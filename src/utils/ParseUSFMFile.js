@@ -13,9 +13,7 @@ export default class USFMParser extends Component{
     constructor(){
         super()
         this.bookId = null;
-        this.book = []
-        this.chapterList = [];
-        this.verseList = [];
+        this.chapters ={};
        
     }
 
@@ -49,9 +47,7 @@ export default class USFMParser extends Component{
         }
         switch (splitString[0]){
             case "\\id": {
-                if (!this.addBook(splitString[1])) {
-                    return false;
-                }
+                this.addBook(splitString[1]);
                 break;
             }
             case "\\c": {
@@ -76,32 +72,26 @@ export default class USFMParser extends Component{
 
 
     addBook(value) {
-        this.bookId = value.toString().trim();
-        return true;
+        // console.log("book "+JSON.stringify(this.book))
     }
 
     addChapter(num) {
-       var chapter = {chapterNumber:num,verseList:[]} 
-       this.chapterList.push(chapter)
+       this.chapters = {chapterNumber:num,verseList:[]} 
+    //    this.book.chapterList.push(chapters)
+    //    console.log("book "+JSON.stringify(this.book))
+
 
     }
     addVerse(splitString){
         var verseNum = splitString[1];
-        // console.log("chapter list "+JSON.stringify(this.chapterList))
         text = [];
         for (var i=2; i<splitString.length; i++) {
-            text.push(splitString[i]);
+            text.push(splitString[i])
         }
         var verse = {verseNumber:verseNum,verseText:text}
-        this.verseList.push(verse)
-        this.chapterList[this.chapterList.length - 1].verseList.push(this.verseList);
-        console.log("chapters in verse  "+JSON.stringify(this.chapterList))
-
-
-        // this.book.push(this.chapterList)
-        this.chapterList = []
-        this.verseList = []
-            // console.log("add verse "+JSON.stringify(this.book))
+        this.chapters.verseList.push(verse)
+        console.log("chapters in verse  "+JSON.stringify(this.chapters))
+        
     }
     
     componentDidMount(){
