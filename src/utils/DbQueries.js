@@ -1,28 +1,27 @@
 import Realm from 'realm'
-import LanguageSchema from './models/LanguageSchema'
+import LanguageSchema from '../models/LanguageSchema'
 import VersionSchema from '../models/VersionSchema'
 import BookSchema from '../models/BookSchema'
 import ChapterSchema from '../models/ChapterSchema'
 import VerseSchema from '../models/VerseSchema'
-import ParseUSFMFile from './ParseUSFMFile'
 var RNFS = require('react-native-fs');
 
-class DbQuery {
+class DbQueries {
     async getRealm() {
     	try {
     		return await Realm.open({
-				schemaVersion: 1,
 				deleteRealmIfMigrationNeeded: true, 
 				path: RNFS.DocumentDirectoryPath + 'vachanOnline.realm ',
 				schema: [LanguageSchema, VersionSchema, BookSchema, ChapterSchema,VerseSchema] });
     	} catch (err) {
     		return null;
     	}
-    }
-    addData(langC,verC,book,chap,verse){
+	}
+	addBookData(){
 		var realm = this.getRealm()
-		
-		
-    }
+		console.log("hello db queries ")
+
+	}
+    
 }
-export default new DbQuery
+export default new DbQueries()

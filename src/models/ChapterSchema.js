@@ -6,7 +6,6 @@ ChapterSchema.schema = {
     name: 'ChapterSchema',
     properties: {
         chapterNum:'int',
-        numberOfVerse: 'int',
         verse:'VerseSchema[]'
     }
 }

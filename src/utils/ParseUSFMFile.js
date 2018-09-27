@@ -1,20 +1,16 @@
-// import BookModel from '../models/BookModel'
-// import ChapterModel from '../models/ChapterModel'
-// import VerseComponentsModel from '../models/VerseComponentsModel'
-// import DbQueries from './dbQueries'
+import DbQueries from './DbQueries.js'
 // import id_name_map from '../assets/mappings.json'
 // const Constants = require('./constants')
 import React, {Component} from  'react'
 import {View,Text} from 'react-native'
-
 var RNFS = require('react-native-fs');
 
-export default class USFMParser extends Component{
+export default class USFMParser {
     constructor(){
-        super()
         this.bookId = null;
-        this.chapters ={};
-       
+        this.book ={},
+        this.chapterList=[]
+        this.verseList=[]
     }
 
     async parseFile(){
@@ -35,7 +31,9 @@ export default class USFMParser extends Component{
                     return false;
                 }
             }
+            this.addBookToDB()
         } catch(exception) {
+            
             console.log("error in parsing file : " + exception)
         }
     }
@@ -67,20 +65,20 @@ export default class USFMParser extends Component{
                 
             }
         }
+        
         return true;
     }
 
 
-    addBook(value) {
-        // console.log("book "+JSON.stringify(this.book))
+    addBook(value){
+        this.bookId = value
+        this.book = {bookId:this.bookId,chapterList:this.chapterList} 
     }
 
     addChapter(num) {
-       this.chapters = {chapterNumber:num,verseList:[]} 
-    //    this.book.chapterList.push(chapters)
-    //    console.log("book "+JSON.stringify(this.book))
-
-
+       var chapters = {chapterNumber:num,verseList:this.verseList} 
+       this.chapterList.push(chapters)
+    //    console.log("chapters in verse  "+JSON.stringify(this.chapterList))
     }
     addVerse(splitString){
         var verseNum = splitString[1];
@@ -89,18 +87,9 @@ export default class USFMParser extends Component{
             text.push(splitString[i])
         }
         var verse = {verseNumber:verseNum,verseText:text}
-        this.chapters.verseList.push(verse)
-        console.log("chapters in verse  "+JSON.stringify(this.chapters))
-        
+        this.verseList.push(verse)
     }
-    
-    componentDidMount(){
-        this.parseFile()
-    }
-   
-    render(){
-        return(
-            <Text>doing parsing</Text>
-        )
+    addBookToDB(){
+        DbQueries.addBookData()
     }
 }

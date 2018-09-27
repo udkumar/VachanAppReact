@@ -9,7 +9,8 @@
   "dependencies": {
     "react": "16.5.0",
     "react-native": "0.57.0",
-    "react-native-fs": "^2.11.15"
+    "react-native-fs": "^2.11.15",
+    "realm": "^2.16.2"
   },
   "devDependencies": {
     "babel-jest": "23.6.0",
