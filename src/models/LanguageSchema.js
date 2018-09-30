@@ -5,8 +5,9 @@ export default class LanguageSchema extends Realm.Object {}
 
 LanguageSchema.schema = {
     name: 'LanguageSchema',
+    primaryKey: 'languageCode',
     properties: {
-        languageName:'int',
+        languageName:'string',
         languageCode: 'string',
         version:'VersionSchema[]'
     }

@@ -6,7 +6,7 @@ export default class VersionSchema extends Realm.Object {}
 VersionSchema.schema = {
     name: 'VersionSchema',
     properties: {
-        versionName:'int',
+        versionName:'string',
         versionCode: 'string',
         books:'BookSchema[]'
     }

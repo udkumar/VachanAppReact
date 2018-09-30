@@ -1,14 +1,15 @@
+'use strict'
 import DbQueries from './DbQueries.js'
 // import id_name_map from '../assets/mappings.json'
 // const Constants = require('./constants')
 import React, {Component} from  'react'
 import {View,Text} from 'react-native'
+import Book from '../screens/Book.js';
 var RNFS = require('react-native-fs');
 
 export default class USFMParser {
     constructor(){
         this.bookId = null;
-        this.book ={},
         this.chapterList=[]
         this.verseList=[]
     }
@@ -17,6 +18,7 @@ export default class USFMParser {
         try {
             var content = await RNFS.readFileAssets('01-GEN.usfm')
             this.parseFileContents(content)
+
         }
         catch(error){
             console.log("error "+error)
@@ -30,8 +32,10 @@ export default class USFMParser {
                 if (!this.processLine(lines[i])) {
                     return false;
                 }
+                this.addBookToDB()
+
             }
-            this.addBookToDB()
+           
         } catch(exception) {
             
             console.log("error in parsing file : " + exception)
@@ -68,16 +72,14 @@ export default class USFMParser {
         
         return true;
     }
-
-
     addBook(value){
         this.bookId = value
-        this.book = {bookId:this.bookId,chapterList:this.chapterList} 
-    }
+        this.book = {bookId:this.bookId,chapterList:this.chapterList}
 
-    addChapter(num) {
+    }
+    addChapter(num){
        var chapters = {chapterNumber:num,verseList:this.verseList} 
-       this.chapterList.push(chapters)
+        this.chapterList.push(chapters)
     //    console.log("chapters in verse  "+JSON.stringify(this.chapterList))
     }
     addVerse(splitString){
@@ -90,6 +92,17 @@ export default class USFMParser {
         this.verseList.push(verse)
     }
     addBookToDB(){
-        DbQueries.addBookData()
+        if(this.bookId == null){
+            return
+        }
+        var bookModel = {bookId:this.bookId,bookName:"Genesis",chapters:this.chapterList}
+        var versionModel = {versionName:"IRV",versionCode:"IRV",books:[]}
+        var languageModel = {languageName:"Hindi", languageCode:"Hin",version:[]}
+        versionModel.books.push(bookModel)
+        languageModel.version.push(versionModel)
+        console.log("bookModel "+bookModel+" versionModel "+versionModel+ " languageModel "+languageModel)
+        // Book.book(bookModel,versionModel,languageModel)
+        const str  = "hello"
+        DbQueries.addBookData(bookModel, versionModel, languageModel)
     }
 }

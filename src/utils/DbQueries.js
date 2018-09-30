@@ -6,7 +6,7 @@ import ChapterSchema from '../models/ChapterSchema'
 import VerseSchema from '../models/VerseSchema'
 var RNFS = require('react-native-fs');
 
-class DbQueries {
+class DbHelper {
     async getRealm() {
     	try {
     		return await Realm.open({
@@ -17,11 +17,19 @@ class DbQueries {
     		return null;
     	}
 	}
-	addBookData(){
-		var realm = this.getRealm()
-		console.log("hello db queries ")
+	async addBook(bookModel,VersionModel,languageModel){
+        var realm = await this.getRealm()
+		if (realm) {
+			realm.write(() => {
+				realm.create('LanguageSchema', languageModel)
+				realm.create('VersionSchema', VersionModel);
+				realm.create('BookSchema', bookModel)
 
+			});
+        }
 	}
-    
+	queryBook(){
+		
+	}
 }
-export default new DbQueries()
+export default new DbHelper()
