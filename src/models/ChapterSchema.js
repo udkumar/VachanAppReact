@@ -5,7 +5,7 @@ export default class ChapterSchema extends Realm.Object {}
 ChapterSchema.schema = {
     name: 'ChapterSchema',
     properties: {
-        chapterNum:'int',
+        chapterNum:'string',
         verse:'VerseSchema[]'
     }
 }

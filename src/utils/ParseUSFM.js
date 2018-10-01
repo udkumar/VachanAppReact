@@ -7,7 +7,7 @@ import {View,Text} from 'react-native'
 import Book from '../screens/Book.js';
 var RNFS = require('react-native-fs');
 
-export default class USFMParser {
+export default class ParseUSFM {
     constructor(){
         this.bookId = null;
         this.chapterList=[]
@@ -30,14 +30,12 @@ export default class USFMParser {
             for(var i = 0; i < lines.length; i++) {
                 //code here using lines[i] which will give you each line
                 if (!this.processLine(lines[i])) {
-                    return false;
+                    return false
                 }
                 this.addBookToDB()
-
             }
            
         } catch(exception) {
-            
             console.log("error in parsing file : " + exception)
         }
     }
@@ -78,21 +76,22 @@ export default class USFMParser {
 
     }
     addChapter(num){
-       var chapters = {chapterNumber:num,verseList:this.verseList} 
+       var chapters = {chapterNum:num,verse:this.verseList} 
         this.chapterList.push(chapters)
     //    console.log("chapters in verse  "+JSON.stringify(this.chapterList))
     }
     addVerse(splitString){
         var verseNum = splitString[1];
-        text = [];
+        var text = [];
         for (var i=2; i<splitString.length; i++) {
             text.push(splitString[i])
         }
-        var verse = {verseNumber:verseNum,verseText:text}
+        const res = text.join(" ")
+        var verse = {verseNumber:verseNum,verseText:res}
         this.verseList.push(verse)
     }
     addBookToDB(){
-        if(this.bookId == null){
+        if(this.bookId == null && this.chapterList.length == 0){
             return
         }
         var bookModel = {bookId:this.bookId,bookName:"Genesis",chapters:this.chapterList}
@@ -100,9 +99,6 @@ export default class USFMParser {
         var languageModel = {languageName:"Hindi", languageCode:"Hin",version:[]}
         versionModel.books.push(bookModel)
         languageModel.version.push(versionModel)
-        console.log("bookModel "+bookModel+" versionModel "+versionModel+ " languageModel "+languageModel)
-        // Book.book(bookModel,versionModel,languageModel)
-        const str  = "hello"
         DbQueries.addBookData(bookModel, versionModel, languageModel)
     }
 }

@@ -3,7 +3,7 @@ const Realm = require('realm');
 export default class BooksSchema extends Realm.Object {}
 
 BooksSchema.schema = {
-    name: 'BooksSchema',
+    name: 'BookSchema',
     properties: {
         bookId:'string',
         bookName:'string',

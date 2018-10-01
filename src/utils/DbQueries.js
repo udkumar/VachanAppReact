@@ -6,30 +6,46 @@ import ChapterSchema from '../models/ChapterSchema'
 import VerseSchema from '../models/VerseSchema'
 var RNFS = require('react-native-fs');
 
-class DbHelper {
+class DbQueries {
     async getRealm() {
     	try {
     		return await Realm.open({
 				deleteRealmIfMigrationNeeded: true, 
-				path: RNFS.DocumentDirectoryPath + 'vachanOnline.realm ',
+				path: RNFS.DocumentDirectoryPath + '/vachanOnline.realm ',
 				schema: [LanguageSchema, VersionSchema, BookSchema, ChapterSchema,VerseSchema] });
     	} catch (err) {
+			console.log("error "+err)
     		return null;
     	}
 	}
-	async addBook(bookModel,VersionModel,languageModel){
-        var realm = await this.getRealm()
+	async addBookData(bookModel,versionModel,languageModel,){
+		var realm = await this.getRealm()
 		if (realm) {
-			realm.write(() => {
-				realm.create('LanguageSchema', languageModel)
-				realm.create('VersionSchema', VersionModel);
-				realm.create('BookSchema', bookModel)
+				realm.write(() => {
+					let languages = realm.create('LanguageSchema', {
+						languageName:languageModel.languageName,
+						languageCode: languageModel.languageCode,
+						version:[]
+					})
+					languages.version.push({
+						versionName:versionModel.versionName,
+						versionCode: versionModel.versionCode,
+						books:[]
+					})
+					languages.version[0].books.push(bookModel)
+					console.log("done all create"+JSON.stringify(languages.version[0].books[0].chapters))
+				}
+			)
+			}
+	}
+	async queryBook(){
+		var realm = await this.getRealm()
+		var results = realm.objects('LanguageSchema')
+		console.log("not realm")
+		if(realm){
+				// return results
+		}
+	}
 
-			});
-        }
-	}
-	queryBook(){
-		
-	}
 }
-export default new DbHelper()
+export default new DbQueries()
