@@ -43,7 +43,8 @@ class DbQueries {
 		var results = realm.objects('LanguageSchema')
 		console.log("not realm")
 		if(realm){
-				// return results
+		console.log("realm")
+				return results
 		}
 	}
 
