@@ -11,14 +11,14 @@ class DbQueries {
     	try {
     		return await Realm.open({
 				deleteRealmIfMigrationNeeded: true, 
-				path: RNFS.DocumentDirectoryPath + '/vachanOnline.realm ',
+				path: RNFS.DocumentDirectoryPath + '/vachanOnlineApp.realm ',
 				schema: [LanguageSchema, VersionSchema, BookSchema, ChapterSchema,VerseSchema] });
     	} catch (err) {
 			console.log("error "+err)
     		return null;
     	}
 	}
-	async addBookData(bookModel,versionModel,languageModel,){
+	async addBookData(bookModel,versionModel,languageModel){
 		var realm = await this.getRealm()
 		if (realm) {
 				realm.write(() => {
@@ -33,7 +33,7 @@ class DbQueries {
 						books:[]
 					})
 					languages.version[0].books.push(bookModel)
-					console.log("done all create"+JSON.stringify(languages.version[0].books[0].chapters))
+					// console.log("done all create"+JSON.stringify(languages.version[0].books[0].chapters))
 				}
 			)
 			}
@@ -41,9 +41,7 @@ class DbQueries {
 	async queryBook(){
 		var realm = await this.getRealm()
 		var results = realm.objects('LanguageSchema')
-		console.log("not realm")
 		if(realm){
-		console.log("realm")
 				return results
 		}
 	}
