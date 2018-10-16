@@ -1,33 +1,17 @@
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import {Platform, StyleSheet, Dimensions, Text, View} from 'react-native';
 import Book from './src/screens/Book'
+const width = Dimensions.get('window').width;
 
 
 export default class App extends Component {
   
   render() {
     return (
-      <Book/>
-    );
+              <Book/>
+          )
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
+

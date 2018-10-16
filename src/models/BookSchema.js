@@ -7,6 +7,9 @@ BooksSchema.schema = {
     properties: {
         bookId:'string',
         bookName:'string',
-        chapters:'ChapterSchema[]'
+        chapters:'ChapterSchema[]',
+        intro:'BookIntroSchema[]',
+        IOLTitle:'string',
+        IOLContent:'IntroOutlineContentSchema[]'
     }
 }
