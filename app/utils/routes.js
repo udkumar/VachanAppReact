@@ -28,16 +28,6 @@ import DbQueries from '../utils/dbQueries'
 import Realm from 'realm'
 
 
-import StudyBible from '../screens/tabsNav/StudyBible'
-import Audio from '../screens/tabsNav/Audio'
-import Map from '../screens/tabsNav/Map'
-
-const  Tabs = TabNavigator({
-  Home:Home,
-  StudyBible: StudyBible,
-  Audio: Audio,
-  Map: Map,
-})
 
 const StackNavigate = (styles) => StackNavigator(
   {  

@@ -17,7 +17,7 @@ export default class Splash extends Component {
     console.log("SPLASH :: props " + JSON.stringify(props))
     if (!this.props.screenProps.isDbLoading) {
           console.log("NOWWW const")
-          this._navigateTo('Tabs')
+          this._navigateTo('Home')
     }
   }
 
@@ -25,7 +25,7 @@ export default class Splash extends Component {
     console.log("SPLASH receive PROPS : " + JSON.stringify(props))
       if (!props.screenProps.isDbLoading) {
         console.log("start home")
-          this._navigateTo('Tabs')
+          this._navigateTo('Home')
           // this.props.navigation.navigate('Home')
       }
   }
