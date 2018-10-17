@@ -143,8 +143,8 @@ export default class ParseUSFM {
         var verseNum = splitString[1];
         const res = this.joinString(splitString)
         const tagRemove = res.replace(/\\it\*\*|\\it/g,'');
-        const verseData = tagRemove.replace(/\\f(.*?)\\f\*/g,"")
-        
+        const verseData = tagRemove.replace(/(\\f(.*?)\\f\*)|(\\bdit(.*?)\\bdit\*)/g,"")
+        console.log("verse only "+verseData)
         const footnote = tagRemove.match(/\\f(.*?)\\f\*/g)
         if(footnote == null){
             return true
