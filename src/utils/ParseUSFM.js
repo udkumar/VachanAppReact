@@ -18,9 +18,10 @@ export default class ParseUSFM {
         this.IOLTitle=null,
         this.IOLContent=[],
         this.chapterSection=[],
-        this.foootNoteRef=null,
-        this.foootNoteText=null,
-        this.footNotequotation=null
+        this.foootNoteRef='',
+        this.foootNoteText='',
+        this.footNotequotation='',
+        this.bookName =null
     }
 
     async parseFile(){
@@ -31,7 +32,7 @@ export default class ParseUSFM {
         catch(error){
             console.log("error "+error)
         }
-        // this.addBookToDB()
+        this.addBookToDB()
     }
     parseFileContents(result) {
         try {
@@ -54,8 +55,12 @@ export default class ParseUSFM {
         }
         switch (splitString[0]){
             case "\\id": {
-                this.addBook(splitString[1]);
+                this.bookId = splitString[1]
                 break;
+            }
+            case ("\\h"): {
+                this.addBookName(splitString);
+                break
             }
             case ("\\is"): {
             }
@@ -94,19 +99,9 @@ export default class ParseUSFM {
         }
         return true;
     }
-    addBook(value){
-        this.bookId = value
-        const book= {
-            bookId:this.bookId,
-            bookName:"GENESIS",
-            chapters:this.chapterList,
-            intro:this.bookIntro,
-            IOLTitle:this.IOLTitle,
-            IOLContent:this.IOLContent,
-        }
-        // this.book = {bookId:this.bookId,chapterList:this.chapterList}
+    addBookName(name){
+        this.bookname = this.joinString(name)       
     }
-  
     addbookIntro(intro){
         switch(intro[0]){
             case "\\is": {
@@ -117,7 +112,6 @@ export default class ParseUSFM {
                 this.paragraph = this.joinString(intro)
                 const bookIntro = {introSecHeader:this.section,introParagraph:this.paragraph}
                 this.bookIntro.push(bookIntro)
-                // console.log("bookIntro "+JSON.stringify(bookIntro))
                 break;
             }
             default:{
@@ -144,21 +138,15 @@ export default class ParseUSFM {
         const res = this.joinString(splitString)
         const tagRemove = res.replace(/\\it\*\*|\\it/g,'');
         const verseData = tagRemove.replace(/(\\f(.*?)\\f\*)|(\\bdit(.*?)\\bdit\*)/g,"")
-        console.log("verse only "+verseData)
         const footnote = tagRemove.match(/\\f(.*?)\\f\*/g)
         if(footnote == null){
             return true
-        }
-        this.addfootnotes(footnote)
-        const verse = {verseNumber:verseNum,
-                    verseText:verseData,
-                    footNoteText:this.foootNoteText,
-                    footNotequotation:this.footNotequotation,
-                    foootNoteRef:this.foootNoteRef
-        }
-        this.verseList.push(verse)
+        }   
+        console.log("footnote "+footnote)
+        this.addfootnotes(footnote,verseNum,verseData)
+
     }
-    addfootnotes(note){
+    addfootnotes(note,verseNumm,verseDataa){
         const noteData = note.toString()
         if(note.length == 0) {
             return true
@@ -172,35 +160,46 @@ export default class ParseUSFM {
         this.foootNoteRef = noteData.replace(frTag,'$3')
         this.footNotequotation = noteContent.replace(fxTag,'$5')
         this.foootNoteText = noteContent.replace(fqTag,'')
+        var verse = {verseNumber:verseNumm,
+            verseText:verseDataa,
+            footNoteText:this.foootNoteRef,
+            footNotequotation:this.footNotequotation,
+            foootNoteRef:this.foootNoteRef
+        }
+        this.verseList.push(verse)
     }
 
     joinString(string){
         var text = [];
-        for (var i= string[0] == '\\v' ? 2 : '\\io1' ? 2 : 1; i<string.length; i++) {
+        for (var i= string[0] == ('\\v' || '\\io1') ? 2 : 1; i<string.length; i++) {
             text.push(string[i])
         }
+        // if(string.length<=3){
+        //     // console.log("LESS LENGTH STRING"+string)
+        //     // console.log("text"+string[1])
+        //     // return text
+        // }
         const res = text.join(" ")
         return res
     }
-    // addBookToDB(){
-    //     if(this.bookId == null && this.chapterList.length == 0){
-    //         return
-    //     }
-    //     var bookModel ={ 
-    //     bookId:this.bookId,
-    //     bookName:"GENESIS",
-    //     chapters:this.chapterList,
-    //     intro:this.bookIntro,
-    //     IOLTitle:this.IOLTitle,
-    //     IOLContent:this.IOLContent}
-    //     // var bookModel = {bookId:this.bookId,bookName:"Genesis",chapters:this.chapterList}
-    //     var versionModel = {versionName:"IRV",versionCode:"IRV",books:[]}
-    //     var languageModel = {languageName:"Hindi", languageCode:"Hin",version:[]}
-    //     versionModel.books.push(bookModel)
-    //     languageModel.version.push(versionModel)
-    //     console.log("BOOK MODEL "+JSON.stringify(bookModel.IOLContent))
-    //     console.log("BOOK MODEL "+JSON.stringify(bookModel.chapters))
-
-    //     // DbQueries.addBookData(bookModel, versionModel, languageModel)
-    // }
+    addBookToDB(){
+        if(this.bookId == null && this.chapterList.length == 0){
+            return
+        }
+        // console.log("BOOK NAME"+this.bookName)
+        var bookModel ={ 
+        bookId:this.bookId,
+        bookName:this.bookName,
+        chapters:this.chapterList,
+        intro:this.bookIntro,
+        IOLTitle:this.IOLTitle,
+        IOLContent:this.IOLContent}
+        // var bookModel = {bookId:this.bookId,bookName:"Genesis",chapters:this.chapterList}
+        var versionModel = {versionName:"Indian Revised Version",versionCode:"IRV",books:[]}
+        var languageModel = {languageName:"Hindi", languageCode:"Hin",version:[]}
+        versionModel.books.push(bookModel)
+        languageModel.version.push(versionModel)
+        console.log("book model "+JSON.stringify(bookModel))
+        // DbQueries.addBookData(bookModel, versionModel, languageModel)
+    }
 }
