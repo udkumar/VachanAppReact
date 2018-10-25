@@ -31,11 +31,68 @@ import Realm from 'realm'
 
 
 const StackNavigate = (styles) => StackNavigator(
-    {  
+  {  
+    
+      Splash: {
+        screen: Splash,
+      },
       Home: {
         screen: Home,
       },
-    },
+      About: {
+        screen: About,
+      },
+      Bookmarks: {
+        screen: Bookmarks,
+      },
+      EditNote: {
+        screen: EditNote,
+      },
+      Highlights: {
+        screen: Highlights,
+      },
+      History: {
+        screen: History,
+      },
+      Notes: {
+        screen: Notes,
+      },  
+      Settings: {
+        screen: Settings,
+      },
+      ChapterSelection: {
+        screen: ChapterSelection,
+        navigationOptions: {
+            headerTitle:"Select Chapter"
+        }
+      },
+      ReferenceSelection: {
+        screen: ReferenceSelection,
+      },
+      Hints: {
+        screen: Hints,
+      },
+      Book: {
+        screen: Book,
+      },
+      Language:{
+        screen:Language
+      },
+      DownloadLanguage: {
+        screen: DownloadLanguage
+      },
+      DownloadVersion: {
+        screen: DownloadVersion
+      },
+     
+      Search: {
+        screen: Search,
+      },
+      BackupRestore: {
+        screen: BackupRestore
+      },
+     
+  },
   {
     navigationOptions: {
       headerTintColor: '#fff',
@@ -48,7 +105,107 @@ export default class App extends Component {
 
   constructor(props){
     super(props)
-    // Realm.copyBundledRealmFiles();
+    Realm.copyBundledRealmFiles();
+      
+    this.state = {
+        booksList: [],
+        isDbLoading: true,
+        languageCode: AsyncStorageConstants.Values.DefLanguageCode,
+        versionCode: AsyncStorageConstants.Values.DefVersionCode,
+        languageName:AsyncStorageConstants.Values.DefLanguageName,
+        versionName:AsyncStorageConstants.Values.DefVersionName,
+        colorMode: AsyncStorageConstants.Values.DayMode,
+        sizeMode: AsyncStorageConstants.Values.SizeModeNormal,
+        colorFile:dayColors,
+        sizeFile:mediumFont,
+        verseInLine:false,
+        lastRead:{}
+    }
+
+		this.updateBooks = this.updateBooks.bind(this)
+    this.updateSize = this.updateSize.bind(this)
+    this.updateColor = this.updateColor.bind(this)
+    this.updateVerseInLine = this.updateVerseInLine.bind(this)
+    this.changeSizeByOne = this.changeSizeByOne.bind(this)
+    this.updateLastRead = this.updateLastRead.bind(this)
+    this.updateLanguage  = this.updateLanguage.bind(this)
+
+    this.styles = styleFile(this.state.colorFile,this.state.sizeFile)
+    this.StackNav = StackNavigate(this.styles)
+    console.log("ALL HEADER COLOR /////// "+JSON.stringify(this.styles))
+  }
+
+  updateBooks = (booksList) => {
+    this.setState({booksList})
+  }
+
+  updateVerseInLine = (verseInLine) =>{
+    this.setState({verseInLine})
+  }
+
+  updateLastRead = (lastRead) => {
+    this.setState({lastRead})
+  }
+
+  updateColor = (colorMode, colorFile) => {
+    this.setState({colorMode, colorFile})
+	}
+	
+  updateSize = (sizeMode, sizeFile) => {
+    this.setState({sizeMode, sizeFile})
+  }
+
+  changeSizeByOne = (value) => {
+    switch (this.state.sizeMode) {
+      case AsyncStorageConstants.Values.SizeModeXSmall : {
+        if (value == -1) {
+          return
+        } else {
+          AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.SizeMode, AsyncStorageConstants.Values.SizeModeSmall);    
+          this.setState({sizeFile:smallFont, sizeMode: AsyncStorageConstants.Values.SizeModeSmall})
+        }
+        break;
+      } 
+      case AsyncStorageConstants.Values.SizeModeSmall : {
+        if (value == -1) {
+          AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.SizeMode, AsyncStorageConstants.Values.SizeModeXSmall);    
+          this.setState({sizeFile:extraSmallFont, sizeMode: AsyncStorageConstants.Values.SizeModeXSmall})          
+        } else {
+          AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.SizeMode, AsyncStorageConstants.Values.SizeModeNormal);    
+          this.setState({sizeFile:mediumFont, sizeMode: AsyncStorageConstants.Values.SizeModeNormal})                    
+        }
+        break;
+      }
+      case AsyncStorageConstants.Values.SizeModeNormal : {
+        if (value == -1) {
+          AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.SizeMode, AsyncStorageConstants.Values.SizeModeSmall);    
+          this.setState({sizeFile:smallFont, sizeMode: AsyncStorageConstants.Values.SizeModeSmall})          
+        } else {
+          AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.SizeMode, AsyncStorageConstants.Values.SizeModeLarge);    
+          this.setState({sizeFile:largeFont, sizeMode: AsyncStorageConstants.Values.SizeModeLarge})                    
+        }
+        break;
+      }
+      case AsyncStorageConstants.Values.SizeModeLarge : {
+        if (value == -1) {
+          AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.SizeMode, AsyncStorageConstants.Values.SizeModeNormal);    
+          this.setState({sizeFile:mediumFont, sizeMode: AsyncStorageConstants.Values.SizeModeNormal})          
+        } else {
+          AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.SizeMode, AsyncStorageConstants.Values.SizeModeXLarge);    
+          this.setState({sizeFile:extraLargeFont, sizeMode: AsyncStorageConstants.Values.SizeModeXLarge})                    
+        }
+        break;
+      }
+      case AsyncStorageConstants.Values.SizeModeXLarge : {
+        if (value == -1) {
+          AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.SizeMode, AsyncStorageConstants.Values.SizeModeLarge);    
+          this.setState({sizeFile:largeFont, sizeMode: AsyncStorageConstants.Values.SizeModeLarge})          
+        } else {
+          return                   
+        }
+        break;
+      }
+    }
   }
 
   updateLanguage = async(languageCode,languageName,versionCode,versionName) =>{

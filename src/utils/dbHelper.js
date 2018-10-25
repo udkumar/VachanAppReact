@@ -21,7 +21,7 @@ class DbHelper {
     async getRealm() {
     	try {
     		return await Realm.open({
-				path: RNFS.DocumentDirectoryPath +'/onlineApp.realm ',
+				path: RNFS.DocumentDirectoryPath + '/onlineApp.realm ',
 				schema: [LanguageModel, VersionModel, BookModel, ChapterModel, VerseComponentsModel, NoteModel, StylingModel, ReferenceModel, HistoryModel] });
 			
     	} catch (err) {
@@ -152,7 +152,7 @@ class DbHelper {
 					
                 })
 			}
-			realm.close();
+			// realm.close();
 			
 		  }
 	}

@@ -12,6 +12,7 @@ import {
   Alert
 } from 'react-native';
 import DbQueries from '../../utils/dbQueries'
+import USFMParser from '../../utils/USFMParser'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {Segment,Button,Tab,Tabs} from 'native-base'
 import { homePageStyle } from './styles.js';
@@ -19,29 +20,25 @@ const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 const AsyncStorageConstants = require('../../utils/AsyncStorageConstants')
 import {getBookNameFromMapping} from '../../utils/UtilFunctions'
-import {nightColors, dayColors} from '../../utils/colors.js'
 import FixedSidebar from '../../components/FixedSidebar/FixedSidebar'
-import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
-import {constantFont} from '../../utils/dimens.js'
-import firebase from 'react-native-firebase'
 
 export default class Home extends Component {
 
-  static navigationOptions = ({navigation}) =>{
-    const { params = {} } = navigation.state;
-    console.log("props navigation VALUE "+JSON.stringify(navigation.state.params))
-    return{
-      headerTitle: (
-              <TouchableOpacity onPress={() =>{navigation.navigate("About")}} >
-                <Text style={{color:'white',fontSize:20,marginHorizontal:16,fontWeight:'500'}}>Autographa Go</Text>
-              </TouchableOpacity>),
-      headerRight:(
-          <TouchableOpacity onPress={() =>{navigation.state.params.openLanguages()}} >
-            <Text style={params.headerRightText}>{params.bibleLanguage} {params.bibleVersion}</Text>
-          </TouchableOpacity>
-        )
-      }
-  }
+  // static navigationOptions = ({navigation}) =>{
+  //   const { params = {} } = navigation.state;
+  //   console.log("props navigation VALUE "+JSON.stringify(navigation.state.params))
+  //   return{
+  //     headerTitle: (
+  //             <TouchableOpacity onPress={() =>{navigation.navigate("About")}} >
+  //               <Text style={{color:'white',fontSize:20,marginHorizontal:16,fontWeight:'500'}}>Autographa Go</Text>
+  //             </TouchableOpacity>),
+  //     headerRight:(
+  //         <TouchableOpacity onPress={() =>{navigation.state.params.openLanguages()}} >
+  //           <Text style={params.headerRightText}>{params.bibleLanguage} {params.bibleVersion}</Text>
+  //         </TouchableOpacity>
+  //       )
+  //     }
+  // }
 
   constructor(props){
     super(props)
@@ -51,8 +48,8 @@ export default class Home extends Component {
       sizeFile:this.props.screenProps.sizeFile,
       colorMode:this.props.screenProps.colorMode,
       lastRead:this.props.screenProps.lastRead,
-      bibleLanguage:this.props.screenProps.languageName,
-      bibleVersion:this.props.screenProps.versionCode,
+      // bibleLanguage:this.props.screenProps.languageName,
+      // bibleVersion:this.props.screenProps.versionCode,
       activeTab:true,
       iconPress: [],
       booksList: this.props.screenProps.booksList,
@@ -80,12 +77,12 @@ export default class Home extends Component {
     }
   }
   
-  updateLanguage = (language,version) =>{
-    this.props.navigation.setParams({
-      bibleLanguage: language,
-      bibleVersion: version
-    })
-  }
+  // updateLanguage = (language,version) =>{
+  //   this.props.navigation.setParams({
+  //     bibleLanguage: language,
+  //     bibleVersion: version
+  //   })
+  // }
 
   openLanguages = ()=>{
     this.props.navigation.navigate("Language", {updateLanguage:this.updateLanguage})
@@ -113,12 +110,12 @@ export default class Home extends Component {
   )
   
   componentDidMount(){
-    this.props.navigation.setParams({
-      bibleLanguage: this.props.screenProps.languageName, 
-      bibleVersion: this.props.screenProps.versionCode,
-      openLanguages: this.openLanguages,
-      headerRightText:this.styles.headerRightText
-    })
+    // this.props.navigation.setParams({
+    //   bibleLanguage: this.props.screenProps.languageName, 
+    //   bibleVersion: this.props.screenProps.versionCode,
+    //   openLanguages: this.openLanguages,
+    //   headerRightText:this.styles.headerRightText
+    // })
 
     if (Platform.OS == "android") {
       Linking.getInitialURL().then(url => {
@@ -279,6 +276,7 @@ renderItem = ({item, index})=> {
               :null}
             </Segment>
             <FlatList
+
               ref={ref => this.flatlistRef = ref}
               data={this.state.booksList}
               getItemLayout={this.getItemLayout}
@@ -296,3 +294,4 @@ renderItem = ({item, index})=> {
   }
 
 }
+

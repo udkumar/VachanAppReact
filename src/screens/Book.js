@@ -20,30 +20,24 @@ export default class Book extends Component {
     }
     async componentDidMount(){
         // this.startParse()
-        // console.log("query book ''''''''.....")
         let queryBook = await DbHelper.queryData()
-        console.log("query book ........")
-        // this.setState({data:queryBook})
-        console.log("query book "+queryBook[0].versionModels[0].bookModels[0].bookId)
+        // console.log("query book ........")
+        this.setState({data:queryBook[0].versionModels[0].bookModels})
+        console.log("query book "+JSON.stringify(queryBook[0].versionModels[0].bookModels))
     }
 
     render(){
-        console.log("chapters book "+JSON.stringify(this.state.data))
+        // console.log("chapters book "+JSON.stringify(this.state.data))
         return(
-            <Text>text</Text>
-            // <FlatList
-            //     data={this.state.chapters}
-            //     renderItem={({item,index}) => 
-            //     <View>
-            //         <Text style={{fontWeight:"bold",fontSize:20}}>{JSON.parse(item.chapterNum)}</Text>
-            //         {
-            //             item.verse.map((data)=>
-            //                 <Text>{data.verseNumber} : {data.verseText}</Text> 
-            //             )
-            //         }
-            //     </View>
-            //     }
-            // />
+            <FlatList
+                data={this.state.data}
+                renderItem={({item,index}) => 
+                <View>
+                    <Text style={{fontWeight:"bold",fontSize:20}}>{item.bookId}</Text>
+                </View>
+                }
+                keyExtractor={(item, index) => index.toString()}
+            />
             
         )
     }

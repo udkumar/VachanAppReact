@@ -7,9 +7,14 @@
     "test": "jest"
   },
   "dependencies": {
+    "native-base": "^2.8.1",
     "react": "16.5.0",
     "react-native": "0.57.0",
+    "react-native-collapsible": "^1.2.1",
+    "react-native-firebase": "^5.0.0",
     "react-native-fs": "^2.11.15",
+    "react-native-vector-icons": "^6.0.2",
+    "react-navigation": "^2.18.1",
     "realm": "^2.16.2"
   },
   "devDependencies": {
