@@ -2,6 +2,7 @@
 import React, { Component } from 'react'
 import {StackNavigator, TabNavigator} from 'react-navigation'
 import Home from '../screens/Home/Home'
+// import Book from '../screens/Book'
 // import About from '../screens/About/About'
 // import Bookmarks from '../screens/Bookmarks/Bookmarks'
 // import Highlights from '../screens/Highlights/Highlights'
@@ -33,9 +34,12 @@ import Realm from 'realm'
 const StackNavigate = (styles) => StackNavigator(
   {  
     
-      Splash: {
-        screen: Splash,
-      },
+      // Splash: {
+      //   screen: Splash,
+      // },
+      // Book:{
+      //   screen:Book
+      // },
       Home: {
         screen: Home,
       },
@@ -127,7 +131,7 @@ export default class App extends Component {
     this.updateVerseInLine = this.updateVerseInLine.bind(this)
     this.changeSizeByOne = this.changeSizeByOne.bind(this)
     this.updateLastRead = this.updateLastRead.bind(this)
-    this.updateLanguage  = this.updateLanguage.bind(this)
+    // this.updateLanguage  = this.updateLanguage.bind(this)
 
     this.styles = styleFile(this.state.colorFile,this.state.sizeFile)
     this.StackNav = StackNavigate(this.styles)
@@ -243,7 +247,7 @@ export default class App extends Component {
           updateBooks: this.updateBooks,
           changeSizeByOne: this.changeSizeByOne,
           updateLastRead: this.updateLastRead,
-          updateLanguage: this.updateLanguage
+          // updateLanguage: this.updateLanguage
         }}
       />
     );
@@ -305,8 +309,8 @@ export default class App extends Component {
     }, async ()=> {
       console.log("QUERY : " + this.state.versionCode + " ::  " + this.state.languageCode)
       let models = await DbQueries.queryBookIdModels(this.state.versionCode, this.state.languageCode);
-      // console.log("routes len =" + models)
-      // console.log("VERSE VALUE ++++ " + res[2][1])
+      console.log("routes len =" + models)
+      console.log("VERSE VALUE ++++ " + res[2][1])
       this.setState({isDbLoading: false})
       if (models && models.length > 0) {
         this.setState({booksList: models})

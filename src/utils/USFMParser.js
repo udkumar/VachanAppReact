@@ -21,37 +21,37 @@ export default class USFMParser {
         this.license = "CCSA";
     }
 
-    parseFile(path, lCode, lName, vCode, vName, source, license, year, fromAssets) {
-        this.languageCode = lCode;
-        this.languageName = lName;
-        this.versionCode = vCode;
-        this.versionName = vName;
-        this.source = source;
-        this.license = license;
-        this.year = year;
+    // parseFile(path, lCode, lName, vCode, vName, source, license, year, fromAssets) {
+    //     this.languageCode = lCode;
+    //     this.languageName = lName;
+    //     this.versionCode = vCode;
+    //     this.versionName = vName;
+    //     this.source = source;
+    //     this.license = license;
+    //     this.year = year;
 
-        if (fromAssets) {
-            RNFS.readFileAssets(path)
-                .then((result)=>{
-                    this.parseFileContents(result);
-                });
-        } else {
-            RNFS.readFile(path)
-                .then((result)=>{
-                    this.parseFileContents(result);
-                });
-        }
-    }
-
-    // async parseFile(){
-    //     try {
-    //         var content = await RNFS.readFileAssets('67-REV.usfm')
-    //         this.parseFileContents(content)
-    //     }
-    //     catch(error){
-    //         console.log("error "+error)
+    //     if (fromAssets) {
+    //         RNFS.readFileAssets(path)
+    //             .then((result)=>{
+    //                 this.parseFileContents(result);
+    //             });
+    //     } else {
+    //         RNFS.readFile(path)
+    //             .then((result)=>{
+    //                 this.parseFileContents(result);
+    //             });
     //     }
     // }
+
+    async parseFile(){
+        try {
+            var content = await RNFS.readFileAssets('67-REV.usfm')
+            this.parseFileContents(content)
+        }
+        catch(error){
+            console.log("error "+error)
+        }
+    }
 
     parseFileContents(result) {
         try {

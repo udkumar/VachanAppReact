@@ -152,7 +152,6 @@ class DbHelper {
 					
                 })
 			}
-			// realm.close();
 			
 		  }
 	}
@@ -160,6 +159,7 @@ class DbHelper {
 	async queryData(){
 		let realm = await this.getRealm();
     	if(realm) {
+			console.log("realm")
 			let results = realm.objects('LanguageModel');
 			console.log("results "+results)
 			return results;
@@ -177,10 +177,12 @@ class DbHelper {
 		  }
 	}
 
-	async queryBookIdModels(verCode: string, langCode: string) {
+	async queryBookIdModels(verCode, langCode) {
+		console.log("language code "+langCode+"version code "+verCode)
 		let realm = await this.getRealm();
     	if (realm) {
 			let result = realm.objectForPrimaryKey("LanguageModel", langCode);
+			console.log("result "+result)
 			let resultsA = result.versionModels;
 			resultsA = resultsA.filtered('versionCode == [c] "' + verCode + '"');
 			if (resultsA.length > 0) {

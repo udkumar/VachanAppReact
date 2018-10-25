@@ -21,14 +21,14 @@ export default class Splash extends Component {
     }
   }
 
-  componentWillReceiveProps(props) {
-    // console.log("SPLASH receive PROPS : " + JSON.stringify(props))
-      if (!props.screenProps.isDbLoading) {
-        // console.log("start home")
-          this._navigateTo('Home')
-          // this.props.navigation.navigate('Home')
-      }
-  }
+  // componentWillReceiveProps(props) {
+  //   // console.log("SPLASH receive PROPS : " + JSON.stringify(props))
+  //     if (!props.screenProps.isDbLoading) {
+  //       // console.log("start home")
+  //         this._navigateTo('Home')
+  //         // this.props.navigation.navigate('Home')
+  //     }
+  // }
 
   _navigateTo = (routeName: string) => {
     const resetAction = NavigationActions.reset({

@@ -68,7 +68,10 @@ class DbQueries {
     queryBookIdModels(verCode: string, langCode: string) {
         return DbHelper.queryBookIdModels(verCode, langCode);
     }
-
+    queryData(verCode: string, langCode: string) {
+        return DbHelper.queryData(verCode, langCode);
+    }
+    
     queryNotes() {
        return DbHelper.queryNotes();
     }

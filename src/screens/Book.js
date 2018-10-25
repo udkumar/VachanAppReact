@@ -1,6 +1,6 @@
 import React,{Component } from 'react'
 import {View,Text,FlatList} from 'react-native'
-import DbHelper from '../utils/DbHelper.js'
+import DbHelper from '../utils/dbHelper.js'
 import USFMParser from '../utils/USFMParser'
 
 
@@ -19,11 +19,11 @@ export default class Book extends Component {
         parse.parseFile();
     }
     async componentDidMount(){
-        // this.startParse()
-        let queryBook = await DbHelper.queryData()
+        this.startParse()
+        // let queryBook = await DbHelper.queryData()
         // console.log("query book ........")
-        this.setState({data:queryBook[0].versionModels[0].bookModels})
-        console.log("query book "+JSON.stringify(queryBook[0].versionModels[0].bookModels))
+        // this.setState({data:queryBook[0})
+        // console.log("query book "+JSON.stringify(queryBook.length))
     }
 
     render(){
