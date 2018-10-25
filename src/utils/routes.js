@@ -2,7 +2,7 @@
 import React, { Component } from 'react'
 import {StackNavigator, TabNavigator} from 'react-navigation'
 import Home from '../screens/Home/Home'
-// import Book from '../screens/Book'
+import Book from '../screens/book/Book'
 // import About from '../screens/About/About'
 // import Bookmarks from '../screens/Bookmarks/Bookmarks'
 // import Highlights from '../screens/Highlights/Highlights'
@@ -13,7 +13,7 @@ import Home from '../screens/Home/Home'
 // import Settings from '../screens/settings/Settings'
 import Splash from '../screens/Splash/Splash'
 // import ReferenceSelection from '../screens/numberSelection/ReferenceSelection'
-// import ChapterSelection from '../screens/numberSelection/ChapterSelection'
+import ChapterSelection from '../screens/numberSelection/ChapterSelection'
 // import Hints from '../screens/Hints/Hints'
 // import Language from '../screens/Language/Language'
 // import Book from '../screens/book/Book'
@@ -37,11 +37,12 @@ const StackNavigate = (styles) => StackNavigator(
       // Splash: {
       //   screen: Splash,
       // },
-      // Book:{
-      //   screen:Book
-      // },
-      Home: {
+      
+      Home:{
         screen: Home,
+      },
+      Book:{
+        screen:Book
       },
   //     About: {
   //       screen: About,
@@ -64,21 +65,19 @@ const StackNavigate = (styles) => StackNavigator(
   //     Settings: {
   //       screen: Settings,
   //     },
-  //     ChapterSelection: {
-  //       screen: ChapterSelection,
-  //       navigationOptions: {
-  //           headerTitle:"Select Chapter"
-  //       }
-  //     },
+      ChapterSelection: {
+        screen: ChapterSelection,
+        navigationOptions: {
+            headerTitle:"Select Chapter"
+        }
+      },
   //     ReferenceSelection: {
   //       screen: ReferenceSelection,
   //     },
   //     Hints: {
   //       screen: Hints,
   //     },
-  //     Book: {
-  //       screen: Book,
-  //     },
+      
   //     Language:{
   //       screen:Language
   //     },
@@ -313,6 +312,7 @@ export default class App extends Component {
       console.log("VERSE VALUE ++++ " + res[2][1])
       this.setState({isDbLoading: false})
       if (models && models.length > 0) {
+        console.log("BOOK LIST "+models.length)
         this.setState({booksList: models})
       }
     })
