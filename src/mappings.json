@@ -1,334 +1,392 @@
 {
   "id_name_map": {
     "GEN": {
-      "book_name": "Genesis",
       "section": "OT",
-      "number": 1
+      "number": 1,
+      "book_short_name":"उत्प."
     },
     "EXO": {
-      "book_name": "Exodus",
       "section": "OT",
-      "number": 2
+      "number": 2,
+      "book_short_name":"निर्ग."
+
     },
     "LEV": {
-      "book_name": "Leviticus",
       "section": "OT",
-      "number": 3
+      "number": 3,
+      "book_short_name":"लैव्य."
+
     },
     "NUM": {
-      "book_name": "Numbers",
       "section": "OT",
-      "number": 4
+      "number": 4,
+      "book_short_name":"गिन."
+
     },
     "DEU": {
-      "book_name": "Deuteronomy",
       "section": "OT",
-      "number": 5
+      "number": 5,
+      "book_short_name":"व्य."
     },
     "JOS": {
-      "book_name": "Joshua",
       "section": "OT",
-      "number": 6
+      "number": 6,
+      "book_short_name":"यहो."
     },
     "JDG": {
-      "book_name": "Judges",
       "section": "OT",
-      "number": 7
+      "number": 7,
+      "book_short_name":"न्याय."
     },
     "RUT": {
-      "book_name": "Ruth",
       "section": "OT",
-      "number": 8
+      "number": 8,
+      "book_short_name":"रूत"
     },
     "1SA": {
-      "book_name": "1 Samuel",
       "section": "OT",
-      "number": 9
+      "number": 9,
+      "book_short_name":"1 शमू."
     },
     "2SA": {
-      "book_name": "2 Samuel",
       "section": "OT",
-      "number": 10
+      "number": 10,
+      "book_short_name":"2 शमू."
+
     },
     "1KI": {
-      "book_name": "1 Kings",
       "section": "OT",
-      "number": 11
+      "number": 11,
+      "book_short_name":"1 राजा"
     },
     "2KI": {
-      "book_name": "2 Kings",
       "section": "OT",
-      "number": 12
+      "number": 12,
+      "book_short_name":"2 राजा"
     },
     "1CH": {
-      "book_name": "1 Chronicles",
       "section": "OT",
-      "number": 13
+      "number": 13,
+      "book_short_name":"1 इति."
     },
     "2CH": {
-      "book_name": "2 Chronicles",
       "section": "OT",
-      "number": 14
+      "number": 14,
+      "book_short_name":"2 इति."
+
     },
     "EZR": {
-      "book_name": "Ezra",
       "section": "OT",
-      "number": 15
+      "number": 15,
+      "book_short_name":"एज्रा"
+
     },
     "NEH": {
-      "book_name": "Nehemiah",
       "section": "OT",
-      "number": 16
+      "number": 16,
+      "book_short_name":"नहे."
+
     },
     "EST": {
-      "book_name": "Esther",
       "section": "OT",
-      "number": 17
+      "number": 17,
+      "book_short_name":"एस्ते."
+
     },
     "JOB": {
-      "book_name": "Job",
       "section": "OT",
-      "number": 18
+      "number": 18,
+      "book_short_name":"अय्यू."
+
     },
     "PSA": {
-      "book_name": "Psalms",
       "section": "OT",
-      "number": 19
+      "number": 19,
+      "book_short_name":"भज."
+
     },
     "PRO": {
-      "book_name": "Proverbs",
       "section": "OT",
-      "number": 20
+      "number": 20,
+      "book_short_name":"नीति."
+
     },
     "ECC": {
-      "book_name": "Ecclesiastes",
       "section": "OT",
-      "number": 21
+      "number": 21,
+      "book_short_name":"सभो."
+
     },
     "SNG": {
-      "book_name": "Song of Solomon",
       "section": "OT",
-      "number": 22
+      "number": 22,
+      "book_short_name":"श्रेष्ठ."
+
+
     },
     "ISA": {
-      "book_name": "Isaiah",
       "section": "OT",
-      "number": 23
+      "number": 23,
+      "book_short_name":"यशा."
+
     },
     "JER": {
-      "book_name": "Jeremiah",
       "section": "OT",
-      "number": 24
+      "number": 24,
+      "book_short_name":"यिर्म"
+
     },
     "LAM": {
-      "book_name": "Lamentations",
       "section": "OT",
-      "number": 25
+      "number": 25,
+      "book_short_name":"विला."
+
     },
     "EZK": {
-      "book_name": "Ezekiel",
       "section": "OT",
-      "number": 26
+      "number": 26,
+      "book_short_name":"यहे."
+
     },
     "DAN": {
-      "book_name": "Daniel",
       "section": "OT",
-      "number": 27
+      "number": 27,
+      "book_short_name":"दानि."
+
     },
     "HOS": {
-      "book_name": "Hosea",
       "section": "OT",
-      "number": 28
+      "number": 28,
+      "book_short_name":"होशे"
+
     },
     "JOL": {
-      "book_name": "Joel",
       "section": "OT",
-      "number": 29
+      "number": 29,
+      "book_short_name":"योए."
+
     },
     "AMO": {
-      "book_name": "Amos",
       "section": "OT",
-      "number": 30
+      "number": 30,
+      "book_short_name":"आमो."
+
     },
     "OBA": {
-      "book_name": "Obadiah",
       "section": "OT",
-      "number": 31
+      "number": 31,
+      "book_short_name":"Oba."
+
     },
     "JON": {
-      "book_name": "Jonah",
       "section": "OT",
-      "number": 32
+      "number": 32,
+      "book_short_name":"योना"
+
     },
     "MIC": {
-      "book_name": "Micah",
       "section": "OT",
-      "number": 33
+      "number": 33,
+      "book_short_name":"मीका"
+
     },
     "NAM": {
-      "book_name": "Nahum",
       "section": "OT",
-      "number": 34
+      "number": 34,
+      "book_short_name":"नहू."
+
     },
     "HAB": {
-      "book_name": "Habakkuk",
       "section": "OT",
-      "number": 35
+      "number": 35,
+      "book_short_name":"हब."
+
     },
     "ZEP": {
-      "book_name": "Zephaniah",
       "section": "OT",
-      "number": 36
+      "number": 36,
+      "book_short_name":"सप."
+
     },
     "HAG": {
-      "book_name": "Haggai",
       "section": "OT",
-      "number": 37
+      "number": 37,
+      "book_short_name":"हाग्गै"
+
     },
     "ZEC": {
-      "book_name": "Zechariah",
       "section": "OT",
-      "number": 38
+      "number": 38,
+      "book_short_name":"जक"
+
     },
     "MAL": {
-      "book_name": "Malachi",
       "section": "OT",
-      "number": 39
+      "number": 39,
+      "book_short_name":"मला."
+
     },
     "MAT": {
-      "book_name": "Matthew's Gospel",
       "section": "NT",
-      "number": 41
+      "number": 41,
+      "book_short_name":"मत्ती."
+
     },
     "MRK": {
-      "book_name": "Mark's Gospel",
       "section": "NT",
-      "number": 42
+      "number": 42,
+      "book_short_name":"मर."
+
     },
     "LUK": {
-      "book_name": "Luke's Gospel",
       "section": "NT",
-      "number": 43
+      "number": 43,
+      "book_short_name":"लूका"
+
     },
     "JHN": {
-      "book_name": "John's Gospel",
       "section": "NT",
-      "number": 44
+      "number": 44,
+      "book_short_name":"यूह."
+
     },
     "ACT": {
-      "book_name": "Acts",
       "section": "NT",
-      "number": 45
+      "number": 45,
+      "book_short_name":"प्रेरि."
+
     },
     "ROM": {
-      "book_name": "Romans",
       "section": "NT",
-      "number": 46
+      "number": 46,
+      "book_short_name":"रोम."
+
     },
     "1CO": {
-      "book_name": "1 Corinthians",
       "section": "NT",
-      "number": 47
+      "number": 47,
+      "book_short_name":"1 कुरि."
+
     },
     "2CO": {
-      "book_name": "2 Corinthians",
       "section": "NT",
-      "number": 48
+      "number": 48,
+      "book_short_name":"2 कुरि."
+
     },
     "GAL": {
-      "book_name": "Galatians",
       "section": "NT",
-      "number": 49
+      "number": 49,
+      "book_short_name":"गला."
+
     },
     "EPH": {
-      "book_name": "Ephesians",
       "section": "NT",
-      "number": 50
+      "number": 50,
+      "book_short_name":"इफि."
+
     },
     "PHP": {
-      "book_name": "Philippians",
       "section": "NT",
-      "number": 51
+      "number": 51,
+      "book_short_name":"फिलि."
+
     },
     "COL": {
-      "book_name": "Colossians",
       "section": "NT",
-      "number": 52
+      "number": 52,
+      "book_short_name":"कुलु."
+
     },
     "1TH": {
-      "book_name": "1 Thessalonians",
       "section": "NT",
-      "number": 53
+      "number": 53,
+      "book_short_name":"1  थिस्स."
+
     },
     "2TH": {
-      "book_name": "2 Thessalonians",
       "section": "NT",
-      "number": 54
+      "number": 54,
+      "book_short_name":"2 थिस्स."
+
     },
     "1TI": {
-      "book_name": "1 Timothy",
       "section": "NT",
-      "number": 55
+      "number": 55,
+      "book_short_name":"1 तीमु."
+
     },
     "2TI": {
-      "book_name": "2 Timothy",
       "section": "NT",
-      "number": 56
+      "number": 56,
+      "book_short_name":"2 तीमु."
+
     },
     "TIT": {
-      "book_name": "Titus",
       "section": "NT",
-      "number": 57
+      "number": 57,
+      "book_short_name":"तीतु."
+
     },
     "PHM": {
-      "book_name": "Philemon",
       "section": "NT",
-      "number": 58
+      "number": 58,
+      "book_short_name":"Phm."
+
     },
     "HEB": {
-      "book_name": "Hebrews",
       "section": "NT",
-      "number": 59
+      "number": 59,
+      "book_short_name":"इब्रा."
+
     },
     "JAS": {
-      "book_name": "James",
       "section": "NT",
-      "number": 60
+      "number": 60,
+      "book_short_name":"याकू."
+
     },
     "1PE": {
-      "book_name": "1 Peter",
       "section": "NT",
-      "number": 61
+      "number": 61,
+      "book_short_name":"1 पत."
+
     },
     "2PE": {
-      "book_name": "2 Peter",
       "section": "NT",
-      "number": 62
+      "number": 62,
+      "book_short_name":"2 पत."
+
     },
     "1JN": {
-      "book_name": "1 John",
       "section": "NT",
-      "number": 63
+      "number": 63,
+      "book_short_name":"1 यूह."
+
     },
     "2JN": {
-      "book_name": "2 John",
       "section": "NT",
-      "number": 64
+      "number": 64,
+      "book_short_name":"2 यूह."
+
     },
     "3JN": {
-      "book_name": "3 John",
       "section": "NT",
-      "number": 65
+      "number": 65,
+      "book_short_name":"3 यूह."
+
     },
     "JUD": {
-      "book_name": "Jude",
       "section": "NT",
-      "number": 66
+      "number": 66,
+      "book_short_name":"यहू."
+
     },
     "REV": {
-      "book_name": "Revelation",
       "section": "NT",
-      "number": 67
+      "number": 67,
+      "book_short_name":"प्रका."
+
     }
   }
 }

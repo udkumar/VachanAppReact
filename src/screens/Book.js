@@ -1,36 +1,34 @@
 import React,{Component } from 'react'
 import {View,Text,FlatList} from 'react-native'
-import DbQueries from '../utils/DbQueries.js'
-import ParseUSFM from '../utils/ParseUSFM'
+import DbHelper from '../utils/DbHelper.js'
+import USFMParser from '../utils/USFMParser'
 
 
 export default class Book extends Component {
     constructor(){
         super()
-        // this.state = {
-        //     versionName:"",
-        //     book:'',
-        //     chapters:[]
-        // }
+        this.state = {
+            versionName:"",
+            book:'',
+            data:[],
+            chapters:[]
+        }
     }
     async startParse() {
-        var parse = await new ParseUSFM()
+        var parse = await new USFMParser()
         parse.parseFile();
     }
-    componentDidMount(){
-        this.startParse()
+    async componentDidMount(){
         // this.startParse()
-        // var queryBook  = await DbQueries.queryBook()
-        // console.log("query book "+JSON.stringify(queryBook[0].version[0].books))
-        // this.setState({
-        //     versionName:queryBook[0].versionName,
-        //     book:queryBook[0].version[0].books,
-        //     chapters:queryBook[0].version[0].books[0].chapters
-        // })
+        // console.log("query book ''''''''.....")
+        let queryBook = await DbHelper.queryData()
+        console.log("query book ........")
+        // this.setState({data:queryBook})
+        console.log("query book "+queryBook[0].versionModels[0].bookModels[0].bookId)
     }
 
     render(){
-        // console.log("chapters book "+JSON.stringify(this.state.chapters))
+        console.log("chapters book "+JSON.stringify(this.state.data))
         return(
             <Text>text</Text>
             // <FlatList
