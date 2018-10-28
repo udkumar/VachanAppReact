@@ -13,6 +13,8 @@ BookModel.schema = {
       section: {type: 'string', default: 'NT'},
       bookNumber: 'int',
 
+      BookIntroModels:'BookIntroModel[]',
+
       bookOwner: {type: 'linkingObjects', objectType: 'VersionModel', property:'bookModels' }
     }
 };

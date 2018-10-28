@@ -9,6 +9,7 @@ import ChapterModel from '../models/ChapterModel'
 import VerseComponentsModel from '../models/VerseComponentsModel'
 import StylingModel from '../models/StylingModel'
 import ReferenceModel from '../models/ReferenceModel'
+import BookIntroModel from '../models/BookIntroModel'
 
 import {
 	Platform,
@@ -22,7 +23,7 @@ class DbHelper {
     	try {
     		return await Realm.open({
 				path: RNFS.DocumentDirectoryPath + '/onlineApp.realm ',
-				schema: [LanguageModel, VersionModel, BookModel, ChapterModel, VerseComponentsModel, NoteModel, StylingModel, ReferenceModel, HistoryModel] });
+				schema: [LanguageModel, VersionModel, BookModel, ChapterModel, VerseComponentsModel, NoteModel, StylingModel, ReferenceModel, HistoryModel,BookIntroModel] });
 			
     	} catch (err) {
     		return null;

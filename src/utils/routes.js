@@ -2,7 +2,7 @@
 import React, { Component } from 'react'
 import {StackNavigator, TabNavigator} from 'react-navigation'
 import Home from '../screens/Home/Home'
-import Book from '../screens/book/Book'
+import Book from '../screens/Book'
 // import About from '../screens/About/About'
 // import Bookmarks from '../screens/Bookmarks/Bookmarks'
 // import Highlights from '../screens/Highlights/Highlights'
@@ -38,9 +38,9 @@ const StackNavigate = (styles) => StackNavigator(
       //   screen: Splash,
       // },
       
-      Home:{
-        screen: Home,
-      },
+      // Home:{
+      //   screen: Home,
+      // },
       Book:{
         screen:Book
       },
@@ -65,12 +65,12 @@ const StackNavigate = (styles) => StackNavigator(
   //     Settings: {
   //       screen: Settings,
   //     },
-      ChapterSelection: {
-        screen: ChapterSelection,
-        navigationOptions: {
-            headerTitle:"Select Chapter"
-        }
-      },
+      // ChapterSelection: {
+      //   screen: ChapterSelection,
+      //   navigationOptions: {
+      //       headerTitle:"Select Chapter"
+      //   }
+      // },
   //     ReferenceSelection: {
   //       screen: ReferenceSelection,
   //     },
@@ -97,10 +97,10 @@ const StackNavigate = (styles) => StackNavigator(
      
   // },
   // {
-  //   navigationOptions: {
-  //     headerTintColor: '#fff',
-  //     headerStyle: styles.headerStyle
-  //   }
+    // navigationOptions: {
+    //   headerTintColor: '#fff',
+    //   headerStyle: styles.headerStyle
+    // }
   }
 )
 

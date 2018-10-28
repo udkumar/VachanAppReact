@@ -24,21 +24,21 @@ import FixedSidebar from '../../components/FixedSidebar/FixedSidebar'
 
 export default class Home extends Component {
 
-  // static navigationOptions = ({navigation}) =>{
-  //   const { params = {} } = navigation.state;
-  //   console.log("props navigation VALUE "+JSON.stringify(navigation.state.params))
-  //   return{
-  //     headerTitle: (
-  //             <TouchableOpacity onPress={() =>{navigation.navigate("About")}} >
-  //               <Text style={{color:'white',fontSize:20,marginHorizontal:16,fontWeight:'500'}}>Autographa Go</Text>
-  //             </TouchableOpacity>),
-  //     headerRight:(
-  //         <TouchableOpacity onPress={() =>{navigation.state.params.openLanguages()}} >
-  //           <Text style={params.headerRightText}>{params.bibleLanguage} {params.bibleVersion}</Text>
-  //         </TouchableOpacity>
-  //       )
-  //     }
-  // }
+  static navigationOptions = ({navigation}) =>{
+    const { params = {} } = navigation.state;
+    console.log("props navigation VALUE "+JSON.stringify(navigation.state.params))
+    return{
+      headerTitle: (
+              <TouchableOpacity onPress={() =>{navigation.navigate("About")}} >
+                <Text style={{color:'white',fontSize:20,marginHorizontal:16,fontWeight:'500'}}>Autographa Go</Text>
+              </TouchableOpacity>),
+      // headerRight:(
+      //     <TouchableOpacity onPress={() =>{navigation.state.params.openLanguages()}} >
+      //       <Text style={params.headerRightText}>{params.bibleLanguage} {params.bibleVersion}</Text>
+      //     </TouchableOpacity>
+      //   )
+      }
+  }
 
   constructor(props){
     super(props)
