@@ -22,10 +22,11 @@ class DbHelper {
     async getRealm() {
     	try {
     		return await Realm.open({
-				path: RNFS.DocumentDirectoryPath + '/onlineApp.realm ',
+				path: RNFS.DocumentDirectoryPath + '/realmDB.realm ',
 				schema: [LanguageModel, VersionModel, BookModel, ChapterModel, VerseComponentsModel, NoteModel, StylingModel, ReferenceModel, HistoryModel,BookIntroModel] });
 			
     	} catch (err) {
+			console.log("ERROR "+err)
     		return null;
     	}
     }
@@ -68,6 +69,7 @@ class DbHelper {
 					let resultsB = resultsA[0].bookModels;				
 					if (bookId) {
 						resultsB = resultsB.filtered('bookId ==[c] "' + bookId + '"');
+						console.log("result from db "+resultsB)
 						return resultsB;
 					}
 					if (text) {
@@ -116,9 +118,12 @@ class DbHelper {
 	
 	async insertNewBook(bookModel, versionModel, languageModel) {
 		let realm = await this.getRealm();
+		console.log("not realm")
 		if (realm) {
+		console.log("realm")
             var ls = realm.objectForPrimaryKey('LanguageModel', languageModel.languageCode);
-            if (ls) {
+			
+			if (ls) {
                 var pos = -1;
                 for (var i=0; i<ls.versionModels.length; i++) {
                     var vModel = ls.versionModels[i];
@@ -153,7 +158,10 @@ class DbHelper {
 					
                 })
 			}
-			
+		// 	realm.write(() => {
+		// 		realm.deleteAll()
+		// 		console.log("all deleted")
+		// 		        });
 		  }
 	}
 

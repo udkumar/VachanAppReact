@@ -53,6 +53,7 @@ module.exports = {
         MARKER_INTRO_SECTION:'is',
         MARKER_INTRO_OUTLINE_TITLE:'iot',
         MARKER_INTRO_OUTLINE_CONTENT:'io1',
-        // footnotes:''
+        MARKER_FOOT_NOTES_TEXT:'ft',
+        MARKER_FOOT_NOTES_QUOTATION:'fq'
     }
 };

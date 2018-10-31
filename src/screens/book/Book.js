@@ -31,22 +31,22 @@ const height = Dimensions.get('window').height;
 
 export default class Book extends Component {
 
-  static navigationOptions = ({navigation}) => ({
-    headerTitle: navigation.state.params.bookName,
-    headerRight: (
-      <Icon 
-          onPress={()=> {navigation.state.params.onIconPress()}} 
-          name={'bookmark'} 
-          color={navigation.state.params.isBookmark ? "red" : "white"} 
-          size={24} 
-          style={{marginHorizontal:8}} 
-      />      
-    ),
-  });
+  // static navigationOptions = ({navigation}) => ({
+  //   headerTitle: navigation.state.params.bookName,
+  //   headerRight: (
+  //     <Icon 
+  //         onPress={()=> {navigation.state.params.onIconPress()}} 
+  //         name={'bookmark'} 
+  //         color={navigation.state.params.isBookmark ? "red" : "white"} 
+  //         size={24} 
+  //         style={{marginHorizontal:8}} 
+  //     />      
+  //   ),
+  // });
 
   constructor(props) {
     super(props);
-    console.log("PROPS IN BOOKS "+props)
+    console.log("PROPS IN BOOKS "+JSON.stringify(props))
     this.mappingData = id_name_map;
     this.getSelectedReferences = this.getSelectedReferences.bind(this)
     this.queryBook = this.queryBook.bind(this)

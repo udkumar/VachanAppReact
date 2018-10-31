@@ -15,8 +15,6 @@ VerseComponentsModel.schema = {
 		bookId: {type: 'string', indexed: true},
 		chapterNumber: {type: 'int', indexed: true},
 		
-		footnote:{type:'string?'},
-		
         verseComponentOwner: {type: 'linkingObjects', objectType: 'ChapterModel', property: 'verseComponentsModels' }
     }
 };

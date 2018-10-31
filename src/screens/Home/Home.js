@@ -42,7 +42,7 @@ export default class Home extends Component {
 
   constructor(props){
     super(props)
-
+    console.log("PROPS IN HOME PAGE "+JSON.stringify(props))
     this.state = {
       colorFile:this.props.screenProps.colorFile,
       sizeFile:this.props.screenProps.sizeFile,

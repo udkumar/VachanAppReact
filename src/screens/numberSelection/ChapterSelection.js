@@ -18,7 +18,7 @@ export default class ChapterSelection extends Component {
 
   constructor(props){
     super(props)
-    console.log("props number : "+JSON.stringify(props.navigation))
+    console.log("props number : "+JSON.stringify(props))
 
     this.state = {
       bookId: this.props.navigation.state.params.bookId,
@@ -33,7 +33,7 @@ export default class ChapterSelection extends Component {
 
   onNumPress(item) {
     console.log("BOOKID "+this.state.bookId+" BOOK NAME "+this.state.bookName+"CHAPTER NUMVER "+item)
-    this.props.navigation.replace('Book', {bookId: this.state.bookId, 
+    this.props.navigation.replace('StudyNotes', {bookId: this.state.bookId, 
       bookName: this.state.bookName, chapterNumber: item })
     var time =  new Date()
     DbQueries.addHistory(this.props.screenProps.languageCode, this.props.screenProps.versionCode, 

@@ -7,6 +7,7 @@ BookIntroModel.schema = {
     name: 'BookIntroModel',
     properties: {
         type:'string',
-        introText:{text: 'string', indexed: false,bold:'bool'},
+        introText:{type: 'string', indexed: false},
+        bold:'bool'
     }
 };

@@ -1,6 +1,7 @@
 
 import DbHelper from './dbHelper'
 import id_name_map from '../assets/mappings.json'
+import BookModel from '../models/BookModel';
 const Constants = require('./constants')
 
 var RNFS = require('react-native-fs');
@@ -11,6 +12,7 @@ export default class USFMParser {
         this.bookId = null;
         this.chapterList = [];
         this.verseList = [];
+        this.bookIntro = [];
         this.mappingData = id_name_map;
         this.languageCode = "Hin";
         this.languageName = "Hindi";
@@ -164,7 +166,7 @@ export default class USFMParser {
     }
 
     addChunk() {
-        console.log("added in add chunk "+verseModel.added)
+        // console.log("added in add chunk "+verseModel.added)
         var verseComponentsModel = {type: Constants.MarkerTypes.CHUNK, verseNumber: "", 
             text: "", highlighted: false, added: true, 
             languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
@@ -194,6 +196,7 @@ export default class USFMParser {
             languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
             chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber};
         this.verseList.push(verseComponentsModel);
+
     }
 
     addVerse(splitString) {
@@ -215,8 +218,8 @@ export default class USFMParser {
             }
         }
         var verseNum = splitString[1]
-        var intString = verseNum.replace(/[^0-9]/g,"");
-        var notIntString = verseNum.replace(/[0-9]/g,"");
+        var intString = verseNum.replace(/[^0-9]/g,"")
+        var notIntString = verseNum.replace(/[0-9]/g,"")
         if (intString == "") {
             return;
         }
@@ -239,23 +242,20 @@ export default class USFMParser {
         const tagRemove = result.replace(/\\it\*\*|\\it/g,'')
         const verseData = tagRemove.replace(/(\\f(.*?)\\f\*)|(\\bdit(.*?)\\bdit\*)/g,"")
         const footnote = tagRemove.match(/\\f(.*?)\\f\*/g)
-        var verseComponentsModel = {type: Constants.MarkerTypes.VERSE, verseNumber: splitString[1], 
+
+        var verseComponentsModel = {type: Constants.MarkerTypes.VERSE, verseNumber:splitString[1], 
             text: verseData, highlighted: false, added: true, 
             languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
             chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber};
         this.verseList.push(verseComponentsModel)
-       
+
         if(footnote == null){
             return true
         }
-        console.log("foonotes"+footnote)
-        this.addFootNotes(footnote,splitString)
+        this.addFootNotes(footnote,splitString[1])
     }
 
-    addFootNotes(notes,splitString){
-        console.log("FOOTNOTES "+notes)
-        console.log("full string "+splitString)
-
+    addFootNotes(notes,verseNum){
         const noteData = notes.toString()
         if(notes.length == 0) {
             return true
@@ -269,18 +269,26 @@ export default class USFMParser {
         const foootNoteRef = noteData.replace(frTag,'$3')
         const footNotequotation = noteContent.replace(fxTag,'$5')
         const foootNoteText = noteContent.replace(fqTag,'')
-        console.log("FOOTNOTE TEXT "+foootNoteText+" FOOTNOTE REFERENCE "+foootNoteRef+" FOOTNOTES QUOTATION "+footNotequotation)
 
-        var verseComponentsModel = {type: "footnotes", verseNumber:splitString[1],
+        console.log("FOOTNOTE TEXT "+foootNoteText+" FOOTNOTE REFERENCE "+foootNoteRef+" FOOTNOTES QUOTATION "+footNotequotation)
+        var verseComponentsModel = {type:Constants.MarkerTypes.MARKER_FOOT_NOTES_QUOTATION, 
+        verseNumber:verseNum, 
+        text:footNotequotation, highlighted: false, added: true, 
+        languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
+        chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber};
+        this.verseList.push(verseComponentsModel)
+
+        var verseComponentsModel = {type:Constants.MarkerTypes.MARKER_FOOT_NOTES_TEXT, 
+            verseNumber:verseNum, 
             text:foootNoteText, highlighted: false, added: true, 
             languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
-            chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber,
-        };
-        // .push(verseComponentsModel)
-        console.log("vere list footnotes "+JSON.stringify(this.verseList))
+            chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber};
+        this.verseList.push(verseComponentsModel)
+
     }
 
     addComponentsToChapter() {
+        console.log("chapter data "+JSON.stringify(this.chapterList[2]))
         if (this.chapterList.length > 0) {
             if (this.verseList.length > 0) {
                 for (var i=0; i<this.verseList.length; i++) {
@@ -308,12 +316,14 @@ export default class USFMParser {
     }
     addBookIntro(introType,introString){
         var res = this.joinString(introString)
+        console.log("string")
         let bookIntroText = {
             type:introType,
-            introText:{text:res,
-                bold:introType == Constants.MarkerTypes.MARKER_INTRO_SECTION || introType == Constants.MarkerTypes.MARKER_INTRO_OUTLINE_CONTENT ? true : false},}
-        var bookIntro = []
-        bookIntro.push(bookIntroText)
+            introText:res,
+            bold:introType == Constants.MarkerTypes.MARKER_INTRO_SECTION || introType == Constants.MarkerTypes.MARKER_INTRO_OUTLINE_CONTENT ? true : false
+            
+        }
+        this.bookIntro.push(bookIntroText)
     }
    
     joinString(data){
@@ -339,16 +349,34 @@ export default class USFMParser {
     addBookToContainer() {
         var mapResult = this.getBookNameFromMapping(this.bookId);
         if (mapResult == null) {
-            return;
+            return
         }
-        var bookModel = {bookId: this.bookId, bookName: mapResult.book_name, bookNumber: mapResult.number, 
-            section: mapResult.section, chapterModels: this.chapterList}
-        var versionModel = {versionName: this.versionName, versionCode: this.versionCode, bookModels: [],
-            source: this.source, license: this.license, year: this.year}
-        versionModel.bookModels.push(bookModel);
-        var languageModel = {languageCode: this.languageCode, languageName: this.languageName, versionModels: []}
+  
+        var bookModel = {
+            bookId: this.bookId, 
+            bookName: mapResult.book_name, 
+            bookNumber: mapResult.number, 
+            section: mapResult.section, 
+            chapterModels: this.chapterList,
+            BookIntroModels:this.bookIntro
+        }
+        var versionModel = {
+            versionName: this.versionName, 
+            versionCode: this.versionCode, 
+            bookModels: [],
+            source: this.source, 
+            license: this.license, 
+            year: this.year}
+        versionModel.bookModels.push(bookModel)
+
+        var languageModel = {
+            languageCode: this.languageCode, 
+            languageName: this.languageName, 
+            versionModels: []
+        }
         languageModel.versionModels.push(versionModel);
         console.log("ADD BOOK : " + this.bookId + " :: " + this.versionCode + " :: " + this.languageCode)
+        
         // DbHelper.insertNewBook(bookModel, versionModel, languageModel);
     }
 

@@ -2,21 +2,22 @@
 import React, { Component } from 'react'
 import {StackNavigator, TabNavigator} from 'react-navigation'
 import Home from '../screens/Home/Home'
-import Book from '../screens/Book'
+// import Book from '../screens/Book'
 // import About from '../screens/About/About'
-// import Bookmarks from '../screens/Bookmarks/Bookmarks'
+// import Bookmarks frokm '../screens/Bookmarks/Bookmarks'
 // import Highlights from '../screens/Highlights/Highlights'
 // import History from '../screens/History/History'
 // import Notes from '../screens/Note/Notes'
 // import EditNote from '../screens/Note/EditNote'
 // import Search from '../screens/Search/Search'
 // import Settings from '../screens/settings/Settings'
-import Splash from '../screens/Splash/Splash'
+// import Splash from '../screens/Splash/Splash'
 // import ReferenceSelection from '../screens/numberSelection/ReferenceSelection'
 import ChapterSelection from '../screens/numberSelection/ChapterSelection'
 // import Hints from '../screens/Hints/Hints'
 // import Language from '../screens/Language/Language'
-// import Book from '../screens/book/Book'
+import Book from '../screens/book/Book'
+import StudyNotes from '../screens/StudyBible/StudyNotes'
 // import DownloadLanguage from '../screens/Downloads/DownloadLanguage'
 // import DownloadVersion from '../screens/Downloads/DownloadVersion'
 // import BackupRestore from '../screens/backup/BackupRestore'
@@ -38,11 +39,14 @@ const StackNavigate = (styles) => StackNavigator(
       //   screen: Splash,
       // },
       
-      // Home:{
-      //   screen: Home,
-      // },
+      Home:{
+        screen: Home,
+      },
       Book:{
         screen:Book
+      },
+      StudyNotes:{
+        screen:StudyNotes
       },
   //     About: {
   //       screen: About,
@@ -64,13 +68,13 @@ const StackNavigate = (styles) => StackNavigator(
   //     },  
   //     Settings: {
   //       screen: Settings,
-  //     },
-      // ChapterSelection: {
-      //   screen: ChapterSelection,
-      //   navigationOptions: {
-      //       headerTitle:"Select Chapter"
-      //   }
       // },
+      ChapterSelection: {
+        screen: ChapterSelection,
+        navigationOptions: {
+            headerTitle:"Select Chapter"
+        }
+      },
   //     ReferenceSelection: {
   //       screen: ReferenceSelection,
   //     },
@@ -313,6 +317,7 @@ export default class App extends Component {
       this.setState({isDbLoading: false})
       if (models && models.length > 0) {
         console.log("BOOK LIST "+models.length)
+        
         this.setState({booksList: models})
       }
     })
