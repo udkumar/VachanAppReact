@@ -18,7 +18,7 @@ import Language from '../screens/Language/Language'
 import Book from '../screens/book/Book'
 import DownloadLanguage from '../screens/Downloads/DownloadLanguage'
 import DownloadVersion from '../screens/Downloads/DownloadVersion'
-import BackupRestore from '../screens/backup/BackupRestore'
+import StudyNotes from '../screens/StudyBible/StudyNotes'
 
 const AsyncStorageConstants = require('./AsyncStorageConstants')
 import AsyncStorageUtil from './AsyncStorageUtil';
@@ -32,7 +32,6 @@ import Realm from 'realm'
 
 const StackNavigate = (styles) => StackNavigator(
   {  
-    
       Splash: {
         screen: Splash,
       },
@@ -88,10 +87,9 @@ const StackNavigate = (styles) => StackNavigator(
       Search: {
         screen: Search,
       },
-      BackupRestore: {
-        screen: BackupRestore
-      },
-     
+      StudyNotes:{
+        screen:StudyNotes,
+      }
   },
   {
     navigationOptions: {
@@ -249,7 +247,6 @@ export default class App extends Component {
       />
     );
   }
-
     
   async componentDidMount(){
     let res = await AsyncStorageUtil.getAllItems([
@@ -266,14 +263,13 @@ export default class App extends Component {
     if (res == null) {
       return
     }
-
     console.log("ROUTES.... color mode "+res[0][1])
     this.setState({sizeMode: res[1][1] == null ? AsyncStorageConstants.Values.SizeModeNormal : parseInt(res[1][1])}, ()=> {
       switch (this.state.sizeMode) {
         case  AsyncStorageConstants.Values.SizeModeXSmall : {
           this.setState({sizeFile:extraSmallFont})
           break;
-        }
+        } 
         case  AsyncStorageConstants.Values.SizeModeSmall : {
           this.setState({sizeFile:smallFont})
           break;
@@ -297,17 +293,17 @@ export default class App extends Component {
     this.setState({
       colorMode: res[0][1]== null ? AsyncStorageConstants.Values.DayMode : parseInt(res[0][1]),
       colorFile: res[0][1] == null ? dayColors : 
-        (parseInt(res[0][1]) == AsyncStorageConstants.Values.DayMode ? dayColors : nightColors),
+      (parseInt(res[0][1]) == AsyncStorageConstants.Values.DayMode ? dayColors : nightColors),
       verseInLine:  res[2][1] == null ? AsyncStorageConstants.Values.VerseInLine : res[2][1],
       languageCode: res[3][1] == null ? AsyncStorageConstants.Values.DefLanguageCode : res[3][1],
       versionCode:  res[4][1] == null ? AsyncStorageConstants.Values.DefVersionCode : res[4][1],
       languageName: res[5][1] == null ? AsyncStorageConstants.Values.DefLanguageName : res[5][1],
       versionName:  res[6][1] == null ? AsyncStorageConstants.Values.DefVersionName : res[6][1],
     }, async ()=> {
-      console.log("QUERY : " + this.state.versionCode + " ::  " + this.state.languageCode)
+
       let models = await DbQueries.queryBookIdModels(this.state.versionCode, this.state.languageCode);
-      // console.log("routes len =" + models)
-      // console.log("VERSE VALUE ++++ " + res[2][1])
+      console.log("routes len =" + models)
+      console.log("VERSE VALUE ++++ " + res[2][1])
       this.setState({isDbLoading: false})
       if (models && models.length > 0) {
         this.setState({booksList: models})
@@ -318,7 +314,6 @@ export default class App extends Component {
       ).then((lastRead) => {
           this.setState({lastRead})
     })
-    console.log("DSIDI mount value "+typeof this.state.sizeMode)
+  console.log("DSIDI mount value "+typeof this.state.sizeMode)
   }
-
 }

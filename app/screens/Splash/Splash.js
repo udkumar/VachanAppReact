@@ -14,17 +14,17 @@ export default class Splash extends Component {
 
   constructor(props) {
     super(props)
-    // console.log("SPLASH :: props " + JSON.stringify(props))
+    console.log("SPLASH :: props " + JSON.stringify(props))
     if (!this.props.screenProps.isDbLoading) {
-          // console.log("NOWWW const")
+          console.log("NOWWW const")
           this._navigateTo('Home')
     }
   }
 
   componentWillReceiveProps(props) {
-    // console.log("SPLASH receive PROPS : " + JSON.stringify(props))
+    console.log("SPLASH receive PROPS : " + JSON.stringify(props))
       if (!props.screenProps.isDbLoading) {
-        // console.log("start home")
+        console.log("start home")
           this._navigateTo('Home')
           // this.props.navigation.navigate('Home')
       }
@@ -33,12 +33,8 @@ export default class Splash extends Component {
   _navigateTo = (routeName: string) => {
     const resetAction = NavigationActions.reset({
       index: 0,
-      actions: [
-        NavigationActions.navigate({
-          routeName,
-          params:{languageCode:this.props.screenProps.languageCode,versionCode:this.props.screenProps.versionCode}
-        })
-      ]
+      actions: [NavigationActions.navigate({routeName,params:{languageCode:this.props.screenProps.languageCode,versionCode:this.props.screenProps.versionCode} })]
+
     })
     setTimeout(() => {  
       this.props.navigation.dispatch(resetAction)

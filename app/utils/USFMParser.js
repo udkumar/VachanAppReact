@@ -1,6 +1,7 @@
 
-import DbHelper from './DbHelper'
+import DbHelper from './dbHelper'
 import id_name_map from '../assets/mappings.json'
+import BookModel from '../models/BookModel';
 const Constants = require('./constants')
 
 var RNFS = require('react-native-fs');
@@ -11,6 +12,7 @@ export default class USFMParser {
         this.bookId = null;
         this.chapterList = [];
         this.verseList = [];
+        this.bookIntro = [];
         this.mappingData = id_name_map;
         this.languageCode = "Hin";
         this.languageName = "Hindi";
@@ -21,37 +23,37 @@ export default class USFMParser {
         this.license = "CCSA";
     }
 
-    parseFile(path, lCode, lName, vCode, vName, source, license, year, fromAssets) {
-        this.languageCode = lCode;
-        this.languageName = lName;
-        this.versionCode = vCode;
-        this.versionName = vName;
-        this.source = source;
-        this.license = license;
-        this.year = year;
+    // parseFile(path, lCode, lName, vCode, vName, source, license, year, fromAssets) {
+    //     this.languageCode = lCode;
+    //     this.languageName = lName;
+    //     this.versionCode = vCode;
+    //     this.versionName = vName;
+    //     this.source = source;
+    //     this.license = license;
+    //     this.year = year;
 
-        if (fromAssets) {
-            RNFS.readFileAssets(path)
-                .then((result)=>{
-                    this.parseFileContents(result);
-                });
-        } else {
-            RNFS.readFile(path)
-                .then((result)=>{
-                    this.parseFileContents(result);
-                });
-        }
-    }
-
-    // async parseFile(){
-    //     try {
-    //         var content = await RNFS.readFileAssets('67-REV.usfm')
-    //         this.parseFileContents(content)
-    //     }
-    //     catch(error){
-    //         console.log("error "+error)
+    //     if (fromAssets) {
+    //         RNFS.readFileAssets(path)
+    //             .then((result)=>{
+    //                 this.parseFileContents(result);
+    //             });
+    //     } else {
+    //         RNFS.readFile(path)
+    //             .then((result)=>{
+    //                 this.parseFileContents(result);
+    //             });
     //     }
     // }
+
+    async parseFile(){
+        try {
+            var content = await RNFS.readFileAssets('01-GEN.usfm')
+            this.parseFileContents(content)
+        }
+        catch(error){
+            console.log("error "+error)
+        }
+    }
 
     parseFileContents(result) {
         try {
@@ -80,6 +82,22 @@ export default class USFMParser {
                     console.log("Skip book, already exist in db, " + splitString[1]);
                     return false;
                 }
+                break;
+            }
+            case Constants.MarkerConstants.MARKER_INTRO_SECTION:{
+                this.addBookIntro(Constants.MarkerTypes.MARKER_INTRO_SECTION,splitString);
+                break;
+            }
+            case Constants.MarkerConstants.MARKER_INTRO_PARAGRAPH:{
+                this.addBookIntro(Constants.MarkerTypes.MARKER_INTRO_PARAGRAPH,splitString);
+                break;
+            }
+            case Constants.MarkerConstants.MARKER_INTRO_OUTLINE_TITLE:{
+                this.addBookIntro(Constants.MarkerTypes.MARKER_INTRO_OUTLINE_TITLE,splitString);
+                break;
+            }
+            case Constants.MarkerConstants.MARKER_INTRO_OUTLINE_CONTENT:{
+                this.addBookIntro(Constants.MarkerTypes.MARKER_INTRO_OUTLINE_CONTENT,splitString);
                 break;
             }
             case Constants.MarkerConstants.MARKER_CHAPTER_NUMBER: {
@@ -118,17 +136,18 @@ export default class USFMParser {
                 this.addChunk();
                 break;
             }
+           
             case "": {
                 break;
             }
             default: {
-                if (splitString.length == 1) {
-                    // add this to the next coming verse
-                    this.addFormattingToNextVerse(line);
-                } else {
-                    // add this to the last verse
-                    this.addFormattingToLastVerse(line);
-                }
+                // if (splitString.length == 1) {
+                //     // add this to the next coming verse
+                //     this.addFormattingToNextVerse(line);
+                // } else {
+                //     // add this to the last verse
+                //     this.addFormattingToLastVerse(line);
+                // }
             }
         }
         return true;
@@ -147,6 +166,7 @@ export default class USFMParser {
     }
 
     addChunk() {
+        // console.log("added in add chunk "+verseModel.added)
         var verseComponentsModel = {type: Constants.MarkerTypes.CHUNK, verseNumber: "", 
             text: "", highlighted: false, added: true, 
             languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
@@ -176,26 +196,30 @@ export default class USFMParser {
             languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
             chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber};
         this.verseList.push(verseComponentsModel);
+
     }
 
     addVerse(splitString) {
         var tempRes = [];
         for (var i=0; i<this.verseList.length; i++) {
             var verseModel = this.verseList[i];
+
             if (!verseModel.added) {
                 tempRes.push(verseModel.text);
             }
         }
+
         var res = tempRes.join("");
         var j = this.verseList.length;
+
         while (j--) {
             if (!this.verseList[j].added) {
                 this.verseList.splice(j, 1);
             }
         }
-        var verseNum = splitString[1];
-        var intString = verseNum.replace(/[^0-9]/g, "");
-        var notIntString = verseNum.replace(/[0-9]/g, "");
+        var verseNum = splitString[1]
+        var intString = verseNum.replace(/[^0-9]/g,"")
+        var notIntString = verseNum.replace(/[0-9]/g,"")
         if (intString == "") {
             return;
         }
@@ -213,15 +237,58 @@ export default class USFMParser {
                 break;
             }
         }
+        
         var result = res + tempRes.join(" ");
-        var verseComponentsModel = {type: Constants.MarkerTypes.VERSE, verseNumber: splitString[1], 
-            text: result, highlighted: false, added: true, 
+        const tagRemove = result.replace(/\\it\*\*|\\it/g,'')
+        const verseData = tagRemove.replace(/(\\f(.*?)\\f\*)|(\\bdit(.*?)\\bdit\*)/g,"")
+        const footnote = tagRemove.match(/\\f(.*?)\\f\*/g)
+
+        var verseComponentsModel = {type: Constants.MarkerTypes.VERSE, verseNumber:splitString[1], 
+            text: verseData, highlighted: false, added: true, 
             languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
             chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber};
-        this.verseList.push(verseComponentsModel);
+        this.verseList.push(verseComponentsModel)
+
+        if(footnote == null){
+            return true
+        }
+        this.addFootNotes(footnote,splitString[1])
+    }
+
+    addFootNotes(notes,verseNum){
+        const noteData = notes.toString()
+        if(notes.length == 0) {
+            return true
+        }
+        const frTag = /((\\f\s+\+\s+\\fr\s+)(\d+\.\d+)(.*?)(\\f\*))/g
+        const fqTag = /((\\fr(.*?)\\fq\s+)(.*?)(\\ft))/g
+        const fxTag =/((\\fr(.*?)\\fq)((.*?)\\ft.*))/g
+        const fTag = /((\\f\s+\+)(.*?)(\\f\*))/g
+        const noteContent = noteData.replace(fTag,'$3')
+
+        const foootNoteRef = noteData.replace(frTag,'$3')
+        const footNotequotation = noteContent.replace(fxTag,'$5')
+        const foootNoteText = noteContent.replace(fqTag,'')
+
+        console.log("FOOTNOTE TEXT "+foootNoteText+" FOOTNOTE REFERENCE "+foootNoteRef+" FOOTNOTES QUOTATION "+footNotequotation)
+        var verseComponentsModel = {type:Constants.MarkerTypes.MARKER_FOOT_NOTES_QUOTATION, 
+        verseNumber:verseNum, 
+        text:footNotequotation, highlighted: false, added: true, 
+        languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
+        chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber};
+        this.verseList.push(verseComponentsModel)
+
+        var verseComponentsModel = {type:Constants.MarkerTypes.MARKER_FOOT_NOTES_TEXT, 
+            verseNumber:verseNum, 
+            text:foootNoteText, highlighted: false, added: true, 
+            languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
+            chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber};
+        this.verseList.push(verseComponentsModel)
+
     }
 
     addComponentsToChapter() {
+        console.log("chapter data "+JSON.stringify(this.chapterList[2]))
         if (this.chapterList.length > 0) {
             if (this.verseList.length > 0) {
                 for (var i=0; i<this.verseList.length; i++) {
@@ -247,7 +314,26 @@ export default class USFMParser {
             }
         }
     }
-
+    addBookIntro(introType,introString){
+        var res = this.joinString(introString)
+        console.log("string")
+        let bookIntroText = {
+            type:introType,
+            introText:res,
+            bold:introType == Constants.MarkerTypes.MARKER_INTRO_SECTION || introType == Constants.MarkerTypes.MARKER_INTRO_OUTLINE_CONTENT ? true : false
+            
+        }
+        this.bookIntro.push(bookIntroText)
+    }
+   
+    joinString(data){
+        const tempRes = [] 
+        for (var i=1; i<data.length; i++) {
+            tempRes.push(data[i])
+        }
+        var  result = tempRes.join(" ");
+        return result
+    }
     getBookNameFromMapping(bookId) {
         var obj = this.mappingData.id_name_map;
         for (var key in obj) {
@@ -260,35 +346,52 @@ export default class USFMParser {
         }
         return null;
     }
-
     addBookToContainer() {
         var mapResult = this.getBookNameFromMapping(this.bookId);
         if (mapResult == null) {
-            return;
+            return
         }
-        var bookModel = {bookId: this.bookId, bookName: mapResult.book_name, bookNumber: mapResult.number, 
-            section: mapResult.section, chapterModels: this.chapterList}
-        var versionModel = {versionName: this.versionName, versionCode: this.versionCode, bookModels: [],
-            source: this.source, license: this.license, year: this.year}
-        versionModel.bookModels.push(bookModel);
-        var languageModel = {languageCode: this.languageCode, languageName: this.languageName, versionModels: []}
+  
+        var bookModel = {
+            bookId: this.bookId, 
+            bookName: mapResult.book_name, 
+            bookNumber: mapResult.number, 
+            section: mapResult.section, 
+            chapterModels: this.chapterList,
+            BookIntroModels:this.bookIntro
+        }
+        var versionModel = {
+            versionName: this.versionName, 
+            versionCode: this.versionCode, 
+            bookModels: [],
+            source: this.source, 
+            license: this.license, 
+            year: this.year}
+        versionModel.bookModels.push(bookModel)
+
+        var languageModel = {
+            languageCode: this.languageCode, 
+            languageName: this.languageName, 
+            versionModels: []
+        }
         languageModel.versionModels.push(versionModel);
         console.log("ADD BOOK : " + this.bookId + " :: " + this.versionCode + " :: " + this.languageCode)
+        
         DbHelper.insertNewBook(bookModel, versionModel, languageModel);
     }
 
-    addFormattingToLastVerse(line) {
-        if (this.verseList.length > 0) {
-            var res = this.verseList[this.verseList.length - 1].text + " \n " + line + " ";
-            this.verseList[[this.verseList.length - 1].text = res];
-        }
-    }
+    // addFormattingToLastVerse(line) {
+    //     if (this.verseList.length > 0) {
+    //         var res = this.verseList[this.verseList.length - 1].text + " \n " + line + " ";
+    //         this.verseList[[this.verseList.length - 1].text = res];
+    //     }
+    // }
 
-    addFormattingToNextVerse(line) {
-        var verseComponentsModel = {type: "", verseNumber: "", 
-            text: " " + line + " ", highlighted: false, added: false, 
-            languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
-            chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber};
-        this.verseList.push(verseComponentsModel);
-    }
+    // addFormattingToNextVerse(line) {
+    //     var verseComponentsModel = {type: "", verseNumber: "", 
+    //         text: " " + line + " ", highlighted: false, added: false, 
+    //         languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
+    //         chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber};
+    //     this.verseList.push(verseComponentsModel);
+    // }
 }

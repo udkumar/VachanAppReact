@@ -39,12 +39,13 @@ export const styles =(colorFile, sizeFile) =>{
     },
     bottomOptionText:{
         textAlign:'center',
-        color:'white',   
+        color:colorFile.backgroundColor,   
         fontSize:sizeFile.bottomBarText 
 
     },
     bottomOptionIcon:{
         alignSelf:'center',
+        color:colorFile.backgroundColor,   
         fontSize:sizeFile.iconSize 
     },
     bottomOptionSeparator:{
@@ -93,7 +94,7 @@ export const styles =(colorFile, sizeFile) =>{
         fontWeight:'bold'
     },
     verseTextSelectedHighlighted:{
-        backgroundColor:colorFile.highlightColor,
+        backgroundColor:'yellow',
         textDecorationLine: 'underline',
         
     },
@@ -101,7 +102,7 @@ export const styles =(colorFile, sizeFile) =>{
 
     },
     verseTextNotSelectedHighlighted:{
-        backgroundColor:colorFile.highlightColor
+        backgroundColor:'yellow'
     },
     verseTextSelectedNotHighlighted:{
         textDecorationLine: 'underline',

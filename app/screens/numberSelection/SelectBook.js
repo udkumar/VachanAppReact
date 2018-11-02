@@ -47,10 +47,9 @@ export default class SelectBook extends Component {
         <TouchableOpacity style={[
           styles.selectBookTouchable,
           {
-          backgroundColor:'transparent'}]}
+          backgroundColor:index == this.state.selectedIndex ? 'blue' : 'transparent'}]}
           onPress={()=>this.onBookSelected(index)} >
-            <Text style={[styles.selectText, 
-                  {fontWeight: this.state.selectedIndex == index ? "bold" : "normal"}]}>{item.bookName}</Text>
+            <Text style={styles.bookName}>{item.bookName}</Text>
         </TouchableOpacity>
         }
       />

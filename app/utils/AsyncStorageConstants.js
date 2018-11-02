@@ -7,8 +7,7 @@ module.exports = {
         LanguageCode:'language_code',
         VersionCode:'version_code',
         LanguageName:'language_name',
-        VersionName:'version_name',
-        BackupRestoreEmail:'backup_restore_email'
+        VersionName:'version_name'
 
     },
     Values: {
@@ -33,7 +32,7 @@ module.exports = {
         DefLanguageCode:'Hin',
         DefLanguageName:'Hindi',
         DefVersionCode:'IRV',
-        DefVersionName:'Indian Revised Version'
+        DefVersionName:'Iindian Revised Version'
        
     }
 }

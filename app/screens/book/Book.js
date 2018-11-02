@@ -19,9 +19,6 @@ import VerseView from './VerseView'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import AsyncStorageConstants from '../../utils/AsyncStorageConstants';
 const Constants = require('../../utils/constants')
-
-import {getResultText} from '../../utils/UtilFunctions';
-
 import { styles } from './styles.js';
 import id_name_map from '../../assets/mappings.json'
 import {NavigationActions} from 'react-navigation'
@@ -32,7 +29,17 @@ const height = Dimensions.get('window').height;
 export default class Book extends Component {
 
   static navigationOptions = ({navigation}) => ({
-    headerTitle: navigation.state.params.bookName,
+    headerLeft: (
+      <TouchableOpacity 
+          onPress={()=> {navigation.navigate("StudyNotes",{bookName:navigation.state.params.bookName,chapterNumber:navigation.state.params.chapterNumber})}} 
+          name={'bookmark'} 
+          color={navigation.state.params.isBookmark ? "red" : "white"} 
+          size={24} 
+          style={{marginHorizontal:8}} 
+      >
+      <Text style={{fontSize:18,color:"white"}}>{navigation.state.params.bookName}</Text>
+      </TouchableOpacity>      
+    ),
     headerRight: (
       <Icon 
           onPress={()=> {navigation.state.params.onIconPress()}} 
@@ -183,6 +190,7 @@ export default class Book extends Component {
 
   }
 
+  
   getSelectedReferences(vIndex, chapterNum, vNum) {
     let obj = chapterNum + '_' + vIndex + '_' + vNum
     
@@ -258,7 +266,7 @@ export default class Book extends Component {
   }
 
   getVerseText(cNum, vIndex) {
-    return getResultText(this.state.modelData[cNum - 1].verseComponentsModels[vIndex].text)
+    return this.state.modelData[cNum - 1].verseComponentsModels[vIndex].text
   }
 
   addToShare = () => {
@@ -321,7 +329,6 @@ export default class Book extends Component {
                     ref={(ref) => { this.scrollViewRef = ref; }}                    
                 >
                  {    (this.state.verseInLine) ?
-                  <View style={this.styles.chapterList}>
                             <FlatList
                            
                             data={this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels}
@@ -332,7 +339,7 @@ export default class Book extends Component {
                                             ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
                                             verseData = {item}
                                             index = {index}
-                                            styles = {this.styles}
+                                            styles = {this.styles.VerseText}
                                             selectedReferences = {this.state.selectedReferenceSet}
                                             getSelection = {(verseIndex, chapterNumber, verseNumber) => {
                                             this.getSelectedReferences(verseIndex, chapterNumber, verseNumber)
@@ -342,7 +349,6 @@ export default class Book extends Component {
                             }
                             ListFooterComponent={<View style={styles.addToSharefooterComponent} />}
                             />
-                            </View>
                         :
                             <View style={this.styles.chapterList}>
                                 
