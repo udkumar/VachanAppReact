@@ -12,8 +12,8 @@ BookModel.schema = {
       section: {type: 'string', default: 'NT'},
       chapterModels: 'ChapterModel[]',
       bookmarksList: 'int?[]',
-      BookIntroModels:'BookIntroModel[]',
-
-      bookOwner: {type: 'linkingObjects', objectType: 'VersionModel', property:'bookModels' }
+      bookIntroModels:'BookIntroModel[]',
+      bookSummerydModels:'BookSummerydModel[]',
+      bookOwner: {type:'linkingObjects', objectType: 'VersionModel', property:'bookModels' }
     }
 };

@@ -13,6 +13,7 @@ export default class USFMParser {
         this.chapterList = [];
         this.verseList = [];
         this.bookIntro = [];
+        this.bookSummary = [];
         this.mappingData = id_name_map;
         this.languageCode = "Hin";
         this.languageName = "Hindi";
@@ -47,7 +48,7 @@ export default class USFMParser {
 
     async parseFile(){
         try {
-            var content = await RNFS.readFileAssets('01-GEN.usfm')
+            var content = await RNFS.readFileAssets('05-DEU.usfm')
             this.parseFileContents(content)
         }
         catch(error){
@@ -325,7 +326,14 @@ export default class USFMParser {
         }
         this.bookIntro.push(bookIntroText)
     }
-   
+    // addBookSummary(){
+    //     let bookSummary = {
+    //     text:'string',
+    //     style:'string'
+    //     }
+    //     this.bookSummary.push(bookSummary)
+    //     console.log("book summary  "+this.bookSummary)
+    // }
     joinString(data){
         const tempRes = [] 
         for (var i=1; i<data.length; i++) {
@@ -358,7 +366,8 @@ export default class USFMParser {
             bookNumber: mapResult.number, 
             section: mapResult.section, 
             chapterModels: this.chapterList,
-            BookIntroModels:this.bookIntro
+            BookIntroModels:this.bookIntro,
+            // bookSummerydModels:this.bookSummary
         }
         var versionModel = {
             versionName: this.versionName, 
@@ -366,7 +375,8 @@ export default class USFMParser {
             bookModels: [],
             source: this.source, 
             license: this.license, 
-            year: this.year}
+            year: this.year
+        }
         versionModel.bookModels.push(bookModel)
 
         var languageModel = {
@@ -377,21 +387,21 @@ export default class USFMParser {
         languageModel.versionModels.push(versionModel);
         console.log("ADD BOOK : " + this.bookId + " :: " + this.versionCode + " :: " + this.languageCode)
         
-        DbHelper.insertNewBook(bookModel, versionModel, languageModel);
+        // DbHelper.insertNewBook(bookModel, versionModel, languageModel);
     }
 
-    // addFormattingToLastVerse(line) {
-    //     if (this.verseList.length > 0) {
-    //         var res = this.verseList[this.verseList.length - 1].text + " \n " + line + " ";
-    //         this.verseList[[this.verseList.length - 1].text = res];
-    //     }
-    // }
+    addFormattingToLastVerse(line) {
+        if (this.verseList.length > 0) {
+            var res = this.verseList[this.verseList.length - 1].text + " \n " + line + " ";
+            this.verseList[[this.verseList.length - 1].text = res];
+        }
+    }
 
-    // addFormattingToNextVerse(line) {
-    //     var verseComponentsModel = {type: "", verseNumber: "", 
-    //         text: " " + line + " ", highlighted: false, added: false, 
-    //         languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
-    //         chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber};
-    //     this.verseList.push(verseComponentsModel);
-    // }
+    addFormattingToNextVerse(line) {
+        var verseComponentsModel = {type: "", verseNumber: "", 
+            text: " " + line + " ", highlighted: false, added: false, 
+            languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
+            chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber};
+        this.verseList.push(verseComponentsModel);
+    }
 }

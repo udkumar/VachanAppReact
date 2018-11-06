@@ -103,7 +103,7 @@ export default class App extends Component {
 
   constructor(props){
     super(props)
-    Realm.copyBundledRealmFiles();
+    // Realm.copyBundledRealmFiles();
       
     this.state = {
         booksList: [],

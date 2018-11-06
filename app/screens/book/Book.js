@@ -319,7 +319,7 @@ export default class Book extends Component {
   render() {
     const thumbSize = this.state.thumbSize;
       return (
-        <View style={this.styles.container} >
+        <View style={this.styles.container}>
         {this.state.modelData.length>0 ? 
             <View>
 

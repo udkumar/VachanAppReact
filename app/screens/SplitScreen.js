@@ -1,18 +1,14 @@
 import React,{Component } from 'react'
-import {View,Text,FlatList} from 'react-native'
+import {View,Text,FlatList,Dimensions} from 'react-native'
 import DbHelper from '../utils/dbHelper.js'
 import USFMParser from '../utils/USFMParser'
+const width = Dimensions.get('window').width;
+const height = Dimensions.get('window').height;
 
 
-export default class Book extends Component {
+export default class AddData extends Component {
     constructor(){
         super()
-        this.state = {
-            versionName:"",
-            book:'',
-            data:[],
-            chapters:[]
-        }
     }
     async startParse() {
         var parse = await new USFMParser()
@@ -28,16 +24,18 @@ export default class Book extends Component {
     render(){
         // console.log("chapters book "+JSON.stringify(this.state.data))
         return(
-            <Text>HI</Text>
-            // <FlatList
-            //     data={this.state.data}
-            //     renderItem={({item,index}) => 
-            //     <View>
-            //         <Text style={{fontWeight:"bold",fontSize:20}}>{item.bookId}</Text>
-            //     </View>
-            //     }
-            //     keyExtractor={(item, index) => index.toString()}
-            // />
+           <View style={{flexDirection:"row"}}>
+               <View style={{width:width/2,flexDirection:'column'}}>
+               <ScroolView>
+
+               </ScroolView>
+               </View>
+               <View style={{width:width/2,flexDirection:'column'}}>
+                   <ScroolView>
+
+                   </ScroolView>
+               </View>
+           </View>
             
         )
     }
