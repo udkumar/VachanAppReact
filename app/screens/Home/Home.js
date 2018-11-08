@@ -31,7 +31,7 @@ export default class Home extends Component {
     return{
       headerTitle: (
               <TouchableOpacity onPress={() =>{navigation.navigate("About")}} >
-                <Text style={{color:'white',fontSize:20,marginHorizontal:16,fontWeight:'500'}}>Autographa Go</Text>
+                <Text style={{color:'white',fontSize:20,marginHorizontal:16,fontWeight:'500'}}>VachanOnline</Text>
               </TouchableOpacity>),
       headerRight:(
           <TouchableOpacity onPress={() =>{navigation.state.params.openLanguages()}} >
@@ -128,7 +128,7 @@ export default class Home extends Component {
       openLanguages: this.openLanguages,
       headerRightText:this.styles.headerRightText
     })
-   
+    
       // firebase.messaging().requestPermission().then(function() {
       //   console.log('Notification permission granted.');
       //   firebase.messaging().getToken().then(function(currentToken) {

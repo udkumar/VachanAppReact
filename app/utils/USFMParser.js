@@ -45,19 +45,10 @@ export default class USFMParser {
                 });
         }
     }
+    
     // async parseFile(){
     //     try {
-    //         var content = await RNFS.readFileAssets('66-JUD.usfm')
-    //         this.parseFileContents(content)
-    //     }
-    //     catch(error){
-    //         console.log("error "+error)
-    //     }
-    // }
-
-    // async parseFile(){
-    //     try {
-    //         var content = await RNFS.readFileAssets('66-JUD.usfm')
+    //         var content = await RNFS.readFileAssets('67-REV.usfm')
     //         this.parseFileContents(content)
     //     }
     //     catch(error){
@@ -374,7 +365,7 @@ export default class USFMParser {
             bookNumber: mapResult.number, 
             section: mapResult.section, 
             chapterModels: this.chapterList,
-            BookIntroModels:this.bookIntro,
+            bookIntroModels:this.bookIntro,
             // bookSummerydModels:this.bookSummary
         }
         var versionModel = {
@@ -393,6 +384,7 @@ export default class USFMParser {
             versionModels: []
         }
         languageModel.versionModels.push(versionModel);
+        // console.log("BOOK MODEL WITH BOOK INTRO "+JSON.stringify(bookModel.bookIntroModels))
         console.log("ADD BOOK : " + this.bookId + " :: " + this.versionCode + " :: " + this.languageCode)
         
         DbHelper.insertNewBook(bookModel, versionModel, languageModel);

@@ -45,11 +45,13 @@ export default class Book extends Component {
     super(props);
 
     this.queryBook = this.queryBook.bind(this)
+    // this.updateCurrentChapter =this.updateCurrentChapter.bind(this)
 
     this.state = {
       languageCode: this.props.screenProps.languageCode,
       versionCode: this.props.screenProps.versionCode,
       modelData: [],
+      bookIntro:[],
       isLoading: false,
       bookId: this.props.navigation.state.params.bookId,
       bookName: this.props.navigation.state.params.bookName,
@@ -78,18 +80,17 @@ export default class Book extends Component {
   }
   
   async queryBook() {
-    let model = await DbQueries.queryBookWithId(this.props.screenProps.versionCode, 
-        this.props.screenProps.languageCode, this.state.bookId);
+    let model = await DbQueries.queryBookWithId(this.state.versionCode, 
+        this.state.languageCode, this.state.bookId);
     this.setState({isLoading:false})
     if (model == null) {
       // console.log("mode lnull")
     } else {
       if (model.length > 0) {
-        this.setState({modelData: model[0].chapterModels, bookmarksList: model[0].bookmarksList}, () => {
-              this.setState({isBookmark: this.state.bookmarksList.indexOf(this.state.currentVisibleChapter) > -1}, () => {
-                this.props.navigation.setParams({isBookmark: this.state.isBookmark})      
-              })
-        })
+        this.setState({
+          modelData: model[0].chapterModels,bookIntro:model[0].bookIntroModels}
+             
+        )
       }
       var notesData = []
               var quotationText = null
@@ -122,7 +123,6 @@ export default class Book extends Component {
 
   }
 
-  
   getBookNameFromMapping(bookId) {
     var obj = this.mappingData.id_name_map;
     for (var key in obj) {
@@ -136,32 +136,29 @@ export default class Book extends Component {
     return null;
   }
  
-  addToNotes = () => {
-    let refList = []
-    let id = this.state.bookId
-    let name = this.getBookNameFromMapping(this.state.bookId)
-    for (let item of this.state.selectedReferenceSet) {
-      let tempVal = item.split('_')
-      let refModel = {bookId: id, bookName: name, chapterNumber: parseInt(tempVal[0]), verseNumber: tempVal[2], 
-        versionCode: this.props.screenProps.versionCode, languageCode: this.props.screenProps.languageCode};
-      refList.push(refModel)
-    }
-    this.props.navigation.navigate('Notes', {referenceList: refList})
-    this.setState({selectedReferenceSet: [], showBottomBar: false})
-  }
-
-  getVerseText(cNum, vIndex) {
-    return this.state.modelData[cNum - 1].verseComponentsModels[vIndex].text
-  }
+ 
 
  
   render() {
+    console.log("book intro ductio part "+JSON.stringify(this.state.bookIntro))
       return (
         <View style={this.styles.container}>
-        {this.state.notesData.length>0 ? 
-            <View>
-
+        {this.state.notesData.length>0 && this.state.bookIntro.length> 0 ? 
+            <View style={{flex:1}}>
                 <ScrollView>
+                  {
+                    this.state.currentVisibleChapter == 1 ? 
+                      <FlatList
+                      data={this.state.bookIntro}
+                      renderItem={({ item,index }) => (
+                        <VerseView
+                          verseData = {item}
+                          index = {index}
+                      />
+                      )}
+                        />:null
+                  }
+              
                 <FlatList
                 data={this.state.notesData}
                 renderItem={({ item }) => (
@@ -173,7 +170,7 @@ export default class Book extends Component {
                 </ScrollView>
               
             </View>
-              :
+               : 
             <ActivityIndicator 
             animating={this.state.isLoading ? true : false} 
             size="large" 

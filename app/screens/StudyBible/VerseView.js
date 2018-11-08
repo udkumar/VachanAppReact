@@ -11,17 +11,31 @@ export default class VerseView extends Component {
   render() {
     switch(this.props.verseData.type) {
       
-      case Constants.MarkerTypes.MARKER_FOOT_NOTES_QUOTATION: {
+      case Constants.MarkerTypes.MARKER_INTRO_SECTION: {
         return (
             <Text style={{fontWeight:"bold",margin:8}} >
-              {this.props.verseData.verseNumber} {this.props.verseData.text}
+               {this.props.verseData.introText}
           </Text>
         );
       }
-      case Constants.MarkerTypes.MARKER_FOOT_NOTES_TEXT: {
+      case Constants.MarkerTypes.MARKER_INTRO_PARAGRAPH: {
               return (
                 <Text style={{margin:8}} >
-                {this.props.verseData.text}
+                {this.props.verseData.introText}
+              </Text>
+            )
+      }
+      case Constants.MarkerTypes. MARKER_INTRO_OUTLINE_TITLE: {
+        return (
+            <Text style={{fontWeight:"bold",margin:8}} >
+               {this.props.verseData.introText}
+          </Text>
+        );
+      }
+      case Constants.MarkerTypes.MARKER_INTRO_OUTLINE_CONTENT: {
+              return (
+                <Text style={{margin:8}} >
+                {this.props.verseData.introText}
               </Text>
             )
       }

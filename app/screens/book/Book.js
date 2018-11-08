@@ -142,7 +142,7 @@ export default class Book extends Component {
       left: width / 2,
       top: height / 2,
 
-      modalVisible:false
+      modalVisible:false,
     }
 
     this.pinchDiff = 0
@@ -243,7 +243,7 @@ export default class Book extends Component {
       // console.log("mode lnull")
     } else {
       if (model.length > 0) {
-        this.setState({modelData: model[0].chapterModels, bookmarksList: model[0].bookmarksList}, () => {
+        this.setState({modelData: model[0].chapterModels,bookmarksList: model[0].bookmarksList}, () => {
               this.setState({isBookmark: this.state.bookmarksList.indexOf(this.state.currentVisibleChapter) > -1}, () => {
                 this.props.navigation.setParams({isBookmark: this.state.isBookmark})      
               })
@@ -265,7 +265,7 @@ export default class Book extends Component {
     this.props.navigation.setParams({modalVisible:false})
     this.props.navigation.navigate("StudyNotes",
     {
-      bookId:this.state.bookId,bookName:this.state.bookName,chapterNumber:this.props.navigation.state.params.chapterNumber
+      bookId:this.state.bookId,bookName:this.state.bookName,chapterNumber:this.state.currentVisibleChapter
     })
    
   }
