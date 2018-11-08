@@ -14,7 +14,7 @@ VerseComponentsModel.schema = {
 		versionCode: 'string',
 		bookId: {type: 'string', indexed: true},
 		chapterNumber: {type: 'int', indexed: true},
-		verseSummaryModels:'verseSummaryModel[]',
+		// verseSummaryModels:'verseSummaryModel[]',
 		
         verseComponentOwner: {type: 'linkingObjects', objectType: 'ChapterModel', property: 'verseComponentsModels' }
     }

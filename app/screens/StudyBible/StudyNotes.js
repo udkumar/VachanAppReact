@@ -10,6 +10,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Share,
+  Modal
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {createResponder } from 'react-native-gesture-responder';
@@ -19,9 +20,6 @@ import VerseView from './VerseView'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import AsyncStorageConstants from '../../utils/AsyncStorageConstants';
 const Constants = require('../../utils/constants')
-
-import {getResultText} from '../../utils/UtilFunctions';
-
 import { styles } from './styles.js';
 import id_name_map from '../../assets/mappings.json'
 import {NavigationActions} from 'react-navigation'
@@ -29,25 +27,23 @@ import {NavigationActions} from 'react-navigation'
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-export default class StudyNotes extends Component {
+export default class Book extends Component {
 
   static navigationOptions = ({navigation}) => ({
-    headerTitle: navigation.state.params.bookName,
-    headerRight: (
-      <Icon 
-          onPress={()=> {navigation.state.params.onIconPress()}} 
+    headerLeft: (
+      <TouchableOpacity 
           name={'bookmark'} 
           color={navigation.state.params.isBookmark ? "red" : "white"} 
           size={24} 
           style={{marginHorizontal:8}} 
-      />      
+      >
+      <Text style={{fontSize:18,color:"white"}}>{navigation.state.params.bookName}</Text>
+      </TouchableOpacity>      
     ),
-  });
-
+  })
   constructor(props) {
     super(props);
-    console.log("PROPS IN BOOKS "+JSON.stringify(props))
-    console.log()
+
     this.queryBook = this.queryBook.bind(this)
 
     this.state = {
@@ -57,20 +53,23 @@ export default class StudyNotes extends Component {
       isLoading: false,
       bookId: this.props.navigation.state.params.bookId,
       bookName: this.props.navigation.state.params.bookName,
-      bookmarksList: [],
       currentVisibleChapter: this.props.navigation.state.params.chapterNumber,
 
       colorFile:this.props.screenProps.colorFile,
       sizeFile:this.props.screenProps.sizeFile,
 
+
+      notesData:[]
     }
 
+    this.pinchDiff = 0
+    this.pinchTime = new Date().getTime()
     this.styles = styles(this.state.colorFile, this.state.sizeFile);    
 
   }
 
   
-  
+
 
   componentDidMount() {
     this.setState({isLoading: true}, () => {
@@ -82,8 +81,7 @@ export default class StudyNotes extends Component {
     let model = await DbQueries.queryBookWithId(this.props.screenProps.versionCode, 
         this.props.screenProps.languageCode, this.state.bookId);
     this.setState({isLoading:false})
-        console.log("book chappter "+model)
-      if (model == null) {
+    if (model == null) {
       // console.log("mode lnull")
     } else {
       if (model.length > 0) {
@@ -93,7 +91,35 @@ export default class StudyNotes extends Component {
               })
         })
       }
+      var notesData = []
+              var quotationText = null
+              for(i=0 ; i<=model[0].chapterModels[this.state.currentVisibleChapter - 1].verseComponentsModels.length-1; i++){
+                this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels[i]
+              if(this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels[i].type == Constants.MarkerTypes.MARKER_FOOT_NOTES_QUOTATION){
+                  console.log("foot not quotation "+this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels[i].text)
+                  quotationText=this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels[i].text
+             
+              }
+              if(this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels[i].type == Constants.MarkerTypes.MARKER_FOOT_NOTES_TEXT){
+                console.log("foot note text "+this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels[i].text)
+                notesData.push({
+                  'quotationText':quotationText,
+                  'notesText':this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels[i].text,
+                  'verseNumber':this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels[i].verseNumber
+                })
+              }
+              this.setState({notesData})
+             }
     }
+  }
+
+  async onBookmarkPress() {
+    var index = this.state.bookmarksList.indexOf(this.state.currentVisibleChapter);
+    await DbQueries.updateBookmarkInBook(this.state.bookmarksList, this.state.currentVisibleChapter, index > -1 ? false : true);
+    this.setState({isBookmark: index > -1 ? false : true}, () => {
+        this.props.navigation.setParams({isBookmark: this.state.isBookmark,modalVisible:false})      
+    })
+
   }
 
   
@@ -110,68 +136,53 @@ export default class StudyNotes extends Component {
     return null;
   }
  
-  // componentWillUnmount(){
-  //   let lastRead = {
-  //       languageCode:this.state.languageCode,
-  //       versionCode:this.state.versionCode,
-  //       bookId:this.state.bookId,
-  //       chapterNumber:this.state.currentVisibleChapter,
-  //   }
-  //   AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.LastReadReference, lastRead);
-  //   this.props.screenProps.updateLastRead(lastRead);
-  //   console.log("this.props.navigation back book page "+JSON.stringify(this.props))
-  //   // sceneProps.scene.route.routeName 
+  addToNotes = () => {
+    let refList = []
+    let id = this.state.bookId
+    let name = this.getBookNameFromMapping(this.state.bookId)
+    for (let item of this.state.selectedReferenceSet) {
+      let tempVal = item.split('_')
+      let refModel = {bookId: id, bookName: name, chapterNumber: parseInt(tempVal[0]), verseNumber: tempVal[2], 
+        versionCode: this.props.screenProps.versionCode, languageCode: this.props.screenProps.languageCode};
+      refList.push(refModel)
+    }
+    this.props.navigation.navigate('Notes', {referenceList: refList})
+    this.setState({selectedReferenceSet: [], showBottomBar: false})
+  }
 
-  //   if(this.props.navigation.state.params.prevScreen =='bookmark'){
-  //     this.props.navigation.state.params.updateBookmark()
-  //   }
-  //   else if(this.props.navigation.state.params.prevScreen == 'highlights'){
-  //     this.props.navigation.state.params.updateHighlights()
-  //   }
-   
-  // }
+  getVerseText(cNum, vIndex) {
+    return this.state.modelData[cNum - 1].verseComponentsModels[vIndex].text
+  }
 
  
   render() {
-    // console.log("this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels "+JSON.stringify(this.state.modelData))
       return (
-        <View>
-        {this.state.modelData.length>0 ? 
+        <View style={this.styles.container}>
+        {this.state.notesData.length>0 ? 
             <View>
 
-                <ScrollView
-                >
-                  <View>
-                            <FlatList
-                            data={this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels}
-                            renderItem={({item,index}) => 
-                            <Text style={{margin:8}}>
-                               <VerseView
-                                  ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
-                                  verseData = {item}
-                                  index = {index}
-                                  styles = {this.styles}
-                                        />
-                            </Text>
-                            }
-
-                            />
-                            </View>
-                        
+                <ScrollView>
+                <FlatList
+                data={this.state.notesData}
+                renderItem={({ item }) => (
+                  <Text style={{margin:8,alignItems:'center',justifyContent:'center'}}>
+                    <Text>{item.verseNumber}<Text style={{fontWeight:'bold'}}>{item.quotationText}</Text>: {item.notesText}</Text>
+                  </Text>
+                )}
+                  />
                 </ScrollView>
-                
               
-               
             </View>
-            :
+              :
             <ActivityIndicator 
             animating={this.state.isLoading ? true : false} 
             size="large" 
             color="#0000ff" />
-            
-          }
+         }
         </View>
       );
   }
 
 }
+
+

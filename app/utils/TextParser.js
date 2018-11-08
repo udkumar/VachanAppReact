@@ -5,6 +5,7 @@ import BookModel from '../models/BookModel';
 import { Results } from 'realm';
 import { styles } from '../screens/StudyBible/styles';
 import { Spinner } from 'native-base';
+import { constColors } from './colors';
 const Constants = require('./constants')
 var Buffer = require('buffer/').Buffer 
 var RNFS = require('react-native-fs');
@@ -49,15 +50,6 @@ export default class USFMParser {
     // }
 
     async parseFile(){
-        // try {
-        //     console.log("add data text file ")
-        //     var content =  RNFS.readFileAssets('irvhin.txt')
-        //     // this.parseFileContents(content)
-        //     console.log("text from file text "+content)
-        // }
-        // catch(error){
-        //     console.log("error "+error)
-        // }
         try {
             var content = await RNFS.readFileAssets('irvhin.txt', 'base64')
             const result = Buffer.from(content, 'base64').toString('utf8')
@@ -71,79 +63,24 @@ export default class USFMParser {
     parseFileContents(result) {
         try {
             var lines = result.split('\n');
-            for(var i = 0; i < lines.length-1; i++) {
-                // console.log("split string "+line[0])
-                if (!this.processLine(lines[i])) {
-                    return false;
-                }
-                // this.processLine[70]
+            for(var i = 1; i<=lines[66]; i++) {
+                this.processLine(lines[i])
+                // console.log("split string "+lines[i])
             }
         } catch(exception) {
             console.log("error in parsing file : " + exception)
         }
     }
-
-    processLine(line) {
-        var splitString = line.split(/\s+/);
-        // console.log("book id is 0"+splitString[0])
-        // console.log("book id is 1 "+splitString[1])
-        // if(splitString[0] && splitString[1]){
-        //     const bookId  = splitString[1].match(/^[A-Z]{3}/g)
-        // }
-        if(splitString[1]){
-            const chapterNum = splitString[1].match(/^\d+:$/g)
-            const verseNum = splitString[1].match(/^\d+:\d+$/g)
-
-            if(chapterNum !== null){
-                this.addChapterSummary(line)
-            }
-            if(verseNum !== null){
-               this.addVerseSummary(line)
-            }
-            else{
-                this.addBookSummary(line)
-            }
-        }
-        // if(summerisedText == '</b>'){
-        // }
-       
-        
-        return true
+    processLine(summary) {
+        console.log("lines in process line "+summary)
+        const idBook = summary.match(/(^\w{3})/g)
+        console.log("book id "+idBook)
         // if (splitString.length == 0) {
         //     return true;
         // }
     }
-    addBookSummary(string){
-        var splitString = string.split(/\s+/);
-        for(i=0; i<=splitString.length;i++){
-            splitString[i].match(/<[^>]>+/)
-        }
-        const bookS = []
-        const bookSummary= {
-            text:string,
-            style:'string'
-        }
-
-        bookS.push(bookS)
-        console.log("line of matched boook "+bookS)
-    }
-    // addChapterSummary(string){
-    //     const chapterS =[]
-    //     const chapterSummary= {
-    //         text:string,
-    //         style:'string'
-    //     }
-    //     chapterS.push(chapterSummary)
-    //     console.log("line of matched chapter "+chapterS)
-    // }
-    // addVerseSummary(string){
-    //     const verseS =[]
-    //     const verseSummary= {
-    //         text:string,
-    //         style:'string'
-    //     }
-    //     verseS.push(verseSummary)
-    //     console.log("line of matched verse "+verseSummary)
+    // addBookSummary(string){
+    //         console.log("tags "+tags)
     // }
 
 }

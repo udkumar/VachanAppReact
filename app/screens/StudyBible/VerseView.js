@@ -27,7 +27,7 @@ export default class VerseView extends Component {
       }
      
       default: {
-      return null;
+      return<Text>{null}</Text>;
       }
     }
   }

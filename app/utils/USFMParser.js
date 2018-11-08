@@ -24,43 +24,51 @@ export default class USFMParser {
         this.license = "CCSA";
     }
 
-    // parseFile(path, lCode, lName, vCode, vName, source, license, year, fromAssets) {
-    //     this.languageCode = lCode;
-    //     this.languageName = lName;
-    //     this.versionCode = vCode;
-    //     this.versionName = vName;
-    //     this.source = source;
-    //     this.license = license;
-    //     this.year = year;
+    parseFile(path, lCode, lName, vCode, vName, source, license, year, fromAssets) {
+        this.languageCode = lCode;
+        this.languageName = lName;
+        this.versionCode = vCode;
+        this.versionName = vName;
+        this.source = source;
+        this.license = license;
+        this.year = year;
 
-    //     if (fromAssets) {
-    //         RNFS.readFileAssets(path)
-    //             .then((result)=>{
-    //                 this.parseFileContents(result);
-    //             });
-    //     } else {
-    //         RNFS.readFile(path)
-    //             .then((result)=>{
-    //                 this.parseFileContents(result);
-    //             });
+        if (fromAssets) {
+            RNFS.readFileAssets(path)
+                .then((result)=>{
+                    this.parseFileContents(result);
+                });
+        } else {
+            RNFS.readFile(path)
+                .then((result)=>{
+                    this.parseFileContents(result);
+                });
+        }
+    }
+    // async parseFile(){
+    //     try {
+    //         var content = await RNFS.readFileAssets('66-JUD.usfm')
+    //         this.parseFileContents(content)
+    //     }
+    //     catch(error){
+    //         console.log("error "+error)
     //     }
     // }
 
-    async parseFile(){
-        try {
-            var content = await RNFS.readFileAssets('05-DEU.usfm')
-            this.parseFileContents(content)
-        }
-        catch(error){
-            console.log("error "+error)
-        }
-    }
+    // async parseFile(){
+    //     try {
+    //         var content = await RNFS.readFileAssets('66-JUD.usfm')
+    //         this.parseFileContents(content)
+    //     }
+    //     catch(error){
+    //         console.log("error "+error)
+    //     }
+    // }
 
     parseFileContents(result) {
         try {
             var lines = result.split('\n');
             for(var i = 0; i < lines.length; i++) {
-                //code here using lines[i] which will give you each line
                 if (!this.processLine(lines[i])) {
                     return false;
                 }
@@ -387,7 +395,7 @@ export default class USFMParser {
         languageModel.versionModels.push(versionModel);
         console.log("ADD BOOK : " + this.bookId + " :: " + this.versionCode + " :: " + this.languageCode)
         
-        // DbHelper.insertNewBook(bookModel, versionModel, languageModel);
+        DbHelper.insertNewBook(bookModel, versionModel, languageModel);
     }
 
     addFormattingToLastVerse(line) {

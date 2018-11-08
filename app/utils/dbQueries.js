@@ -127,6 +127,10 @@ class DbQueries {
     deleteLanguage(lanCode, verCode){
         DbHelper.deleteLanguage(lanCode, verCode)
     }
+    queryVersions() {
+        return DbHelper.query('VersionModel');
+    }
+
 }
 
 export default new DbQueries();

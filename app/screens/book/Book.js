@@ -10,6 +10,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Share,
+  Modal
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {createResponder } from 'react-native-gesture-responder';
@@ -31,7 +32,6 @@ export default class Book extends Component {
   static navigationOptions = ({navigation}) => ({
     headerLeft: (
       <TouchableOpacity 
-          onPress={()=> {navigation.navigate("StudyNotes",{bookName:navigation.state.params.bookName,chapterNumber:navigation.state.params.chapterNumber})}} 
           name={'bookmark'} 
           color={navigation.state.params.isBookmark ? "red" : "white"} 
           size={24} 
@@ -41,13 +41,70 @@ export default class Book extends Component {
       </TouchableOpacity>      
     ),
     headerRight: (
-      <Icon 
-          onPress={()=> {navigation.state.params.onIconPress()}} 
-          name={'bookmark'} 
-          color={navigation.state.params.isBookmark ? "red" : "white"} 
+      <View style={{justifyContent: 'center',}}>
+      <Modal
+          transparent={true}
+          animationType="fade"
+          visible={navigation.state.params.modalVisible}
+          onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+        }}>
+        <View style={{
+            flex:1,
+        justifyContent: 'center',
+        alignSelf:'center',
+        backgroundColor : "transparent", 
+        }}>
+          <View 
+          style={{
+              justifyContent: 'center',
+              alignItems: 'center', 
+              backgroundColor : '#3F51B5', 
+              height: 300 ,
+              width: 350,
+              borderRadius:10,
+              borderWidth: 1,
+              borderColor: '#fff'
+          }}
+          >
+          <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+            <Text style={{color:'white',fontSize:20}}>Add Book Mark</Text>
+             <Icon 
+                onPress={()=> {navigation.state.params.onIconPress()}} 
+                name={'bookmark'} 
+                color={navigation.state.params.isBookmark ? "red" : "white"} 
+                size={24} 
+                style={{marginHorizontal:8}} 
+            />   
+          </View> 
+            <Text 
+              style={{color:"white",textAlign:'center',fontSize:20}}
+              onPress={()=> {
+                navigation.state.params.goToStudyNotes()
+               }} 
+            >
+              Study Notes
+            </Text>
+             <TouchableOpacity
+              onPress={() => {
+                navigation.state.params.setModalVisible(!navigation.state.params.modalVisible)
+              }}>
+             
+              <Text style={{color:"white",textAlign:'center',fontSize:20}}>close</Text>
+            </TouchableOpacity> 
+          </View>
+        </View>
+      </Modal>
+         <Icon 
+          onPress={() => {
+            navigation.state.params.setModalVisible(true);
+          }}
+          name={'dehaze'} 
           size={24} 
-          style={{marginHorizontal:8}} 
-      />      
+          color="white"
+          style={{marginHorizontal:8,alignItems:'center'}} 
+      />
+    </View>      
     ),
   });
 
@@ -58,6 +115,8 @@ export default class Book extends Component {
     this.getSelectedReferences = this.getSelectedReferences.bind(this)
     this.queryBook = this.queryBook.bind(this)
     this.onBookmarkPress = this.onBookmarkPress.bind(this)
+    this.setModalVisible =this.setModalVisible.bind(this)
+    this.goToStudyNotes = this.goToStudyNotes.bind(this)
 
     this.updateCurrentChapter = this.updateCurrentChapter.bind(this)
     this.state = {
@@ -82,6 +141,8 @@ export default class Book extends Component {
       thumbSize: 100,
       left: width / 2,
       top: height / 2,
+
+      modalVisible:false
     }
 
     this.pinchDiff = 0
@@ -98,6 +159,10 @@ export default class Book extends Component {
       sizeFile:props.screenProps.sizeFile,
     })
     this.styles = styles(props.screenProps.colorFile, props.screenProps.sizeFile);   
+  }
+  setModalVisible(visible) {
+    this.setState({modalVisible: visible});
+    this.props.navigation.setParams({modalVisible: visible}) 
   }
 
   componentDidMount() {
@@ -157,8 +222,14 @@ export default class Book extends Component {
       debug: false
     });
 
-    this.props.navigation.setParams({onIconPress: this.onBookmarkPress})    
-    this.props.navigation.setParams({isBookmark: this.state.isBookmark})
+    this.props.navigation.setParams({
+      onIconPress: this.onBookmarkPress,
+      isBookmark: this.state.isBookmark,
+      modalVisible:this.state.modalVisible,
+      setModalVisible:this.setModalVisible,
+      goToStudyNotes:this.goToStudyNotes
+      
+    })    
     this.setState({isLoading: true}, () => {
       this.queryBook()
     })
@@ -185,12 +256,19 @@ export default class Book extends Component {
     var index = this.state.bookmarksList.indexOf(this.state.currentVisibleChapter);
     await DbQueries.updateBookmarkInBook(this.state.bookmarksList, this.state.currentVisibleChapter, index > -1 ? false : true);
     this.setState({isBookmark: index > -1 ? false : true}, () => {
-        this.props.navigation.setParams({isBookmark: this.state.isBookmark})      
+        this.props.navigation.setParams({isBookmark: this.state.isBookmark,modalVisible:false})      
     })
 
   }
 
-  
+  goToStudyNotes(){
+    this.props.navigation.setParams({modalVisible:false})
+    this.props.navigation.navigate("StudyNotes",
+    {
+      bookId:this.state.bookId,bookName:this.state.bookName,chapterNumber:this.props.navigation.state.params.chapterNumber
+    })
+   
+  }
   getSelectedReferences(vIndex, chapterNum, vNum) {
     let obj = chapterNum + '_' + vIndex + '_' + vNum
     

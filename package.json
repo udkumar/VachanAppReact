@@ -19,6 +19,7 @@
     "react-native-firebase": "^4.3.8",
     "react-native-fs": "^2.9.12",
     "react-native-gesture-responder": "^0.1.1",
+    "react-native-modal": "^7.0.0",
     "react-native-vector-icons": "^4.6.0",
     "react-native-webview-bridge": "^0.33.0",
     "react-native-zip-archive": "^2.2.6",

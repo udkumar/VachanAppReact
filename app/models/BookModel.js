@@ -13,7 +13,7 @@ BookModel.schema = {
       chapterModels: 'ChapterModel[]',
       bookmarksList: 'int?[]',
       bookIntroModels:'BookIntroModel[]',
-      bookSummerydModels:'BookSummerydModel[]',
+      // bookSummerydModels:'BookSummerydModel[]',
       bookOwner: {type:'linkingObjects', objectType: 'VersionModel', property:'bookModels' }
     }
 };

@@ -24,18 +24,7 @@ export default class AddData extends Component {
     render(){
         // console.log("chapters book "+JSON.stringify(this.state.data))
         return(
-           <View style={{flexDirection:"row"}}>
-               <View style={{width:width/2,flexDirection:'column'}}>
-               <ScroolView>
-
-               </ScroolView>
-               </View>
-               <View style={{width:width/2,flexDirection:'column'}}>
-                   <ScroolView>
-
-                   </ScroolView>
-               </View>
-           </View>
+         <Text>hi</Text>
             
         )
     }
