@@ -62,22 +62,28 @@ export default class USFMParser {
 
     parseFileContents(result) {
         try {
+            // console.log("result length "+result.length)
             var lines = result.split('\n');
-            for(var i = 1; i<=lines[66]; i++) {
+            // console.log("lines "+lines.length)
+            for(var i=0; i<66; i++) {
                 this.processLine(lines[i])
-                // console.log("split string "+lines[i])
+                    console.log("i value "+lines[i])
             }
         } catch(exception) {
             console.log("error in parsing file : " + exception)
         }
     }
     processLine(summary) {
-        console.log("lines in process line "+summary)
+        // console.log("lines in process line "+summary)
         const idBook = summary.match(/(^\w{3})/g)
         console.log("book id "+idBook)
-        // if (splitString.length == 0) {
-        //     return true;
-        // }
+        const value = summary.match(/(\s+\-\s+.*?)(?:<)/g)
+        console.log("value of string "+value)
+        const mazorValue = value.toString().split('<')
+        console.log(" mazor value of string "+mazorValue[3])
+        const key = summary.match(/(\<b\>).*?(\<\/b\>)/g)
+        console.log("key of string "+key)
+        
     }
     // addBookSummary(string){
     //         console.log("tags "+tags)
