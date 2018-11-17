@@ -44,8 +44,8 @@ export default class DownloadLanguage extends Component {
         this.setState({isLoading:true},() => {
             DownloadUtil.getLanguages()
             .then(res => {
-                console.log("res = " + JSON.stringify(res))
-                console.log("len = " + res.languages_available.length)
+                console.log("res111 = " + JSON.stringify(res))
+                console.log("len = " + res.languages_available)
                 this.setState({isLoading: false, refreshing: false, downloadData: res.languages_available})
             })
             .catch(error => {

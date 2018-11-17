@@ -32,7 +32,7 @@ var DownloadUtil = {
               }
             })
             .then(ApiUtils.checkStatus)
-            .then((response) => response.json())
+            .then((response) => console.log(response))
             .catch(e => e)
         } catch(error) {
             return error;

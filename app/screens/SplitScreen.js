@@ -98,7 +98,7 @@ export default class splitScreen extends Component {
   render() {
     return (
       <WebView
-        source={{uri:'file:///android_asset/english_esv/AC.html'}}
+        source={{uri:'file:///android_asset/Bibles/english_bbe/index.html'}}
         ref={(webView) => { this.state.ref = webView; }}
         onNavigationStateChange={(navState) => { this.state.canGoBack = navState.canGoBack; }}
       />

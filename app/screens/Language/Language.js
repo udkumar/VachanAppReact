@@ -150,9 +150,8 @@ export default class Language extends Component{
                     ? "bold" : "normal"}]}>
                {item.versionName}
               </Text>
-              {/* <Icon 
-                name= {(data.languageCode == 'ENG') && (item.versionCode == 'ULT' || 
-                    item.versionCode=='UST') 
+              <Icon 
+                name= {(data.languageCode == 'Hin') && (item.versionCode == 'IRV') 
                     ? null 
                     : this.props.screenProps.versionCode == item.versionCode && 
                     this.props.screenProps.languageCode == data.languageCode
@@ -161,7 +160,7 @@ export default class Language extends Component{
                 style={this.styles.checkIcon} 
                 onPress={()=>this.onDeleteVersion(data.languageCode, index, 
                   item.versionCode, versionIndex)}
-              /> */}
+              />
              </TouchableOpacity>
              <View style={this.styles.divider}/>
           </View>
@@ -222,3 +221,4 @@ export default class Language extends Component{
 }
     
 }
+

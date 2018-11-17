@@ -7,7 +7,11 @@ import {
   ScrollView,
   TouchableOpacity,
   FlatList,
-  Alert
+  Alert,
+  Platform,
+  BackHandler,
+  WebView
+  
 } from 'react-native';
 import DbQueries from '../../utils/dbQueries'
 import USFMParser from '../../utils/USFMParser'
@@ -56,7 +60,11 @@ export default class Home extends Component {
       booksList: this.props.screenProps.booksList,
       OTSize:0,
       NTSize:0,
-      token:null
+      token:null,
+
+      // webview states
+      canGoBack: false,
+      ref: null,
     }
     console.log("IN HOME, bok len"  + this.props.screenProps.booksList.length)
     console.log("IN HOME, ACTIVE TAB"  + this.state.activeTab)
@@ -73,6 +81,7 @@ export default class Home extends Component {
       this.viewabilityConfig = {
         itemVisiblePercentThreshold: 100
       }
+      // this.onAndroidBackPress = this.onAndroidBackPress.bind(this)
   }
 
   toggleButton(value){
@@ -242,15 +251,31 @@ renderItem = ({item, index})=> {
         }
       }
   }
+  // onAndroidBackPress = () => {
+  //   if (this.state.canGoBack && this.state.ref) {
+  //     this.state.ref.goBack();
+  //     return true;
+  //   }
+  //   return false;
+  // }
 
+  // componentWillMount() {
+  //   if (Platform.OS === 'android') {
+  //     BackHandler.addEventListener('hardwareBackPress', this.onAndroidBackPress);
+  //   }
+  // }
+
+  // componentWillUnmount() {
+  //   if (Platform.OS === 'android') {
+  //     BackHandler.removeEventListener('hardwareBackPress');
+  //   }
+  // }
 
   render(){
     let activeBgColor = 
       this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#3F51B5' : '#fff'
     let inactiveBgColor = 
       this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#fff' : '#3F51B5'
-   
-   
     return (
       <View style={this.styles.container}>
         <FixedSidebar 
@@ -289,7 +314,6 @@ renderItem = ({item, index})=> {
               : null}
               {
                 this.state.NTSize > 0 
-
               ?
               <Button 
                 active={!this.state.activeTab} 
@@ -311,7 +335,6 @@ renderItem = ({item, index})=> {
               :null}
             </Segment>
             <FlatList
-
               ref={ref => this.flatlistRef = ref}
               data={this.state.booksList}
               getItemLayout={this.getItemLayout}
@@ -324,6 +347,11 @@ renderItem = ({item, index})=> {
               // onViewableItemsChanged={this.handleViewableItemsChanged}
             />
         </View> 
+        {/* <WebView
+        source={{uri:'file:///android_asset/Bibles/english_bbe/index.html'}}
+        ref={(webView) => { this.state.ref = webView; }}
+        onNavigationStateChange={(navState) => { this.state.canGoBack = navState.canGoBack; }}
+      /> */}
       </View>
     );
   }
