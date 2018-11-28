@@ -18,27 +18,6 @@ import { historyStyle } from './styles.js'
 var moment = require('moment');
 
 export default class History extends Component{
-  static navigationOptions = ({navigation}) =>({
-    headerTitle: 'History',
-    headerRight:(
-      <View>
-      {
-        navigation.state.params.historyListLength == 0 ? null :
-      <TouchableOpacity 
-        style={{
-          flexDirection:"row",
-          alignItems:'center',
-          justifyContent:'center',
-          marginHorizontal:16
-        }}
-        onPress={()=>navigation.state.params.onClearHistory()}>
-        <Text style={{ color:'white',fontSize:22, marginHorizontal:8}}>Clear</Text>
-        <Icon name="delete-forever" color="#fff" size={24}  />
-      </TouchableOpacity>
-      }
-      </View>
-      )
-  })
 
   constructor(props){
     super(props)

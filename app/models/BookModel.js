@@ -8,12 +8,11 @@ BookModel.schema = {
     properties: {
       bookId: 'string',
       bookName: 'string',
-      bookNumber: 'int',
-      section: {type: 'string', default: 'NT'},
       chapterModels: 'ChapterModel[]',
       bookmarksList: 'int?[]',
-      bookIntroModels:'BookIntroModel[]',
-      // bookSummerydModels:'BookSummerydModel[]',
-      bookOwner: {type:'linkingObjects', objectType: 'VersionModel', property:'bookModels' }
+      section: {type: 'string', default: 'NT'},
+      bookNumber: 'int',
+
+      bookOwner: {type: 'linkingObjects', objectType: 'VersionModel', property:'bookModels' }
     }
 };

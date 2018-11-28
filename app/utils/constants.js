@@ -1,3 +1,4 @@
+// info such as our server URL
 export const UserEmail = "email";
 export const UserToken = "token";
 
@@ -5,19 +6,8 @@ module.exports = {
     BASE_URL: 'http://someurl.com',
     MarkerConstants: {
         MARKER_BOOK_NAME : "\\id",
-        // MARKER_BOOK_NAME:'\\h',
-        MARKER_INTRO_SECTION:'\\is',
-        MARKER_INTRO_PARAGRAPH:'\\ip',
-        MARKER_INTRO_OUTLINE_TITLE:'\\iot',
-        MARKER_INTRO_OUTLINE_CONTENT:'\\io1',
         MARKER_CHAPTER_NUMBER : "\\c",
         MARKER_VERSE_NUMBER : "\\v",
-        MARKER_FOOT_NOTES_OPEN :'\\f',
-        MARKER_FOOT_NOTES_CLOSE :'\\f*',
-        MARKER_FOOT_NOTES_QUOTATION : '\\fq',
-        MARKER_FOOT_NOTES_TEXT : '\\ft',
-        MARKER_ITALIC_CLOSE : '\\it',
-        MARKER_ITALIC_OPEN : '\\it**',
         MARKER_NEW_PARAGRAPH : "\\p",
         MARKER_SECTION_HEADING : "\\s",
         MARKER_SECTION_HEADING_ONE : "\\s1",
@@ -48,12 +38,6 @@ module.exports = {
         SECTION_HEADING_FOUR : "s4",
         CHUNK : "s5",
         PARAGRAPH : "p",
-        VERSE : "v",
-        MARKER_INTRO_PARAGRAPH:'ip',
-        MARKER_INTRO_SECTION:'is',
-        MARKER_INTRO_OUTLINE_TITLE:'iot',
-        MARKER_INTRO_OUTLINE_CONTENT:'io1',
-        MARKER_FOOT_NOTES_TEXT:'ft',
-        MARKER_FOOT_NOTES_QUOTATION:'fq'
+        VERSE : "v"
     }
 };

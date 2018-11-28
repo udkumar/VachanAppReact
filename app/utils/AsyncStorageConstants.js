@@ -7,7 +7,8 @@ module.exports = {
         LanguageCode:'language_code',
         VersionCode:'version_code',
         LanguageName:'language_name',
-        VersionName:'version_name'
+        VersionName:'version_name',
+        BackupRestoreEmail:'backup_restore_email'
 
     },
     Values: {
@@ -23,16 +24,16 @@ module.exports = {
         VerseInLine:false,
 
         LastReadReference: {
-            languageCode:'Hin',
-            versionCode:'IRV',
+            languageCode:'ENG',
+            versionCode:'ULT',
             bookId:'GEN',
             chapterNumber:1,
         },
 
-        DefLanguageCode:'Hin',
-        DefLanguageName:'Hindi',
-        DefVersionCode:'IRV',
-        DefVersionName:'Iindian Revised Version'
+        DefLanguageCode:'ENG',
+        DefLanguageName:'English',
+        DefVersionCode:'ULT',
+        DefVersionName:'unfoldingWord Literal Text'
        
     }
 }

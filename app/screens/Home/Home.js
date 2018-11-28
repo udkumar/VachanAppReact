@@ -7,11 +7,9 @@ import {
   ScrollView,
   TouchableOpacity,
   FlatList,
-  Alert,
+  Linking,
   Platform,
-  BackHandler,
-  WebView
-  
+  Alert
 } from 'react-native';
 import DbQueries from '../../utils/dbQueries'
 import USFMParser from '../../utils/USFMParser'
@@ -24,6 +22,7 @@ const AsyncStorageConstants = require('../../utils/AsyncStorageConstants')
 import {getBookNameFromMapping} from '../../utils/UtilFunctions'
 import {nightColors, dayColors} from '../../utils/colors.js'
 import FixedSidebar from '../../components/FixedSidebar/FixedSidebar'
+import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import {constantFont} from '../../utils/dimens.js'
 import firebase from 'react-native-firebase'
 
@@ -35,7 +34,7 @@ export default class Home extends Component {
     return{
       headerTitle: (
               <TouchableOpacity onPress={() =>{navigation.navigate("About")}} >
-                <Text style={{color:'white',fontSize:20,marginHorizontal:16,fontWeight:'500'}}>VachanOnline</Text>
+                <Text style={{color:'white',fontSize:20,marginHorizontal:16,fontWeight:'500'}}>Autographa Go</Text>
               </TouchableOpacity>),
       headerRight:(
           <TouchableOpacity onPress={() =>{navigation.state.params.openLanguages()}} >
@@ -58,30 +57,17 @@ export default class Home extends Component {
       activeTab:true,
       iconPress: [],
       booksList: this.props.screenProps.booksList,
-      OTSize:0,
-      NTSize:0,
-      token:null,
-
-      // webview states
-      canGoBack: false,
-      ref: null,
+      OTSize:this.getOTSize(this.props.screenProps.booksList),
+      NTSize:this.getNTSize(this.props.screenProps.booksList),
+      token:null
     }
     console.log("IN HOME, bok len"  + this.props.screenProps.booksList.length)
-    console.log("IN HOME, ACTIVE TAB"  + this.state.activeTab)
     this.styles = homePageStyle(this.state.colorFile, this.state.sizeFile);
     
     this.viewabilityConfig = {
-        itemVisiblePercentThreshold: 50,
+        itemVisiblePercentThreshold: 100,
         waitForInteraction: true
     }
-
-    this.setState({OTSize:this.getOTSize(this.props.screenProps.booksList),
-      NTSize:this.getNTSize(this.props.screenProps.booksList)})
-
-      this.viewabilityConfig = {
-        itemVisiblePercentThreshold: 100
-      }
-      // this.onAndroidBackPress = this.onAndroidBackPress.bind(this)
   }
 
   toggleButton(value){
@@ -107,7 +93,7 @@ export default class Home extends Component {
   } 
 
    componentWillReceiveProps(props){
-    console.log("WILLLLL recievr props  version "+JSON.stringify(props))
+    console.log("will recievr Bible page"+JSON.stringify(props.screenProps.booksList))
      this.setState({
       colorFile:props.screenProps.colorFile,
       colorMode: props.screenProps.colorMode,
@@ -126,9 +112,6 @@ export default class Home extends Component {
   getItemLayout = (data, index) => (
     { length: 48, offset: 48 * index, index }
   )
-
-  
-
   
   componentDidMount(){
     this.props.navigation.setParams({
@@ -137,56 +120,33 @@ export default class Home extends Component {
       openLanguages: this.openLanguages,
       headerRightText:this.styles.headerRightText
     })
-    
-      // firebase.messaging().requestPermission().then(function() {
-      //   console.log('Notification permission granted.');
-      //   firebase.messaging().getToken().then(function(currentToken) {
-      //     if (currentToken) {
-      //       console.log("token notification "+currentToken)
-      //       this.setState({token:currentToken})
-      //       sendTokenToServer(currentToken);
-      //       updateUIForPushEnabled(currentToken);
-      //     } else {
-      //       console.log('No Instance ID token available. Request permission to generate one.');
-      //       updateUIForPushPermissionRequired();
-      //       setTokenSentToServer(false);
-      //     }
-      //   }).catch(function(err) {
-      //     showToken('Error retrieving Instance ID token. ', err);
-      //     setTokenSentToServer(false);
-      //   });
-      //   firebase.messaging().onTokenRefresh(function() {
-      //     firebase.messaging().getToken().then(function(refreshedToken) {
-      //       console.log('Token refreshed.');
-      //       setState({token:refreshedToken})
-      //       setTokenSentToServer(false);
-      //       sendTokenToServer(refreshedToken);
-      //     }).catch(function(err) {
-      //       showToken('Unable to retrieve refreshed token ', err);
-      //     });
-      //   });
-      //   // TODO(developer): Retrieve an Instance ID token for use with FCM.
-      //   // ...
-      // }).catch(function(err) {
-      //   console.log('Unable to get permission to notify.', err);
-      // })
-  }
- 
-  // subscribeTokenToTopic() {
-  //   const global = 'global'
-  //   fetch('https://iid.googleapis.com/iid/v1/'+this.state.token+'/rel/topics/'+global, {
-  //     method: 'POST',
-  //     headers: new Headers({
-  //       'Authorization': AIzaSyCNEote_sBqM-caTdT4udwvrdqo9YEMbS4
-  //     })
-  //   }).then(response => {
-  //     console.log("res "+JOSN.stringify() );
-  //   }).catch(error => {
-  //     console.error(error);
-  //   })
-  // }
 
-  
+    if (Platform.OS == "android") {
+      Linking.getInitialURL().then(url => {
+        console.log("HOME linking initial = " + url);
+        this.navigate(url);
+      });
+    } else {
+      Linking.addEventListener('url', this.handleOpenURL);
+    }
+  }
+
+  componentWillUnmount() {
+    Linking.removeEventListener('url', this.handleOpenURL);
+  }
+
+  handleOpenURL = (event) => {
+    this.navigate(event.url);
+  }
+
+  navigate = (url) => { // E
+    console.log("IN LINKING : " + url)
+    if (url == null) {
+      return
+    }
+    this.props.navigation.navigate({routeName:'BackupRestore',params:{url:url},key:'BackupRestore'})
+  }
+
 renderItem = ({item, index})=> {
     return (
       <TouchableOpacity 
@@ -251,34 +211,18 @@ renderItem = ({item, index})=> {
         }
       }
   }
-  // onAndroidBackPress = () => {
-  //   if (this.state.canGoBack && this.state.ref) {
-  //     this.state.ref.goBack();
-  //     return true;
-  //   }
-  //   return false;
-  // }
 
-  // componentWillMount() {
-  //   if (Platform.OS === 'android') {
-  //     BackHandler.addEventListener('hardwareBackPress', this.onAndroidBackPress);
-  //   }
-  // }
-
-  // componentWillUnmount() {
-  //   if (Platform.OS === 'android') {
-  //     BackHandler.removeEventListener('hardwareBackPress');
-  //   }
-  // }
 
   render(){
     let activeBgColor = 
       this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#3F51B5' : '#fff'
     let inactiveBgColor = 
       this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#fff' : '#3F51B5'
+   
+   
     return (
       <View style={this.styles.container}>
-        <FixedSidebar 
+        {/* <FixedSidebar 
           onPress={(icon)=>{
             this.props.navigation.navigate(
               icon,
@@ -289,7 +233,7 @@ renderItem = ({item, index})=> {
                 bookName:getBookNameFromMapping(this.state.lastRead.bookId)
               })}}
           doAnimate = {false}
-        />
+        /> */}
         <View style={this.styles.bookNameContainer}>
             <Segment>
               {
@@ -300,7 +244,7 @@ renderItem = ({item, index})=> {
        
                 style={[{
                   backgroundColor: this.state.activeTab ? activeBgColor : inactiveBgColor,
-                  width: this.state.NTSize == 0 ? width*4/5 : width*2/5,
+                  width: this.state.NTSize == 0 ? width/2 : width/2,
                   },this.styles.segmentButton]} 
                 onPress={this.toggleButton.bind(this,true)
                 }
@@ -314,12 +258,13 @@ renderItem = ({item, index})=> {
               : null}
               {
                 this.state.NTSize > 0 
+
               ?
               <Button 
                 active={!this.state.activeTab} 
                 style={[{
                   backgroundColor: !this.state.activeTab ? activeBgColor : inactiveBgColor,
-                  width: this.state.OTSize == 0 ? width*4/5 : width*2/5,                  
+                  width: this.state.OTSize == 0 ? width/2 : width/2,                  
                 },this.styles.segmentButton]} 
                 onPress={this.toggleButton.bind(this,false)}>
                 <Text 
@@ -335,6 +280,7 @@ renderItem = ({item, index})=> {
               :null}
             </Segment>
             <FlatList
+
               ref={ref => this.flatlistRef = ref}
               data={this.state.booksList}
               getItemLayout={this.getItemLayout}
@@ -347,13 +293,9 @@ renderItem = ({item, index})=> {
               // onViewableItemsChanged={this.handleViewableItemsChanged}
             />
         </View> 
-        {/* <WebView
-        source={{uri:'file:///android_asset/Bibles/english_bbe/index.html'}}
-        ref={(webView) => { this.state.ref = webView; }}
-        onNavigationStateChange={(navState) => { this.state.canGoBack = navState.canGoBack; }}
-      /> */}
       </View>
     );
   }
+
 }
 

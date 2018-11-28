@@ -1,8 +1,5 @@
 import { AppRegistry } from 'react-native';
 import App from './app/utils/routes'
-// import AddData from './app/screens/AddData'
-import SplitScreen from './app/screens/SplitScreen'
-
 import React, {Component} from 'react'
 
 export default class AutographaGo extends Component {
@@ -18,4 +15,4 @@ export default class AutographaGo extends Component {
     }
 }
 
-AppRegistry.registerComponent('AutographaGo_ReactNative', () =>  App);
+AppRegistry.registerComponent('AutographaGo_ReactNative', () => App);

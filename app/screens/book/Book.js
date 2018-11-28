@@ -10,7 +10,6 @@ import {
   Dimensions,
   TouchableOpacity,
   Share,
-  Modal
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {createResponder } from 'react-native-gesture-responder';
@@ -20,6 +19,9 @@ import VerseView from './VerseView'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import AsyncStorageConstants from '../../utils/AsyncStorageConstants';
 const Constants = require('../../utils/constants')
+
+import {getResultText} from '../../utils/UtilFunctions';
+
 import { styles } from './styles.js';
 import id_name_map from '../../assets/mappings.json'
 import {NavigationActions} from 'react-navigation'
@@ -30,81 +32,15 @@ const height = Dimensions.get('window').height;
 export default class Book extends Component {
 
   static navigationOptions = ({navigation}) => ({
-    headerLeft: (
-      <TouchableOpacity 
+    headerTitle: navigation.state.params.bookName,
+    headerRight: (
+      <Icon 
+          onPress={()=> {navigation.state.params.onIconPress()}} 
           name={'bookmark'} 
           color={navigation.state.params.isBookmark ? "red" : "white"} 
           size={24} 
           style={{marginHorizontal:8}} 
-      >
-      <Text style={{fontSize:18,color:"white"}}>{navigation.state.params.bookName}</Text>
-      </TouchableOpacity>      
-    ),
-    headerRight: (
-      <View style={{justifyContent: 'center',}}>
-      <Modal
-          transparent={true}
-          animationType="fade"
-          visible={navigation.state.params.modalVisible}
-          onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
-        }}>
-        <View style={{
-            flex:1,
-        justifyContent: 'center',
-        alignSelf:'center',
-        backgroundColor : "transparent", 
-        }}>
-          <View 
-          style={{
-              justifyContent: 'center',
-              alignItems: 'center', 
-              backgroundColor : '#3F51B5', 
-              height: 300 ,
-              width: 350,
-              borderRadius:10,
-              borderWidth: 1,
-              borderColor: '#fff'
-          }}
-          >
-          <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
-            <Text style={{color:'white',fontSize:20}}>Add Book Mark</Text>
-             <Icon 
-                onPress={()=> {navigation.state.params.onIconPress()}} 
-                name={'bookmark'} 
-                color={navigation.state.params.isBookmark ? "red" : "white"} 
-                size={24} 
-                style={{marginHorizontal:8}} 
-            />   
-          </View> 
-            <Text 
-              style={{color:"white",textAlign:'center',fontSize:20}}
-              onPress={()=> {
-                navigation.state.params.goToStudyNotes()
-               }} 
-            >
-              Study Notes
-            </Text>
-             <TouchableOpacity
-              onPress={() => {
-                navigation.state.params.setModalVisible(!navigation.state.params.modalVisible)
-              }}>
-             
-              <Text style={{color:"white",textAlign:'center',fontSize:20}}>close</Text>
-            </TouchableOpacity> 
-          </View>
-        </View>
-      </Modal>
-         <Icon 
-          onPress={() => {
-            navigation.state.params.setModalVisible(true);
-          }}
-          name={'dehaze'} 
-          size={24} 
-          color="white"
-          style={{marginHorizontal:8,alignItems:'center'}} 
-      />
-    </View>      
+      />      
     ),
   });
 
@@ -115,8 +51,6 @@ export default class Book extends Component {
     this.getSelectedReferences = this.getSelectedReferences.bind(this)
     this.queryBook = this.queryBook.bind(this)
     this.onBookmarkPress = this.onBookmarkPress.bind(this)
-    this.setModalVisible =this.setModalVisible.bind(this)
-    this.goToStudyNotes = this.goToStudyNotes.bind(this)
 
     this.updateCurrentChapter = this.updateCurrentChapter.bind(this)
     this.state = {
@@ -141,8 +75,6 @@ export default class Book extends Component {
       thumbSize: 100,
       left: width / 2,
       top: height / 2,
-
-      modalVisible:false,
     }
 
     this.pinchDiff = 0
@@ -159,10 +91,6 @@ export default class Book extends Component {
       sizeFile:props.screenProps.sizeFile,
     })
     this.styles = styles(props.screenProps.colorFile, props.screenProps.sizeFile);   
-  }
-  setModalVisible(visible) {
-    this.setState({modalVisible: visible});
-    this.props.navigation.setParams({modalVisible: visible}) 
   }
 
   componentDidMount() {
@@ -222,14 +150,8 @@ export default class Book extends Component {
       debug: false
     });
 
-    this.props.navigation.setParams({
-      onIconPress: this.onBookmarkPress,
-      isBookmark: this.state.isBookmark,
-      modalVisible:this.state.modalVisible,
-      setModalVisible:this.setModalVisible,
-      goToStudyNotes:this.goToStudyNotes
-      
-    })    
+    this.props.navigation.setParams({onIconPress: this.onBookmarkPress})    
+    this.props.navigation.setParams({isBookmark: this.state.isBookmark})
     this.setState({isLoading: true}, () => {
       this.queryBook()
     })
@@ -243,7 +165,7 @@ export default class Book extends Component {
       // console.log("mode lnull")
     } else {
       if (model.length > 0) {
-        this.setState({modelData: model[0].chapterModels,bookmarksList: model[0].bookmarksList}, () => {
+        this.setState({modelData: model[0].chapterModels, bookmarksList: model[0].bookmarksList}, () => {
               this.setState({isBookmark: this.state.bookmarksList.indexOf(this.state.currentVisibleChapter) > -1}, () => {
                 this.props.navigation.setParams({isBookmark: this.state.isBookmark})      
               })
@@ -256,19 +178,11 @@ export default class Book extends Component {
     var index = this.state.bookmarksList.indexOf(this.state.currentVisibleChapter);
     await DbQueries.updateBookmarkInBook(this.state.bookmarksList, this.state.currentVisibleChapter, index > -1 ? false : true);
     this.setState({isBookmark: index > -1 ? false : true}, () => {
-        this.props.navigation.setParams({isBookmark: this.state.isBookmark,modalVisible:false})      
+        this.props.navigation.setParams({isBookmark: this.state.isBookmark})      
     })
 
   }
 
-  goToStudyNotes(){
-    this.props.navigation.setParams({modalVisible:false})
-    this.props.navigation.navigate("StudyNotes",
-    {
-      bookId:this.state.bookId,bookName:this.state.bookName,chapterNumber:this.state.currentVisibleChapter
-    })
-   
-  }
   getSelectedReferences(vIndex, chapterNum, vNum) {
     let obj = chapterNum + '_' + vIndex + '_' + vNum
     
@@ -344,7 +258,7 @@ export default class Book extends Component {
   }
 
   getVerseText(cNum, vIndex) {
-    return this.state.modelData[cNum - 1].verseComponentsModels[vIndex].text
+    return getResultText(this.state.modelData[cNum - 1].verseComponentsModels[vIndex].text)
   }
 
   addToShare = () => {
@@ -397,7 +311,7 @@ export default class Book extends Component {
   render() {
     const thumbSize = this.state.thumbSize;
       return (
-        <View style={this.styles.container}>
+        <View style={this.styles.container} >
         {this.state.modelData.length>0 ? 
             <View>
 
@@ -407,6 +321,7 @@ export default class Book extends Component {
                     ref={(ref) => { this.scrollViewRef = ref; }}                    
                 >
                  {    (this.state.verseInLine) ?
+                  <View style={this.styles.chapterList}>
                             <FlatList
                            
                             data={this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels}
@@ -417,7 +332,7 @@ export default class Book extends Component {
                                             ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
                                             verseData = {item}
                                             index = {index}
-                                            styles = {this.styles.VerseText}
+                                            styles = {this.styles}
                                             selectedReferences = {this.state.selectedReferenceSet}
                                             getSelection = {(verseIndex, chapterNumber, verseNumber) => {
                                             this.getSelectedReferences(verseIndex, chapterNumber, verseNumber)
@@ -427,6 +342,7 @@ export default class Book extends Component {
                             }
                             ListFooterComponent={<View style={styles.addToSharefooterComponent} />}
                             />
+                            </View>
                         :
                             <View style={this.styles.chapterList}>
                                 

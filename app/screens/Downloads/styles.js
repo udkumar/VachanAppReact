@@ -10,13 +10,15 @@ export const downloadPageStyle = (colorFile, sizeFile) =>{
         },
         containerMargin:{
             flex:1,
-            margin:8
+            margin:8,
+            justifyContent:'center'
         },
         cardItemStyle:{
-            backgroundColor:colorFile.backgroundColor
+            backgroundColor:colorFile.backgroundColor,
+            padding:8            
         },
         cardStyle:{
-             margin:16
+             margin:16,
         },
         textStyle:{
             color: colorFile.textColor,   
@@ -32,7 +34,23 @@ export const downloadPageStyle = (colorFile, sizeFile) =>{
         textLoader:{
             color: colorFile.textColor,   
             fontSize:sizeFile.contentText,
-        }
+        },
+       
+        emptyMessageIcon:{
+            textAlign:'center',
+            alignItems:'center',
+            fontSize:sizeFile.emptyIconSize,
+            color:colorFile.iconColor,
+        },
+        messageEmpty:{
+            textAlign:'center',
+            fontSize:sizeFile.titleText,
+            color:colorFile.textColor,
+        },
+        emptyMessageContainer:{
+            flexDirection:'column',
+            justifyContent:'center'
+        },
     
         
 })

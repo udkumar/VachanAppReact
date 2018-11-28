@@ -151,7 +151,8 @@ export default class Language extends Component{
                {item.versionName}
               </Text>
               <Icon 
-                name= {(data.languageCode == 'Hin') && (item.versionCode == 'IRV') 
+                name= {(data.languageCode == 'ENG') && (item.versionCode == 'ULT' || 
+                    item.versionCode=='UST') 
                     ? null 
                     : this.props.screenProps.versionCode == item.versionCode && 
                     this.props.screenProps.languageCode == data.languageCode

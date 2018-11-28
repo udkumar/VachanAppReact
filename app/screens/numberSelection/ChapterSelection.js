@@ -26,7 +26,6 @@ export default class ChapterSelection extends Component {
       bookIndex: this.props.navigation.state.params.bookIndex,
       numOfChapters: this.props.navigation.state.params.numOfChapters,
       bookData: Array.from(new Array(this.props.navigation.state.params.numOfChapters), (x,i) => i+1),
-    
     }
 
     this.styles = numberSelection(props.screenProps.colorFile, props.screenProps.sizeFile);   

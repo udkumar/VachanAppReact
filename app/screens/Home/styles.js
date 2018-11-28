@@ -21,7 +21,7 @@ export const homePageStyle =(colorFile, sizeFile) =>{
    },
     sideBarContainer:{
         flexDirection:'column',
-        width:width/5,
+        // width:width/5,
         backgroundColor:colorConstants.Black
     },
     sideBarIconCustom:{
@@ -31,7 +31,6 @@ export const homePageStyle =(colorFile, sizeFile) =>{
     },
     bookNameContainer:{
         flexDirection:'column',
-        width:width*4/5,
         backgroundColor:colorFile.backgroundColor
     },
   

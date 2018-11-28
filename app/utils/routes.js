@@ -1,6 +1,8 @@
 // all of our routes
 import React, { Component } from 'react'
-import {StackNavigator, TabNavigator} from 'react-navigation'
+import {TouchableOpacity,View} from 'react-native'
+import {StackNavigator, DrawerNavigator,DrawerActions,NavigationActions} from 'react-navigation'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 import Home from '../screens/Home/Home'
 import About from '../screens/About/About'
 import Bookmarks from '../screens/Bookmarks/Bookmarks'
@@ -18,7 +20,9 @@ import Language from '../screens/Language/Language'
 import Book from '../screens/book/Book'
 import DownloadLanguage from '../screens/Downloads/DownloadLanguage'
 import DownloadVersion from '../screens/Downloads/DownloadVersion'
-import StudyNotes from '../screens/StudyBible/StudyNotes'
+import BackupRestore from '../screens/backup/BackupRestore'
+import DrawerScreen from '../screens/DrawerScreen/DrawerScreen'
+import  Bible from '../screens/Bible/Bible'
 
 const AsyncStorageConstants = require('./AsyncStorageConstants')
 import AsyncStorageUtil from './AsyncStorageUtil';
@@ -29,81 +33,214 @@ import DbQueries from '../utils/dbQueries'
 import Realm from 'realm'
 
 
-
-const StackNavigate = (styles) => StackNavigator(
-  {  
-      Splash: {
-        screen: Splash,
-      },
-      Home: {
-        screen: Home,
-      },
-      About: {
-        screen: About,
-      },
-      Bookmarks: {
-        screen: Bookmarks,
-      },
-      EditNote: {
-        screen: EditNote,
-      },
-      Highlights: {
-        screen: Highlights,
-      },
-      History: {
-        screen: History,
-      },
-      Notes: {
-        screen: Notes,
-      },  
-      Settings: {
-        screen: Settings,
-      },
-      ChapterSelection: {
-        screen: ChapterSelection,
-        navigationOptions: {
-            headerTitle:"Select Chapter"
-        }
-      },
-      ReferenceSelection: {
-        screen: ReferenceSelection,
-      },
-      Hints: {
-        screen: Hints,
-      },
-      Book: {
-        screen: Book,
-      },
-      Language:{
-        screen:Language
-      },
-      DownloadLanguage: {
-        screen: DownloadLanguage
-      },
-      DownloadVersion: {
-        screen: DownloadVersion
-      },
-     
-      Search: {
-        screen: Search,
-      },
-      StudyNotes:{
-        screen:StudyNotes,
-      }
+const DrawerNavigate = DrawerNavigator({
+  Splash: {
+    screen: Splash,
   },
-  {
+  Bible:{
+    screen:Bible
+  },
+  Home: {
+    screen: Home,
+  },
+  About: {
+    screen: About,
+  },
+  Bookmarks: {
+    screen: Bookmarks,
+  },
+  EditNote: {
+    screen: EditNote,
+  },
+  Highlights: {
+    screen: Highlights,
+  },
+  History: {
+    screen: History,
+    navigationOptions: ({navigation}) => ({
+      headerRight:(
+        <View>
+        <TouchableOpacity 
+          style={{
+            flexDirection:"row",
+            alignItems:'center',
+            justifyContent:'center',
+            marginHorizontal:16
+          }}
+          // onPress={()=>navigation.state.params.onClearHistory()}
+          >
+          <Text style={{ color:'white',fontSize:22, marginHorizontal:8}}>Clear</Text>
+          <Icon name="delete-forever" color="#fff" size={24}  />
+        </TouchableOpacity>
+        </View>
+        )
+  }),
+  },
+  Notes: {
+    screen: Notes,
+  },  
+  Settings: {
+    screen: Settings,
+  },
+ 
+  Book: {
+    screen: Book,
+  },
+  Search: {
+    screen: Search,
+  },
+ 
+},
+{
+  initialRouteName: 'Bible',
+  contentComponent: DrawerScreen,
+  drawerWidth: 300
+});
+
+const MenuIcon = (navigation) => {
+      console.log("navigation of drawer "+JSON.stringify(navigation))
+      return (
+          <Icon 
+            name="dehaze"  
+            Size={52}  
+            color="#fff"
+            onPress={() => {navigation.navigate('DrawerOpen')}}
+            style={{marginHorizontal:8}}
+          />
+      );
+    // return <Icon name="keyboard-arrow-lefte"  Size={38}/>
+   
+}
+
+const StackNavigate  = (styles) => StackNavigator({
+  
+  //important: key and screen name (i.e. DrawerNavigator) should be same while using the drawer navigator inside stack navigator.
+  DrawerNavigate:{
+      screen: DrawerNavigate
+  },
+  Book: {
+    screen: Book,
+  },
+  Bible:{
+    screen:Bible
+  },
+  ChapterSelection: {
+    screen: ChapterSelection,
     navigationOptions: {
-      headerTintColor: '#fff',
-      headerStyle: styles.headerStyle
+        headerTitle:"Select Chapter"
     }
-  }
-)
+  },
+  ReferenceSelection: {
+    screen: ReferenceSelection,
+  },
+  Hints: {
+    screen: Hints,
+  },
+  Language:{
+    screen:Language
+  },
+  DownloadLanguage: {
+    screen: DownloadLanguage
+  },
+  DownloadVersion: {
+    screen: DownloadVersion
+  },
+  BackupRestore: {
+    screen: BackupRestore
+  },
+},{
+  navigationOptions: ({ navigation }) => ({
+      title: 'VachanOnline',  // Title to appear in status bar
+      headerLeft : <MenuIcon navigate={navigation.navigate}/>,
+      headerStyle: {
+          backgroundColor: '#333',
+      },
+      headerTintColor: '#fff',
+      headerStyle: styles.headerStyle,
+      headerTitleStyle: {
+        fontWeight: 'bold',
+      },
+
+  })
+},
+
+);
+
+// const StackNavigate = (styles) => StackNavigator(
+//   {  
+//       Splash: {
+//         screen: Splash,
+//       },
+//       Home: {
+//         screen: Home,
+//       },
+//       About: {
+//         screen: About,
+//       },
+//       Bookmarks: {
+//         screen: Bookmarks,
+//       },
+//       EditNote: {
+//         screen: EditNote,
+//       },
+//       Highlights: {
+//         screen: Highlights,
+//       },
+//       History: {
+//         screen: History,
+//       },
+//       Notes: {
+//         screen: Notes,
+//       },  
+//       Settings: {
+//         screen: Settings,
+//       },
+//       ChapterSelection: {
+//         screen: ChapterSelection,
+//         navigationOptions: {
+//             headerTitle:"Select Chapter"
+//         }
+//       },
+//       ReferenceSelection: {
+//         screen: ReferenceSelection,
+//       },
+//       Hints: {
+//         screen: Hints,
+//       },
+//       Book: {
+//         screen: Book,
+//       },
+//       Language:{
+//         screen:Language
+//       },
+//       DownloadLanguage: {
+//         screen: DownloadLanguage
+//       },
+//       DownloadVersion: {
+//         screen: DownloadVersion
+//       },
+     
+//       Search: {
+//         screen: Search,
+//       },
+//       BackupRestore: {
+//         screen: BackupRestore
+//       },
+     
+//   },
+//   {
+//     navigationOptions: {
+//       headerTintColor: '#fff',
+//       headerStyle: styles.headerStyle
+//     }
+//   }
+// )
 
 export default class App extends Component {
 
   constructor(props){
     super(props)
-    // Realm.copyBundledRealmFiles();
+    Realm.copyBundledRealmFiles();
       
     this.state = {
         booksList: [],
@@ -211,7 +348,7 @@ export default class App extends Component {
     this.setState({languageCode, languageName,versionCode,versionName})
 
     let models = await DbQueries.queryBookIdModels(versionCode, languageCode);
-      console.log("routes len =" + models)
+      console.log("routes len =" + JSON.stringify(models))
       if (models && models.length > 0) {
         this.setState({booksList: models})
       }
@@ -219,6 +356,7 @@ export default class App extends Component {
   }
 
   render(){
+    // console.log("bookList "+JSON.stringify(this.state.booksList.bookId))
     let  StackNav = this.StackNav
     return(
       <StackNav 
@@ -247,6 +385,7 @@ export default class App extends Component {
       />
     );
   }
+
     
   async componentDidMount(){
     let res = await AsyncStorageUtil.getAllItems([
@@ -263,13 +402,14 @@ export default class App extends Component {
     if (res == null) {
       return
     }
+
     console.log("ROUTES.... color mode "+res[0][1])
     this.setState({sizeMode: res[1][1] == null ? AsyncStorageConstants.Values.SizeModeNormal : parseInt(res[1][1])}, ()=> {
       switch (this.state.sizeMode) {
         case  AsyncStorageConstants.Values.SizeModeXSmall : {
           this.setState({sizeFile:extraSmallFont})
           break;
-        } 
+        }
         case  AsyncStorageConstants.Values.SizeModeSmall : {
           this.setState({sizeFile:smallFont})
           break;
@@ -293,27 +433,29 @@ export default class App extends Component {
     this.setState({
       colorMode: res[0][1]== null ? AsyncStorageConstants.Values.DayMode : parseInt(res[0][1]),
       colorFile: res[0][1] == null ? dayColors : 
-      (parseInt(res[0][1]) == AsyncStorageConstants.Values.DayMode ? dayColors : nightColors),
+        (parseInt(res[0][1]) == AsyncStorageConstants.Values.DayMode ? dayColors : nightColors),
       verseInLine:  res[2][1] == null ? AsyncStorageConstants.Values.VerseInLine : res[2][1],
       languageCode: res[3][1] == null ? AsyncStorageConstants.Values.DefLanguageCode : res[3][1],
       versionCode:  res[4][1] == null ? AsyncStorageConstants.Values.DefVersionCode : res[4][1],
       languageName: res[5][1] == null ? AsyncStorageConstants.Values.DefLanguageName : res[5][1],
       versionName:  res[6][1] == null ? AsyncStorageConstants.Values.DefVersionName : res[6][1],
     }, async ()=> {
-
+      console.log("QUERY : " + this.state.versionCode + " ::  " + this.state.languageCode)
       let models = await DbQueries.queryBookIdModels(this.state.versionCode, this.state.languageCode);
       console.log("routes len =" + models)
-      console.log("VERSE VALUE ++++ " + res[2][1])
+      // console.log("VERSE VALUE ++++ " + res[2][1])
       this.setState({isDbLoading: false})
       if (models && models.length > 0) {
         this.setState({booksList: models})
       }
     })
-
+    // console.log("")
     await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.LastReadReference, AsyncStorageConstants.Values.LastReadReference
       ).then((lastRead) => {
           this.setState({lastRead})
     })
-  console.log("DSIDI mount value "+typeof this.state.sizeMode)
+
+    console.log("DSIDI mount value "+typeof this.state.sizeMode)
   }
+
 }

@@ -72,3 +72,4 @@
 -keep class io.invertase.firebase.** { *; }
 -dontwarn io.invertase.firebase.**
 
+-keep class io.realm.react.**

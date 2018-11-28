@@ -46,10 +46,11 @@ export default class SelectChapter extends Component {
         data={this.state.bookData}
         renderItem={({item, index}) => 
         <TouchableOpacity style={[styles.selectGridNum,
-          {backgroundColor: this.state.selectedIndex == index ? 'blue' : 'transparent'}]}
+          {backgroundColor:'transparent'}]}
           onPress={()=>this.onChapterSelected(item, index)}
           >
-                <Text style={styles.selectText}>{item}</Text>
+                <Text style={[styles.selectText, 
+                  {fontWeight: this.state.selectedIndex == index ? "bold" : "normal"}]}>{item}</Text>
             </TouchableOpacity>
         }
       />
