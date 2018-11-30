@@ -15,7 +15,7 @@ import DbQueries from '../../utils/dbQueries'
 import USFMParser from '../../utils/USFMParser'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {Segment,Button,Tab,Tabs} from 'native-base'
-import { homePageStyle } from './styles.js';
+import { SelectBookPageStyle } from './styles.js';
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 const AsyncStorageConstants = require('../../utils/AsyncStorageConstants')
@@ -25,23 +25,37 @@ import FixedSidebar from '../../components/FixedSidebar/FixedSidebar'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import {constantFont} from '../../utils/dimens.js'
 import firebase from 'react-native-firebase'
+import {NavigationActions} from 'react-navigation'
 
-export default class Home extends Component {
+export default class SelectBook extends Component {
 
   static navigationOptions = ({navigation}) =>{
     const { params = {} } = navigation.state;
-    console.log("props navigation VALUE "+JSON.stringify(navigation.state.params))
     return{
-      headerTitle: (
-              <TouchableOpacity onPress={() =>{navigation.navigate("About")}} >
-                <Text style={{color:'white',fontSize:20,marginHorizontal:16,fontWeight:'500'}}>Autographa Go</Text>
-              </TouchableOpacity>),
-      headerRight:(
-          <TouchableOpacity onPress={() =>{navigation.state.params.openLanguages()}} >
-            <Text style={params.headerRightText}>{params.bibleLanguage} {params.bibleVersion}</Text>
-          </TouchableOpacity>
-        )
-      }
+      headerLeft: (
+        <View style={{flexDirection:"row"}}>
+          <Icon name="clear" style={{fontSize:20,color:"#fff",fontWeight:"bold",marginLeft:16}} onPress={() =>{navigation.dispatch(NavigationActions.back())}}/>
+          {/* <Text style={{fontSize:16,color:"#000",marginHorizontal:8}}>CHOOSE BOOK</Text> */}
+        </View>
+      ),
+    //  headerStyle: {
+    //   backgroundColor:"#fff"
+    //  },
+    }
+   
+  //   const { params = {} } = navigation.state;
+  //   console.log("props navigation VALUE "+JSON.stringify(navigation.state.params))
+  //   return{
+  //     headerTitle: (
+  //             <TouchableOpacity onPress={() =>{navigation.navigate("About")}} >
+  //               <Text style={{color:'white',fontSize:20,marginHorizontal:16,fontWeight:'500'}}>Autographa Go</Text>
+  //             </TouchableOpacity>),
+  //     headerRight:(
+  //         <TouchableOpacity onPress={() =>{navigation.state.params.openLanguages()}} >
+  //           <Text style={params.headerRightText}>{params.bibleLanguage} {params.bibleVersion}</Text>
+  //         </TouchableOpacity>
+  //       )
+  //     }
   }
 
   constructor(props){
@@ -61,8 +75,8 @@ export default class Home extends Component {
       NTSize:this.getNTSize(this.props.screenProps.booksList),
       token:null
     }
-    console.log("IN HOME, bok len"  + this.props.screenProps.booksList.length)
-    this.styles = homePageStyle(this.state.colorFile, this.state.sizeFile);
+    console.log("IN SelectBook, bok len"  + this.props.screenProps.booksList.length)
+    this.styles = SelectBookPageStyle(this.state.colorFile, this.state.sizeFile);
     
     this.viewabilityConfig = {
         itemVisiblePercentThreshold: 100,
@@ -93,7 +107,7 @@ export default class Home extends Component {
   } 
 
    componentWillReceiveProps(props){
-    console.log("will recievr Bible page"+JSON.stringify(props.screenProps.booksList))
+    // console.log("will recievr Bible page"+JSON.stringify(props.screenProps.booksList))
      this.setState({
       colorFile:props.screenProps.colorFile,
       colorMode: props.screenProps.colorMode,
@@ -106,7 +120,7 @@ export default class Home extends Component {
     })
     console.log("OT SIZE " +this.state.OTSize)
    
-    this.styles = homePageStyle(props.screenProps.colorFile, props.screenProps.sizeFile);   
+    this.styles = SelectBookPageStyle(props.screenProps.colorFile, props.screenProps.sizeFile);   
   }
  
   getItemLayout = (data, index) => (
@@ -123,7 +137,7 @@ export default class Home extends Component {
 
     if (Platform.OS == "android") {
       Linking.getInitialURL().then(url => {
-        console.log("HOME linking initial = " + url);
+        console.log("SelectBook linking initial = " + url);
         this.navigate(url);
       });
     } else {

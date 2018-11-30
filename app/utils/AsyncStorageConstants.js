@@ -8,7 +8,10 @@ module.exports = {
         VersionCode:'version_code',
         LanguageName:'language_name',
         VersionName:'version_name',
-        BackupRestoreEmail:'backup_restore_email'
+        BookId:'book_id',
+        BookName:'book_name',
+        BackupRestoreEmail:'backup_restore_email',
+        ChapterNumber:"chapter_number"
 
     },
     Values: {
@@ -33,7 +36,11 @@ module.exports = {
         DefLanguageCode:'ENG',
         DefLanguageName:'English',
         DefVersionCode:'ULT',
-        DefVersionName:'unfoldingWord Literal Text'
+        DefVersionName:'unfoldingWord Literal Text',
+        DefBookId:'GEN',
+        DefBookName:'Genesis',
+        DefBookChapter:1
+
        
     }
 }

@@ -22,12 +22,12 @@ const AsyncStorageConstants = require('../../utils/AsyncStorageConstants')
 
 const setParamsAction = ({colorFile}) => NavigationActions.setParams({
   params: { colorFile },
-  key: 'Home',
+  key: 'SelectBook',
 });
 
 const setParamsAction2 = ({sizeFile}) => NavigationActions.setParams({
   params: { sizeFile },
-  key: 'Home',
+  key: 'SelectBook',
 });
 
 export default class Setting extends Component {

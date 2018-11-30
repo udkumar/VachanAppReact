@@ -9,8 +9,10 @@ import {
   ActivityIndicator,
   Dimensions,
   TouchableOpacity,
+  Slider,
   Share,
 } from 'react-native';
+import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {createResponder } from 'react-native-gesture-responder';
 
@@ -25,67 +27,82 @@ import {getResultText} from '../../utils/UtilFunctions';
 import { styles } from './styles.js';
 import id_name_map from '../../assets/mappings.json'
 import {NavigationActions} from 'react-navigation'
+import SwipableModal from '../../components/SwipableModal'
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-export default class Book extends Component {
+const MenuIcon = (navigation) => {
+  return (
+      <Icon 
+        name="dehaze"  
+        color="#fff"
+        onPress={() => {navigation.navigate('DrawerToggle')}}
+        style={{marginHorizontal:8,fontSize:20}}
+      />
+  );
+// return <Icon name="keyboard-arrow-lefte"  Size={38}/>
+
+}
+
+export default class Bible extends Component {
+
 
   static navigationOptions = ({navigation}) =>{
     const { params = {} } = navigation.state;
-    console.log("props navigation VALUE "+JSON.stringify(params))
+    console.log("props navigation VALUE bible"+JSON.stringify(navigation))
+
     return{
-        headerTitle: params.bookName,
-        headerRight: (
-            <View style={{flexDirection:'row',flex:1}}>
-            {params.currentVisibleChapter == 1 
-             ? null :
-            <View>
-                <Icon name={'chevron-left'} color="black" size={36} 
-                    style={{
-                        alignItems:'center',
-                        zIndex:2, 
-                        alignSelf:'center',
-                        color:"#fff",
-                        fontSize: 20
-                    }} 
-                    onPress={()=> params.updateChapter(-1)}
-                    />
-            </View>
-             }
-            {params.currentVisibleChapter == params.dataLength 
-                ? null :
-            <View>
+        headerTitle:(
+          <View style={{flexDirection:'row',flex:1}}>
+           <TouchableOpacity onPress={()=> params.currentChapter == 1 ? null : params.updateChapter(-1)}>
+              <Icon name={'chevron-left'} color="black" size={36} 
+                  style={{
+                      alignItems:'center',
+                      zIndex:2, 
+                      alignSelf:'center',
+                      color:"#fff",
+                      fontSize: 22,
+                  }} 
+                  
+                  />
+            </TouchableOpacity>
+              <Text 
+                style={{fontSize:16,color:"#fff",alignSelf:'center',alignItems:'center'}}
+                onPress={()=>{navigation.navigate("SelectBook")}}>{params.bookName}
+              </Text>
+              <TouchableOpacity onPress={()=>params.currentChapter == params.dataLength ? null : params.updateChapter(1)}>
                 <Icon name={'chevron-right'} 
-                    style={{
-                        alignItems:'center',
-                        zIndex:2, 
-                        alignSelf:'center',
-                        color:"#fff",
-                        fontSize:20
-                    }} 
-                    onPress={()=> params.updateChapter(1)}
-                    />
-            </View>
-            }
-            <View>
-                <Icon 
-                    onPress={()=> {params.onIconPress()}} 
-                    name={'bookmark'} 
-                    color={params.isBookmark ? "red" : "white"} 
-                    size={24} 
-                    style={{marginHorizontal:8}} 
-                />    
-            </View>
-            
-        </View>
-         
-        ),
+                  style={{
+                      alignItems:'center',
+                      zIndex:2, 
+                      alignSelf:'center',
+                      color:"#fff",
+                      fontSize:22,
+                  }} 
+                 
+                  />
+              </TouchableOpacity>
+      </View>
+       
+      ), 
+        headerTintColor:"#fff",
+        headerRight:(
+          <Icon 
+              onPress={()=> {params.onIconPress()}} 
+              name={'bookmark'} 
+              color={params.isBookmark ? "red" : "white"} 
+              size={24} 
+              style={{marginHorizontal:8}} 
+          />    
+        )
     }
   }
 
   constructor(props) {
     super(props);
+
+    console.log("PROPS VALUE BIBLE "+JSON.stringify(props.screenProps))
 
     this.mappingData = id_name_map;
     this.getSelectedReferences = this.getSelectedReferences.bind(this)
@@ -99,12 +116,12 @@ export default class Book extends Component {
       modelData: [],
       isLoading: false,
       showBottomBar: false,
-      bookId: "GEN",
-      bookName:"Genesis",
+      bookId: this.props.screenProps.bookId,
+      bookName:this.props.screenProps.bookName,
       bottomHighlightText: true,
       bookmarksList: [],
       isBookmark: false,
-      currentVisibleChapter:1,
+      currentVisibleChapter:this.props.screenProps.chapterNumber,
       selectedReferenceSet: [],
       verseInLine: this.props.screenProps.verseInLine,
 
@@ -115,20 +132,29 @@ export default class Book extends Component {
       thumbSize: 100,
       left: width / 2,
       top: height / 2,
+
+      isOpen: false,
+      isDisabled: false,
+      swipeToClose: true,
+      sliderValue: 0.3
     }
 
     this.pinchDiff = 0
     this.pinchTime = new Date().getTime()
     this.styles = styles(this.state.colorFile, this.state.sizeFile);    
+    this.modelValue = "modal1"
 
   }
 
   
   componentWillReceiveProps(props){
-    // console.log("will recievr props"+JSON.stringify(props))
+    console.log("will recievr props"+JSON.stringify(props))
     this.setState({
       colorFile:props.screenProps.colorFile,
       sizeFile:props.screenProps.sizeFile,
+      // bookId:props.screenProps.bookId,
+      // bookName:props.screenProps.bookName,
+      // currentChapter:props.screenProps.currentChapter
     })
     this.styles = styles(props.screenProps.colorFile, props.screenProps.sizeFile);   
   }
@@ -189,11 +215,12 @@ export default class Book extends Component {
       moveThreshold: 2,
       debug: false
     });
-
+    console.log("book did mount "+this.state.bookName)
     this.props.navigation.setParams({
         onIconPress: this.onBookmarkPress,
         updateChapter:this.updateCurrentChapter,
         bookName: this.state.bookName,
+        currentChapter:this.state.currentVisibleChapter
     })    
     this.setState({isLoading: true}, () => {
       this.queryBook()
@@ -350,14 +377,15 @@ export default class Book extends Component {
         isBookmark: this.state.bookmarksList.indexOf(currChapter) > -1}, () => {
             this.props.navigation.setParams({
                 isBookmark: this.state.isBookmark,
-                currentVisibleChapter:this.state.currentVisibleChapter,
+                currentChapter:this.state.currentVisibleChapter,
                 dataLength:this.state.modelData.length
             })
             this.scrollViewRef.scrollTo({x: 0, y: 0, animated: false})
     })
   }
-
- 
+  modalHandle = () =>{
+    let refValue = this.modalOpen.open()
+  }
   render() {
     const thumbSize = this.state.thumbSize;
       return (
@@ -422,7 +450,7 @@ export default class Book extends Component {
                         }
                 </ScrollView>
                 
-                {this.state.showBottomBar || this.state.currentVisibleChapter == 1
+                {/* {this.state.showBottomBar || this.state.currentVisibleChapter == 1
                 ? null :
                 <View style={this.styles.bottomBarPrevView}>
                     <Icon name={'chevron-left'} color="black" size={36} 
@@ -439,7 +467,7 @@ export default class Book extends Component {
                         onPress={()=> this.updateCurrentChapter(1)}
                         />
                 </View>
-                }
+                } */}
             </View>
 
             :
@@ -449,11 +477,40 @@ export default class Book extends Component {
             color="#0000ff" />
             
           }
-          {this.state.showBottomBar 
-          ? 
-          <View style={this.styles.bottomBar}>
-  
-            <View style={this.styles.bottomOption}>
+       
+          <View 
+          style={{
+            position:'absolute', 
+            bottom:0,
+            width: width, 
+            height: 30, 
+            backgroundColor:'#3F51B5',
+            flexDirection:'row',
+            justifyContent:'center'
+    
+          }}
+          >
+            <TouchableOpacity 
+              onPress={()=>{this.child.onOpen()}}
+              style={{
+                position:'absolute', 
+                top:0, 
+                right:0,
+                marginHorizontal:8
+              }}
+            >
+            <Icon 
+              name="arrow-drop-up" 
+              style={{
+                color:"#fff",
+                fontSize:28,
+               
+              }}
+            />
+            </TouchableOpacity>
+          {/* {this.state.showBottomBar  */}
+            {/* ?  */}
+            {/* <View style={this.styles.bottomOption}>
             <TouchableOpacity onPress={this.doHighlight}  
             >
               <Text style={this.styles.bottomOptionText}>
@@ -487,12 +544,18 @@ export default class Book extends Component {
                 </Text>
                 <Icon name={'share'} color="white" size={24} style={this.styles.bottomOptionIcon} />
               </TouchableOpacity>
-            </View>
-  
+            </View> */}
+          {/* // : null } */}
           </View>
-          : null }
+           <SwipableModal
+              onRef={ref => (this.child = ref)}
+              handleModel={this.modalHandle}
+            /> 
         </View>
       );
   }
 
 }
+
+
+  

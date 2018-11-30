@@ -4,7 +4,7 @@ const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 import colorConstants from '../../utils/colorConstants.js'
 
-export const homePageStyle =(colorFile, sizeFile) =>{
+export const SelectBookPageStyle =(colorFile, sizeFile) =>{
     return StyleSheet.create({
    container:{
     flex:1,

@@ -32,11 +32,13 @@ export default class ChapterSelection extends Component {
   }
 
   onNumPress(item) {
-    this.props.navigation.replace('Book', {bookId: this.state.bookId, 
-      bookName: this.state.bookName, chapterNumber: item })
+    this.props.navigation.replace('Bible', {bookId: this.state.bookId, 
+    bookName: this.state.bookName, chapterNumber: item })
     var time =  new Date()
     DbQueries.addHistory(this.props.screenProps.languageCode, this.props.screenProps.versionCode, 
     this.state.bookId, item, time);
+    this.props.screenProps.updateBookData(this.state.bookId, this.state.bookName,item)
+
   }
   
   render() {

@@ -21,15 +21,15 @@ class DrawerScreen extends Component {
       <View>
         <ScrollView>
           <View>
-            <View style={{
+            {/* <View style={{
                 padding: 10,
                 borderWidth: 0.5,
                 borderColor: '#d6d7da'
             }}>
-              <Text onPress={()=>{this.props.navigation.navigate('Book')}}>
+              <Text onPress={()=>{this.props.navigation.navigate('Bible')}}>
               Book
               </Text>
-            </View>
+            </View> */}
             <View style={{
                     padding: 10,
                     borderWidth: 0.5,

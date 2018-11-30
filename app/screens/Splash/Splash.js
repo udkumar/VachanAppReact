@@ -17,16 +17,16 @@ export default class Splash extends Component {
     // console.log("SPLASH :: props " + JSON.stringify(props))
     if (!this.props.screenProps.isDbLoading) {
           // console.log("NOWWW const")
-          this._navigateTo('Home')
+          this._navigateTo('SelectBook')
     }
   }
 
   componentWillReceiveProps(props) {
     // console.log("SPLASH receive PROPS : " + JSON.stringify(props))
       if (!props.screenProps.isDbLoading) {
-        // console.log("start home")
-          this._navigateTo('Home')
-          // this.props.navigation.navigate('Home')
+        // console.log("start SelectBook")
+          this._navigateTo('SelectBook')
+          // this.props.navigation.navigate('SelectBook')
       }
   }
 
