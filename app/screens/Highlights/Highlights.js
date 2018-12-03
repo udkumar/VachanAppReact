@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import DbQueries from '../../utils/dbQueries'
-import {getBookNameFromMapping} from '../../utils/UtilFunctions';
+import {getNameFromMapping} from '../../utils/UtilFunctions';
 import id_name_map from '../../assets/mappings.json'
 import {constantFont} from '../../utils/dimens.js'
 import { highlightstyle } from './styles'
@@ -93,7 +93,7 @@ export default class HighLights extends Component {
       // getItemLayout={this.getItemLayout}
       renderItem={({item, index}) =>
       <TouchableOpacity style={this.styles.highlightsView}
-        onPress={()=>this.props.navigation.navigate('Book', {bookId: item.bookId, 
+        onPress={()=>this.props.navigation.navigate('Bible', {bookId: item.bookId, 
           bookName: getBookNameFromMapping(item.bookId), 
           chapterNumber: item.chapterNumber, verseNumber: item.verseNumber,
           updateHighlights:this.updateHighlights,prevScreen:'highlights'

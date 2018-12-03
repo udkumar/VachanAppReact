@@ -206,7 +206,7 @@ export default class EditNote extends Component {
     // todo open reference in RV page
     var list = this.state.referenceList
     var item = list[index]
-    this.props.navigation.navigate('Book', {bookId: item.bookId, bookName: item.bookName, 
+    this.props.navigation.navigate('Bible', {bookId: item.bookId, bookName: item.bookName, 
       chapterNumber: item.chapterNumber, verseNumber: item.verseNumber})
   }
 

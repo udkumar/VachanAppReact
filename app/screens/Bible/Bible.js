@@ -27,7 +27,9 @@ import {getResultText} from '../../utils/UtilFunctions';
 import { styles } from './styles.js';
 import id_name_map from '../../assets/mappings.json'
 import {NavigationActions} from 'react-navigation'
-import SwipableModal from '../../components/SwipableModal'
+import SwipableModal from './Modals/SwipableModal'
+import BottomModal from './Modals/BottomModal'
+import SplitScreen from './Modals/SplitScreen'
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -108,6 +110,8 @@ export default class Bible extends Component {
     this.getSelectedReferences = this.getSelectedReferences.bind(this)
     this.queryBook = this.queryBook.bind(this)
     this.onBookmarkPress = this.onBookmarkPress.bind(this)
+    this.showScreen = this.showScreen.bind(this)
+    // this.modalHandle = this.modalHandle.bind(this)
 
     this.updateCurrentChapter = this.updateCurrentChapter.bind(this)
     this.state = {
@@ -136,7 +140,10 @@ export default class Bible extends Component {
       isOpen: false,
       isDisabled: false,
       swipeToClose: true,
-      sliderValue: 0.3
+      sliderValue: 0.3,
+
+      styleHeight: null,
+      show:false
     }
 
     this.pinchDiff = 0
@@ -383,19 +390,25 @@ export default class Bible extends Component {
             this.scrollViewRef.scrollTo({x: 0, y: 0, animated: false})
     })
   }
-  modalHandle = () =>{
-    let refValue = this.modalOpen.open()
+  // modalHandle(){
+  //   this.setState({show:false})
+  //   this.refs.modal1.open()
+  // }
+  showScreen =(value)=>{
+    console.log("show bottom "+value)
+    this.setState({show: value})
+    console.log("show bottom "+this.state.value)
   }
   render() {
     const thumbSize = this.state.thumbSize;
+    console.log("show "+this.state.show)
       return (
         <View style={this.styles.container} >
         {this.state.modelData.length>0 ? 
             <View>
-
                 <ScrollView
                     {...this.gestureResponder}
-                    style={this.styles.recyclerListView}
+                    style={{height:this.state.show ? height/2 : height}}
                     ref={(ref) => { this.scrollViewRef = ref; }}                    
                 >
                  {    (this.state.verseInLine) ?
@@ -449,7 +462,16 @@ export default class Bible extends Component {
                             </View>
                         }
                 </ScrollView>
-                
+                {
+                this.state.show ?  
+                <ScrollView style={{height:height/2}}>
+                  <Text>abcd</Text>
+                </ScrollView>:null
+                }
+               <View
+               >
+
+               </View>
                 {/* {this.state.showBottomBar || this.state.currentVisibleChapter == 1
                 ? null :
                 <View style={this.styles.bottomBarPrevView}>
@@ -469,88 +491,19 @@ export default class Bible extends Component {
                 </View>
                 } */}
             </View>
-
+           
             :
             <ActivityIndicator 
             animating={this.state.isLoading ? true : false} 
             size="large" 
             color="#0000ff" />
-            
           }
-       
-          <View 
-          style={{
-            position:'absolute', 
-            bottom:0,
-            width: width, 
-            height: 30, 
-            backgroundColor:'#3F51B5',
-            flexDirection:'row',
-            justifyContent:'center'
-    
-          }}
-          >
-            <TouchableOpacity 
-              onPress={()=>{this.child.onOpen()}}
-              style={{
-                position:'absolute', 
-                top:0, 
-                right:0,
-                marginHorizontal:8
-              }}
-            >
-            <Icon 
-              name="arrow-drop-up" 
-              style={{
-                color:"#fff",
-                fontSize:28,
-               
-              }}
-            />
-            </TouchableOpacity>
-          {/* {this.state.showBottomBar  */}
-            {/* ?  */}
-            {/* <View style={this.styles.bottomOption}>
-            <TouchableOpacity onPress={this.doHighlight}  
-            >
-              <Text style={this.styles.bottomOptionText}>
-                {this.state.bottomHighlightText == true ? 'HIGHLIGHT' : 'REMOVE HIGHLIGHT' }
-              </Text>
-              <Icon name={'border-color'} color="white" size={24} style={this.styles.bottomOptionIcon} />
-              </TouchableOpacity>
-            </View>
-            
-            <View style={this.styles.bottomOptionSeparator} />
-            
-            <View style={this.styles.bottomOption}>  
-              <TouchableOpacity onPress={this.addToNotes} 
-              >        
-                <Text style={this.styles.bottomOptionText}>
-                  NOTES
-                </Text>
-                <Icon name={'note'} color="white" size={24} 
-                style={this.styles.bottomOptionIcon} 
-                />
-              </TouchableOpacity>
-            </View>
-            
-            <View style={this.styles.bottomOptionSeparator} />          
-  
-            <View style={this.styles.bottomOption}>   
-              <TouchableOpacity onPress={this.addToShare}  
-              >       
-                <Text style={this.styles.bottomOptionText}>
-                  SHARE
-                </Text>
-                <Icon name={'share'} color="white" size={24} style={this.styles.bottomOptionIcon} />
-              </TouchableOpacity>
-            </View> */}
-          {/* // : null } */}
-          </View>
-           <SwipableModal
-              onRef={ref => (this.child = ref)}
-              handleModel={this.modalHandle}
-            /> 
+           <View>
+             <BottomModal
+             show={this.state.show}
+             showScreen={this.showScreen}
+             />
+           </View>
         </View>
       );
   }

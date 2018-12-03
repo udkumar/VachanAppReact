@@ -19,62 +19,30 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 // import HighLights from '../screens/Highlights/Highlights';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
+import SplitScreen from './SplitScreen'
 
-var screen = Dimensions.get('window');
+// var screen = Dimensions.get('window');
 
-export default class Example extends React.Component {
+export default class BottomTab extends React.Component {
 
   constructor(props) {
-    super(props);
-    this.state = {
-      isOpen: false,
-      isDisabled: false,
-      swipeToClose: true,
-      sliderValue: 0.3
-    };
+    super(props)
+    console.log("props "+JSON.stringify(props))
+   
   }
-
-  onClose() {
-    console.log('Modal just closed');
-  }
-
-  onOpen = () =>  {
-    console.log("reference function ")
-    this.refs.modal1.open()
-    // this.ref.open()
-  }
-
-  onClosingState(state) {
-    console.log('the open/close of the swipeToClose just changed');
-  }
-  componentDidMount(){
-      this.props.onRef(this)
-  }
- 
-
+  
   render() {
     return (
-        <Modal 
-            style={{height:68}}
-            position={"bottom"} 
-            ref={"modal1"}
-            swipeArea={100}
-            backdrop={true}
-            coverScreen	={false}
-            backdrop='bottom'
-            coverScreen={false}
-            swipeToClose={true}
-            backdropOpacity={0}
-        >
+        <View style={{flex:1}}>
             <View 
                 style={{
                     position:'absolute', 
                     bottom:0,
-                    width: width, 
-                    height: 68, 
+                    width: width,
+                    // height:50, 
                     backgroundColor:'#3F51B5',
                     flexDirection:'row',
-                    justifyContent:'center'
+                    justifyContent:'center',
                 }}
             >
             <View 
@@ -83,10 +51,10 @@ export default class Example extends React.Component {
                     width:width/5,
                     justifyContent:'center',
                     alignItems:'center',
+                    marginVertical:4
                 }}>
                 <TouchableOpacity 
-                // onPress={()=>this.refs.modal2.open}  
-
+                    onPress={()=>this.prop.showScreen(!this.props.show)}
                 >
                 <Text style={{textAlign:'center',color:'white', }}>
                     NotePad
@@ -99,8 +67,8 @@ export default class Example extends React.Component {
                     }} 
                 />
                 </TouchableOpacity>
-                </View>
-                <View 
+            </View>
+            <View 
                 style={{ width: 1,
                     backgroundColor:'white',
                     marginVertical:8,
@@ -219,8 +187,10 @@ export default class Example extends React.Component {
                 />
               </TouchableOpacity>
             </View>  
+         
          </View>
-        </Modal>
+           
+        </View>
     
     );
   }
@@ -228,51 +198,3 @@ export default class Example extends React.Component {
 }
 
 
-const styles = StyleSheet.create({
-
-  wrapper: {
-    paddingTop: 50,
-    flex: 1
-  },
-
-  modal: {
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-
-  modal2: {
-    height: 230,
-    backgroundColor: "#3B5998"
-  },
-
-  modal3: {
-    height: 300,
-    width: 300
-  },
-
-  modal4: {
-    height: 300
-  },
-
-  btn: {
-    margin: 10,
-    backgroundColor: "#3B5998",
-    color: "white",
-    padding: 10
-  },
-
-  btnModal: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    width: 50,
-    height: 50,
-    backgroundColor: "transparent"
-  },
-
-  text: {
-    color: "black",
-    fontSize: 22
-  }
-
-});

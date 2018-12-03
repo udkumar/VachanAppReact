@@ -8,14 +8,6 @@ class DrawerScreen extends Component {
     constructor(props){
         super(props);
     }
-  navigateToScreen = (route) => () => {
-    const navigateAction = NavigationActions.navigate({
-      routeName: route
-    });
-//     this.props.navigation.dispatch(navigateAction);
-//     props.navigation.navigate('DrawerClose');
-  }
-
   render () {
     return (
       <View>

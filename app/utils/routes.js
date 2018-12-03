@@ -17,13 +17,11 @@ import ReferenceSelection from '../screens/numberSelection/ReferenceSelection'
 import ChapterSelection from '../screens/numberSelection/ChapterSelection'
 import Hints from '../screens/Hints/Hints'
 import Language from '../screens/Language/Language'
-import Book from '../screens/book/Book'
 import DownloadLanguage from '../screens/Downloads/DownloadLanguage'
 import DownloadVersion from '../screens/Downloads/DownloadVersion'
 import BackupRestore from '../screens/backup/BackupRestore'
 import DrawerScreen from '../screens/DrawerScreen/DrawerScreen'
 import  Bible from '../screens/Bible/Bible'
-
 const AsyncStorageConstants = require('./AsyncStorageConstants')
 import AsyncStorageUtil from './AsyncStorageUtil';
 import {nightColors, dayColors, constColors} from './colors.js'
@@ -120,9 +118,6 @@ const StackNavigate = StackNavigator(
       },
       Hints: {
         screen: Hints,
-      },
-      Book: {
-        screen: Book,
       },
       Language:{
         screen:Language
