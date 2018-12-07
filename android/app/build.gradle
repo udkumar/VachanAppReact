@@ -137,7 +137,6 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-bottomsheet')
     implementation project(':react-native-fs')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-webview-bridge')
@@ -162,9 +161,9 @@ dependencies {
 
     api "com.android.support:appcompat-v7:27.1.0"
     api "com.facebook.react:react-native:+"  // From node_modules
-    implementation ("com.facebook.react:react-native:0.54.0") {
-         force = true 
-    } 
+    // implementation ("com.facebook.react:react-native:0.54.0") {
+    //      force = true 
+    // } 
 
 }
 
@@ -182,3 +181,4 @@ project.afterEvaluate {
 
 
 apply plugin: 'com.google.gms.google-services'
+com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true

@@ -1,18 +1,7 @@
-import { AppRegistry } from 'react-native';
-import App from './app/utils/routes'
-import React, {Component} from 'react'
+/** @format */
 
-export default class AutographaGo extends Component {
+import {AppRegistry} from 'react-native';
+import App from './App';
+import {name as appName} from './app.json';
 
-    constructor(props) {
-        super(props)
-    }
-    
-    render(){
-        return(
-            <App/>
-        )
-    }
-}
-
-AppRegistry.registerComponent('AutographaGo_ReactNative', () => App);
+AppRegistry.registerComponent(appName, () => App);

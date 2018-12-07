@@ -12,7 +12,6 @@ import {
   Slider,
   Share,
 } from 'react-native';
-import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {createResponder } from 'react-native-gesture-responder';
 
@@ -23,30 +22,16 @@ import AsyncStorageConstants from '../../utils/AsyncStorageConstants';
 const Constants = require('../../utils/constants')
 
 import {getResultText} from '../../utils/UtilFunctions';
-
+import {
+  MenuContext
+} from 'react-native-popup-menu';
 import { styles } from './styles.js';
 import id_name_map from '../../assets/mappings.json'
 import {NavigationActions} from 'react-navigation'
-import SwipableModal from './Modals/SwipableModal'
 import BottomModal from './Modals/BottomModal'
-import SplitScreen from './Modals/SplitScreen'
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-
-const MenuIcon = (navigation) => {
-  return (
-      <Icon 
-        name="dehaze"  
-        color="#fff"
-        onPress={() => {navigation.navigate('DrawerToggle')}}
-        style={{marginHorizontal:8,fontSize:20}}
-      />
-  );
-// return <Icon name="keyboard-arrow-lefte"  Size={38}/>
-
-}
-
 export default class Bible extends Component {
 
 
@@ -65,15 +50,22 @@ export default class Bible extends Component {
                       alignSelf:'center',
                       color:"#fff",
                       fontSize: 22,
+                      marginTop:2
                   }} 
                   
                   />
             </TouchableOpacity>
+            <TouchableOpacity style={{flexDirection:'row'}} onPress={()=>{navigation.navigate("SelectBook")}}>
               <Text 
-                style={{fontSize:16,color:"#fff",alignSelf:'center',alignItems:'center'}}
-                onPress={()=>{navigation.navigate("SelectBook")}}>{params.bookName}
+                style={{fontSize:16,color:"#fff",alignSelf:'center',alignItems:'center',marginHorizontal:4}}
+                >{params.bookName}
               </Text>
-              <TouchableOpacity onPress={()=>params.currentChapter == params.dataLength ? null : params.updateChapter(1)}>
+              <Text 
+                style={{fontSize:16,color:"#fff",alignSelf:'center',alignItems:'center',marginHorizontal:4}}
+                >{params.currentChapter }
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={()=>params.currentChapter == params.dataLength ? null : params.updateChapter(1)}>
                 <Icon name={'chevron-right'} 
                   style={{
                       alignItems:'center',
@@ -81,22 +73,30 @@ export default class Bible extends Component {
                       alignSelf:'center',
                       color:"#fff",
                       fontSize:22,
+                      marginTop:2
                   }} 
                  
                   />
-              </TouchableOpacity>
+            </TouchableOpacity>
       </View>
        
       ), 
         headerTintColor:"#fff",
         headerRight:(
-          <Icon 
-              onPress={()=> {params.onIconPress()}} 
-              name={'bookmark'} 
-              color={params.isBookmark ? "red" : "white"} 
-              size={24} 
-              style={{marginHorizontal:8}} 
-          />    
+          <View  style={{flexDirection:'row',flex:1}}>
+            <TouchableOpacity onPress={() =>{params.openLanguages()}} >
+              <Text style={{
+                fontSize:16,color:"#fff",alignSelf:'center',alignItems:'center'
+              }}>{params.bibleLanguage} {params.bibleVersion}</Text>
+            </TouchableOpacity>
+            <Icon 
+                onPress={()=> {params.onIconPress()}} 
+                name={'bookmark'} 
+                color={params.isBookmark ? "red" : "white"} 
+                size={24} 
+                style={{marginHorizontal:8}} 
+            />    
+          </View>
         )
     }
   }
@@ -111,6 +111,7 @@ export default class Bible extends Component {
     this.queryBook = this.queryBook.bind(this)
     this.onBookmarkPress = this.onBookmarkPress.bind(this)
     this.showScreen = this.showScreen.bind(this)
+    // this.openLanguages = this.openLanguages.bind(this)
     // this.modalHandle = this.modalHandle.bind(this)
 
     this.updateCurrentChapter = this.updateCurrentChapter.bind(this)
@@ -226,8 +227,11 @@ export default class Bible extends Component {
     this.props.navigation.setParams({
         onIconPress: this.onBookmarkPress,
         updateChapter:this.updateCurrentChapter,
+        openLanguages:this.openLanguages,
         bookName: this.state.bookName,
-        currentChapter:this.state.currentVisibleChapter
+        currentChapter:this.state.currentVisibleChapter,
+        bibleLanguage: this.props.screenProps.languageName, 
+        bibleVersion: this.props.screenProps.versionCode
     })    
     this.setState({isLoading: true}, () => {
       this.queryBook()
@@ -390,35 +394,48 @@ export default class Bible extends Component {
             this.scrollViewRef.scrollTo({x: 0, y: 0, animated: false})
     })
   }
-  // modalHandle(){
-  //   this.setState({show:false})
-  //   this.refs.modal1.open()
-  // }
-  showScreen =(value)=>{
-    console.log("show bottom "+value)
-    this.setState({show: value})
-    console.log("show bottom "+this.state.value)
+  modalHandle(){
+    this.setState({show:!this.state.show})
+    this.refs.modal1.open()
   }
+  showScreen(){
+    console.log("state value "+this.state.show)
+    this.setState({
+      show: !this.state.show});
+  }
+  
+  openLanguages = ()=>{
+    this.props.navigation.navigate("Language", {updateLanguage:this.updateLanguage})
+  } 
+  updateLanguage = (language,version) =>{
+    this.props.navigation.setParams({
+      bibleLanguage: language,
+      bibleVersion: version
+    })
+  }
+  // onOptionSelect(value) {
+  //   alert(`Selected number: ${value}`);
+  //   this.setState({ showBottomBar: false });
+  // }
   render() {
     const thumbSize = this.state.thumbSize;
-    console.log("show "+this.state.show)
       return (
         <View style={this.styles.container} >
+          <MenuContext style={this.styles.verseWrapperText}>
         {this.state.modelData.length>0 ? 
             <View>
                 <ScrollView
-                    {...this.gestureResponder}
-                    style={{height:this.state.show ? height/2 : height}}
+                   style={{height:this.state.show ? height/2 : height}}
+                    // style={this.styles.recyclerListView}
                     ref={(ref) => { this.scrollViewRef = ref; }}                    
                 >
                  {    (this.state.verseInLine) ?
-                  <View style={this.styles.chapterList}>
+                          <View style={this.styles.chapterList}>
                             <FlatList
-                           
                             data={this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels}
                             renderItem={({item, index}) => 
-                                <Text letterSpacing={24}
-                                    style={this.styles.verseWrapperText}>
+                                  <Text letterSpacing={24} 
+                                     style={this.styles.verseWrapperText}> 
                                         <VerseView
                                             ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
                                             verseData = {item}
@@ -429,18 +446,20 @@ export default class Bible extends Component {
                                             this.getSelectedReferences(verseIndex, chapterNumber, verseNumber)
                                             }}
                                         />
-                                </Text>
+                                     
+                                  </Text> 
                             }
                             ListFooterComponent={<View style={styles.addToSharefooterComponent} />}
                             />
                             </View>
                         :
+
                             <View style={this.styles.chapterList}>
-                                
+                                  
                                     {this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels.map((verse, index) => 
                                         <View>
-                                            <Text letterSpacing={24}
-                                                style={this.styles.verseWrapperText}>
+                                            {/* <Text letterSpacing={24}
+                                                 >   */}
                                                 <VerseView
                                                     ref={child => (this[`child_${verse.chapterNumber}_${index}`] = child)}
                                                     verseData = {verse}
@@ -450,60 +469,125 @@ export default class Bible extends Component {
                                                     getSelection = {(verseIndex, chapterNumber, verseNumber) => {
                                                     this.getSelectedReferences(verseIndex, chapterNumber,verseNumber)
                                                     }}
+                                                    makeHighlight={this.doHighlight}
+                                                    makeNotes={this.addToNotes}
+                                                    share={this.addToShare}
+                                                    HighlightText={this.state.bottomHighlightText}
+                                                    
                                                 />
-                                            </Text>
+                                               
+                                            {/* </Text> */}
+                                            
                                             {index == this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels.length - 1
-                                            ? <View style={{height:64, marginBottom:4}} />
+                                            ? <View style={{height:80, marginBottom:4}} />
                                             : null
                                             }
-                                                </View>
+                                            
+                                          </View>
                                     )}
-                                
                             </View>
                         }
                 </ScrollView>
+                
                 {
-                this.state.show ?  
-                <ScrollView style={{height:height/2}}>
-                  <Text>abcd</Text>
-                </ScrollView>:null
+                  this.state.show ? 
+                  <ScrollView
+                  style={{height:height/2}}
+                  >
+                    <TouchableOpacity style={{backgroundColor:'#3F51B5'}} onPress={this.showScreen}>
+                      {/* <Text>go up</Text> */}
+                      <Icon name="arrow-drop-down" style={{fontSize:20,color:"#fff",alignSelf: 'flex-end'}}/>
+                    </TouchableOpacity>
+                   
+                  </ScrollView>
+                  :null
                 }
-               <View
-               >
-
-               </View>
-                {/* {this.state.showBottomBar || this.state.currentVisibleChapter == 1
-                ? null :
-                <View style={this.styles.bottomBarPrevView}>
-                    <Icon name={'chevron-left'} color="black" size={36} 
-                        style={this.styles.bottomBarChevrontIcon} 
-                        onPress={()=> this.updateCurrentChapter(-1)}
-                        />
-                </View>
-                }
-                {this.state.showBottomBar || this.state.currentVisibleChapter == this.state.modelData.length 
-                ? null :
-                <View style={this.styles.bottomBarNextView}>
-                    <Icon name={'chevron-right'} 
-                        style={this.styles.bottomBarChevrontIcon} 
-                        onPress={()=> this.updateCurrentChapter(1)}
-                        />
-                </View>
-                } */}
+                
             </View>
-           
+
             :
             <ActivityIndicator 
             animating={this.state.isLoading ? true : false} 
             size="large" 
             color="#0000ff" />
+            
           }
-           <View>
-             <BottomModal
-             show={this.state.show}
-             showScreen={this.showScreen}
-             />
-           </View>
+          <BottomModal
+              showScreen = {this.showScreen}
+              show={this.state.show}
+          />
+          {/* <View 
+          style={{
+            position:'absolute', 
+            bottom:0,
+            width: width, 
+            height: 30, 
+            backgroundColor:'#3F51B5',
+            flexDirection:'row',
+            justifyContent:'center'
+    
+          }}
+          >
+            <TouchableOpacity 
+          
+              onPress={this.showScreen}
+              style={{
+                position:'absolute', 
+                top:0, 
+                right:0,
+                marginHorizontal:8
+              }}
+            >
+            <Icon 
+              name="arrow-drop-up" 
+              style={{
+                color:"#fff",
+                fontSize:28,
+               
+              }}
+            />
+            </TouchableOpacity>
+            </View> */}
+          {/* {this.state.showBottomBar  */}
+            {/* ?  */}
+            {/* <View style={this.styles.bottomOption}>
+            <TouchableOpacity onPress={this.doHighlight}  
+            >
+              <Text style={this.styles.bottomOptionText}>
+                {this.state.bottomHighlightText == true ? 'HIGHLIGHT' : 'REMOVE HIGHLIGHT' }
+              </Text>
+              <Icon name={'border-color'} color="white" size={24} style={this.styles.bottomOptionIcon} />
+              </TouchableOpacity>
+            </View>
+            
+            <View style={this.styles.bottomOptionSeparator} />
+            
+            <View style={this.styles.bottomOption}>  
+              <TouchableOpacity onPress={this.addToNotes} 
+              >        
+                <Text style={this.styles.bottomOptionText}>
+                  NOTES
+                </Text>
+                <Icon name={'note'} color="white" size={24} 
+                style={this.styles.bottomOptionIcon} 
+                />
+              </TouchableOpacity>
+            </View>
+            
+            <View style={this.styles.bottomOptionSeparator} />          
+  
+            <View style={this.styles.bottomOption}>   
+              <TouchableOpacity onPress={this.addToShare}  
+              >       
+                <Text style={this.styles.bottomOptionText}>
+                  SHARE
+                </Text>
+                <Icon name={'share'} color="white" size={24} style={this.styles.bottomOptionIcon} />
+              </TouchableOpacity>
+            </View> */}
+          {/* // : null } */}
+          {/* </View> */}
+          </MenuContext>
         </View>
       );
   }
