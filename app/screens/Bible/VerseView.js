@@ -76,14 +76,13 @@ export default class VerseView extends Component {
           >
           <MenuTrigger text=""/>
             <MenuOptions style={{flexDirection:'row',justifyContent:"center"}}>
-                      <MenuOption onSelect={() => this.props.makeHighlight()}  style={{alignItems:'center'}}>
+                      <MenuOption onSelect={this.props.makeHighlight()}  style={{alignItems:'center'}}>
                         <Text>{this.props.HighlightText == true ? "Highlight" : "Remove Highlight"}</Text>
                       </MenuOption>
-                      
-                      <MenuOption  onSelect={() => this.props.makeNotes()} style={{alignItems:'center'}}>
+                      <MenuOption  onSelect={this.props.makeNotes()} style={{alignItems:'center'}}>
                         <Text>Note</Text>
                       </MenuOption>
-                      <MenuOption onSelect={() => this.props.share()} style={{alignItems:'center'}}>
+                      <MenuOption onSelect={this.props.share()} style={{alignItems:'center'}}>
                         <Text>Share</Text>
                       </MenuOption>
             </MenuOptions>
