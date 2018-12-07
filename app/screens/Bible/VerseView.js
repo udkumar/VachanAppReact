@@ -27,15 +27,15 @@ export default class VerseView extends Component {
     }
   }
  
-  onPress(menuValue) {
-    console.log("get selection ")
-    this.props.getSelection(
-        this.props.index, 
-        this.props.verseData.chapterNumber,
-        this.props.verseData.verseNumber
-    )
-    Alert.alert(menuValue)
-  }
+  // onPress(menuValue) {
+  //   console.log("get selection ")
+  //   this.props.getSelection(
+  //       this.props.index, 
+  //       this.props.verseData.chapterNumber,
+  //       this.props.verseData.verseNumber
+  //   )
+  //   Alert.alert(menuValue)
+  // }
 
   has(selectedReferences, obj) {
     for(var i = 0; i < selectedReferences.length; i++) {
@@ -76,13 +76,13 @@ export default class VerseView extends Component {
           >
           <MenuTrigger text=""/>
             <MenuOptions style={{flexDirection:'row',justifyContent:"center"}}>
-                      <MenuOption onSelect={this.props.makeHighlight()}  style={{alignItems:'center'}}>
+                      <MenuOption onSelect={this.props.makeHighlight}  style={{alignItems:'center'}}>
                         <Text>{this.props.HighlightText == true ? "Highlight" : "Remove Highlight"}</Text>
                       </MenuOption>
-                      <MenuOption  onSelect={this.props.makeNotes()} style={{alignItems:'center'}}>
+                      <MenuOption  onSelect={this.props.makeNotes} style={{alignItems:'center'}}>
                         <Text>Note</Text>
                       </MenuOption>
-                      <MenuOption onSelect={this.props.share()} style={{alignItems:'center'}}>
+                      <MenuOption onSelect={this.props.share} style={{alignItems:'center'}}>
                         <Text>Share</Text>
                       </MenuOption>
             </MenuOptions>
