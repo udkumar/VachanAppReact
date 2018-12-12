@@ -208,12 +208,56 @@ export default class USFMParser {
             }
         }
         var result = res + tempRes.join(" ");
+
         var verseComponentsModel = {type: Constants.MarkerTypes.VERSE, verseNumber: splitString[1], 
             text: result, highlighted: false, added: true, 
             languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
             chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber};
         this.verseList.push(verseComponentsModel);
+
+        var result = res + tempRes.join(" ");
+        const tagRemove = result.replace(/\\it\*\*|\\it/g,'')
+        const verseData = tagRemove.replace(/(\\f(.*?)\\f\*)|(\\bdit(.*?)\\bdit\*)/g,"")
+        const footnote = tagRemove.match(/\\f(.*?)\\f\*/g)
+
+        if(footnote == null){
+            return true
+        }
+        this.addFootNotes(footnote,splitString[1])
     }
+
+    addFootNotes(notes,verseNum){
+        const noteData = notes.toString()
+        if(notes.length == 0) {
+            return true
+        }
+        const frTag = /((\\f\s+\+\s+\\fr\s+)(\d+\.\d+)(.*?)(\\f\*))/g
+        const fqTag = /((\\fr(.*?)\\fq\s+)(.*?)(\\ft))/g
+        const fxTag =/((\\fr(.*?)\\fq)((.*?)\\ft.*))/g
+        const fTag = /((\\f\s+\+)(.*?)(\\f\*))/g
+        const noteContent = noteData.replace(fTag,'$3')
+
+        const foootNoteRef = noteData.replace(frTag,'$3')
+        const footNotequotation = noteContent.replace(fxTag,'$5')
+        const foootNoteText = noteContent.replace(fqTag,'')
+
+        console.log("FOOTNOTE TEXT "+foootNoteText+" FOOTNOTE REFERENCE "+foootNoteRef+" FOOTNOTES QUOTATION "+footNotequotation)
+        var verseComponentsModel = {type:Constants.MarkerTypes.MARKER_FOOT_NOTES_QUOTATION, 
+        verseNumber:verseNum, 
+        text:footNotequotation, highlighted: false, added: true, 
+        languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
+        chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber};
+        this.verseList.push(verseComponentsModel)
+
+        var verseComponentsModel = {type:Constants.MarkerTypes.MARKER_FOOT_NOTES_TEXT, 
+            verseNumber:verseNum, 
+            text:foootNoteText, highlighted: false, added: true, 
+            languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
+            chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber};
+        this.verseList.push(verseComponentsModel)
+
+    }
+
 
     addComponentsToChapter() {
         if (this.chapterList.length > 0) {

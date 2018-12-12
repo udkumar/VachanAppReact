@@ -47,7 +47,6 @@ export default class Example extends React.Component {
                 }}>
                 <TouchableOpacity 
                 onPress={this.props.showScreen}  
-
                 >
                 <Text style={{textAlign:'center',color:'white', }}>
                     NotePad

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {
-  StyleSheet,
   Text,
   View,
   Button,
@@ -9,7 +8,7 @@ import {
   ActivityIndicator,
   Dimensions,
   TouchableOpacity,
-  Slider,
+  LayoutAnimation,
   Share,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -111,7 +110,8 @@ export default class Bible extends Component {
     this.queryBook = this.queryBook.bind(this)
     this.onBookmarkPress = this.onBookmarkPress.bind(this)
     this.showScreen = this.showScreen.bind(this)
-    // this.openLanguages = this.openLanguages.bind(this)
+    this.onScroll = this.onScroll.bind(this)
+     // this.openLanguages = this.openLanguages.bind(this)
     // this.modalHandle = this.modalHandle.bind(this)
 
     this.updateCurrentChapter = this.updateCurrentChapter.bind(this)
@@ -138,12 +138,9 @@ export default class Bible extends Component {
       left: width / 2,
       top: height / 2,
 
-      isOpen: false,
-      isDisabled: false,
-      swipeToClose: true,
-      sliderValue: 0.3,
-
-      styleHeight: null,
+      offset:0,
+      scrollDirection:'up',
+      index:0,
       show:false
     }
 
@@ -413,19 +410,31 @@ export default class Bible extends Component {
       bibleVersion: version
     })
   }
-  // onOptionSelect(value) {
-  //   alert(`Selected number: ${value}`);
-  //   this.setState({ showBottomBar: false });
-  // }
+  onScroll(event){
+    var currentOffset = event.nativeEvent.contentOffset.y;
+    var direction = currentOffset > this.state.offset ? 'down' : 'up';
+    this.state.offset = currentOffset;
+    this.setState({scrollDirection:direction})
+    console.log(direction);
+  }
+
+
+  onLayoutChange = () =>{
+    const heightInc = Dimensions.get('window').height/4
+    console.log("value of index before"+this.state.index)
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+    this.setState({index: this.state.index + heightInc});
+    console.log("value of index "+this.state.index)
+  }
   render() {
     const thumbSize = this.state.thumbSize;
+    const whiteHeight = this.state.index + height/4 
       return (
         <View style={this.styles.container} >
           <MenuContext style={this.styles.verseWrapperText}>
         {this.state.modelData.length>0 ? 
             <View>
-                <ScrollView
-                   style={{height:this.state.show ? height/2 : height}}
+                <ScrollView onScroll={this.onScroll}
                     // style={this.styles.recyclerListView}
                     ref={(ref) => { this.scrollViewRef = ref; }}                    
                 >
@@ -445,6 +454,10 @@ export default class Bible extends Component {
                                             getSelection = {(verseIndex, chapterNumber, verseNumber) => {
                                             this.getSelectedReferences(verseIndex, chapterNumber, verseNumber)
                                             }}
+                                            makeHighlight={this.doHighlight}
+                                            makeNotes={this.addToNotes}
+                                            share={this.addToShare}
+                                            HighlightText={this.state.bottomHighlightText}
                                         />
                                      
                                   </Text> 
@@ -479,7 +492,7 @@ export default class Bible extends Component {
                                             {/* </Text> */}
                                             
                                             {index == this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels.length - 1
-                                            ? <View style={{height:80, marginBottom:4}} />
+                                            ? <View style={{height:25, marginBottom:4}} />
                                             : null
                                             }
                                             
@@ -487,24 +500,10 @@ export default class Bible extends Component {
                                     )}
                             </View>
                         }
+
                 </ScrollView>
                 
-                {
-                  this.state.show ? 
-                  <ScrollView
-                  style={{height:height/2}}
-                  >
-                    <TouchableOpacity style={{backgroundColor:'#3F51B5'}} onPress={this.showScreen}>
-                      {/* <Text>go up</Text> */}
-                      <Icon name="arrow-drop-down" style={{fontSize:20,color:"#fff",alignSelf: 'flex-end'}}/>
-                    </TouchableOpacity>
-                   
-                  </ScrollView>
-                  :null
-                }
-                
             </View>
-
             :
             <ActivityIndicator 
             animating={this.state.isLoading ? true : false} 
@@ -512,82 +511,28 @@ export default class Bible extends Component {
             color="#0000ff" />
             
           }
-          <BottomModal
-              showScreen = {this.showScreen}
-              show={this.state.show}
-          />
-          {/* <View 
-          style={{
-            position:'absolute', 
-            bottom:0,
-            width: width, 
-            height: 30, 
-            backgroundColor:'#3F51B5',
-            flexDirection:'row',
-            justifyContent:'center'
-    
-          }}
-          >
-            <TouchableOpacity 
-          
-              onPress={this.showScreen}
-              style={{
-                position:'absolute', 
-                top:0, 
-                right:0,
-                marginHorizontal:8
-              }}
-            >
-            <Icon 
-              name="arrow-drop-up" 
-              style={{
-                color:"#fff",
-                fontSize:28,
-               
-              }}
-            />
-            </TouchableOpacity>
-            </View> */}
-          {/* {this.state.showBottomBar  */}
-            {/* ?  */}
-            {/* <View style={this.styles.bottomOption}>
-            <TouchableOpacity onPress={this.doHighlight}  
-            >
-              <Text style={this.styles.bottomOptionText}>
-                {this.state.bottomHighlightText == true ? 'HIGHLIGHT' : 'REMOVE HIGHLIGHT' }
-              </Text>
-              <Icon name={'border-color'} color="white" size={24} style={this.styles.bottomOptionIcon} />
-              </TouchableOpacity>
-            </View>
-            
-            <View style={this.styles.bottomOptionSeparator} />
-            
-            <View style={this.styles.bottomOption}>  
-              <TouchableOpacity onPress={this.addToNotes} 
-              >        
-                <Text style={this.styles.bottomOptionText}>
-                  NOTES
-                </Text>
-                <Icon name={'note'} color="white" size={24} 
-                style={this.styles.bottomOptionIcon} 
-                />
-              </TouchableOpacity>
-            </View>
-            
-            <View style={this.styles.bottomOptionSeparator} />          
-  
-            <View style={this.styles.bottomOption}>   
-              <TouchableOpacity onPress={this.addToShare}  
-              >       
-                <Text style={this.styles.bottomOptionText}>
-                  SHARE
-                </Text>
-                <Icon name={'share'} color="white" size={24} style={this.styles.bottomOptionIcon} />
-              </TouchableOpacity>
-            </View> */}
-          {/* // : null } */}
-          {/* </View> */}
+         
           </MenuContext>
+          {
+            this.state.show ? 
+              <View>
+                  <TouchableOpacity style={{backgroundColor:'#3F51B5'}} onPress={this.onLayoutChange}> 
+                      {/* <Text style={{color:'#fff'}}>go up</Text>  */}
+                        <Icon name="arrow-drop-up" style={{fontSize:20,color:"#fff",alignSelf: 'flex-end'}}/> 
+                    </TouchableOpacity>
+                  {/* <ScrollView onscroll={this.onLayoutChang}> */}
+                  <View style={{backgroundColor:'pink', height:whiteHeight}} />
+                  {/* </ScrollView> */}
+            </View>:null
+          }
+          {
+            this.state.scrollDirection == 'up' ? 
+            <BottomModal
+            showScreen = {this.showScreen}
+            show={this.state.show}
+          /> : null 
+          }
+         
         </View>
       );
   }

@@ -47,7 +47,6 @@ export default class VerseView extends Component {
   }
   onBackdropPress(){
     this.setState({ opened: false });
-    console.log("coming to on backdrop press")
   }
   openMenu = () => {
     this.props.getSelection(
@@ -55,7 +54,11 @@ export default class VerseView extends Component {
       this.props.verseData.chapterNumber,
       this.props.verseData.verseNumber
   )
-    this.menu.open();
+  let obj = this.props.verseData.chapterNumber + '_' + this.props.index + '_' + this.props.verseData.verseNumber;
+  let isSelect = this.has(this.props.selectedReferences, obj)
+  if(isSelect){
+    this.menu.open()
+  }
   };
 
   
@@ -63,7 +66,6 @@ export default class VerseView extends Component {
     let obj = this.props.verseData.chapterNumber + '_' + this.props.index + '_' + this.props.verseData.verseNumber;
     let isSelect = this.has(this.props.selectedReferences, obj)
     let isHighlight = this.props.verseData.highlighted;
-    console.log("is highlighted text "+isHighlight+" is selected text "+isSelect)
 
     switch(this.props.verseData.type) {
       case Constants.MarkerTypes.VERSE: {
@@ -120,7 +122,7 @@ export default class VerseView extends Component {
           <Text style={this.props.styles.paragraphText} >
             {"\n"} {getResultText(this.props.verseData.text)}
           </Text>
-        );
+        )
       }
       case Constants.MarkerTypes.SECTION_HEADING: {
       }
