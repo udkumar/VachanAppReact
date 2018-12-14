@@ -258,7 +258,7 @@ renderItem = ({item, index})=> {
        
                 style={[{
                   backgroundColor: this.state.activeTab ? activeBgColor : inactiveBgColor,
-                  width: this.state.NTSize == 0 ? width/2 : width/2,
+                  width: this.state.NTSize == 0 ? width : width/2,
                   },this.styles.segmentButton]} 
                 onPress={this.toggleButton.bind(this,true)
                 }
@@ -278,7 +278,7 @@ renderItem = ({item, index})=> {
                 active={!this.state.activeTab} 
                 style={[{
                   backgroundColor: !this.state.activeTab ? activeBgColor : inactiveBgColor,
-                  width: this.state.OTSize == 0 ? width/2 : width/2,                  
+                  width: this.state.OTSize == 0 ? width : width/2,                  
                 },this.styles.segmentButton]} 
                 onPress={this.toggleButton.bind(this,false)}>
                 <Text 

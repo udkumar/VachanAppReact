@@ -6,6 +6,7 @@ import {
   Alert,
   TouchableWithoutFeedback
 } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons'
 const Constants = require('../../utils/constants')
 import {getResultText} from '../../utils/UtilFunctions';
 import {
@@ -37,6 +38,7 @@ export default class VerseView extends Component {
   //   Alert.alert(menuValue)
   // }
 
+
   has(selectedReferences, obj) {
     for(var i = 0; i < selectedReferences.length; i++) {
       if (selectedReferences[i] == obj) {
@@ -60,7 +62,9 @@ export default class VerseView extends Component {
     this.menu.open()
   }
   };
-
+  onShowNotes = ()=>{
+    this.props.onPressfootNote
+  }
   
   render() {
     let obj = this.props.verseData.chapterNumber + '_' + this.props.index + '_' + this.props.verseData.verseNumber;
@@ -70,6 +74,7 @@ export default class VerseView extends Component {
     switch(this.props.verseData.type) {
       case Constants.MarkerTypes.VERSE: {
         return (
+          <View >
           <TouchableWithoutFeedback onLongPress={this.openMenu}>
           <View>
           <Menu 
@@ -102,28 +107,50 @@ export default class VerseView extends Component {
                       : this.props.styles.verseTextSelectedNotHighlighted}
                       >
                 {getResultText(this.props.verseData.text)}
-              </Text>   
+              </Text> 
             </Text>
-         
-        </View>
+            </View>
         </TouchableWithoutFeedback>   
+        </View>
         );
       }
-      case Constants.MarkerTypes.PARAGRAPH: {
-        if (this.props.verseData.verseNumber == "1" || 
-            this.props.verseData.verseNumber.startsWith("1-")) {
-              return (
-                <Text style={this.props.styles.paragraphText} >
-                  {getResultText(this.props.verseData.text)}
-                </Text>      
-              );
-        }
+      // case Constants.MarkerTypes.PARAGRAPH: {
+      //   if (this.props.verseData.verseNumber == "1" || 
+      //       this.props.verseData.verseNumber.startsWith("1-")) {
+      //         return (
+      //           <Text style={this.props.styles.paragraphText} >
+      //             {getResultText(this.props.verseData.text)}
+      //           </Text>      
+      //         );
+      //   }
+      //   return (
+      //     <Text style={this.props.styles.paragraphText} >
+      //       {"\n"} {getResultText(this.props.verseData.text)}
+      //     </Text>
+      //   )
+      // }
+      
+      // case (Constants.MarkerTypes.MARKER_FOOT_NOTES_QUOTATION) : {
+      //   return (
+      //     <Text>
+      //     <Text onPress={this.props.onPressfootNote} style={{fontSize:20,fontFamily:'italic',fontWeight:'bold'}}>f</Text>
+      //     {this.props.showFootNote ?  <Text style={this.props.styles.paragraphText} >
+      //     {"\n"} {getResultText(this.props.verseData.text)}
+      //     </Text>:null}
+      //    </Text>
+      //   )
+      // }
+       case (Constants.MarkerTypes.MARKER_FOOT_NOTES_TEXT) : {
         return (
-          <Text style={this.props.styles.paragraphText} >
-            {"\n"} {getResultText(this.props.verseData.text)}
-          </Text>
+          <View>
+            <Icon onPress={this.props.onPressfootNote}  name="keyboard-arrow-down" style={{color:"#3F51B5",fontSize:18}}/>
+          {this.props.showFootNote ?  <Text style={this.props.styles.paragraphText} >
+           {getResultText(this.props.verseData.text)}
+          </Text>:null}
+         </View>
         )
       }
+     
       case Constants.MarkerTypes.SECTION_HEADING: {
       }
       case Constants.MarkerTypes.SECTION_HEADING_ONE: {

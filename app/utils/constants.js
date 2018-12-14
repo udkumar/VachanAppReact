@@ -14,7 +14,13 @@ module.exports = {
         MARKER_SECTION_HEADING_TWO : "\\s2",
         MARKER_SECTION_HEADING_THREE : "\\s3",
         MARKER_SECTION_HEADING_FOUR : "\\s4",
-        MARKER_CHUNK : "\\s5"
+        MARKER_CHUNK : "\\s5",
+        MARKER_FOOT_NOTES_OPEN :'\\f',
+        MARKER_FOOT_NOTES_CLOSE :'\\f*',
+        MARKER_FOOT_NOTES_QUOTATION : '\\fq',
+        MARKER_FOOT_NOTES_TEXT : '\\ft',
+        MARKER_ITALIC_CLOSE : '\\it',
+        MARKER_ITALIC_OPEN : '\\it**',
     },
     StylingConstants: {
         SPLIT_SPACE : "\\s+",
@@ -38,6 +44,8 @@ module.exports = {
         SECTION_HEADING_FOUR : "s4",
         CHUNK : "s5",
         PARAGRAPH : "p",
-        VERSE : "v"
+        VERSE : "v",
+        MARKER_FOOT_NOTES_TEXT:'ft',
+        MARKER_FOOT_NOTES_QUOTATION:'fq'
     }
 };

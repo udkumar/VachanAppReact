@@ -120,6 +120,7 @@ class DbHelper {
 	}
 	
 	async insertNewBook(bookModel, versionModel, languageModel) {
+		// console.log("bookModel "+JSON.stringify(bookModel)+ " version modal "+JSON.stringify(versionModel)+ "language modal "+JSON.stringify(languageModel))
 		let realm = await this.getRealm();
 		if (realm) {
             var ls = realm.objectForPrimaryKey('LanguageModel', languageModel.languageCode);
@@ -141,16 +142,19 @@ class DbHelper {
                         }
                     }
                     realm.write(() => {
-                        ls.versionModels[pos].bookModels.push(bookModel);
+						ls.versionModels[pos].bookModels.push(bookModel);
+						console.log("BOOK ADDED ")
                     });
                 } else {
                     realm.write(() => {
-                        ls.versionModels.push(versionModel);     
+						ls.versionModels.push(versionModel);
+						console.log("verion model added ")    
                     });
                 }
             } else {
                 realm.write(() => {
-                    realm.create('LanguageModel', languageModel);
+					realm.create('LanguageModel', languageModel);
+					console.log("langauge added")
                 });
             }
 	  	}

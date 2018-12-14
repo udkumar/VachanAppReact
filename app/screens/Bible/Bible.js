@@ -141,7 +141,8 @@ export default class Bible extends Component {
       offset:0,
       scrollDirection:'up',
       index:0,
-      show:false
+      show:false,
+      showFootNote:false
     }
 
     this.pinchDiff = 0
@@ -426,6 +427,11 @@ export default class Bible extends Component {
     this.setState({index: this.state.index + heightInc});
     console.log("value of index "+this.state.index)
   }
+
+  onPressfootNote = () => {
+    this.setState({showFootNote:!this.state.showFootNote})
+    console.log("show notes "+this.state.showFootNote)
+  }
   render() {
     const thumbSize = this.state.thumbSize;
     const whiteHeight = this.state.index + height/4 
@@ -458,6 +464,9 @@ export default class Bible extends Component {
                                             makeNotes={this.addToNotes}
                                             share={this.addToShare}
                                             HighlightText={this.state.bottomHighlightText}
+                                            onPressfootNote = {this.onPressfootNote}
+                                            showFootNote = {this.state.showFootNote}
+
                                         />
                                      
                                   </Text> 
@@ -486,6 +495,8 @@ export default class Bible extends Component {
                                                     makeNotes={this.addToNotes}
                                                     share={this.addToShare}
                                                     HighlightText={this.state.bottomHighlightText}
+                                                    onPressfootNote = {this.onPressfootNote}
+                                                    showFootNote = {this.state.showFootNote}
                                                     
                                                 />
                                                

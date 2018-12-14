@@ -20,31 +20,47 @@ export default class USFMParser {
         this.languageName = "";
         this.versionCode = "";
         this.versionName = "";
-        this.source = "BridgeConn";
-        this.year = 2017;
-        this.license = "CCSA";
+        // this.source = "BridgeConn";
+        // this.year = 2017;
+        // this.license = "CCSA";
     }
 
-    parseFile(path, lCode, lName, vCode, vName, source, license, year, fromAssets) {
-        this.languageCode = lCode;
-        this.languageName = lName;
-        this.versionCode = vCode;
-        this.versionName = vName;
-        this.source = source;
-        this.license = license;
-        this.year = year;
+    // parseFile(path, lCode, lName, vCode, vName, source, license, year, fromAssets) {
+    //     this.languageCode = lCode;
+    //     this.languageName = lName;
+    //     this.versionCode = vCode;
+    //     this.versionName = vName;
+    //     this.source = source;
+    //     this.license = license;
+    //     this.year = year;
 
-        if (fromAssets) {
-            RNFS.readFileAssets(path)
-                .then((result)=>{
-                    this.parseFileContents(result);
-                });
-        } else {
-            RNFS.readFile(path)
-                .then((result)=>{
-                    this.parseFileContents(result);
-                });
-        }
+    //     if (fromAssets) {
+    //         RNFS.readFileAssets(path)
+    //             .then((result)=>{
+    //                 this.parseFileContents(result);
+    //             });
+    //     } else {
+    //         RNFS.readFile(path)
+    //             .then((result)=>{
+    //                 this.parseFileContents(result);
+    //             });
+    //     }
+    // }
+
+    parseFile() {
+        this.languageCode =  "HIN",
+        this.languageName = "Hindi",
+        this.versionCode = "IRV",
+        this.versionName = "Indian Revised Version",
+        this.source = "Unfolding Word",
+        this.license = "V5.0 (Consultant Checked)",
+        this.year = 2018;
+
+        RNFS.readFileAssets("hindi_irv/67-REV.usfm")
+            .then((result)=>{
+                this.parseFileContents(result)
+            })
+        
     }
 
     parseFileContents(result) {
@@ -151,7 +167,7 @@ export default class USFMParser {
     addSection(markerType, line, splitString) {
         var res = "";
         if (splitString.length > 1) {
-            var res = line.slice(4);
+            var res = line.slice(3);
         }
         var verseComponentsModel = {type: markerType, verseNumber: "", 
             text: res, highlighted: false, added: true, 
@@ -208,20 +224,18 @@ export default class USFMParser {
             }
         }
         var result = res + tempRes.join(" ");
-
-        var verseComponentsModel = {type: Constants.MarkerTypes.VERSE, verseNumber: splitString[1], 
-            text: result, highlighted: false, added: true, 
-            languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
-            chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber};
-        this.verseList.push(verseComponentsModel);
-
-        var result = res + tempRes.join(" ");
         const tagRemove = result.replace(/\\it\*\*|\\it/g,'')
         const verseData = tagRemove.replace(/(\\f(.*?)\\f\*)|(\\bdit(.*?)\\bdit\*)/g,"")
         const footnote = tagRemove.match(/\\f(.*?)\\f\*/g)
 
+        var verseComponentsModel = {type: Constants.MarkerTypes.VERSE, verseNumber: splitString[1], 
+            text: verseData, highlighted: false, added: true, 
+            languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
+            chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber};
+        this.verseList.push(verseComponentsModel);
+
         if(footnote == null){
-            return true
+            return
         }
         this.addFootNotes(footnote,splitString[1])
     }
@@ -229,7 +243,7 @@ export default class USFMParser {
     addFootNotes(notes,verseNum){
         const noteData = notes.toString()
         if(notes.length == 0) {
-            return true
+            return 
         }
         const frTag = /((\\f\s+\+\s+\\fr\s+)(\d+\.\d+)(.*?)(\\f\*))/g
         const fqTag = /((\\fr(.*?)\\fq\s+)(.*?)(\\ft))/g
@@ -241,7 +255,7 @@ export default class USFMParser {
         const footNotequotation = noteContent.replace(fxTag,'$5')
         const foootNoteText = noteContent.replace(fqTag,'')
 
-        console.log("FOOTNOTE TEXT "+foootNoteText+" FOOTNOTE REFERENCE "+foootNoteRef+" FOOTNOTES QUOTATION "+footNotequotation)
+        // console.log("FOOTNOTE TEXT "+foootNoteText+" FOOTNOTE REFERENCE "+foootNoteRef+" FOOTNOTES QUOTATION "+footNotequotation)
         var verseComponentsModel = {type:Constants.MarkerTypes.MARKER_FOOT_NOTES_QUOTATION, 
         verseNumber:verseNum, 
         text:footNotequotation, highlighted: false, added: true, 
@@ -300,6 +314,7 @@ export default class USFMParser {
     }
 
     addBookToContainer() {
+        console.log("bookid "+this.bookId)
         var mapResult = this.getBookNameFromMapping(this.bookId);
         if (mapResult == null) {
             return;

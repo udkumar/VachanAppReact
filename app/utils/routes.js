@@ -380,7 +380,7 @@ export default class App extends Component {
     }, async ()=> {
       console.log("QUERY : " + this.state.versionCode + " ::  " + this.state.languageCode)
       let models = await DbQueries.queryBookIdModels(this.state.versionCode, this.state.languageCode);
-      console.log("routes len =" + JSON.stringify(models[0].bookId))
+      console.log("routes len =" + JSON.stringify(models))
       console.log("VERSE VALUE ++++ " + res[2][1])
       this.setState({isDbLoading: false})
       if (models && models.length > 0) {
