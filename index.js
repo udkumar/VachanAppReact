@@ -7,9 +7,9 @@ export default class AutographaGo extends Component {
 
     render(){
         return(
-            <App/>
+            <AddData/>
         )
     }
 }
 
-AppRegistry.registerComponent('AutographaGo_ReactNative', () => App);
+AppRegistry.registerComponent('AutographaGo_ReactNative', () => AddData);
