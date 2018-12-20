@@ -29,6 +29,9 @@ import id_name_map from '../../assets/mappings.json'
 import {NavigationActions} from 'react-navigation'
 import BottomModal from './Modals/BottomModal'
 
+import {parseFile} from '../../utils/TextParser'
+import { Results } from 'realm';
+
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 export default class Bible extends Component {
@@ -36,7 +39,6 @@ export default class Bible extends Component {
 
   static navigationOptions = ({navigation}) =>{
     const { params = {} } = navigation.state;
-    console.log("props navigation VALUE bible"+JSON.stringify(navigation))
 
     return{
         headerTitle:(
@@ -140,9 +142,10 @@ export default class Bible extends Component {
 
       offset:0,
       scrollDirection:'up',
-      index:0,
+      index: height / 4,
       show:false,
-      showFootNote:false
+      showFootNote:false,
+      summaryOfBook:[]
     }
 
     this.pinchDiff = 0
@@ -154,7 +157,6 @@ export default class Bible extends Component {
 
   
   componentWillReceiveProps(props){
-    console.log("will recievr props"+JSON.stringify(props))
     this.setState({
       colorFile:props.screenProps.colorFile,
       sizeFile:props.screenProps.sizeFile,
@@ -230,7 +232,24 @@ export default class Bible extends Component {
         currentChapter:this.state.currentVisibleChapter,
         bibleLanguage: this.props.screenProps.languageName, 
         bibleVersion: this.props.screenProps.versionCode
-    })    
+    })  
+    // const value =  parseFile(this.state.bookId).then()
+    var summaryOfBook = []
+    parseFile(this.state.bookId).then((value)=>{
+      const bookId = this.state.bookId
+      for(i=0; i<value.length; i++){
+        Object.keys(value[i]).forEach(function(key){
+          const keyCapitals = key.toUpperCase()
+          if(keyCapitals == bookId){
+            summaryOfBook = value[i][key]
+            // console.log(key + ':' + JSON.stringify(value[i][key]))
+          }
+        })
+      }
+      console.log("summary of book "+ JSON.stringify(summaryOfBook))
+      this.setState({summaryOfBook})
+
+    })
     this.setState({isLoading: true}, () => {
       this.queryBook()
     })
@@ -424,7 +443,11 @@ export default class Bible extends Component {
     const heightInc = Dimensions.get('window').height/4
     console.log("value of index before"+this.state.index)
     LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
-    this.setState({index: this.state.index + heightInc});
+    this.setState({index: this.state.index + heightInc})
+    if(this.state.index > height/2){
+      console.log("height of screen "+height)
+      this.setState({index: this.state.index - heightInc})
+    }
     console.log("value of index "+this.state.index)
   }
 
@@ -434,7 +457,8 @@ export default class Bible extends Component {
   }
   render() {
     const thumbSize = this.state.thumbSize;
-    const whiteHeight = this.state.index + height/4 
+    console.log("this.state.index value "+this.state.index)
+    // const whiteHeight = this.state.index + height/4 
       return (
         <View style={this.styles.container} >
           <MenuContext style={this.styles.verseWrapperText}>
@@ -526,13 +550,17 @@ export default class Bible extends Component {
           </MenuContext>
           {
             this.state.show ? 
-              <View>
+              <View style={{height:this.state.index}}>
                   <TouchableOpacity style={{backgroundColor:'#3F51B5'}} onPress={this.onLayoutChange}> 
                       {/* <Text style={{color:'#fff'}}>go up</Text>  */}
                         <Icon name="arrow-drop-up" style={{fontSize:20,color:"#fff",alignSelf: 'flex-end'}}/> 
                     </TouchableOpacity>
                   {/* <ScrollView onscroll={this.onLayoutChang}> */}
-                  <View style={{backgroundColor:'pink', height:whiteHeight}} />
+                  <View>
+                  {this.state.summaryOfBook.map((item)=>
+                      <Text>{item.key} {item.value}</Text>
+                  )}
+                  </View>
                   {/* </ScrollView> */}
             </View>:null
           }

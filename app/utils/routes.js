@@ -268,11 +268,11 @@ export default class App extends Component {
   }
 
   updateLanguage = async(languageCode,languageName,versionCode,versionName) =>{
-    console.log("in ROTES update language")
+    // console.log("in ROTES update language")
     this.setState({languageCode, languageName,versionCode,versionName})
 
     let models = await DbQueries.queryBookIdModels(versionCode, languageCode);
-      console.log("routes len =" + JSON.stringify(models))
+      // console.log("routes len =" + JSON.stringify(models))
       if (models && models.length > 0) {
         this.setState({booksList: models})
       }
@@ -378,10 +378,10 @@ export default class App extends Component {
       bookName: res[8][1] == null ? AsyncStorageConstants.Values.DefBookName:res[8][1],
       chapterNumber: res[8][1] == null ? AsyncStorageConstants.Values.DefBookChapter:parseInt(res[9][1])
     }, async ()=> {
-      console.log("QUERY : " + this.state.versionCode + " ::  " + this.state.languageCode)
+      // console.log("QUERY : " + this.state.versionCode + " ::  " + this.state.languageCode)
       let models = await DbQueries.queryBookIdModels(this.state.versionCode, this.state.languageCode);
-      console.log("routes len =" + JSON.stringify(models))
-      console.log("VERSE VALUE ++++ " + res[2][1])
+      // console.log("routes len =" + JSON.stringify(models))
+      // console.log("VERSE VALUE ++++ " + res[2][1])
       this.setState({isDbLoading: false})
       if (models && models.length > 0) {
         this.setState({booksList: models,bookId:models[0].bookId,bookName:models[0].bookName})
