@@ -14,8 +14,6 @@ export default class AddData extends Component {
 
   componentDidMount(){
     // parseFile
-    // const usfmText = new TextParser()
-      // usfmText.parseFile()
     const usfmParse = new USFMParser()
       usfmParse.parseFile()
     // DbQueries.deleteLanguage("HIN", "IRV")

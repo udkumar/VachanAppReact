@@ -28,9 +28,12 @@ import { styles } from './styles.js';
 import id_name_map from '../../assets/mappings.json'
 import {NavigationActions} from 'react-navigation'
 import BottomModal from './Modals/BottomModal'
-
+import Titusbible from '../Audio/Titues'
+import SwiperMap from'../Images/map'
+import MyWebVideo from'../Video/samplevideo'
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
+const heightInc = Dimensions.get('window').height/4
 export default class Bible extends Component {
 
 
@@ -102,7 +105,8 @@ export default class Bible extends Component {
 
   constructor(props) {
     super(props);
-
+    this.leftIsScrolling = false;
+    this.rigthIsScrolling = false;
     console.log("PROPS VALUE BIBLE "+JSON.stringify(props.screenProps))
 
     this.mappingData = id_name_map;
@@ -110,6 +114,9 @@ export default class Bible extends Component {
     this.queryBook = this.queryBook.bind(this)
     this.onBookmarkPress = this.onBookmarkPress.bind(this)
     this.showScreen = this.showScreen.bind(this)
+    this.showAudioScreen = this.showAudioScreen.bind(this)
+    this.showImageScreen =this.showImageScreen.bind(this)
+    this.showVideoScreen =this.showVideoScreen.bind(this)
     this.onScroll = this.onScroll.bind(this)
      // this.openLanguages = this.openLanguages.bind(this)
     // this.modalHandle = this.modalHandle.bind(this)
@@ -141,7 +148,11 @@ export default class Bible extends Component {
       offset:0,
       scrollDirection:'up',
       index:0,
+      indexdown:heightInc,
       show:false,
+      showAudio:false,
+      showImage:false,
+      showVideo:false,
       showFootNote:false
     }
 
@@ -401,6 +412,21 @@ export default class Bible extends Component {
     this.setState({
       show: !this.state.show});
   }
+  showAudioScreen(){
+    console.log("state value "+this.state.showAudio)
+    this.setState({
+      showAudio: !this.state.showAudio});
+  }
+  showImageScreen(){
+    console.log("state value "+this.state.showImage)
+    this.setState({
+      showImage: !this.state.showImage});
+  }
+  showVideoScreen(){
+    console.log("state value "+this.state.showVideo)
+    this.setState({
+      showVideo: !this.state.showVideo});
+  }
   
   openLanguages = ()=>{
     this.props.navigation.navigate("Language", {updateLanguage:this.updateLanguage})
@@ -424,8 +450,10 @@ export default class Bible extends Component {
     const heightInc = Dimensions.get('window').height/4
     console.log("value of index before"+this.state.index)
     LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
-    this.setState({index: this.state.index + heightInc});
+    this.setState({index: this.state.index + heightInc})
     console.log("value of index "+this.state.index)
+    this.setState({indexdown:this.state.indexdown +0})
+
   }
 
   onPressfootNote = () => {
@@ -440,10 +468,19 @@ export default class Bible extends Component {
           <MenuContext style={this.styles.verseWrapperText}>
         {this.state.modelData.length>0 ? 
             <View>
-                <ScrollView onScroll={this.onScroll}
+                <ScrollView  
+                   ref={(ref) => { this.scrollViewRef = ref; }}
+                   onScroll={e => {
+                      if (!this.leftIsScrolling) {
+                        this.rigthIsScrolling = true;
+                        var scrollY = e.nativeEvent.contentOffset.y;
+                        this.scrollViewRef.scrollTo({ y: scrollY });
+                      }
+                      this.leftIsScrolling = false;
+                    }}
+                
                     // style={this.styles.recyclerListView}
-                    ref={(ref) => { this.scrollViewRef = ref; }}                    
-                >
+                  >
                  {    (this.state.verseInLine) ?
                           <View style={this.styles.chapterList}>
                             <FlatList
@@ -526,21 +563,150 @@ export default class Bible extends Component {
           </MenuContext>
           {
             this.state.show ? 
-              <View>
+              <View style={{ height:whiteHeight}}>
                   <TouchableOpacity style={{backgroundColor:'#3F51B5'}} onPress={this.onLayoutChange}> 
                       {/* <Text style={{color:'#fff'}}>go up</Text>  */}
                         <Icon name="arrow-drop-up" style={{fontSize:20,color:"#fff",alignSelf: 'flex-end'}}/> 
                     </TouchableOpacity>
                   {/* <ScrollView onscroll={this.onLayoutChang}> */}
-                  <View style={{backgroundColor:'pink', height:whiteHeight}} />
+                  {/* <Text style={{backgroundColor:'pink', height:whiteHeight}} /> */}
+                  <MenuContext style={this.styles.verseWrapperText}>
+        {this.state.modelData.length>0 ? 
+            <View>
+                <ScrollView  ref={(ref) => { this.scrollViewRef = ref; }} 
+                    scrollEventThrottle={16}
+            onScroll={e => {
+              if (!this.rigthIsScrolling) {
+                this.leftIsScrolling = true;
+                var scrollY = e.nativeEvent.contentOffset.y;
+                this.scrollViewRef.scrollTo({ y: scrollY });
+              }
+              this.rigthIsScrolling = false;
+            }} >                  
+                
+                 {    (this.state.verseInLine) ?
+                          <View style={this.styles.chapterList}>
+                            <FlatList
+                            data={this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels}
+                            renderItem={({item, index}) => 
+                                  <Text letterSpacing={24} 
+                                     style={this.styles.verseWrapperText}> 
+                                        <VerseView
+                                            ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
+                                            verseData = {item}
+                                            index = {index}
+                                            styles = {this.styles}
+                                            selectedReferences = {this.state.selectedReferenceSet}
+                                            getSelection = {(verseIndex, chapterNumber, verseNumber) => {
+                                            this.getSelectedReferences(verseIndex, chapterNumber, verseNumber)
+                                            }}
+                                            makeHighlight={this.doHighlight}
+                                            makeNotes={this.addToNotes}
+                                            share={this.addToShare}
+                                            HighlightText={this.state.bottomHighlightText}
+                                            onPressfootNote = {this.onPressfootNote}
+                                            showFootNote = {this.state.showFootNote}
+
+                                        />
+                                     
+                                  </Text> 
+                            }
+                            ListFooterComponent={<View style={styles.addToSharefooterComponent} />}
+                            />
+                            </View>
+                        :
+
+                            <View style={this.styles.chapterList}>
+                                  
+                                    {this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels.map((verse, index) => 
+                                        <View>
+                                            {/* <Text letterSpacing={24}
+                                                 >   */}
+                                                <VerseView
+                                                    ref={child => (this[`child_${verse.chapterNumber}_${index}`] = child)}
+                                                    verseData = {verse}
+                                                    index = {index}
+                                                    styles = {this.styles}
+                                                    selectedReferences = {this.state.selectedReferenceSet}
+                                                    getSelection = {(verseIndex, chapterNumber, verseNumber) => {
+                                                    this.getSelectedReferences(verseIndex, chapterNumber,verseNumber)
+                                                    }}
+                                                    makeHighlight={this.doHighlight}
+                                                    makeNotes={this.addToNotes}
+                                                    share={this.addToShare}
+                                                    HighlightText={this.state.bottomHighlightText}
+                                                    onPressfootNote = {this.onPressfootNote}
+                                                    showFootNote = {this.state.showFootNote}
+                                                    
+                                                />
+                                               
+                                            {/* </Text> */}
+                                            
+                                            {index == this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels.length - 1
+                                            ? <View style={{height:25, marginBottom:4}} />
+                                            : null
+                                            }
+                                            
+                                          </View>
+                                    )}
+                            </View>
+                        }
+
+                </ScrollView>
+                
+            </View>
+            :
+            <ActivityIndicator 
+            animating={this.state.isLoading ? true : false} 
+            size="large" 
+            color="#0000ff" />
+            
+          }
+         
+          </MenuContext>
                   {/* </ScrollView> */}
             </View>:null
+          }{
+            this.state.showAudio ?
+            <View style={{ height:whiteHeight}}>
+            <TouchableOpacity style={{backgroundColor:'#3F51B5'}} onPress={this.onLayoutChange}> 
+                {/* <Text style={{color:'#fff'}}>go up</Text>  */}
+                  <Icon name="arrow-drop-up" style={{fontSize:20,color:"#fff",alignSelf: 'flex-end'}}/> 
+              </TouchableOpacity>
+              <Titusbible/>
+              </View>:null
+          }
+          {
+            this.state.showImage ?
+            <View style={{ height:whiteHeight}}>
+            <TouchableOpacity style={{backgroundColor:'#3F51B5'}} onPress={this.onLayoutChange}> 
+                {/* <Text style={{color:'#fff'}}>go up</Text>  */}
+                  <Icon name="arrow-drop-up" style={{fontSize:20,color:"#fff",alignSelf: 'flex-end'}}/> 
+              </TouchableOpacity>
+              <SwiperMap/>
+              </View>:null
+          }
+          {
+            this.state.showVideo ?
+            <View style={{ height:whiteHeight}}>
+            <TouchableOpacity style={{backgroundColor:'#3F51B5'}} onPress={this.onLayoutChange}> 
+                {/* <Text style={{color:'#fff'}}>go up</Text>  */}
+                  <Icon name="arrow-drop-up" style={{fontSize:20,color:"#fff",alignSelf: 'flex-end'}}/> 
+              </TouchableOpacity>
+              <MyWebVideo/>
+              </View>:null
           }
           {
             this.state.scrollDirection == 'up' ? 
             <BottomModal
             showScreen = {this.showScreen}
             show={this.state.show}
+             showAudioScreen = {this.showAudioScreen}
+            showAudio={this.state.showAudio}
+            showImageScreen = {this.showImageScreen}
+            showImage={this.state.showImage}
+            showVideoScreen = {this.showVideoScreen}
+            showVideo={this.state.showVideo}
           /> : null 
           }
          

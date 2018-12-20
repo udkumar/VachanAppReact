@@ -56,7 +56,7 @@ export default class USFMParser {
         this.license = "V5.0 (Consultant Checked)",
         this.year = 2018;
 
-        RNFS.readFileAssets("hindi_irv/67-REV.usfm")
+        RNFS.readFileAssets("hindi_irv/01-GEN.usfm")
             .then((result)=>{
                 this.parseFileContents(result)
             })
