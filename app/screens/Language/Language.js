@@ -181,8 +181,7 @@ export default class Language extends Component{
     this.props.screenProps.updateLanguage(lanCode,langName, verCode, verName);
 
     this.props.navigation.state.params.updateLanguage(langName,verCode)
-    // this.props.navigation.dispatch(NavigationActions.back())  
-    this.props.navigation.navigate('SelectBook')
+    this.props.navigation.dispatch(NavigationActions.back())    
   }
   
   render(){
@@ -223,4 +222,3 @@ export default class Language extends Component{
 }
     
 }
-

@@ -186,7 +186,6 @@ export default class App extends Component {
     this.changeSizeByOne = this.changeSizeByOne.bind(this)
     this.updateLastRead = this.updateLastRead.bind(this)
     this.updateLanguage  = this.updateLanguage.bind(this)
-    this.updateBookData = this.updateBookData.bind(this)
 
     this.styles = styleFile(this.state.colorFile,this.state.sizeFile)
     this.DrawerNavigate = DrawerNavigate(this.styles)
@@ -278,9 +277,7 @@ export default class App extends Component {
       }
 
   }
-  updateBookData(id,name,chapter){
-    this.setState({bookId:id,bookName:name,chapterNumber:chapter})
-  }
+ 
 
   render(){
     // console.log("bookList "+JSON.stringify(this.state.booksList[0].bookId))
@@ -308,7 +305,6 @@ export default class App extends Component {
           updateSize: this.updateSize,
           updateVerseInLine:this.updateVerseInLine,
           updateBooks: this.updateBooks,
-          updateBookData: this.updateBookData,
           changeSizeByOne: this.changeSizeByOne,
           updateLastRead: this.updateLastRead,
           updateLanguage: this.updateLanguage

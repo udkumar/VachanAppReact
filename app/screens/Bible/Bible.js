@@ -167,7 +167,7 @@ export default class Bible extends Component {
     this.styles = styles(props.screenProps.colorFile, props.screenProps.sizeFile);   
   }
 
-  componentDidMount() {
+  componentDidMount(){
     this.gestureResponder = createResponder({
       onStartShouldSetResponder: (evt, gestureState) => true,
       onStartShouldSetResponderCapture: (evt, gestureState) => true,
@@ -233,7 +233,6 @@ export default class Bible extends Component {
         bibleLanguage: this.props.screenProps.languageName, 
         bibleVersion: this.props.screenProps.versionCode
     })  
-    // const value =  parseFile(this.state.bookId).then()
     var summaryOfBook = []
     parseFile(this.state.bookId).then((value)=>{
       const bookId = this.state.bookId
@@ -242,14 +241,12 @@ export default class Bible extends Component {
           const keyCapitals = key.toUpperCase()
           if(keyCapitals == bookId){
             summaryOfBook = value[i][key]
-            // console.log(key + ':' + JSON.stringify(value[i][key]))
           }
         })
       }
-      console.log("summary of book "+ JSON.stringify(summaryOfBook))
       this.setState({summaryOfBook})
-
     })
+  
     this.setState({isLoading: true}, () => {
       this.queryBook()
     })

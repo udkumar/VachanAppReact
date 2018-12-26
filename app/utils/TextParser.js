@@ -1,10 +1,9 @@
-
 var Buffer = require('buffer/').Buffer 
 var RNFS = require('react-native-fs');
 
 const summaryOfBook = []
 const summaryData = []
-const bookId =null
+const bookId = null
 
     export  function parseFile(id){
             return RNFS.readFileAssets('irvhin.txt', 'base64')
@@ -16,15 +15,18 @@ const bookId =null
                             const bookId = idBook[1].toUpperCase()
                             if(bookId == id){
                                 summaryData = []
-                                var myRegexp = /\<b\>(.*?)\<\/b\>(\s+\-\s+.*?)(?:<)/g
-                                while((match = myRegexp.exec(lines[i])) != null) {
-                                    summaryData.push({key:match[1],value:match[2]})
-                                }
-                            }
-                          
+                                    var string  = lines[i].split('<br>')
+                                    for(j=2;j<string.length;j++){
+                                        var myRegexp = /\<b\>(.*?)\<\/b\>(\s+\-\s+.*)/g
+                                        while((match = myRegexp.exec(string[j])) != null){
+                                            summaryData.push({key:match[1],value:match[2]})
+                                        }
+                                    }
+                               
                             summaryOfBook.push({[bookId]:summaryData})
                         }
-                        return summaryOfBook
+                    }
+                    return summaryOfBook
 
                 })
                 .catch ((error)=>{
