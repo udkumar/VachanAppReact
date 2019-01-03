@@ -46,7 +46,7 @@ export default class Example extends React.Component {
                     alignItems:'center',
                 }}>
                 <TouchableOpacity 
-                onPress={this.props.showScreen}  
+                // onPress={this.props.showScreen}  
                 >
                 <Text style={{textAlign:'center',color:'white', }}>
                     NotePad
@@ -79,7 +79,7 @@ export default class Example extends React.Component {
              onPress={this.props.showScreen}  
             >        
                 <Text style={{textAlign:'center',color:'white', }}>
-                  Resources
+                  Summary
                 </Text>
                 <Icon 
                     name={'library-books'} 

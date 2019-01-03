@@ -186,6 +186,7 @@ export default class App extends Component {
     this.changeSizeByOne = this.changeSizeByOne.bind(this)
     this.updateLastRead = this.updateLastRead.bind(this)
     this.updateLanguage  = this.updateLanguage.bind(this)
+    this.updateBookData  = this.updateBookData.bind(this)
 
     this.styles = styleFile(this.state.colorFile,this.state.sizeFile)
     this.DrawerNavigate = DrawerNavigate(this.styles)
@@ -210,6 +211,9 @@ export default class App extends Component {
 	
   updateSize = (sizeMode, sizeFile) => {
     this.setState({sizeMode, sizeFile})
+  }
+  updateBookData = (bookId,bookName,chapterNumber) =>{
+    this.setState({bookId,bookName,chapterNumber})
   }
 
 
@@ -307,7 +311,8 @@ export default class App extends Component {
           updateBooks: this.updateBooks,
           changeSizeByOne: this.changeSizeByOne,
           updateLastRead: this.updateLastRead,
-          updateLanguage: this.updateLanguage
+          updateLanguage: this.updateLanguage,
+          updateBookData: this.updateBookData
         }}
       />
     );

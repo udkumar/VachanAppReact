@@ -5,25 +5,29 @@ const summaryOfBook = []
 const summaryData = []
 const bookId = null
 
-    export  function parseFile(id,chapterNum,verseNum){
+    export  function parseFile(id,chapterNum){
         console.log("chapterNum "+chapterNum)
             return RNFS.readFileAssets('irvhin.txt', 'base64')
                 .then((res)=>{
                     const result = Buffer.from(res, 'base64').toString('utf8')
                         var lines = result.split('\n')
+                       console.log("ID "+id+"CHAPTER "+chapterNum)
+                        if(chapterNum !==null){
+                            console.log("summary of chapter")
+                            for(var i=66; i<1254; i++) {
+                                const bookIdChapter = lines[i].match(/([a-zA-Z]{3})\s+(\d+)/)
+                                if(id == bookIdChapter[1].toUpperCase() && chapterNum == bookIdChapter[2]){
+                                    return summary(lines[i])
+                                }
+                            }
+                        }
                         for(var i=0; i<66; i++) { 
                             const idBookBook = lines[i].match(/([a-zA-Z]{3})/)
                                 if(id == idBookBook[1].toUpperCase()){
-                                    summary(lines[i])
+                                return summary(lines[i])
                                 }
                         }
-                        for(var i=66; i<1254; i++) {
-                            const bookIdChapter = lines[i].match(/([a-zA-Z]{3})\s+(\d+)/)
-                            if(id == bookIdChapter[1].toUpperCase() && chapterNum == bookIdChapter[2]){
-                                console.log("hi got the id and chapter")
-                                return summary(lines[i])
-                            }
-                        }
+
                         // for(var i=1255; i<lines.length-1; i++) {
                         //     const bookIdChapterVerse = lines[i].match(/([a-zA-Z]{3})\s+(\d+):(\d+)/)
                         //     if(id == bookIdChapterVerse[1].toUpperCase() && chapterNum == bookIdChapterVerse[2] && verseNum == bookIdChapterVerse[3]){

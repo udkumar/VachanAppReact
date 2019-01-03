@@ -179,9 +179,13 @@ export default class Language extends Component{
       [AsyncStorageConstants.Keys.VersionName,verName]
     ]);
     this.props.screenProps.updateLanguage(lanCode,langName, verCode, verName);
-
     this.props.navigation.state.params.updateLanguage(langName,verCode)
-    this.props.navigation.dispatch(NavigationActions.back())    
+    /** to update releated language book ,chapter to display
+     this.props.screenProps.updateBookData(this.state.bookId, this.state.bookName,item) 
+     this.props.navigation.dispatch(NavigationActions.back()) **/   
+    this.props.navigation.navigate("SelectBook")    
+
+
   }
   
   render(){
