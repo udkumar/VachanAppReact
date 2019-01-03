@@ -233,19 +233,12 @@ export default class Bible extends Component {
         bibleLanguage: this.props.screenProps.languageName, 
         bibleVersion: this.props.screenProps.versionCode
     })  
-    var summaryOfBook = []
-    parseFile(this.state.bookId).then((value)=>{
-      const bookId = this.state.bookId
-      for(i=0; i<value.length; i++){
-        Object.keys(value[i]).forEach(function(key){
-          const keyCapitals = key.toUpperCase()
-          if(keyCapitals == bookId){
-            summaryOfBook = value[i][key]
-          }
-        })
-      }
-      this.setState({summaryOfBook})
+    parseFile(this.state.bookId,this.state.currentVisibleChapter).then((value)=>{
+      console.log("value "+value)
+      this.setState({summaryOfBook:value})
     })
+    
+   
   
     this.setState({isLoading: true}, () => {
       this.queryBook()
@@ -396,17 +389,22 @@ export default class Bible extends Component {
    
   }
 
-  updateCurrentChapter(val) {
+  updateCurrentChapter(val){
     let currChapter = this.state.currentVisibleChapter + val;
+   
+    parseFile(this.state.bookId,currChapter).then((value)=>{
+      this.setState({summaryOfBook:value})
+    })
     this.setState({currentVisibleChapter: currChapter, 
-        isBookmark: this.state.bookmarksList.indexOf(currChapter) > -1}, () => {
+            isBookmark: this.state.bookmarksList.indexOf(currChapter) > -1}, () => {
             this.props.navigation.setParams({
                 isBookmark: this.state.isBookmark,
                 currentChapter:this.state.currentVisibleChapter,
                 dataLength:this.state.modelData.length
             })
             this.scrollViewRef.scrollTo({x: 0, y: 0, animated: false})
-    })
+        })
+       
   }
   modalHandle(){
     this.setState({show:!this.state.show})
