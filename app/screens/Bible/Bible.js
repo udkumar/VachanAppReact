@@ -246,12 +246,9 @@ export default class Bible extends Component {
         bibleLanguage: this.props.screenProps.languageName, 
         bibleVersion: this.props.screenProps.versionCode
     })  
-    if(this.state.activeTab == SearchResultTypes.BOOK){
-      parseFile(this.state.bookId,null).then((value)=>{
-        // console.log("value "+value)
+      parseFile(this.state.bookId,this.state.currentVisibleChapter).then((value)=>{
         this.setState({summaryOfBook:value})
       })
-    }
     
     this.setState({isLoading: true}, () => {
       this.queryBook()
@@ -436,6 +433,13 @@ export default class Bible extends Component {
     this.props.navigation.setParams({
       bibleLanguage: language,
       bibleVersion: version
+    })
+  }
+  updateSummary = (id,name,chapter) =>{
+    this.props.navigation.setParams({
+      bookId:id,
+      bookName:name,
+      chapterNum:chapter
     })
   }
   onScroll(event){
@@ -634,9 +638,12 @@ export default class Bible extends Component {
                       toggleFunction={this.toggleButton}
                       activeTab={this.state.activeTab}
                       />
+                      <ScrollView>
                       {this.state.summaryOfBook.map((item)=>
                         <Text>{item.key} {item.value}</Text>
                       )}
+                        <View style={{height:65, marginBottom:4}} />
+                      </ScrollView>
                   </View>
              :null
           }
