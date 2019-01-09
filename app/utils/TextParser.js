@@ -11,9 +11,7 @@ const bookId = null
                 .then((res)=>{
                     const result = Buffer.from(res, 'base64').toString('utf8')
                         var lines = result.split('\n')
-                       console.log("ID "+id+"CHAPTER "+chapterNum)
                         if(chapterNum !==null){
-                            console.log("summary of chapter")
                             for(var i=66; i<1254; i++) {
                                 const bookIdChapter = lines[i].match(/([a-zA-Z]{3})\s+(\d+)/)
                                 if(id == bookIdChapter[1].toUpperCase() && chapterNum == bookIdChapter[2]){
@@ -39,7 +37,6 @@ const bookId = null
 
                 })
                 .catch ((error)=>{
-                    console.log("Error while parsing content "+error)
                 })
     }
 
@@ -55,7 +52,6 @@ const bookId = null
                 summaryData.push({key:match[1],value:match[2]})
             }
         }
-        console.log("summarydata "+JSON.stringify(summaryData))
         return summaryData
     }
 

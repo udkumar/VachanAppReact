@@ -46,27 +46,41 @@ export default class USFMParser {
     //             });
     //     }
     // }
-
-    parseFile() {
-        this.languageCode =  "HIN",
-        this.languageName = "Hindi",
-        this.versionCode = "IRV",
-        this.versionName = "Indian Revised Version",
-        this.source = "Unfolding Word",
-        this.license = "V5.0 (Consultant Checked)",
-        this.year = 2018;
-
-        RNFS.readFileAssets("hindi_irv/67-REV.usfm")
-            .then((result)=>{
-                this.parseFileContents(result)
-            })
+     parseFile(result, lCode, lName, vCode, vName, source, license, year) {
+        this.languageCode = lCode;
+        this.languageName = lName;
+        this.versionCode = vCode;
+        this.versionName = vName;
+        this.source = source;
+        this.license = license;
+        this.year = year;
+        this.parseFileContents(result);
         
     }
 
+    // parseFile() {
+    //     this.languageCode =  "HIN",
+    //     this.languageName = "Hindi",
+    //     this.versionCode = "IRV",
+    //     this.versionName = "Indian Revised Version",
+    //     this.source = "Unfolding Word",
+    //     this.license = "V5.0 (Consultant Checked)",
+    //     this.year = 2018;
+
+    //     RNFS.readFileAssets("hindi_irv/67-REV.usfm")
+    //         .then((result)=>{
+    //             this.parseFileContents(result)
+    //         })
+        
+    // }
+
     parseFileContents(result) {
+        console.log("result "+result)
         try {
-            var lines = result.split('\n');
+            // console.log("line length",result.length)
+            var lines = result.split("\n")
             for(var i = 0; i < lines.length; i++) {
+                
                 //code here using lines[i] which will give you each line
                 if (!this.processLine(lines[i])) {
                     return false;

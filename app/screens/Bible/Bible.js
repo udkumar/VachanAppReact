@@ -246,9 +246,9 @@ export default class Bible extends Component {
         bibleLanguage: this.props.screenProps.languageName, 
         bibleVersion: this.props.screenProps.versionCode
     })  
-      parseFile(this.state.bookId,this.state.currentVisibleChapter).then((value)=>{
-        this.setState({summaryOfBook:value})
-      })
+      // parseFile(this.state.bookId,this.state.currentVisibleChapter).then((value)=>{
+      //   this.setState({summaryOfBook:value})
+      // })
     
     this.setState({isLoading: true}, () => {
       this.queryBook()
