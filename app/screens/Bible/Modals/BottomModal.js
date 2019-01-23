@@ -49,7 +49,7 @@ export default class Example extends React.Component {
                 onPress={this.props.showScreen}  
                 >
                 <Text style={{textAlign:'center',color:'white', }}>
-                    NotePad
+                    IRVNotes
                 </Text>
                 <Icon 
                     name={'border-color'} 
@@ -76,10 +76,11 @@ export default class Example extends React.Component {
             >  
               
             <TouchableOpacity 
-            //   onPress={this.addToNotes} 
+              onPress={this.props.showSummaryScreen}
+
             >        
                 <Text style={{textAlign:'center',color:'white', }}>
-                  Resources
+                  Summary
                 </Text>
                 <Icon 
                     name={'library-books'} 

@@ -30,6 +30,7 @@ import {NavigationActions} from 'react-navigation'
 import BottomModal from './Modals/BottomModal'
 import Titusbible from '../Audio/Titues'
 import SwiperMap from'../Images/map'
+import Summary from'../sumarized/parsejson'
 import MyWebVideo from'../Video/samplevideo'
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -114,6 +115,7 @@ export default class Bible extends Component {
     this.queryBook = this.queryBook.bind(this)
     this.onBookmarkPress = this.onBookmarkPress.bind(this)
     this.showScreen = this.showScreen.bind(this)
+    this.showSummaryScreen = this.showSummaryScreen.bind(this)
     this.showAudioScreen = this.showAudioScreen.bind(this)
     this.showImageScreen =this.showImageScreen.bind(this)
     this.showVideoScreen =this.showVideoScreen.bind(this)
@@ -151,6 +153,7 @@ export default class Bible extends Component {
       indexdown:heightInc,
       show:false,
       showAudio:false,
+      showsummary:false,
       showImage:false,
       showVideo:false,
       showFootNote:false
@@ -412,6 +415,11 @@ export default class Bible extends Component {
     this.setState({
       show: !this.state.show});
   }
+  showSummaryScreen(){
+    console.log("state value "+this.state.showSummaryScreen)
+    this.setState({
+      showsummary: !this.state.showsummary});
+  }
   showAudioScreen(){
     console.log("state value "+this.state.showAudio)
     this.setState({
@@ -564,9 +572,11 @@ export default class Bible extends Component {
           {
             this.state.show ? 
               <View style={{ height:whiteHeight}}>
-                  <TouchableOpacity style={{backgroundColor:'#3F51B5'}} onPress={this.onLayoutChange}> 
+                  <TouchableOpacity style={{backgroundColor:'#3F51B5'}}
+                   onPress={this.onLayoutChange}> 
                       {/* <Text style={{color:'#fff'}}>go up</Text>  */}
-                        <Icon name="arrow-drop-up" style={{fontSize:20,color:"#fff",alignSelf: 'flex-end'}}/> 
+                        <Icon name="arrow-drop-up"
+                         style={{fontSize:20,color:"#fff",alignSelf: 'flex-end'}}/> 
                     </TouchableOpacity>
                   {/* <ScrollView onscroll={this.onLayoutChang}> */}
                   {/* <Text style={{backgroundColor:'pink', height:whiteHeight}} /> */}
@@ -614,7 +624,7 @@ export default class Bible extends Component {
                             ListFooterComponent={<View style={styles.addToSharefooterComponent} />}
                             />
                             </View>
-                        :
+                            :
 
                             <View style={this.styles.chapterList}>
                                   
@@ -669,7 +679,8 @@ export default class Bible extends Component {
           }{
             this.state.showAudio ?
             <View style={{ height:whiteHeight}}>
-            <TouchableOpacity style={{backgroundColor:'#3F51B5'}} onPress={this.onLayoutChange}> 
+            <TouchableOpacity style={{backgroundColor:'#3F51B5'}}
+             onPress={this.onLayoutChange}> 
                 {/* <Text style={{color:'#fff'}}>go up</Text>  */}
                   <Icon name="arrow-drop-up" style={{fontSize:20,color:"#fff",alignSelf: 'flex-end'}}/> 
               </TouchableOpacity>
@@ -697,6 +708,16 @@ export default class Bible extends Component {
               </View>:null
           }
           {
+            this.state.showsummary ?
+            <View style={{ height:whiteHeight}}>
+            <TouchableOpacity style={{backgroundColor:'#3F51B5'}} onPress={this.onLayoutChange}> 
+                {/* <Text style={{color:'#fff'}}>go up</Text>  */}
+                  <Icon name="arrow-drop-up" style={{fontSize:20,color:"#fff",alignSelf: 'flex-end'}}/> 
+              </TouchableOpacity>
+              <Summary/>
+              </View>:null
+          }
+          {
             this.state.scrollDirection == 'up' ? 
             <BottomModal
             showScreen = {this.showScreen}
@@ -706,8 +727,10 @@ export default class Bible extends Component {
             showImageScreen = {this.showImageScreen}
             showImage={this.state.showImage}
             showVideoScreen = {this.showVideoScreen}
-            showVideo={this.state.showVideo}
-          /> : null 
+             showVideo={this.state.showVideo}
+             showSummaryScreen ={this.showSummaryScreen}
+             showsummary ={this.state.showsummmary}
+            /> : null 
           }
          
         </View>
