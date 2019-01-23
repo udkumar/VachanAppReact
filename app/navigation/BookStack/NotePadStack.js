@@ -1,11 +1,12 @@
 
-import { createStackNavigator } from "react-navigation";
+import { StackNavigator } from "react-navigation";
 
 import HighLights from '../../screens/Highlights/Highlights'
 import Notes from '../../screens/Note/Notes'
 import Bookmarks from '../../screens/Bookmarks/Bookmarks'
+import History from '../../screens/History/History'
 
-const NotePadStack = createStackNavigator({
+const NotePadStack = StackNavigator({
 	HighLights: {
 		screen: HighLights,
 	},
@@ -14,7 +15,10 @@ const NotePadStack = createStackNavigator({
     },
     Notes:{
         screen:Notes
-    }
+	},
+	History:{
+		screen:History
+	}
 })
 
 export default NotePadStack;

@@ -1,10 +1,10 @@
 
 import { TabNavigator } from "react-navigation";
 
-import StudyHelp from './StudyHelp'
-import NotePadNav from './NotePadStack'
-import Audio from '../../screens/Audio'
-import Video from '../../screens/Video'
+import StudyHelp from '../../navigation/BookStack/StudyHelp'
+import NotePadStack from '../../navigation/BookStack/NotePadStack'
+import Audio from '../Audio'
+import Video from '../Video'
 
 const BottomTabNav = TabNavigator(
 	{
@@ -17,13 +17,13 @@ const BottomTabNav = TabNavigator(
     StudyHelp:{
       screen:StudyHelp
     },
-    NotePadNav:{
-      screen:NotePadNav
+    NotePadStack:{
+      screen:NotePadStack
     }
 	},
 	{
 		backBehavior: "none",
-		tabBarPosition: "bottom"  
+		tabBarPosition: "bottom"
 	}
 )
 export default BottomTabNav

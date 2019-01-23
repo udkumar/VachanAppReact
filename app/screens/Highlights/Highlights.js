@@ -15,7 +15,6 @@ import id_name_map from '../../assets/mappings.json'
 import {constantFont} from '../../utils/dimens.js'
 import { highlightstyle } from './styles'
 
-
 export default class HighLights extends Component {
   static navigationOptions = {
     headerTitle: 'Highlights',

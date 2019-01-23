@@ -1,11 +1,12 @@
 
-import { createStackNavigator } from "react-navigation";
+import { StackNavigator } from "react-navigation";
 import DrawerNav from './DrawerNav'
 
-const AppDrawerNav = createStackNavigator({
+const AppDrawerNav = StackNavigator({
 	DrawerNav: {
 		screen: DrawerNav,
-    }
+	}
+	
     
 })
 

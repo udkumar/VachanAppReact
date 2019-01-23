@@ -29,9 +29,11 @@ import {extraSmallFont,smallFont,mediumFont,largeFont,extraLargeFont} from './di
 import { styleFile } from './styles.js'
 import DbQueries from '../utils/dbQueries'
 import Realm from 'realm'
+import Video from '../screens/Video'
+import Audio from '../screens/Audio'
 
 
-const DrawerNavigate = (styles)=> DrawerNavigator({
+const DrawerNavigate = (styles) => DrawerNavigator({
   StackNavigate:{
     screen: StackNavigate
 }
@@ -85,7 +87,6 @@ const StackNavigate = StackNavigator(
           headerTitle:"Select Book"
       }
       },
-      
       About: {
         screen: About,
       },
@@ -128,13 +129,18 @@ const StackNavigate = StackNavigator(
       DownloadVersion: {
         screen: DownloadVersion
       },
-     
       Search: {
         screen: Search,
       },
       BackupRestore: {
         screen: BackupRestore
       },
+      Audio:{
+        screen:Audio
+      },
+      Video:{
+        screen:Video
+      }
      
   },
   {

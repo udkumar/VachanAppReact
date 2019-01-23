@@ -1,5 +1,13 @@
-import React, { Component } from "react";
-import AppNav from "./AppNav";
+import React, { Component } from "react"
+import DrawerNav from "./DrawerNav"
+const AsyncStorageConstants = require('../utils/AsyncStorageConstants')
+import AsyncStorageUtil from '../utils/AsyncStorageUtil'
+import {nightColors, dayColors, constColors} from '../utils/colors.js'
+import {extraSmallFont,smallFont,mediumFont,largeFont,extraLargeFont} from '../utils/dimens.js'
+import { styleFile } from '../utils/styles.js'
+import DbQueries from '../utils/dbQueries'
+import Realm from 'realm'
+
 
 export default class App extends Component {
     constructor(props){
@@ -34,7 +42,7 @@ export default class App extends Component {
         this.updateBookData  = this.updateBookData.bind(this)
     
         this.styles = styleFile(this.state.colorFile,this.state.sizeFile)
-        this.DrawerNavigate = DrawerNavigate(this.styles)
+        // this.DrawerNavigate = DrawerNavigate(this.styles)
         console.log("ALL HEADER COLOR /////// "+JSON.stringify(this.styles))
       }
     
@@ -127,7 +135,7 @@ export default class App extends Component {
     
       }
 	render() {
-		return <AppNav
+		return <DrawerNav
         screenProps={{
             colorMode: this.state.colorMode, 
             sizeMode: parseInt(this.state.sizeMode), 

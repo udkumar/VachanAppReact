@@ -28,12 +28,14 @@ import { styles } from './styles.js';
 import id_name_map from '../../assets/mappings.json'
 import {NavigationActions} from 'react-navigation'
 import BottomModal from './Modals/BottomModal'
+import BottomTab from './BottomTab'
 import RenderSummary from './Modals/RenderSummary'
 
 
 
 import {parseFile} from '../../utils/TextParser'
 import { Results } from 'realm';
+import BottomTabNav from './BottomTab';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -647,14 +649,14 @@ export default class Bible extends Component {
                   </View>
              :null
           }
-          {
+          {/* {
             this.state.scrollDirection == 'up' ? 
             <BottomModal
             showScreen = {this.showScreen}
             show={this.state.show}
           /> : null 
-          }
-         
+          } */}
+          <BottomTab/>
         </View>
       );
   }

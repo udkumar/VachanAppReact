@@ -1,38 +1,19 @@
-import { createDrawerNavigator } from "react-navigation";
+import { DrawerNavigator } from "react-navigation";
 
 import BookStackNav from './BookStack/BookStackNav'
-import SettingStack from './SettingStack'
-import NoteStack from './NoteStack'
 
-import HighLights from '../screens/Highlights/Highlights'
-import Bookmarks from '../screens/Bookmarks/Bookmarks'
-import Search from '../screens/Search/Search'
-import History from '../screens/History/History'
+import DrawerScreen from '../screens/DrawerScreen/DrawerScreen'
 
-
-const DrawerNav = createDrawerNavigator({
-	  BookStack: {
-		screen: BookStackNav,
-    },
-    NoteStack: {
-		screen: NoteStack,
-    },
-    SettingStack: {
-      screen: SettingStack,
-    },
-    HighLights: {
-		screen: HighLights,
-    },
-    Bookmarks: {
-		screen: Bookmarks,
-    },
-    Search: {
-		screen: Search,
-    },
-    History: {
-		screen: History,
-    },
-    
-})
+const DrawerNav = DrawerNavigator(
+  {
+    Home: {
+      screen:BookStackNav
+    }
+  }, {
+    contentComponent: DrawerScreen,
+    drawerWidth: 300
+  }
+	
+)
 
 export default DrawerNav;
