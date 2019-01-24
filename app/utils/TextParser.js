@@ -6,7 +6,7 @@ const summaryData = []
 const bookId = null
 
     export  function parseFile(id,chapterNum){
-        console.log("chapterNum "+chapterNum)
+
             return RNFS.readFileAssets('irvhin.txt', 'base64')
                 .then((res)=>{
                     const result = Buffer.from(res, 'base64').toString('utf8')
@@ -37,6 +37,7 @@ const bookId = null
 
                 })
                 .catch ((error)=>{
+                    console.log("error "+error)
                 })
     }
 

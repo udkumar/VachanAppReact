@@ -534,6 +534,8 @@ export default class Bible extends Component {
             sizeFile={this.props.screenProps.sizeFile}
             currentVisibleChapter={this.state.currentVisibleChapter}
             bookId = {this.state.bookId}
+            versionCode = {this.state.versionCode}
+            languageCode = {this.state.languageCode}
           />
         </View>
       );
