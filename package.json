@@ -9,6 +9,7 @@
     "version": "./version-ios.sh"
   },
   "dependencies": {
+    "buffer": "^5.2.1",
     "install": "^0.10.4",
     "moment": "^2.22.1",
     "native-base": "^2.4.4",

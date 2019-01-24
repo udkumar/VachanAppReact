@@ -35,7 +35,7 @@ export default class Notes extends Component {
       colorFile:this.props.screenProps.colorFile,
       sizeFile:this.props.screenProps.sizeFile,
       notesData:[],
-      referenceList: this.props.navigation.state.params.referenceList,
+      referenceList:[],
     }
     this.styles = noteStyle(props.screenProps.colorFile, props.screenProps.sizeFile);   
     
@@ -83,8 +83,7 @@ export default class Notes extends Component {
       newNote: this.createNewNote,
       updateNote:this.updateNote
     })
-   
-    this.queryDb()
+      this.queryDb()
   }
 
   openEdit(index, noteObject) {
@@ -92,7 +91,7 @@ export default class Notes extends Component {
       noteObject: noteObject, 
       onDelete: this.onDelete, 
       onRefresh: this.onRefresh, 
-      referenceList: this.state.referenceList,
+      referenceList:  this.props.navigation.state.params.referenceList,
       bookId: this.state.bookId,
       versionCode: this.state.versionCode,
       languageCode: this.state.languageCode,

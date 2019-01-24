@@ -1,92 +1,58 @@
-
-import DbHelper from './dbHelper'
-import id_name_map from '../assets/mappings.json'
-import BookModel from '../models/BookModel';
-import { Results } from 'realm';
-import { styles } from '../screens/StudyBible/styles';
-import { Spinner } from 'native-base';
-import { constColors } from './colors';
-const Constants = require('./constants')
 var Buffer = require('buffer/').Buffer 
 var RNFS = require('react-native-fs');
 
-export default class TextParser {
+const summaryOfBook = []
+const summaryData = []
+const bookId = null
 
-    constructor() {
-        // this.bookId = null;
-        // this.chapterList = [];
-        // this.verseList = [];
-        // this.bookIntro = [];
-        // this.mappingData = id_name_map;
-        // this.languageCode = "Hin";
-        // this.languageName = "Hindi";
-        // this.versionCode = "IRV";
-        // this.versionName = "Indian Revised Version";
-        // this.source = "BridgeConn";
-        // this.year = 2017;
-        // this.license = "CCSA";
+    export  function parseFile(id,chapterNum){
+        console.log("chapterNum "+chapterNum)
+            return RNFS.readFileAssets('irvhin.txt', 'base64')
+                .then((res)=>{
+                    const result = Buffer.from(res, 'base64').toString('utf8')
+                        var lines = result.split('\n')
+                        if(chapterNum !==null){
+                            for(var i=66; i<1254; i++) {
+                                const bookIdChapter = lines[i].match(/([a-zA-Z]{3})\s+(\d+)/)
+                                if(id == bookIdChapter[1].toUpperCase() && chapterNum == bookIdChapter[2]){
+                                    return summary(lines[i])
+                                }
+                            }
+                        }
+                        for(var i=0; i<66; i++) { 
+                            const idBookBook = lines[i].match(/([a-zA-Z]{3})/)
+                                if(id == idBookBook[1].toUpperCase()){
+                                return summary(lines[i])
+                                }
+                        }
+
+                        // for(var i=1255; i<lines.length-1; i++) {
+                        //     const bookIdChapterVerse = lines[i].match(/([a-zA-Z]{3})\s+(\d+):(\d+)/)
+                        //     if(id == bookIdChapterVerse[1].toUpperCase() && chapterNum == bookIdChapterVerse[2] && verseNum == bookIdChapterVerse[3]){
+                        //         console.log("yes every thing is matching")
+                        //     }
+
+                        // }
+
+
+                })
+                .catch ((error)=>{
+                })
     }
 
-    // parseFile(path, lCode, lName, vCode, vName, source, license, year, fromAssets) {
-    //     this.languageCode = lCode;
-    //     this.languageName = lName;
-    //     this.versionCode = vCode;
-    //     this.versionName = vName;
-    //     this.source = source;
-    //     this.license = license;
-    //     this.year = year;
 
-    //     if (fromAssets) {
-    //         RNFS.readFileAssets(path)
-    //             .then((result)=>{
-    //                 this.parseFileContents(result);
-    //             });
-    //     } else {
-    //         RNFS.readFile(path)
-    //             .then((result)=>{
-    //                 this.parseFileContents(result);
-    //             });
-    //     }
-    // }
 
-    async parseFile(){
-        try {
-            var content = await RNFS.readFileAssets('irvhin.txt', 'base64')
-            const result = Buffer.from(content, 'base64').toString('utf8')
-            this.parseFileContents(result)
-        }
-        catch(error){
-            console.log("error "+error)
-        }
-    }
-
-    parseFileContents(result) {
-        try {
-            // console.log("result length "+result.length)
-            var lines = result.split('\n');
-            // console.log("lines "+lines.length)
-            for(var i=0; i<66; i++) {
-                this.processLine(lines[i])
-                    console.log("i value "+lines[i])
+    function summary(line){
+        summaryData = []
+        var string  = line.split('<br>')
+        for(j=0;j<=string.length-1;j++){
+            console.log("string "+string[j])
+            var myRegexp = /\<b\>(.*?)\<\/b\>(\s+\-\s+.*)/g
+            while((match = myRegexp.exec(string[j])) != null){
+                summaryData.push({key:match[1],value:match[2]})
             }
-        } catch(exception) {
-            console.log("error in parsing file : " + exception)
         }
+        return summaryData
     }
-    processLine(summary) {
-        // console.log("lines in process line "+summary)
-        const idBook = summary.match(/(^\w{3})/g)
-        console.log("book id "+idBook)
-        const value = summary.match(/(\s+\-\s+.*?)(?:<)/g)
-        console.log("value of string "+value)
-        const mazorValue = value.toString().split('<')
-        console.log(" mazor value of string "+mazorValue[3])
-        const key = summary.match(/(\<b\>).*?(\<\/b\>)/g)
-        console.log("key of string "+key)
-        
-    }
-    // addBookSummary(string){
-    //         console.log("tags "+tags)
-    // }
 
-}
+   

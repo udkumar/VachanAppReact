@@ -21,7 +21,7 @@ import DownloadLanguage from '../screens/Downloads/DownloadLanguage'
 import DownloadVersion from '../screens/Downloads/DownloadVersion'
 import BackupRestore from '../screens/backup/BackupRestore'
 import DrawerScreen from '../screens/DrawerScreen/DrawerScreen'
-import  Bible from '../screens/Bible/Bible'
+import  Bible from '../screens/Bible'
 const AsyncStorageConstants = require('./AsyncStorageConstants')
 import AsyncStorageUtil from './AsyncStorageUtil';
 import {nightColors, dayColors, constColors} from './colors.js'
@@ -29,9 +29,12 @@ import {extraSmallFont,smallFont,mediumFont,largeFont,extraLargeFont} from './di
 import { styleFile } from './styles.js'
 import DbQueries from '../utils/dbQueries'
 import Realm from 'realm'
+import Video from '../screens/Video'
+import Audio from '../screens/Audio'
+import BottomTab from '../screens/Bible/BottomTab'
 
 
-const DrawerNavigate = (styles)=> DrawerNavigator({
+const DrawerNavigate = (styles) => DrawerNavigator({
   StackNavigate:{
     screen: StackNavigate
 }
@@ -85,7 +88,6 @@ const StackNavigate = StackNavigator(
           headerTitle:"Select Book"
       }
       },
-      
       About: {
         screen: About,
       },
@@ -128,13 +130,21 @@ const StackNavigate = StackNavigator(
       DownloadVersion: {
         screen: DownloadVersion
       },
-     
       Search: {
         screen: Search,
       },
       BackupRestore: {
         screen: BackupRestore
       },
+      Audio:{
+        screen:Audio
+      },
+      Video:{
+        screen:Video
+      },
+      BottomTab:{
+        screen:BottomTab
+      }
      
   },
   {
@@ -186,7 +196,7 @@ export default class App extends Component {
     this.changeSizeByOne = this.changeSizeByOne.bind(this)
     this.updateLastRead = this.updateLastRead.bind(this)
     this.updateLanguage  = this.updateLanguage.bind(this)
-    this.updateBookData = this.updateBookData.bind(this)
+    this.updateBookData  = this.updateBookData.bind(this)
 
     this.styles = styleFile(this.state.colorFile,this.state.sizeFile)
     this.DrawerNavigate = DrawerNavigate(this.styles)
@@ -211,6 +221,9 @@ export default class App extends Component {
 	
   updateSize = (sizeMode, sizeFile) => {
     this.setState({sizeMode, sizeFile})
+  }
+  updateBookData = (bookId,bookName,chapterNumber) =>{
+    this.setState({bookId,bookName,chapterNumber})
   }
 
 
@@ -268,19 +281,17 @@ export default class App extends Component {
   }
 
   updateLanguage = async(languageCode,languageName,versionCode,versionName) =>{
-    console.log("in ROTES update language")
+    // console.log("in ROTES update language")
     this.setState({languageCode, languageName,versionCode,versionName})
 
     let models = await DbQueries.queryBookIdModels(versionCode, languageCode);
-      console.log("routes len =" + JSON.stringify(models))
+      // console.log("routes len =" + JSON.stringify(models))
       if (models && models.length > 0) {
         this.setState({booksList: models})
       }
 
   }
-  updateBookData(id,name,chapter){
-    this.setState({bookId:id,bookName:name,chapterNumber:chapter})
-  }
+ 
 
   render(){
     // console.log("bookList "+JSON.stringify(this.state.booksList[0].bookId))
@@ -308,10 +319,10 @@ export default class App extends Component {
           updateSize: this.updateSize,
           updateVerseInLine:this.updateVerseInLine,
           updateBooks: this.updateBooks,
-          updateBookData: this.updateBookData,
           changeSizeByOne: this.changeSizeByOne,
           updateLastRead: this.updateLastRead,
-          updateLanguage: this.updateLanguage
+          updateLanguage: this.updateLanguage,
+          updateBookData: this.updateBookData
         }}
       />
     );
@@ -378,10 +389,10 @@ export default class App extends Component {
       bookName: res[8][1] == null ? AsyncStorageConstants.Values.DefBookName:res[8][1],
       chapterNumber: res[8][1] == null ? AsyncStorageConstants.Values.DefBookChapter:parseInt(res[9][1])
     }, async ()=> {
-      console.log("QUERY : " + this.state.versionCode + " ::  " + this.state.languageCode)
+      // console.log("QUERY : " + this.state.versionCode + " ::  " + this.state.languageCode)
       let models = await DbQueries.queryBookIdModels(this.state.versionCode, this.state.languageCode);
-      console.log("routes len =" + JSON.stringify(models))
-      console.log("VERSE VALUE ++++ " + res[2][1])
+      // console.log("routes len =" + JSON.stringify(models))
+      // console.log("VERSE VALUE ++++ " + res[2][1])
       this.setState({isDbLoading: false})
       if (models && models.length > 0) {
         this.setState({booksList: models,bookId:models[0].bookId,bookName:models[0].bookName})

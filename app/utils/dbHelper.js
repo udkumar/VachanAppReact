@@ -23,7 +23,7 @@ class DbHelper {
     	try {
     		return await Realm.open({
 				schemaVersion: 1,
-				deleteRealmIfMigrationNeeded: true, 
+				// deleteRealmIfMigrationNeeded: true, 
 				path:
 					Platform.OS === 'ios'
 					? RNFS.MainBundlePath + '/autographa.realm'

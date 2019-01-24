@@ -1,5 +1,6 @@
 import { AppRegistry } from 'react-native';
 import App from './app/utils/routes'
+// import App from './app/navigation'
 import React, {Component} from 'react'
 
 import AddData from './app/utils/AddData'

@@ -255,7 +255,6 @@ renderItem = ({item, index})=> {
               ?
               <Button 
                 active={this.state.activeTab} 
-       
                 style={[{
                   backgroundColor: this.state.activeTab ? activeBgColor : inactiveBgColor,
                   width: this.state.NTSize == 0 ? width : width/2,

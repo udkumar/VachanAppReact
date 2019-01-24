@@ -27,10 +27,10 @@ export default class DownloadVersion extends Component {
     constructor(props){
         super(props);
         this.state = {
-            downloadVersionList:[],
+            downloadVersionList:this.props.navigation.state.params.item.versions,
             isLoading: false,
             refreshing: false,
-            languageName: this.props.navigation.state.params.languageName,
+            // languageName: this.props.navigation.state.params.languageName,
             isDownloading: false,
             downloadMetadata: {},
             isLoadingText: '',
@@ -45,7 +45,8 @@ export default class DownloadVersion extends Component {
     }
 
     componentDidMount() {
-        this.downloadBibleVer()
+        console.log("version data "+this.props.navigation.state.params.item.version)
+    //    this.downloadBibleVer()
     }
     downloadBibleVer(){
         NetInfo.isConnected.fetch().then(isConnected => {
@@ -217,12 +218,17 @@ export default class DownloadVersion extends Component {
             });
     }
     
+    async downloadBook(item){
+        console.log("item "+JSON.stringify(item))
+            await new USFMParser().parseFile(item.books[0],this.props.navigation.state.params.item.language_code,this.props.navigation.state.params.item.langauge_name,item.version_code,item.version_name,item.source,item.license,item.year);
+
+    }
     renderItem = ({item,index})=>{
         return(
             <Card style={this.styles.cardStyle}>
-                <TouchableOpacity onPress={() => this.downloadZip(item)} >
+                <TouchableOpacity onPress={() => this.downloadBook(item)}>
                     <CardItem style={this.styles.cardItemStyle}>
-                        <Text style={this.styles.textStyle}>{item}</Text>
+                        <Text style={this.styles.textStyle}>{item.version_name}</Text>
                     </CardItem>
                 </TouchableOpacity>
             </Card>
@@ -232,7 +238,11 @@ export default class DownloadVersion extends Component {
     render() {
         return (
             <View style={this.styles.container}>
-            <View style={this.styles.containerMargin}>
+              <FlatList
+                    data={this.state.downloadVersionList}
+                    renderItem={this.renderItem}
+                />
+            {/* <View style={this.styles.containerMargin}>
             {this.state.isLoading ? 
                 <ActivityIndicator
                     animating={this.state.isLoading} 
@@ -264,7 +274,7 @@ export default class DownloadVersion extends Component {
 
                 </View>
              : null}
-            </View>
+            </View> */}
             </View>
         );
     }

@@ -46,7 +46,7 @@ export default class Example extends React.Component {
                     alignItems:'center',
                 }}>
                 <TouchableOpacity 
-                onPress={this.props.showScreen}  
+                // onPress={this.props.showScreen}  
                 >
                 <Text style={{textAlign:'center',color:'white', }}>
                     IRVNotes
@@ -76,8 +76,7 @@ export default class Example extends React.Component {
             >  
               
             <TouchableOpacity 
-              onPress={this.props.showSummaryScreen}
-
+             onPress={this.props.showScreen}  
             >        
                 <Text style={{textAlign:'center',color:'white', }}>
                   Summary

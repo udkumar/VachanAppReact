@@ -11,6 +11,8 @@ import DownloadUtil from '../../utils/DownloadUtil'
 import {Card, CardItem} from 'native-base'
 import {downloadPageStyle} from './styles.js'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import bible_data from '../../assets/TestLangApi.json'
+
 
 export default class DownloadLanguage extends Component {
 
@@ -30,7 +32,8 @@ export default class DownloadLanguage extends Component {
     }
 
     componentDidMount() {
-     this.downloadBible()
+        console.log("file json "+JSON.stringify(bible_data.languages))
+            this.setState({downloadData:bible_data.languages})
     }
     downloadBible(){
         NetInfo.isConnected.fetch().then(isConnected => {
@@ -57,9 +60,9 @@ export default class DownloadLanguage extends Component {
     renderItem = ({item,index})=>{
         return(
             <Card style={this.styles.cardStyle}>
-                <TouchableOpacity onPress={()=> this.props.navigation.navigate('DownloadVersion', {languageName: item})} >
+                <TouchableOpacity onPress={()=> this.props.navigation.navigate('DownloadVersion', {item: item})} >
                     <CardItem style={this.styles.cardItemStyle}> 
-                        <Text style={this.styles.textStyle}>{item}</Text>
+                        <Text style={this.styles.textStyle}>{item.langauge_name}</Text>
                     </CardItem>
                 </TouchableOpacity>
             </Card>
@@ -67,9 +70,16 @@ export default class DownloadLanguage extends Component {
     }
 
     render() {
+        // if(this.state.dowsnloadData[0])
+        // console.log("DATA ARRAY "+ JSON.stringify(this.state.downloadData.length) )
         return (
             <View style={this.styles.container}>
-            <View style={this.styles.containerMargin}>
+            <FlatList 
+                 data={this.state.downloadData}
+                 renderItem={this.renderItem}
+            />
+            {/* <Text>{this.state.downloadData}</Text> */}
+            {/* <View style={this.styles.containerMargin}>
                 {this.state.isLoading ? 
                 <ActivityIndicator
                     animating={this.state.isLoading} 
@@ -88,7 +98,7 @@ export default class DownloadLanguage extends Component {
                     renderItem={this.renderItem}
                 />
                 }
-            </View>
+            </View> */}
             </View>
         );
     }

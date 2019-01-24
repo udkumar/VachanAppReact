@@ -38,7 +38,6 @@ export default class ChapterSelection extends Component {
     DbQueries.addHistory(this.props.screenProps.languageCode, this.props.screenProps.versionCode, 
     this.state.bookId, item, time);
     this.props.screenProps.updateBookData(this.state.bookId, this.state.bookName,item)
-
   }
   
   render() {

@@ -10,11 +10,10 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import DbQueries from '../../utils/dbQueries'
-import {getNameFromMapping} from '../../utils/UtilFunctions';
+import {getBookNameFromMapping} from '../../utils/UtilFunctions';
 import id_name_map from '../../assets/mappings.json'
 import {constantFont} from '../../utils/dimens.js'
 import { highlightstyle } from './styles'
-
 
 export default class HighLights extends Component {
   static navigationOptions = {

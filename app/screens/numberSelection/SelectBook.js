@@ -6,18 +6,12 @@ import {
   FlatList,
   Dimensions
 } from 'react-native';
-import DbQueries from '../../utils/dbQueries'
-const height = Dimensions.get('window').height;
-const width = Dimensions.get('window').width;
-import {nightColors, dayColors} from '../../utils/colors.js'
-import {extraSmallFont,smallFont,mediumFont,largeFont,extraLargeFont} from '../../utils/dimens.js'
 
 export default class SelectBook extends Component {
 
   constructor(props){
     super(props)
     console.log("props number : "+JSON.stringify(props))
-
     this.onBookSelected = this.onBookSelected.bind(this)
 
     this.state = {
