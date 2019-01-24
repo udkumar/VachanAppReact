@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -68,6 +67,7 @@
 		E10A94135E24483F9F0BA814 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A27773ACF21F440BB55CEBB0 /* SimpleLineIcons.ttf */; };
 		E1E48CBBE5D64AF1AEF0112C /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5BBD27D602384B1EA50660EA /* Octicons.ttf */; };
 		F7DDA6B1747B406EA4029E8F /* rubicon-icon-font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8D6B66F0D7CF45CD99FF752D /* rubicon-icon-font.ttf */; };
+		9A26F494AB184C7CA8681A0D /* libRNVideoPlayer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 21432339345344358F2697D7 /* libRNVideoPlayer.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -464,6 +464,8 @@
 		F0F81E2C241502055E4CF0A7 /* Pods-AutographaGo_ReactNative.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AutographaGo_ReactNative.release.xcconfig"; path = "Pods/Target Support Files/Pods-AutographaGo_ReactNative/Pods-AutographaGo_ReactNative.release.xcconfig"; sourceTree = "<group>"; };
 		F704A9B30DB3480E87189990 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		FD1C4D8586D645C1AD6DE96A /* libc++.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		1F0F6A4ED6F64DE6B539E927 /* RNVideoPlayer.xcodeproj */ = {isa = PBXFileReference; name = "RNVideoPlayer.xcodeproj"; path = "../node_modules/react-native-native-video-player/ios/RNVideoPlayer.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		21432339345344358F2697D7 /* libRNVideoPlayer.a */ = {isa = PBXFileReference; name = "libRNVideoPlayer.a"; path = "libRNVideoPlayer.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -502,6 +504,7 @@
 				609B3FEF732D41F69AE01634 /* libRNZipArchive.a in Frameworks */,
 				AAC436E23C240E779C7FA1D9 /* libPods-AutographaGo_ReactNative.a in Frameworks */,
 				A3E76D9EF237447787F1224E /* libRNFS.a in Frameworks */,
+				9A26F494AB184C7CA8681A0D /* libRNVideoPlayer.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -780,6 +783,7 @@
 				C5F7FF343FF742EDA815029B /* RNVectorIcons.xcodeproj */,
 				98AA76C49CBF40C4A22F4FD8 /* React-Native-Webview-Bridge.xcodeproj */,
 				7E739EDAD5E64FD2A57AB713 /* RNZipArchive.xcodeproj */,
+				1F0F6A4ED6F64DE6B539E927 /* RNVideoPlayer.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1596,12 +1600,14 @@
 					"$(SRCROOT)/../node_modules/react-native-webview-bridge/ios",
 					"$(SRCROOT)/../node_modules/react-native-zip-archive/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-native-video-player/ios/RNVideoPlayer",
 				);
 				INFOPLIST_FILE = AutographaGo_ReactNativeTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1632,12 +1638,14 @@
 					"$(SRCROOT)/../node_modules/react-native-webview-bridge/ios",
 					"$(SRCROOT)/../node_modules/react-native-zip-archive/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-native-video-player/ios/RNVideoPlayer",
 				);
 				INFOPLIST_FILE = AutographaGo_ReactNativeTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1669,6 +1677,7 @@
 					"$(SRCROOT)/../node_modules/react-native-webview-bridge/ios",
 					"$(SRCROOT)/../node_modules/react-native-zip-archive/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-native-video-player/ios/RNVideoPlayer",
 				);
 				INFOPLIST_FILE = AutographaGo_ReactNative/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1696,6 +1705,7 @@
 					"$(SRCROOT)/../node_modules/react-native-webview-bridge/ios",
 					"$(SRCROOT)/../node_modules/react-native-zip-archive/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-native-video-player/ios/RNVideoPlayer",
 				);
 				INFOPLIST_FILE = AutographaGo_ReactNative/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1730,11 +1740,13 @@
 					"$(SRCROOT)/../node_modules/react-native-webview-bridge/ios",
 					"$(SRCROOT)/../node_modules/react-native-zip-archive/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-native-video-player/ios/RNVideoPlayer",
 				);
 				INFOPLIST_FILE = "AutographaGo_ReactNative-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1775,11 +1787,13 @@
 					"$(SRCROOT)/../node_modules/react-native-webview-bridge/ios",
 					"$(SRCROOT)/../node_modules/react-native-zip-archive/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-native-video-player/ios/RNVideoPlayer",
 				);
 				INFOPLIST_FILE = "AutographaGo_ReactNative-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1821,6 +1835,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.AutographaGo_ReactNative-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1846,6 +1861,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",

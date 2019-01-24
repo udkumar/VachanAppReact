@@ -32,7 +32,7 @@ import Realm from 'realm'
 import Video from '../screens/Video'
 import Audio from '../screens/Audio'
 import BottomTab from '../screens/Bible/BottomTab'
-
+import GoogleMaps from  '../screens/GoogleMaps'
 
 const DrawerNavigate = (styles) => DrawerNavigator({
   StackNavigate:{
@@ -144,6 +144,9 @@ const StackNavigate = StackNavigator(
       },
       BottomTab:{
         screen:BottomTab
+      },
+      GoogleMaps:{
+        screen:GoogleMaps
       }
      
   },

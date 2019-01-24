@@ -66,11 +66,6 @@ export default class USFMParser {
     //     this.source = "Unfolding Word",
     //     this.license = "V5.0 (Consultant Checked)",
     //     this.year = 2018;
-
-    //     RNFS.readFileAssets("hindi_irv/67-REV.usfm")
-    //         .then((result)=>{
-    //             this.parseFileContents(result)
-    //         })
         
     // }
 

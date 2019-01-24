@@ -26,6 +26,7 @@ import {
 } from 'react-native-popup-menu';
 import { styles } from './styles.js';
 import id_name_map from '../../assets/mappings.json'
+
 import BottomTab from './BottomTab'
 
 const width = Dimensions.get('window').width;
@@ -99,7 +100,8 @@ export default class Bible extends Component {
 
   constructor(props) {
     super(props);
-
+    this.leftIsScrolling = false;
+    this.rigthIsScrolling = false;
     console.log("PROPS VALUE BIBLE "+JSON.stringify(props.screenProps))
 
     this.mappingData = id_name_map;
@@ -107,6 +109,10 @@ export default class Bible extends Component {
     this.queryBook = this.queryBook.bind(this)
     this.onBookmarkPress = this.onBookmarkPress.bind(this)
     this.showScreen = this.showScreen.bind(this)
+    this.showSummaryScreen = this.showSummaryScreen.bind(this)
+    this.showAudioScreen = this.showAudioScreen.bind(this)
+    this.showImageScreen =this.showImageScreen.bind(this)
+    this.showVideoScreen =this.showVideoScreen.bind(this)
     this.onScroll = this.onScroll.bind(this)
      // this.openLanguages = this.openLanguages.bind(this)
     // this.modalHandle = this.modalHandle.bind(this)
@@ -137,6 +143,7 @@ export default class Bible extends Component {
 
       offset:0,
       scrollDirection:'up',
+
       index: height / 4,
       show:false,
       showFootNote:false,
@@ -399,6 +406,26 @@ export default class Bible extends Component {
     this.setState({
       show: !this.state.show});
   }
+  showSummaryScreen(){
+    console.log("state value "+this.state.showSummaryScreen)
+    this.setState({
+      showsummary: !this.state.showsummary});
+  }
+  showAudioScreen(){
+    console.log("state value "+this.state.showAudio)
+    this.setState({
+      showAudio: !this.state.showAudio});
+  }
+  showImageScreen(){
+    console.log("state value "+this.state.showImage)
+    this.setState({
+      showImage: !this.state.showImage});
+  }
+  showVideoScreen(){
+    console.log("state value "+this.state.showVideo)
+    this.setState({
+      showVideo: !this.state.showVideo});
+  }
   
   openLanguages = ()=>{
     this.props.navigation.navigate("Language", {updateLanguage:this.updateLanguage})
@@ -423,11 +450,10 @@ export default class Bible extends Component {
     console.log("value of index before"+this.state.index)
     LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
     this.setState({index: this.state.index + heightInc})
-    if(this.state.index > height/2){
-      console.log("height of screen "+height)
-      this.setState({index: this.state.index - heightInc})
-    }
+
     console.log("value of index "+this.state.index)
+    this.setState({indexdown:this.state.indexdown +0})
+
   }
 
   onPressfootNote = () => {
@@ -445,10 +471,19 @@ export default class Bible extends Component {
           <MenuContext style={this.styles.verseWrapperText}>
         {this.state.modelData.length>0 ? 
             <View>
-                <ScrollView onScroll={this.onScroll}
+                <ScrollView  
+                   ref={(ref) => { this.scrollViewRef = ref; }}
+                   onScroll={e => {
+                      if (!this.leftIsScrolling) {
+                        this.rigthIsScrolling = true;
+                        var scrollY = e.nativeEvent.contentOffset.y;
+                        this.scrollViewRef.scrollTo({ y: scrollY });
+                      }
+                      this.leftIsScrolling = false;
+                    }}
+                
                     // style={this.styles.recyclerListView}
-                    ref={(ref) => { this.scrollViewRef = ref; }}                    
-                >
+                  >
                  {    (this.state.verseInLine) ?
                           <View style={this.styles.chapterList}>
                             <FlatList
@@ -529,6 +564,7 @@ export default class Bible extends Component {
           }
          
           </MenuContext>
+
           <BottomTab
             colorFile={this.props.screenProps.colorFile}
             sizeFile={this.props.screenProps.sizeFile}

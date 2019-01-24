@@ -49,7 +49,7 @@ export default class Example extends React.Component {
                 // onPress={this.props.showScreen}  
                 >
                 <Text style={{textAlign:'center',color:'white', }}>
-                    NotePad
+                    IRVNotes
                 </Text>
                 <Icon 
                     name={'border-color'} 
@@ -105,7 +105,7 @@ export default class Example extends React.Component {
                     alignItems:'center',
                 }}>   
             <TouchableOpacity 
-            //   onPress={this.addToShare} 
+            onPress={this.props.showAudioScreen} 
             >       
                 <Text style={{textAlign:'center',color:'white', }}>
                   Audio
@@ -135,7 +135,7 @@ export default class Example extends React.Component {
                 }}
             >   
               <TouchableOpacity 
-            //   onPress={this.addToShare}  
+             onPress={this.props.showImageScreen} 
               >       
                 <Text style={{textAlign:'center',color:'white', }}>
                   Images
@@ -164,7 +164,7 @@ export default class Example extends React.Component {
                     alignItems:'center',
                 }}>   
               <TouchableOpacity 
-            //   onPress={this.addToShare}  
+            onPress={this.props.showVideoScreen} 
               >       
                 <Text style={{textAlign:'center',color:'white', }}>
                   Video

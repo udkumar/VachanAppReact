@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
 import {
   View,
+  Text
 } from 'react-native';
 // import DbQueries from '../utils/dbQueries'
 
-export default class Images extends Component {
+export default class GoogleMaps extends Component {
  
 
   render() {
     return (
-      <View style={splashStyle.splashScreen}>
-       <Text>Images</Text>
+      <View>
+       <Text>GoogleMaps</Text>
       </View>
     );
   }
