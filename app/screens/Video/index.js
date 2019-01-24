@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import {
   View,
-  Text
+  Text,
+  WebView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
@@ -19,8 +20,13 @@ export default class Video extends Component {
 
   render() {
     return (
-      <View>
-       <Text>Video</Text>
+      <View style={{ height: 240 }}>
+       <WebView
+          javaScriptEnabled={true}
+          domStorageEnabled={true}
+          source={{ uri: "https://www.youtube.com/embed/0iayQ1xPsnc" }}
+
+        />
       </View>
     );
   }
