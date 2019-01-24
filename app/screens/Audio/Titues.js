@@ -3,8 +3,10 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
 import { AppRegistry, FlatList,translate,StyleSheet,Slider, Text,Button,Image,
    View ,TouchableWithoutFeedback,Dimensions} from 'react-native';
-  
+import Video from 'react-native-video';
+
 var Sound = require('react-native-sound');
+
 song = new Sound('tt.mp3',Sound.MAIN_BUNDLE,(error) =>{
   if (error) {
       console.log('failed to load the sound', error);
@@ -85,12 +87,7 @@ toggleplay(){
                 }
               
             }
-//    componentDidMount(){
-//     this.handleLoad
-//     this.handleProgress
-//   this.handleEnd
-    
-//  }
+  
 
 
 // componentWillMount()
@@ -137,7 +134,7 @@ toggleplay(){
 
 
  render(){
-  const barWidth = Dimensions.get('screen').width - 30;
+  const barWidth = Dimensions.get('screen').width - 10;
   const progressCustomStyles = {
     backgroundColor: 'red', 
     borderRadius: 0,
@@ -161,28 +158,28 @@ toggleplay(){
  
 }}
 source={require('../../assets/backmusic.jpg')}/>
-
-
-
-          <Slider
+ <Video
           pause={this.state.pause}
-          source={song}
+          source={{uri:'https://www.robtowns.com/music/blind_willie.mp3'}}
           onLoad={this.handleLoad}
+          
           onProgress={this.handleProgress}
+          onEnd={this.handleEnd}
+          ref={ref => {
+            this.song = ref;}}
           />
           
 <TouchableWithoutFeedback onPress={this.handleProgressPress} >
- <ProgressBarAnimated style={{position: 'absolute',alignSelf: 'center',bottom:30}}
+ <Slider style={{position: 'absolute',alignSelf: 'center',bottom:30}}
             width={barWidth}
             value={this.state.progress}
-           backgroundColorOnComplete="#6CC644"
-         
+            
+            
           />
 </TouchableWithoutFeedback>
         <Icon
   onPress={this.toggleplay}
-  
-    name={!this.state.paused ? "pause" : "play"}
+   name={!this.state.paused ? "pause" : "play"}
     size={40}
    color='#3b5998'
    
@@ -191,13 +188,13 @@ source={require('../../assets/backmusic.jpg')}/>
     alignItems: 'center'}}/>
     
      <Icon
- name='forward'
+ name='backward'
     size={30}
    color='#3b5998'
     style={{height:50,width:50,position: 'absolute' ,right:100, top:30,
     flexDirection: 'row', justifyContent: 'center'}}/>
     <Icon
- name='backward'
+ name='forward'
     size={30}
    color='#3b5998'
     style={{height:50,width:50,position: 'absolute',left: 80, top:30, flexDirection: 'row', justifyContent: 'center'}}/>
