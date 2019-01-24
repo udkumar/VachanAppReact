@@ -21,7 +21,7 @@ import DownloadLanguage from '../screens/Downloads/DownloadLanguage'
 import DownloadVersion from '../screens/Downloads/DownloadVersion'
 import BackupRestore from '../screens/backup/BackupRestore'
 import DrawerScreen from '../screens/DrawerScreen/DrawerScreen'
-import  Bible from '../screens/Bible/Bible'
+import  Bible from '../screens/Bible'
 const AsyncStorageConstants = require('./AsyncStorageConstants')
 import AsyncStorageUtil from './AsyncStorageUtil';
 import {nightColors, dayColors, constColors} from './colors.js'
@@ -31,6 +31,7 @@ import DbQueries from '../utils/dbQueries'
 import Realm from 'realm'
 import Video from '../screens/Video'
 import Audio from '../screens/Audio'
+import BottomTab from '../screens/Bible/BottomTab'
 
 
 const DrawerNavigate = (styles) => DrawerNavigator({
@@ -140,6 +141,9 @@ const StackNavigate = StackNavigator(
       },
       Video:{
         screen:Video
+      },
+      BottomTab:{
+        screen:BottomTab
       }
      
   },

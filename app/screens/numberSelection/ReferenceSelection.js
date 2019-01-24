@@ -6,13 +6,9 @@ import {
   FlatList,
   Dimensions
 } from 'react-native';
-import DbQueries from '../../utils/dbQueries'
-import { numberSelectionPageStyle } from './styles.js';
+import {TabNavigator} from 'react-navigation'
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
-import {nightColors, dayColors} from '../../utils/colors.js'
-import {extraSmallFont,smallFont,mediumFont,largeFont,extraLargeFont} from '../../utils/dimens.js'
-import {createMaterialTopTabNavigator, TabNavigator} from 'react-navigation'
 import SelectBook from './SelectBook'
 import SelectChapter from './SelectChapter'
 import SelectVerse from './SelectVerse'

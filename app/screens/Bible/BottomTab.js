@@ -1,29 +1,26 @@
 
-import { TabNavigator } from "react-navigation";
 
-import StudyHelp from '../../navigation/BookStack/StudyHelp'
-import NotePadStack from '../../navigation/BookStack/NotePadStack'
-import Audio from '../Audio'
-import Video from '../Video'
+import React, { Component } from 'react';
 
-const BottomTabNav = TabNavigator(
-	{
-    Audio:{
-      screen:Audio
-    },
-    Video:{
-      screen:Video
-    },
-    StudyHelp:{
-      screen:StudyHelp
-    },
-    NotePadStack:{
-      screen:NotePadStack
+
+import BottomTabNav from './Navigate/BottomTabStack'
+
+export default class BottomTab extends Component {
+    constructor(props){
+        super(props)
     }
-	},
-	{
-		backBehavior: "none",
-		tabBarPosition: "bottom"
-	}
-)
-export default BottomTabNav
+    render() {
+        console.log("props value in bottom tabs"+this.props)
+        return (
+            <BottomTabNav 
+            screenProps={{
+                colorFile:this.props.colorFile,
+                sizeFile:this.props.sizeFile,
+                currentVisibleChapter:this.props.currentVisibleChapter,
+                bookId:this.props.currentVisibleChapter
+            }}
+            />
+        )
+      }
+      
+}

@@ -6,12 +6,6 @@ import {
   FlatList,
   Dimensions
 } from 'react-native';
-import DbQueries from '../../utils/dbQueries'
-import { numberSelectionPageStyle } from './styles.js';
-const height = Dimensions.get('window').height;
-const width = Dimensions.get('window').width;
-import {nightColors, dayColors} from '../../utils/colors.js'
-import {extraSmallFont,smallFont,mediumFont,largeFont,extraLargeFont} from '../../utils/dimens.js'
 
 export default class SelectChapter extends Component {
 

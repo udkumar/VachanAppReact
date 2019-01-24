@@ -26,28 +26,12 @@ import {
 } from 'react-native-popup-menu';
 import { styles } from './styles.js';
 import id_name_map from '../../assets/mappings.json'
-import {NavigationActions} from 'react-navigation'
-import BottomModal from './Modals/BottomModal'
 import BottomTab from './BottomTab'
-import RenderSummary from './Modals/RenderSummary'
-
-
-
-import {parseFile} from '../../utils/TextParser'
-import { Results } from 'realm';
-import BottomTabNav from './BottomTab';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-const SearchResultTypes = {
-  BOOK: 0,
-  CHAPTER: 1,
-  VERSE: 2
-};
 export default class Bible extends Component {
-
-
   static navigationOptions = ({navigation}) =>{
     const { params = {} } = navigation.state;
 
@@ -124,7 +108,6 @@ export default class Bible extends Component {
     this.onBookmarkPress = this.onBookmarkPress.bind(this)
     this.showScreen = this.showScreen.bind(this)
     this.onScroll = this.onScroll.bind(this)
-    this.toggleButton = this.toggleButton.bind(this)
      // this.openLanguages = this.openLanguages.bind(this)
     // this.modalHandle = this.modalHandle.bind(this)
 
@@ -157,10 +140,6 @@ export default class Bible extends Component {
       index: height / 4,
       show:false,
       showFootNote:false,
-      summaryOfBook:[],
-
-      activeTab:SearchResultTypes.BOOK
-
     }
 
     this.pinchDiff = 0
@@ -248,10 +227,7 @@ export default class Bible extends Component {
         bibleLanguage: this.props.screenProps.languageName, 
         bibleVersion: this.props.screenProps.versionCode
     })  
-      // parseFile(this.state.bookId,this.state.currentVisibleChapter).then((value)=>{
-      //   this.setState({summaryOfBook:value})
-      // })
-    
+     
     this.setState({isLoading: true}, () => {
       this.queryBook()
     })
@@ -403,10 +379,6 @@ export default class Bible extends Component {
 
   updateCurrentChapter(val){
     let currChapter = this.state.currentVisibleChapter + val;
-   
-    parseFile(this.state.bookId,currChapter).then((value)=>{
-      this.setState({summaryOfBook:value})
-    })
     this.setState({currentVisibleChapter: currChapter, 
             isBookmark: this.state.bookmarksList.indexOf(currChapter) > -1}, () => {
             this.props.navigation.setParams({
@@ -437,13 +409,6 @@ export default class Bible extends Component {
       bibleVersion: version
     })
   }
-  updateSummary = (id,name,chapter) =>{
-    this.props.navigation.setParams({
-      bookId:id,
-      bookName:name,
-      chapterNum:chapter
-    })
-  }
   onScroll(event){
     var currentOffset = event.nativeEvent.contentOffset.y;
     var direction = currentOffset > this.state.offset ? 'down' : 'up';
@@ -470,34 +435,7 @@ export default class Bible extends Component {
     console.log("show notes "+this.state.showFootNote)
   }
 
-  toggleButton(activeTab){
-    if (this.state.activeTab == activeTab) {
-      return;
-    }
-
-    this.setState({summaryOfBook: []}, () => {
-      switch (activeTab) {
-        case SearchResultTypes.BOOK: {
-          parseFile(this.state.bookId,null).then((value)=>{
-            console.log("value "+JSON.stringify(value))
-            this.setState({summaryOfBook:value})
-          })
-          break;
-        }
-        case SearchResultTypes.CHAPTER: {
-          parseFile(this.state.bookId,this.state.currentVisibleChapter).then((value)=>{
-            console.log("value "+JSON.stringify(value))
-            this.setState({summaryOfBook:value})
-          })
-          break;
-        }
-        case SearchResultTypes.VERSE: {
-          break;
-        }
-      }
-    })
-    this.setState({activeTab})
-  }
+ 
   render() {
     const thumbSize = this.state.thumbSize;
     console.log("this.state.index value "+this.state.index)
@@ -591,72 +529,12 @@ export default class Bible extends Component {
           }
          
           </MenuContext>
-          {
-            // this.state.show ? 
-            //   <View style={{height:this.state.index}}>
-            //       <TouchableOpacity style={{backgroundColor:'#3F51B5'}} onPress={this.onLayoutChange}> 
-            //           {/* <Text style={{color:'#fff'}}>go up</Text>  */}
-            //             <Icon name="arrow-drop-up" style={{fontSize:20,color:"#fff",alignSelf: 'flex-end'}}/> 
-            //         </TouchableOpacity>
-            //       {/* <ScrollView onscroll={this.onLayoutChang}> */}
-            //       <View>
-            //       {this.state.summaryOfBook.map((item)=>
-            //           <Text>{item.key} {item.value}</Text>
-            //       )}
-            //       </View>
-            //       {/* </ScrollView> */}
-            // </View>:null
-
-            
-              this.state.show ? 
-              // <View>{
-              //      this.state.dataRender.map((item)=>
-              //             <Text>{item.key}</Text>
-              // )
-              // }
-              // </View>
-                    <View style={{height:height/2}}>
-                      {/* <TouchableOpacity style={{backgroundColor:'#3F51B5'}} onPress={()=>{this.setState({show:false})}}> 
-                        <Icon name="close" style={{fontSize:20,color:"#fff",alignSelf: 'flex-end'}}/>   
-                      </TouchableOpacity>
-                      <FlatList
-                        data={[{key:'SUMMARY'},{key:'NOTES'},{key:'COMMANTRY'},{key:'DICTIONARY'}]}
-                        numColumns={2}
-                        renderItem={({item}) =>
-                            <TouchableOpacity
-                             style={{
-                              flex:0.50,
-                              borderRightWidth:1, 
-                              borderBottomWidth:1,
-                              height:height/6, 
-                              justifyContent:"center"
-                            }}
-                            >
-                              <Text style={{textAlign:"center", alignItems:"center"}}>{item.key}</Text>
-                            </TouchableOpacity>
-                        }
-                      /> */}
-                      <RenderSummary
-                      toggleFunction={this.toggleButton}
-                      activeTab={this.state.activeTab}
-                      />
-                      <ScrollView>
-                      {this.state.summaryOfBook.map((item)=>
-                        <Text>{item.key} {item.value}</Text>
-                      )}
-                        <View style={{height:65, marginBottom:4}} />
-                      </ScrollView>
-                  </View>
-             :null
-          }
-          {/* {
-            this.state.scrollDirection == 'up' ? 
-            <BottomModal
-            showScreen = {this.showScreen}
-            show={this.state.show}
-          /> : null 
-          } */}
-          <BottomTab/>
+          <BottomTab
+            colorFile={this.props.screenProps.colorFile}
+            sizeFile={this.props.screenProps.sizeFile}
+            currentVisibleChapter={this.state.currentVisibleChapter}
+            bookId = {this.state.bookId}
+          />
         </View>
       );
   }
