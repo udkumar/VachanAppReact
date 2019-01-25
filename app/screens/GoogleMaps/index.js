@@ -36,7 +36,11 @@ const styles = StyleSheet.create({
   }
 })
  
-export default class SwiperMap extends Component {
+export default class GoogleMaps extends Component {
+  static navigationOptions = {
+    headerTitle: 'Google Maps',
+  };
+
   render(){
     return (
       <Swiper style={styles.wrapper} showsButtons={true} autoplay={true}>

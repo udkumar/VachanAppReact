@@ -62,9 +62,6 @@ export default class VerseView extends Component {
     this.menu.open()
   }
   };
-  onShowNotes = ()=>{
-    this.props.onPressfootNote
-  }
   
   render() {
     let obj = this.props.verseData.chapterNumber + '_' + this.props.index + '_' + this.props.verseData.verseNumber;
@@ -129,28 +126,6 @@ export default class VerseView extends Component {
       //     </Text>
       //   )
       // }
-      
-      // case (Constants.MarkerTypes.MARKER_FOOT_NOTES_QUOTATION) : {
-      //   return (
-      //     <Text>
-      //     <Text onPress={this.props.onPressfootNote} style={{fontSize:20,fontFamily:'italic',fontWeight:'bold'}}>f</Text>
-      //     {this.props.showFootNote ?  <Text style={this.props.styles.paragraphText} >
-      //     {"\n"} {getResultText(this.props.verseData.text)}
-      //     </Text>:null}
-      //    </Text>
-      //   )
-      // }
-       case (Constants.MarkerTypes.MARKER_FOOT_NOTES_TEXT) : {
-        return (
-          <View>
-            <Icon onPress={this.props.onPressfootNote}  name="keyboard-arrow-down" style={{color:"#3F51B5",fontSize:18}}/>
-          {this.props.showFootNote ?  <Text style={this.props.styles.paragraphText} >
-           {getResultText(this.props.verseData.text)}
-          </Text>:null}
-         </View>
-        )
-      }
-     
       case Constants.MarkerTypes.SECTION_HEADING: {
       }
       case Constants.MarkerTypes.SECTION_HEADING_ONE: {

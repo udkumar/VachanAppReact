@@ -8,9 +8,12 @@ import BottomTabNav from './Navigate/BottomTabStack'
 export default class BottomTab extends Component {
     constructor(props){
         super(props)
+        this.state = {
+            close: this.props.close
+        }
     }
+    
     render() {
-        console.log("props value in bottom tabs"+this.props)
         return (
             <BottomTabNav 
                 screenProps={{
@@ -21,7 +24,9 @@ export default class BottomTab extends Component {
                     versionCode:this.props.versionCode,
                     currentVisibleChapter:this.props.currentVisibleChapter,
                     bookId:this.props.bookId,
-            }}
+                    close:this.props.close,
+                    closeSplitScreen:this.props.closeSplitScreen,
+                }}
             />
         )
       }

@@ -5,13 +5,16 @@ import {
 } from 'react-native';
 // import DbQueries from '../utils/dbQueries'
 
-export default class GoogleMaps extends Component {
- 
+export default class Images extends Component {
+  static navigationOptions = {
+    headerTitle: 'Images',
+  };
+
 
   render() {
     return (
       <View>
-       <Text>GoogleMaps</Text>
+       <Text>Images</Text>
       </View>
     );
   }

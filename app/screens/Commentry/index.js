@@ -6,7 +6,9 @@ import {
 // import DbQueries from '../utils/dbQueries'
 
 export default class Commentry extends Component {
- 
+  static navigationOptions = {
+    headerTitle: 'Commentry',
+  };
 
   render() {
     return (

@@ -208,18 +208,11 @@ export default class Language extends Component{
       />
       </ScrollView>
       }
-       <View
-        style={this.styles.buttonCustom}
-       >
-      {/* <TouchableOpacity style={this.styles.downloadButton} 
-        onPress = {()=>this.props.navigation.navigate('DownloadLanguage')}>
-        <Text style={this.styles.buttonContent}>Download More Bibles</Text>
-      <Icon name='file-download' style={this.styles.buttonContent} />
-      </TouchableOpacity> */}
-       
-      <Icon name='file-download' style={this.styles.buttonContent} 
-        onPress = {()=>this.props.navigation.navigate('DownloadLanguage')}/>
-      </View>
+      
+       <TouchableOpacity  onPress = {()=>this.props.navigation.navigate('DownloadLanguage')} style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',padding:8,margin:30,backgroundColor:'#3F51B5'}}>
+        <Text style={{fontSize:18,fontWeight:'bold',color:'#fff'}}>DOWNLOAD MORE BIBLES</Text>
+        <Icon name='file-download' style={this.styles.buttonContent} />
+       </TouchableOpacity>
       </View>
    
   )

@@ -6,7 +6,9 @@ import {
 // import DbQueries from '../utils/dbQueries'
 
 export default class Dictionary extends Component {
- 
+  static navigationOptions = {
+    headerTitle: 'Dictionary',
+  };
 
   render() {
     return (

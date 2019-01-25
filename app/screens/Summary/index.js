@@ -18,6 +18,9 @@ const activeTabFlag = {
     VERSE: 2
   };
 export default class Summary extends React.Component {
+  static navigationOptions = {
+    headerTitle: 'Summary',
+  };
   constructor(props) {
     super(props)
     this.state = {
@@ -30,7 +33,8 @@ export default class Summary extends React.Component {
   }
   componentDidMount(){
      parseFile(this.state.bookId,null).then((value)=>{
-        console.log("value "+value)
+       
+        console.log("VALUE TEST "+value+"BOOK ID FROM SUMMARY PAGE "+this.state.bookId)
         this.setState({summaryOfBook:value})
       })
   }
@@ -38,20 +42,23 @@ export default class Summary extends React.Component {
     if (this.state.activeTab == activeTab) {
       return;
     }
-    this.setState({activeTab})
     this.setState({summaryOfBook: []}, () => {
       switch (activeTab) {
         case activeTabFlag.BOOK: {
           parseFile(this.state.bookId,null).then((value)=>{
             console.log("value "+JSON.stringify(value))
-            this.setState({summaryOfBook:[...this.state.summaryOfBook, ...value],activeTab})
+            console.log("value "+value+"BOOK ID FROM SUMMARY PAGE SWITCH CASE "+this.state.bookId)
+
+            this.setState({summaryOfBook:[...this.state.summaryOfBook, ...value]})
           })
           break;
         }
         case activeTabFlag.CHAPTER: {
           parseFile(this.state.bookId,this.state.currentVisibleChapter).then((value)=>{
             console.log("value "+JSON.stringify(value))
-            this.setState({summaryOfBook:[...this.state.summaryOfBook, ...value],activeTab})
+            console.log("value "+value+"BOOK ID FROM SUMMARY PAGE SWITCH CASE chapter"+this.state.bookId)
+
+            this.setState({summaryOfBook:[...this.state.summaryOfBook, ...value]})
           })
           break;
         }
@@ -60,6 +67,8 @@ export default class Summary extends React.Component {
         }
       }
     })
+    this.setState({activeTab})
+
   }
   render() {
     console.log("summary data "+JSON.stringify(this.state.summaryOfBook))

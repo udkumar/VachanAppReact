@@ -18,7 +18,10 @@ import { historyStyle } from './styles.js'
 var moment = require('moment');
 
 export default class History extends Component{
-
+  static navigationOptions = {
+    headerTitle: 'History',
+  };
+  
   constructor(props){
     super(props)
     this.state = {

@@ -33,6 +33,7 @@ import Video from '../screens/Video'
 import Audio from '../screens/Audio'
 import BottomTab from '../screens/Bible/BottomTab'
 import GoogleMaps from  '../screens/GoogleMaps'
+import Images from '../screens/Images'
 
 const DrawerNavigate = (styles) => DrawerNavigator({
   StackNavigate:{
@@ -147,6 +148,9 @@ const StackNavigate = StackNavigator(
       },
       GoogleMaps:{
         screen:GoogleMaps
+      },
+      Images:{
+        screen:Images
       }
      
   },

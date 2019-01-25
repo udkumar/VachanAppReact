@@ -9,13 +9,28 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 // import DbQueries from '../utils/dbQueries'
 
 export default class Video extends Component {
-  static navigationOptions = ({navigation}) =>{
-    return{
-        headerTitle:(<Text style={{fontSize:16,color:"white",marginLeft:10}}>Video</Text>),
-        headerRight:(
-            <Icon name="close"  style={{fontSize:20,marginRight:10,color:"#fff"}}/>
-        )
+  constructor(props){
+    super(props)
+    console.log("PROPS ON NOTEPAD "+JSON.stringify(props))
+    this.state ={
+        close:this.props.screenProps.close
     }
+}
+static navigationOptions = ({navigation}) =>{
+  const { params = {} } = navigation.state;
+      return{
+          headerTitle:(<Text style={{fontSize:16,color:"white",marginLeft:10}}>Video</Text>),
+          headerRight:(
+              <Icon name="close"  style={{fontSize:20,marginRight:10,color:"#fff"}} onPress={() => {params.closeOnPress()}} />
+          ),
+
+      }
+  }
+componentDidMount(){
+    console.log("DID MOUNT OF NOTEPAD")
+    this.props.navigation.setParams({ 
+        closeOnPress: this.props.screenProps.closeSplitScreen,
+    })
 }
 
   render() {

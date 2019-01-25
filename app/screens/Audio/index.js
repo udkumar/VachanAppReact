@@ -23,13 +23,15 @@ song = new Sound('tt.mp3',Sound.MAIN_BUNDLE,(error) =>{
 
 export default class Titusbible extends Component {
   static navigationOptions = ({navigation}) =>{
-    return{
-        headerTitle:(<Text style={{fontSize:16,color:"white",marginLeft:10}}>Notepad</Text>),
-        headerRight:(
-            <Icon name="close"  style={{fontSize:20,marginRight:10,color:"#fff"}}/>
-        )
+    const { params = {} } = navigation.state;
+        return{
+            headerTitle:(<Text style={{fontSize:16,color:"white",marginLeft:10}}>Audio</Text>),
+            headerRight:(
+                <Icon name="close"  style={{fontSize:20,marginRight:10,color:"#fff"}} onPress={() => {params.closeOnPress()}} />
+            ),
+
+        }
     }
-}
   increase = (key, value) => {
     this.setState({
       [key]: this.state[key] + value,
@@ -43,7 +45,7 @@ constructor(props){
     this.state = {
       isPlaying: false,
       paused:false,
-
+      close:this.props.screenProps.close,
       progress: 0,
       duration:0,
       progressWithOnComplete: 0,
@@ -92,7 +94,13 @@ toggleplay(){
               
             }
   
-
+  componentDidMount(){
+      console.log("DID MOUNT OF NOTEPAD")
+      this.props.navigation.setParams({ 
+          closeOnPress: this.props.screenProps.closeSplitScreen,
+      })
+  }
+          
 
 // componentWillMount()
 // {

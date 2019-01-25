@@ -107,6 +107,7 @@ const BottomTabNav = StackNavigator({
             color: 'white',
         },
         headerTintColor: 'white',
+
 }
 }
 )

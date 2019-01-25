@@ -64,9 +64,6 @@ export const languageStyle =(colorFile, sizeFile) =>{
         justifyContent:'center'
     },
     buttonContent:{
-        alignItems:'center',
-        zIndex:2, 
-        alignSelf:'center',
         color:colorFile.buttonColor,
         fontSize:sizeFile.settingsIcon
     },

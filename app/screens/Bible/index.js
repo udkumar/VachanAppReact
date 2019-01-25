@@ -108,14 +108,7 @@ export default class Bible extends Component {
     this.getSelectedReferences = this.getSelectedReferences.bind(this)
     this.queryBook = this.queryBook.bind(this)
     this.onBookmarkPress = this.onBookmarkPress.bind(this)
-    this.showScreen = this.showScreen.bind(this)
-    this.showSummaryScreen = this.showSummaryScreen.bind(this)
-    this.showAudioScreen = this.showAudioScreen.bind(this)
-    this.showImageScreen =this.showImageScreen.bind(this)
-    this.showVideoScreen =this.showVideoScreen.bind(this)
-    this.onScroll = this.onScroll.bind(this)
-     // this.openLanguages = this.openLanguages.bind(this)
-    // this.modalHandle = this.modalHandle.bind(this)
+    // this.onScroll = this.onScroll.bind(this)
 
     this.updateCurrentChapter = this.updateCurrentChapter.bind(this)
     this.state = {
@@ -141,12 +134,8 @@ export default class Bible extends Component {
       left: width / 2,
       top: height / 2,
 
-      offset:0,
       scrollDirection:'up',
-
-      index: height / 4,
-      show:false,
-      showFootNote:false,
+      close:false
     }
 
     this.pinchDiff = 0
@@ -397,36 +386,6 @@ export default class Bible extends Component {
         })
        
   }
-  modalHandle(){
-    this.setState({show:!this.state.show})
-    this.refs.modal1.open()
-  }
-  showScreen(){
-    console.log("state value "+this.state.show)
-    this.setState({
-      show: !this.state.show});
-  }
-  showSummaryScreen(){
-    console.log("state value "+this.state.showSummaryScreen)
-    this.setState({
-      showsummary: !this.state.showsummary});
-  }
-  showAudioScreen(){
-    console.log("state value "+this.state.showAudio)
-    this.setState({
-      showAudio: !this.state.showAudio});
-  }
-  showImageScreen(){
-    console.log("state value "+this.state.showImage)
-    this.setState({
-      showImage: !this.state.showImage});
-  }
-  showVideoScreen(){
-    console.log("state value "+this.state.showVideo)
-    this.setState({
-      showVideo: !this.state.showVideo});
-  }
-  
   openLanguages = ()=>{
     this.props.navigation.navigate("Language", {updateLanguage:this.updateLanguage})
   } 
@@ -436,51 +395,34 @@ export default class Bible extends Component {
       bibleVersion: version
     })
   }
-  onScroll(event){
-    var currentOffset = event.nativeEvent.contentOffset.y;
-    var direction = currentOffset > this.state.offset ? 'down' : 'up';
-    this.state.offset = currentOffset;
-    this.setState({scrollDirection:direction})
-    console.log(direction);
+  // onScroll(event){
+  //   var currentOffset = event.nativeEvent.contentOffset.y;
+  //   var direction = currentOffset > this.state.offset ? 'down' : 'up';
+  //   this.state.offset = currentOffset;
+  //   this.setState({scrollDirection:direction})
+  //   console.log(direction);
+  // }
+    closeSplitScreen = ()=>{
+     this.setState({close:!this.state.close})
   }
-
-
-  onLayoutChange = () =>{
-    const heightInc = Dimensions.get('window').height/4
-    console.log("value of index before"+this.state.index)
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
-    this.setState({index: this.state.index + heightInc})
-
-    console.log("value of index "+this.state.index)
-    this.setState({indexdown:this.state.indexdown +0})
-
-  }
-
-  onPressfootNote = () => {
-    this.setState({showFootNote:!this.state.showFootNote})
-    console.log("show notes "+this.state.showFootNote)
-  }
-
- 
   render() {
     const thumbSize = this.state.thumbSize;
-    console.log("this.state.index value "+this.state.index)
-    // const whiteHeight = this.state.index + height/4 
+    console.log("CLOSE VALUE FROM BIBLE PAGE  "+this.state.close)
       return (
         <View style={this.styles.container} >
           <MenuContext style={this.styles.verseWrapperText}>
-        {this.state.modelData.length>0 ? 
+            {this.state.modelData.length>0 ? 
             <View>
                 <ScrollView  
                    ref={(ref) => { this.scrollViewRef = ref; }}
-                   onScroll={e => {
-                      if (!this.leftIsScrolling) {
-                        this.rigthIsScrolling = true;
-                        var scrollY = e.nativeEvent.contentOffset.y;
-                        this.scrollViewRef.scrollTo({ y: scrollY });
-                      }
-                      this.leftIsScrolling = false;
-                    }}
+                  //  onScroll={e => {
+                  //     if (!this.leftIsScrolling) {
+                  //       this.rigthIsScrolling = true;
+                  //       var scrollY = e.nativeEvent.contentOffset.y;
+                  //       this.scrollViewRef.scrollTo({ y: scrollY });
+                  //     }
+                  //     this.leftIsScrolling = false;
+                  //   }}
                 
                     // style={this.styles.recyclerListView}
                   >
@@ -504,7 +446,6 @@ export default class Bible extends Component {
                                             makeNotes={this.addToNotes}
                                             share={this.addToShare}
                                             HighlightText={this.state.bottomHighlightText}
-                                            onPressfootNote = {this.onPressfootNote}
                                             showFootNote = {this.state.showFootNote}
 
                                         />
@@ -560,19 +501,25 @@ export default class Bible extends Component {
             animating={this.state.isLoading ? true : false} 
             size="large" 
             color="#0000ff" />
-            
           }
-         
           </MenuContext>
-
-          <BottomTab
-            colorFile={this.props.screenProps.colorFile}
-            sizeFile={this.props.screenProps.sizeFile}
-            currentVisibleChapter={this.state.currentVisibleChapter}
-            bookId = {this.state.bookId}
-            versionCode = {this.state.versionCode}
-            languageCode = {this.state.languageCode}
-          />
+          {
+              this.state.close == true ? 
+              <TouchableOpacity style={{backgroundColor:"blue"}} onPress={{}}>
+              
+                <Text style={{alignSelf:'flex-end'}}>See More </Text>
+              </TouchableOpacity>:
+                <BottomTab
+                  colorFile={this.props.screenProps.colorFile}
+                  sizeFile={this.props.screenProps.sizeFile}
+                  currentVisibleChapter={this.state.currentVisibleChapter}
+                  bookId = {this.state.bookId}
+                  versionCode = {this.state.versionCode}
+                  languageCode = {this.state.languageCode}
+                  close={this.state.close}
+                  closeSplitScreen ={this.closeSplitScreen}
+              />
+              }
         </View>
       );
   }
