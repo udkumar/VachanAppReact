@@ -24,6 +24,7 @@ export default class Notepad extends Component {
                 headerRight:(
                     <Icon name="close"  style={{fontSize:20,marginRight:10,color:"#fff"}} onPress={() => {params.closeOnPress()}} />
                 ),
+                tabBarIcon: (<Icon name="content-paste" size={32} style={{color:'#fff'}}/>)
 
             }
         }

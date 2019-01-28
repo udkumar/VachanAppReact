@@ -254,14 +254,14 @@ export default class USFMParser {
         if(notes.length == 0) {
             return 
         }
-        const frTag = /((\\f\s+\+\s+\\fr\s+)(\d+\.\d+)(.*?)(\\f\*))/g
+        // const fullStringNote = /((\\f\s+\+\s+\\fr\s+)(\d+\.\d+)(.*?)(\\f\*))/g
         const fqTag = /((\\fr(.*?)\\fq\s+)(.*?)(\\ft))/g
-        const fxTag =/((\\fr(.*?)\\fq)((.*?)\\ft.*))/g
+        const fullStringNote =/((\\fr(.*?)\\fq)((.*?)\\ft.*))/g
         const fTag = /((\\f\s+\+)(.*?)(\\f\*))/g
         const noteContent = noteData.replace(fTag,'$3')
 
-        const foootNoteRef = noteData.replace(frTag,'$3')
-        const footNotequotation = noteContent.replace(fxTag,'$5')
+        // const foootNoteRef = noteData.replace(fullStringNote,'$3')
+        const footNotequotation = noteContent.replace(fullStringNote,'$5')
         const foootNoteText = noteContent.replace(fqTag,'')
 
         // console.log("FOOTNOTE TEXT "+foootNoteText+" FOOTNOTE REFERENCE "+foootNoteRef+" FOOTNOTES QUOTATION "+footNotequotation)
@@ -280,7 +280,6 @@ export default class USFMParser {
         this.verseList.push(verseComponentsModel)
 
     }
-
 
     addComponentsToChapter() {
         if (this.chapterList.length > 0) {

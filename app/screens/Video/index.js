@@ -23,6 +23,8 @@ static navigationOptions = ({navigation}) =>{
           headerRight:(
               <Icon name="close"  style={{fontSize:20,marginRight:10,color:"#fff"}} onPress={() => {params.closeOnPress()}} />
           ),
+          tabBarIcon: (<Icon name="video-library" size={32} style={{color:'#fff'}}/>)
+
 
       }
   }

@@ -24,6 +24,8 @@ export default class StudyHelp extends Component {
                 headerRight:(
                     <Icon name="close"  style={{fontSize:20,marginRight:10,color:"#fff"}} onPress={() => {params.closeOnPress()}} />
                 ),
+                tabBarIcon: (<Icon name="list" size={35} style={{color:'#fff'}}/>)
+
 
             }
         }

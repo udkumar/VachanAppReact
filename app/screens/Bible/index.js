@@ -61,6 +61,7 @@ export default class Bible extends Component {
                 style={{fontSize:16,color:"#fff",alignSelf:'center',alignItems:'center',marginHorizontal:4}}
                 >{params.currentChapter }
               </Text>
+              
             </TouchableOpacity>
             <TouchableOpacity onPress={()=>params.currentChapter == params.dataLength ? null : params.updateChapter(1)}>
                 <Icon name={'chevron-right'} 
@@ -72,7 +73,6 @@ export default class Bible extends Component {
                       fontSize:22,
                       marginTop:2
                   }} 
-                 
                   />
             </TouchableOpacity>
       </View>
@@ -81,10 +81,12 @@ export default class Bible extends Component {
         headerTintColor:"#fff",
         headerRight:(
           <View  style={{flexDirection:'row',flex:1}}>
-            <TouchableOpacity onPress={() =>{params.openLanguages()}} >
+            <TouchableOpacity onPress={() =>{params.openLanguages()}}  style={{flexDirection:'row',alignSelf:'center',alignItems:'center'
+              }}>
               <Text style={{
                 fontSize:16,color:"#fff",alignSelf:'center',alignItems:'center'
               }}>{params.bibleLanguage} {params.bibleVersion}</Text>
+              <Icon name="arrow-drop-down" color="#fff" size={28}/>
             </TouchableOpacity>
             <Icon 
                 onPress={()=> {params.onIconPress()}} 
@@ -135,7 +137,7 @@ export default class Bible extends Component {
       top: height / 2,
 
       scrollDirection:'up',
-      close:false
+      close:true
     }
 
     this.pinchDiff = 0
@@ -503,11 +505,29 @@ export default class Bible extends Component {
             color="#0000ff" />
           }
           </MenuContext>
+          {/* {this.state.currentVisibleChapter == 1
+                ? null :
+                <View style={[this.styles.bottomBarPrevView]}>
+                    <Icon name={'chevron-left'} color="black" size={36} 
+                        style={this.styles.bottomBarChevrontIcon} 
+                        onPress={()=> this.updateCurrentChapter(-1)}
+                        />
+                </View>
+                }
+                {this.state.currentVisibleChapter == this.state.modelData.length 
+                ? null :
+                <View style={this.styles.bottomBarNextView}>
+                    <Icon name={'chevron-right'} 
+                        style={this.styles.bottomBarChevrontIcon} 
+                        onPress={()=> this.updateCurrentChapter(1)}
+                        />
+                </View>
+                } */}
           {
               this.state.close == true ? 
-              <TouchableOpacity style={{backgroundColor:"blue"}} onPress={{}}>
-              
-                <Text style={{alignSelf:'flex-end'}}>See More </Text>
+              <TouchableOpacity style={{backgroundColor:"#3F51B5",flexDirection:'row',justifyContent:'flex-end'}} onPress={()=>this.setState({close:!this.state.close})}>
+                <Text style={{color:'#fff',textAlign:'center',fontSize:16}}>See More </Text>
+                <Icon name="expand-less" size={24} color="#fff" style={{paddingHorizontal:16}}/>
               </TouchableOpacity>:
                 <BottomTab
                   colorFile={this.props.screenProps.colorFile}

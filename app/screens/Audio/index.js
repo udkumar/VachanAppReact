@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
 import { AppRegistry, FlatList,translate,StyleSheet,Slider, Text,Button,Image,
    View ,TouchableWithoutFeedback,Dimensions} from 'react-native';
@@ -29,7 +29,7 @@ export default class Titusbible extends Component {
             headerRight:(
                 <Icon name="close"  style={{fontSize:20,marginRight:10,color:"#fff"}} onPress={() => {params.closeOnPress()}} />
             ),
-
+            tabBarIcon: (<Icon name="library-music" size={32} style={{color:'#fff'}}/>)
         }
     }
   increase = (key, value) => {

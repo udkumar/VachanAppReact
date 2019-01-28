@@ -17,52 +17,52 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 
 const BottomTab = TabNavigator(
 	{
-   
     NotePad:{
         screen:NotePad,
         navigationOptions: {
             tabBarLabel: 'NotePad',
-            // tabBarIcon: ({ tintColor }) => (
-            //     <Icon name="edit"/>
-            // )
+            // tabBarIcon: () => <Icon name="list" size={35} style={{color:'#fff'}}/>,
         }
     },
     StudyHelp:{
         screen:StudyHelp,
         navigationOptions: {
             tabBarLabel: 'StudyHelp',
-            // tabBarIcon: ({ tintColor }) => (
-            //     <Icon name="edit"/>
-            // )
+         
         }
     },
     Audio:{
         screen:Audio,
         navigationOptions: {
             tabBarLabel: 'Audio',
-            // tabBarIcon: ({ tintColor }) => (
-            //     <Icon name="edit"/>
-            // )
+          
         }
     },
     Video:{
         screen:Video,
         navigationOptions: {
             tabBarLabel: 'Video',
-            // tabBarIcon: ({ tintColor }) => (
-            //     <Icon name="edit"/>
-            // ) 
+           
         }
     }
     },
     {   
         tabBarPosition: 'bottom',
+        activeTintColor:'#fff',
+        inactiveTintColor:'#D3D3D3',
         tabBarOptions: {
+            showIcon: true,
+            showLabel: true,
+            activeTintColor: '#fff',
             upperCaseLabel: false,
+            style: {
+                backgroundColor: '#3F51B5', // Makes Android tab bar white instead of standard blue
+            },
+            indicatorStyle: {
+                backgroundColor: '#fff',
+            },
         },
-          style: {
-            backgroundColor: '#fff',
-          }
+      
     }
 	
 )
@@ -99,15 +99,17 @@ const BottomTabNav = StackNavigator({
     navigationOptions: {
         headerStyle: {
             backgroundColor: '#3F51B5',
+            height:32
         },
         headerTitleStyle: {
             color: 'white',
+            fontWeight: 'normal',
+            
         },
         headerBackTitleStyle: {
             color: 'white',
         },
         headerTintColor: 'white',
-
 }
 }
 )

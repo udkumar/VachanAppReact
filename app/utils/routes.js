@@ -38,27 +38,14 @@ import Images from '../screens/Images'
 const DrawerNavigate = (styles) => DrawerNavigator({
   StackNavigate:{
     screen: StackNavigate
-}
+  },
+
 },
 {
   // initialRouteName: 'Bible',
   contentComponent: DrawerScreen,
   drawerWidth: 250
 },
-{
-  navigationOptions: ({ navigation }) => ({
-    // title: null,  // Title to appear in status bar
-    // header:null,
-    headerLeft :<MenuIcon navigate={navigation.navigate}/>,
-    headerTintColor: '#fff',
-    headerStyle: styles.headerStyle,
-    headerTitleStyle: {
-      fontWeight: 'bold',
-    },
-  
-  })
-}
-
 );
 
 const MenuIcon = (navigation) => {
@@ -81,7 +68,21 @@ const StackNavigate = StackNavigator(
       //   screen: Splash,
       // },
       Bible:{
-        screen:Bible
+        screen:Bible,
+          navigationOptions: ({ navigation }) => ({
+            // title: null,  // Title to appear in status bar
+            // header:null,
+            headerLeft :<MenuIcon navigate={navigation.navigate}/>,
+            headerTintColor: '#fff',
+            headerStyle:{
+              backgroundColor:"#3F51B5"
+            },
+            headerTitleStyle: {
+              fontWeight: 'normal',
+            },
+          
+          })
+        
       },
       SelectBook: {
         screen: SelectBook,
@@ -155,20 +156,18 @@ const StackNavigate = StackNavigator(
      
   },
   {
-      navigationOptions: ({ navigation }) => ({
-        // title: null,  // Title to appear in status bar
-        // header:null,
-        headerLeft :<MenuIcon navigate={navigation.navigate}/>,
-        headerTintColor: '#fff',
-        headerStyle:{
-          backgroundColor:"#3F51B5"
-        },
-        headerTitleStyle: {
-          fontWeight: 'bold',
-        },
-      
-      })
-    }
+    navigationOptions: ({ navigation }) => ({
+      headerTintColor: '#fff',
+      headerStyle:{
+        backgroundColor:"#3F51B5"
+      },
+      headerTitleStyle: {
+        fontWeight: 'normal',
+      },
+    
+    })
+  }
+  
 
 )
 

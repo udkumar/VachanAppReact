@@ -210,7 +210,7 @@ export default class Language extends Component{
       }
       
        <TouchableOpacity  onPress = {()=>this.props.navigation.navigate('DownloadLanguage')} style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',padding:8,margin:30,backgroundColor:'#3F51B5'}}>
-        <Text style={{fontSize:18,fontWeight:'bold',color:'#fff'}}>DOWNLOAD MORE BIBLES</Text>
+        <Text style={{fontSize:18,color:'#fff'}}>DOWNLOAD MORE BIBLES</Text>
         <Icon name='file-download' style={this.styles.buttonContent} />
        </TouchableOpacity>
       </View>
