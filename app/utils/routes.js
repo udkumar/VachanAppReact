@@ -29,12 +29,21 @@ import {extraSmallFont,smallFont,mediumFont,largeFont,extraLargeFont} from './di
 import { styleFile } from './styles.js'
 import DbQueries from '../utils/dbQueries'
 import Realm from 'realm'
+import Signup from '../screens/SignUp'
+import Signin from '../screens/SignIn'
 import Video from '../screens/Video'
 import Audio from '../screens/Audio'
 import BottomTab from '../screens/Bible/BottomTab'
 import GoogleMaps from  '../screens/GoogleMaps'
 
 const DrawerNavigate = (styles) => DrawerNavigator({
+Signin:{
+screen:Signin
+},
+
+  Signup:{
+    screen:Signup
+  },
   StackNavigate:{
     screen: StackNavigate
 }
@@ -79,6 +88,8 @@ const StackNavigate = StackNavigator(
       // Splash: {
       //   screen: Splash,
       // },
+     
+      
       Bible:{
         screen:Bible
       },
@@ -350,7 +361,7 @@ export default class App extends Component {
     
     if (res == null) {
       return
-    }
+    }+
 
     console.log("ROUTES.... color mode "+res[0][1])
     this.setState({sizeMode: res[1][1] == null ? AsyncStorageConstants.Values.SizeModeNormal : parseInt(res[1][1])}, ()=> {

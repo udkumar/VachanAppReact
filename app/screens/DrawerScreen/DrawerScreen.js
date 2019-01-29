@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {NavigationActions} from 'react-navigation';
 import PropTypes from 'prop-types';
-import {ScrollView, Text, View, StyleSheet,ImageBackground} from 'react-native';
+import {ScrollView, Text, View,Image, StyleSheet,ImageBackground} from 'react-native';
 import { DrawerActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 class DrawerScreen extends Component {
@@ -26,7 +26,10 @@ class DrawerScreen extends Component {
              <View style={styles.headerContainer}>
                 <ImageBackground source={require('../../assets/headerbook.jpeg')} style={{flex: 1, width: 280, justifyContent: 'center'}} >
                     <Text style={styles.headerText}>Header Portion</Text>
-                    <Text style={styles.headerText}>You can display here logo or profile image</Text>
+                   
+                     <Image source={require('../../assets/profile.png')}
+                     style={{width: 100, height: 100, borderRadius: 150/2, marginLeft: 120}}
+                   />
                 </ImageBackground>
             </View>
             <View style={{
@@ -149,7 +152,8 @@ const styles = StyleSheet.create({
     color: '#fff8f8',
 },customText:{
    fontSize: 18,
-   textAlign: 'center'
+   textAlign: 'center',
+   color:'#040404'
   
 }
 })
