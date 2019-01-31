@@ -20,11 +20,11 @@ export default class Notepad extends Component {
     static navigationOptions = ({navigation}) =>{
         const { params = {} } = navigation.state;
             return{
-                headerTitle:(<Text style={{fontSize:16,color:"white",marginLeft:10}}>Notepad</Text>),
+                headerTitle:(<Text style={{fontSize:14,color:"white",marginLeft:10}}>Notepad</Text>),
                 headerRight:(
                     <Icon name="close"  style={{fontSize:20,marginRight:10,color:"#fff"}} onPress={() => {params.closeOnPress()}} />
                 ),
-                tabBarIcon: (<Icon name="content-paste" size={32} style={{color:'#fff'}}/>)
+                tabBarIcon: (<Icon name="content-paste" size={20} style={{color:'#fff'}}/>)
 
             }
         }
