@@ -27,7 +27,7 @@ export default class DownloadVersion extends Component {
     constructor(props){
         super(props);
         this.state = {
-            downloadVersionList:this.props.navigation.state.params.item.versions,
+            downloadVersionList:[],
             isLoading: false,
             refreshing: false,
             // languageName: this.props.navigation.state.params.languageName,
@@ -45,8 +45,7 @@ export default class DownloadVersion extends Component {
     }
 
     componentDidMount() {
-        console.log("version data "+this.props.navigation.state.params.item.version)
-    //    this.downloadBibleVer()
+       this.downloadBibleVer()
     }
     downloadBibleVer(){
         NetInfo.isConnected.fetch().then(isConnected => {
@@ -55,19 +54,19 @@ export default class DownloadVersion extends Component {
             this.setState({isConnected:true})
             }
             console.log('First, is ' + (isConnected ? 'online' : 'offline'));
-          });
+          })
 
           this.setState({isLoading:true}, () => {
-            DownloadUtil.getVersions(this.state.languageName)
+            DownloadUtil.getLanguages()
             .then(res => {
                 console.log("res = " + JSON.stringify(res))
-                console.log("len = " + res.list_of_versions_available.length)
-                this.setState({isLoading: false, refreshing: false, downloadVersionList: res.list_of_versions_available})
+                console.log("len = " + res.version)
+                this.setState({isLoading: false, refreshing: false, downloadVersionList:[...this.state.downloadVersionList,res.version]})
             })
             .catch(error => {
                 console.log("error in fetch " + error);
                 this.setState({isLoading: false, refreshing: false})
-            });
+            })
         })
           
     }
@@ -145,7 +144,7 @@ export default class DownloadVersion extends Component {
 
     _downloadFileBegin = () =>{
         console.log("Download Begin");
-      }
+    }
       
       _downloadFileProgress = (data) =>{
         console.log("data byte "+data.bytesWritten +"content length "+data.contentLength) 
@@ -220,15 +219,14 @@ export default class DownloadVersion extends Component {
     
     async downloadBook(item){
         console.log("item "+JSON.stringify(item))
-            await new USFMParser().parseFile(item.books[0],this.props.navigation.state.params.item.language_code,this.props.navigation.state.params.item.langauge_name,item.version_code,item.version_name,item.source,item.license,item.year);
-
+            await new USFMParser().parseFile(item.usfm_text);
     }
     renderItem = ({item,index})=>{
         return(
             <Card style={this.styles.cardStyle}>
                 <TouchableOpacity onPress={() => this.downloadBook(item)}>
                     <CardItem style={this.styles.cardItemStyle}>
-                        <Text style={this.styles.textStyle}>{item.version_name}</Text>
+                        <Text style={this.styles.textStyle}>{item}</Text>
                     </CardItem>
                 </TouchableOpacity>
             </Card>

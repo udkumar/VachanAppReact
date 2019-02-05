@@ -46,7 +46,7 @@ export default class StudyHelp extends Component {
                     flex:0.50,
                     borderRightWidth:1, 
                     borderBottomWidth:1,
-                    height:height/5.5, 
+                    height:height/6, 
                     justifyContent:"center"
                 }}
                 onPress={()=>{this.props.navigation.navigate(item.screen)}}

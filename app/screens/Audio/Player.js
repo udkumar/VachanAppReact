@@ -26,12 +26,14 @@ export default class Player extends Component {
   }
 
   setDuration(data) {
+    console.log("data from video lib"+data);
     // console.log(totalLength);
     this.setState({totalLength: Math.floor(data.duration)});
   }
 
   setTime(data) {
-    //console.log(data);
+    console.log("data from video lib"+JSON.stringify(data)+ "current position "+this.state.currentPosition);
+    this.state.currentPosition
     this.setState({currentPosition: Math.floor(data.currentTime)});
   }
 
@@ -46,7 +48,7 @@ export default class Player extends Component {
 
   onBack() {
     if (this.state.currentPosition < 10 && this.state.selectedTrack > 0) {
-      this.refs.audioElement && this.refs.audioElement.seek(0);
+      this.refs.audioElement && this.refs.audioElement.seek(0)
       this.setState({ isChanging: true });
       setTimeout(() => this.setState({
         currentPosition: 0,

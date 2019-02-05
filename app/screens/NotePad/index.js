@@ -27,7 +27,7 @@ export default class Notepad extends Component {
                 tabBarIcon: (<Icon name="content-paste" size={20} style={{color:'#fff'}}/>)
 
             }
-        }
+    }
 
     componentDidMount(){
         console.log("DID MOUNT OF NOTEPAD")
@@ -45,13 +45,13 @@ export default class Notepad extends Component {
             renderItem={({item}) =>
                 <TouchableOpacity
                     style={{
-                    flex:0.50,
-                    borderRightWidth:1, 
-                    borderBottomWidth:1,
-                    height:height/5.5, 
-                    justifyContent:"center"
-                }}
-                onPress={()=>{this.props.navigation.navigate(item.screen)}}>
+                        flex:0.50,
+                        borderRightWidth:1, 
+                        borderBottomWidth:1,
+                        height:height/6, 
+                        justifyContent:"center"
+                    }}
+                    onPress={()=>{this.props.navigation.navigate(item.screen)}}>
                     <Text style={{textAlign:"center", alignItems:"center"}}>{item.key}</Text>
                 </TouchableOpacity>
             }/>

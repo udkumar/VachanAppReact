@@ -32,8 +32,9 @@ export default class DownloadLanguage extends Component {
     }
 
     componentDidMount() {
-        console.log("file json "+JSON.stringify(bible_data.languages))
-            this.setState({downloadData:bible_data.languages})
+        // console.log("file json "+JSON.stringify(bible_data.languages))
+            // this.setState({downloadData:bible_data.languages})
+            this.downloadBible()
     }
     downloadBible(){
         NetInfo.isConnected.fetch().then(isConnected => {
@@ -47,12 +48,13 @@ export default class DownloadLanguage extends Component {
         this.setState({isLoading:true},() => {
             DownloadUtil.getLanguages()
             .then(res => {
-                console.log("res = " + JSON.stringify(res))
-                console.log("len = " + res.languages_available.length)
-                this.setState({isLoading: false, refreshing: false, downloadData: res.languages_available})
+                console.log("res = " + JSON.stringify(res.language))
+                // console.log("len = " + res.languages_available.length)
+                // this.setState({ myArray: [...this.state.myArray, 'new value'] })
+                this.setState({isLoading: false, refreshing: false, downloadData:[...this.state.downloadData,res.language]})
             })
             .catch(error => {
-                console.log("error in fetch " + error);
+                console.log("error in fetch " + error)
                 this.setState({isLoading: false, refreshing: false})
             });
         })
@@ -62,7 +64,7 @@ export default class DownloadLanguage extends Component {
             <Card style={this.styles.cardStyle}>
                 <TouchableOpacity onPress={()=> this.props.navigation.navigate('DownloadVersion', {item: item})} >
                     <CardItem style={this.styles.cardItemStyle}> 
-                        <Text style={this.styles.textStyle}>{item.langauge_name}</Text>
+                        <Text style={this.styles.textStyle}>{item}</Text>
                     </CardItem>
                 </TouchableOpacity>
             </Card>

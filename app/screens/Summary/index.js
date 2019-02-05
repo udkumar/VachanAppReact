@@ -74,7 +74,7 @@ export default class Summary extends React.Component {
     console.log("summary data "+JSON.stringify(this.state.summaryOfBook))
     return (
       <View>
-        <Segment >
+        <Segment>
               <Button 
                 style={[
                     {backgroundColor:this.state.activeTab === activeTabFlag.BOOK ?  "#3F51B5":"#fff"},
