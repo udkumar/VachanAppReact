@@ -104,7 +104,7 @@ export default class Bible extends Component {
     super(props);
     this.leftIsScrolling = false;
     this.rigthIsScrolling = false;
-    console.log("PROPS VALUE BIBLE "+JSON.stringify(props.screenProps))
+    console.log("PROPS VALUE BIBLE "+JSON.stringify(props))
 
     this.mappingData = id_name_map;
     this.getSelectedReferences = this.getSelectedReferences.bind(this)
@@ -137,14 +137,15 @@ export default class Bible extends Component {
       top: height / 2,
 
       scrollDirection:'up',
-      close:true
+      close:true,
+      bookInfo:this.props.navigation.state.params ? this.props.navigation.state.params.bookInfo : null 
     }
 
     this.pinchDiff = 0
     this.pinchTime = new Date().getTime()
     this.styles = styles(this.state.colorFile, this.state.sizeFile);    
     this.modelValue = "modal1"
-
+    
   }
 
   
@@ -409,7 +410,7 @@ export default class Bible extends Component {
   }
   render() {
     const thumbSize = this.state.thumbSize;
-    console.log("CLOSE VALUE FROM BIBLE PAGE  "+this.state.close)
+    console.log("CLOSE VALUE FROM BIBLE PAGE  BOOK INFO "+JSON.stringify(this.state.bookInfo))
       return (
         <View style={this.styles.container} >
           <MenuContext style={this.styles.verseWrapperText}>

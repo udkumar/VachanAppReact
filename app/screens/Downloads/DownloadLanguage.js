@@ -11,7 +11,6 @@ import DownloadUtil from '../../utils/DownloadUtil'
 import {Card, CardItem} from 'native-base'
 import {downloadPageStyle} from './styles.js'
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import bible_data from '../../assets/TestLangApi.json'
 
 
 export default class DownloadLanguage extends Component {
@@ -32,9 +31,7 @@ export default class DownloadLanguage extends Component {
     }
 
     componentDidMount() {
-        // console.log("file json "+JSON.stringify(bible_data.languages))
-            // this.setState({downloadData:bible_data.languages})
-            this.downloadBible()
+        this.downloadBible()
     }
     downloadBible(){
         NetInfo.isConnected.fetch().then(isConnected => {
@@ -43,18 +40,21 @@ export default class DownloadLanguage extends Component {
             this.setState({isConnected:true})
             }
             console.log('First, is ' + (isConnected ? 'online' : 'offline'));
-          });
+          }
+        )
+        .catch(error => {
+            console.log("error in fetch " + error)
+        });
         
         this.setState({isLoading:true},() => {
             DownloadUtil.getLanguages()
             .then(res => {
-                console.log("res = " + JSON.stringify(res.language))
-                // console.log("len = " + res.languages_available.length)
-                // this.setState({ myArray: [...this.state.myArray, 'new value'] })
+                console.log("res = " + JSON.stringify(res))
+                console.log("len = " + res)
                 this.setState({isLoading: false, refreshing: false, downloadData:[...this.state.downloadData,res.language]})
             })
             .catch(error => {
-                console.log("error in fetch " + error)
+                console.log("error in fetch " + error);
                 this.setState({isLoading: false, refreshing: false})
             });
         })
@@ -62,7 +62,7 @@ export default class DownloadLanguage extends Component {
     renderItem = ({item,index})=>{
         return(
             <Card style={this.styles.cardStyle}>
-                <TouchableOpacity onPress={()=> this.props.navigation.navigate('DownloadVersion', {item: item})} >
+                <TouchableOpacity onPress={()=> this.props.navigation.navigate('DownloadVersion')} >
                     <CardItem style={this.styles.cardItemStyle}> 
                         <Text style={this.styles.textStyle}>{item}</Text>
                     </CardItem>
@@ -73,7 +73,7 @@ export default class DownloadLanguage extends Component {
 
     render() {
         // if(this.state.dowsnloadData[0])
-        // console.log("DATA ARRAY "+ JSON.stringify(this.state.downloadData.length) )
+        console.log("DATA ARRAY "+ JSON.stringify(this.state.downloadData) )
         return (
             <View style={this.styles.container}>
             <FlatList 

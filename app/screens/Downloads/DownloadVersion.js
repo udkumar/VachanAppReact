@@ -34,11 +34,13 @@ export default class DownloadVersion extends Component {
             isDownloading: false,
             downloadMetadata: {},
             isLoadingText: '',
-            isConnected:false
+            isConnected:false,
+            bookInfo:[],
+            chapterModels:[]
         }
         
-        this.downloadZip = this.downloadZip.bind(this)
-        this.readDirectory = this.readDirectory.bind(this)
+        // this.downloadZip = this.downloadZip.bind(this)
+        // this.readDirectory = this.readDirectory.bind(this)
         this.styles = downloadPageStyle(this.props.screenProps.colorFile, this.props.screenProps.sizeFile);
 
         
@@ -57,11 +59,11 @@ export default class DownloadVersion extends Component {
           })
 
           this.setState({isLoading:true}, () => {
-            DownloadUtil.getLanguages()
+            DownloadUtil.getVersions()
             .then(res => {
                 console.log("res = " + JSON.stringify(res))
                 console.log("len = " + res.version)
-                this.setState({isLoading: false, refreshing: false, downloadVersionList:[...this.state.downloadVersionList,res.version]})
+                this.setState({isLoading: false, refreshing: false, downloadVersionList:[...this.state.downloadVersionList,res]})
             })
             .catch(error => {
                 console.log("error in fetch " + error);
@@ -85,148 +87,163 @@ export default class DownloadVersion extends Component {
         })
     }
 
-    downloadZip(version) {
-        const curTime = Date.now().toString() + "_1"
-        console.log("notification "+curTime)
-        notification = new firebase.notifications.Notification()
-            .setNotificationId(curTime)
-            .setTitle('Downloading')
-            .setBody(this.state.languageName +" Bible downloading" )
-            .android.setChannelId('download_channel')
-            .android.setSmallIcon('ic_launcher')
-            .android.setOngoing(true)
+    // downloadZip(version) {
+    //     const curTime = Date.now().toString() + "_1"
+    //     console.log("notification "+curTime)
+    //     notification = new firebase.notifications.Notification()
+    //         .setNotificationId(curTime)
+    //         .setTitle('Downloading')
+    //         .setBody(this.state.languageName +" Bible downloading" )
+    //         .android.setChannelId('download_channel')
+    //         .android.setSmallIcon('ic_launcher')
+    //         .android.setOngoing(true)
 
-        firebase.notifications().displayNotification(notification)
+    //     firebase.notifications().displayNotification(notification)
 
-        this.downloadMetadata(this.state.languageName, version)
-        this.setState({isDownloading:true,isLoading:false, isLoadingText: 'DOWNLOAD BIBLE'}, () => {
-            RNFS.mkdir(RNFS.DocumentDirectoryPath+'/AutoBibles').then(result => {
-                RNFS.downloadFile({
-                    fromUrl: 
-                        'https://raw.githubusercontent.com/friendsofagape/Autographa_Repo/master/Bibles/'
-                        +this.state.languageName+'/'+version+'/Archive.zip', 
-                    toFile: RNFS.DocumentDirectoryPath+'/AutoBibles/Archive.zip',
-                    begin: this._downloadFileBegin,
-                    progress: this._downloadFileProgress,
-                })
-                    .promise.then(result => {
+    //     this.downloadMetadata(this.state.languageName, version)
+    //     this.setState({isDownloading:true,isLoading:false, isLoadingText: 'DOWNLOAD BIBLE'}, () => {
+    //         RNFS.mkdir(RNFS.DocumentDirectoryPath+'/AutoBibles').then(result => {
+    //             RNFS.downloadFile({
+    //                 fromUrl: 
+    //                     'https://raw.githubusercontent.com/friendsofagape/Autographa_Repo/master/Bibles/'
+    //                     +this.state.languageName+'/'+version+'/Archive.zip', 
+    //                 toFile: RNFS.DocumentDirectoryPath+'/AutoBibles/Archive.zip',
+    //                 begin: this._downloadFileBegin,
+    //                 progress: this._downloadFileProgress,
+    //             })
+    //                 .promise.then(result => {
                         
-                        // this.setState({isDownloading:false})
-                        // ToastAndroid.show(version+' Downloaded', ToastAndroid.CENTER);
-                        console.log("result "+JSON.stringify(result))
-                        console.log("result jobid = " + result.jobId)
-                        console.log("result statuscode = " + result.statusCode)
-                        console.log("result byteswritten = " + result.bytesWritten)
+    //                     // this.setState({isDownloading:false})
+    //                     // ToastAndroid.show(version+' Downloaded', ToastAndroid.CENTER);
+    //                     console.log("result "+JSON.stringify(result))
+    //                     console.log("result jobid = " + result.jobId)
+    //                     console.log("result statuscode = " + result.statusCode)
+    //                     console.log("result byteswritten = " + result.bytesWritten)
 
-                        const sourcePath = RNFS.DocumentDirectoryPath +'/AutoBibles/Archive.zip';
-                        const targetPath = RNFS.DocumentDirectoryPath + '/AutoBibles/';
-                        unzip(sourcePath, targetPath)
-                            .then((path) => {
-                                console.log('unzip completed at ' + path)
-                                this.readDirectory(curTime);
-                            })
-                            .catch((error) => {
-                                console.log(error)
-                                // show alert
-                                console.log("alert coming")
-                            Alert.alert("Something went wrong. Please try again")
-                                // delete floder
-                            RNFS.unlink(RNFS.DocumentDirectoryPath + '/AutoBibles/')
-                                // remove notification
-                            firebase.notifications().removeDeliveredNotification(curTime)
-                            })
-                });
-            });
+    //                     const sourcePath = RNFS.DocumentDirectoryPath +'/AutoBibles/Archive.zip';
+    //                     const targetPath = RNFS.DocumentDirectoryPath + '/AutoBibles/';
+    //                     unzip(sourcePath, targetPath)
+    //                         .then((path) => {
+    //                             console.log('unzip completed at ' + path)
+    //                             this.readDirectory(curTime);
+    //                         })
+    //                         .catch((error) => {
+    //                             console.log(error)
+    //                             // show alert
+    //                             console.log("alert coming")
+    //                         Alert.alert("Something went wrong. Please try again")
+    //                             // delete floder
+    //                         RNFS.unlink(RNFS.DocumentDirectoryPath + '/AutoBibles/')
+    //                             // remove notification
+    //                         firebase.notifications().removeDeliveredNotification(curTime)
+    //                         })
+    //             });
+    //         });
            
-        })
+    //     })
 
-    }
+    // }
 
-    _downloadFileBegin = () =>{
-        console.log("Download Begin");
-    }
+    // _downloadFileBegin = () =>{
+    //     console.log("Download Begin");
+    // }
       
-      _downloadFileProgress = (data) =>{
-        console.log("data byte "+data.bytesWritten +"content length "+data.contentLength) 
-        const percentage = ((100 * data.bytesWritten) / data.contentLength) | 0;
-        console.log("progress bar "+percentage)
-        this.setState({isLoadingText: 'Downloading ' + percentage + '%'})
-        // this.notif(percentage)
-        if(data.contentLength == data.bytesWritten){
-        console.log("progress bar full "+percentage)
-        }
-      }
+    //   _downloadFileProgress = (data) =>{
+    //     console.log("data byte "+data.bytesWritten +"content length "+data.contentLength) 
+    //     const percentage = ((100 * data.bytesWritten) / data.contentLength) | 0;
+    //     console.log("progress bar "+percentage)
+    //     this.setState({isLoadingText: 'Downloading ' + percentage + '%'})
+    //     // this.notif(percentage)
+    //     if(data.contentLength == data.bytesWritten){
+    //     console.log("progress bar full "+percentage)
+    //     }
+    //   }
       
 
-    async startParse(path,lcode,lname,vcode,vname, src,lic,year, from) {
-        await new USFMParser().parseFile(path,lcode,lname,vcode,vname,src,lic,year,from);
-    }
+    // async startParse(path,lcode,lname,vcode,vname, src,lic,year, from) {
+    //     await new USFMParser().parseFile(path,lcode,lname,vcode,vname,src,lic,year,from);
+    // }
        
-    async readDirectory(notifId) {
-        console.log("notification id read directory"+notifId)
-        RNFS.readDir(RNFS.DocumentDirectoryPath + '/AutoBibles/')
-            .then( async (result) => {
-                var messageTitle = "";
-                var messageBody = "";
-                if (this.state.downloadMetadata.languageCode == null || 
-                        this.state.downloadMetadata.languageName == null || 
-                        this.state.downloadMetadata.versionCode == null || 
-                        this.state.downloadMetadata.versionName == null) {
-                    messageTitle = "Error";
-                    messageBody = "There is some error in downloading, please try again.";
-                } else {
-                    for (var i=0; i<result.length; i++) {
-                        if (result[i].isFile() && result[i].path.endsWith('.usfm')) {
-                            await this.startParse(result[i].path, 
-                                this.state.downloadMetadata.languageCode,
-                                this.state.downloadMetadata.languageName,
-                                this.state.downloadMetadata.versionCode,
-                                this.state.downloadMetadata.versionName,
-                                this.state.downloadMetadata.source,
-                                this.state.downloadMetadata.license,
-                                this.state.downloadMetadata.year,
-                                false)
-                        }
-                    }
-                    messageTitle = "DOWNLOADS";
-                    messageBody = this.state.downloadMetadata.languageName + " " + this.state.downloadMetadata.versionName +" Bible download finished.";
+    // async readDirectory(notifId) {
+    //     console.log("notification id read directory"+notifId)
+    //     RNFS.readDir(RNFS.DocumentDirectoryPath + '/AutoBibles/')
+    //         .then( async (result) => {
+    //             var messageTitle = "";
+    //             var messageBody = "";
+    //             if (this.state.downloadMetadata.languageCode == null || 
+    //                     this.state.downloadMetadata.languageName == null || 
+    //                     this.state.downloadMetadata.versionCode == null || 
+    //                     this.state.downloadMetadata.versionName == null) {
+    //                 messageTitle = "Error";
+    //                 messageBody = "There is some error in downloading, please try again.";
+    //             } else {
+    //                 for (var i=0; i<result.length; i++) {
+    //                     if (result[i].isFile() && result[i].path.endsWith('.usfm')) {
+    //                         await this.startParse(result[i].path, 
+    //                             this.state.downloadMetadata.languageCode,
+    //                             this.state.downloadMetadata.languageName,
+    //                             this.state.downloadMetadata.versionCode,
+    //                             this.state.downloadMetadata.versionName,
+    //                             this.state.downloadMetadata.source,
+    //                             this.state.downloadMetadata.license,
+    //                             this.state.downloadMetadata.year,
+    //                             false)
+    //                     }
+    //                 }
+    //                 messageTitle = "DOWNLOADS";
+    //                 messageBody = this.state.downloadMetadata.languageName + " " + this.state.downloadMetadata.versionName +" Bible download finished.";
 
-                    const notification = new firebase.notifications.Notification()
-                        .setNotificationId(Date.now().toString() + "_1")
-                        .setTitle('Download finished')
-                        .setBody('Tap to start reading '+this.state.languageName +" Bible" )
-                        .android.setChannelId('download_channel')
-                        .android.setSmallIcon('ic_launcher')
+    //                 const notification = new firebase.notifications.Notification()
+    //                     .setNotificationId(Date.now().toString() + "_1")
+    //                     .setTitle('Download finished')
+    //                     .setBody('Tap to start reading '+this.state.languageName +" Bible" )
+    //                     .android.setChannelId('download_channel')
+    //                     .android.setSmallIcon('ic_launcher')
             
-                    firebase.notifications().displayNotification(notification)
-                }
-                RNFS.unlink(RNFS.DocumentDirectoryPath + '/AutoBibles/')
+    //                 firebase.notifications().displayNotification(notification)
+    //             }
+    //             RNFS.unlink(RNFS.DocumentDirectoryPath + '/AutoBibles/')
 
-                Alert.alert(messageTitle, messageBody)
+    //             Alert.alert(messageTitle, messageBody)
 
-                this.setState({isLoading: false, isDownloading:false, isLoadingText:''})
-                firebase.notifications().removeDeliveredNotification(notifId)
-            })
-            .catch((err) => {
-                console.log(err.message, err.code);
-                Alert.alert("Something went wrong. Please try again")
-                // delete floder
-                RNFS.unlink(RNFS.DocumentDirectoryPath + '/AutoBibles/')
-                // remove notification
-                firebase.notifications().removeDeliveredNotification(notifId)
-            });
-    }
+    //             this.setState({isLoading: false, isDownloading:false, isLoadingText:''})
+    //             firebase.notifications().removeDeliveredNotification(notifId)
+    //         })
+    //         .catch((err) => {
+    //             console.log(err.message, err.code);
+    //             Alert.alert("Something went wrong. Please try again")
+    //             // delete floder
+    //             RNFS.unlink(RNFS.DocumentDirectoryPath + '/AutoBibles/')
+    //             // remove notification
+    //             firebase.notifications().removeDeliveredNotification(notifId)
+    //         });
+    // }
     
-    async downloadBook(item){
-        console.log("item "+JSON.stringify(item))
-            await new USFMParser().parseFile(item.usfm_text);
+    async downloadBook(value){
+        console.log("item "+JSON.stringify(value))
+            await new USFMParser().parseFile(value)
+            
+            // const parsedData =  await new USFMParser().parseFile(value)
+            const parsedData =  await new USFMParser()
+            var bookData = parsedData.parseFile(value)
+
+            console.log("value "+JSON.stringify(bookData))
+            this.setState({bookInfo:[...this.state.bookInfo,{
+                bookId: bookData.bookId,
+                bookName: bookData.bookName,
+                chapterModels: bookData.chapterModels,
+                section:bookData.section,
+                bookNumber:bookData.bookNumber
+            }]
+            })
+            this.props.navigation.navigate("Bible",{bookInfo:this.state.bookInfo})
     }
     renderItem = ({item,index})=>{
         return(
             <Card style={this.styles.cardStyle}>
-                <TouchableOpacity onPress={() => this.downloadBook(item)}>
+                <TouchableOpacity onPress={() => this.downloadBook(item.usfm_text)}>
                     <CardItem style={this.styles.cardItemStyle}>
-                        <Text style={this.styles.textStyle}>{item}</Text>
+                        <Text style={this.styles.textStyle}>{item.version}</Text>
                     </CardItem>
                 </TouchableOpacity>
             </Card>
@@ -240,6 +257,7 @@ export default class DownloadVersion extends Component {
                     data={this.state.downloadVersionList}
                     renderItem={this.renderItem}
                 />
+
             {/* <View style={this.styles.containerMargin}>
             {this.state.isLoading ? 
                 <ActivityIndicator

@@ -16,6 +16,7 @@ export default class USFMParser {
         this.chapterList = [];
         this.verseList = [];
         this.mappingData = id_name_map;
+        this.bookModel = null
         // this.languageCode = "";
         // this.languageName = "";
         // this.versionCode = "";
@@ -54,8 +55,7 @@ export default class USFMParser {
         // this.source = source;
         // this.license = license;
         // this.year = year;
-        this.parseFileContents(result);
-        
+        return this.parseFileContents(result);
     }
 
     // parseFile() {
@@ -82,7 +82,7 @@ export default class USFMParser {
                 }
             }
             this.addComponentsToChapter();
-            this.addBookToContainer();
+            return this.addBookToContainer();
         } catch(exception) {
             console.log("error in parsing file : " + exception)
         }
@@ -327,8 +327,10 @@ export default class USFMParser {
         if (mapResult == null) {
             return;
         }
-        var bookModel = {bookId: this.bookId, bookName: mapResult.book_name, bookNumber: mapResult.number, 
+        const bookModel = {bookId: this.bookId, bookName: mapResult.book_name, bookNumber: mapResult.number, 
             section: mapResult.section, chapterModels: this.chapterList}
+            return bookModel
+
         // var versionModel = {versionName: this.versionName, versionCode: this.versionCode, bookModels: [],
         //     source: this.source, license: this.license, year: this.year}
         // versionModel.bookModels.push(bookModel);

@@ -33,7 +33,7 @@ export default class Audio extends Component {
                 headerRight:(
                     <Icon name="close"  style={{fontSize:20,marginRight:10,color:"#fff"}} onPress={() => {params.closeOnPress()}} />
                 ),
-                tabBarIcon: (<Icon name="video-library" size={20} style={{color:'#fff'}}/>)
+                tabBarIcon: (<Icon name="library-music" size={20} style={{color:'#fff'}}/>)
             }
         }
   render() {
