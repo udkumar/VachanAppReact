@@ -6,7 +6,7 @@ An application for reading bible text, audio, video, study resources, maps, imag
 React-native for mobile app  
 ##### Table of content 
 Languages,
-versions,
+Versions,
 Books,
 Chapters,
 Verses,
