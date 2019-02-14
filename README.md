@@ -1,12 +1,9 @@
 
 ## VachanOnline App
-
 ##### Intro
 An application for reading bible text, audio, video, study resources, maps, images etc.
-
 ##### Technologies 
 React-native for mobile app  
-
 ##### Table of content 
 Languages,
 versions,
