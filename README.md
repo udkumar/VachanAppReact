@@ -3,7 +3,7 @@
 ##### Intro
 An application for reading bible text, audio, video, study resources, maps, images etc.
 ##### Technologies 
-React-native for mobile app  
+React-native and realm for mobile app  
 ##### Table of content 
 Languages,
 Versions,
