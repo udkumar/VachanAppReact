@@ -47,7 +47,7 @@ export default class DownloadLanguage extends Component {
         });
         
         this.setState({isLoading:true},() => {
-            DownloadUtil.getLanguages()
+            DownloadUtil.getAPIdData()
             .then(res => {
                 console.log("res = " + JSON.stringify(res))
                 console.log("len = " + res)
@@ -73,13 +73,23 @@ export default class DownloadLanguage extends Component {
 
     render() {
         // if(this.state.dowsnloadData[0])
-        console.log("DATA ARRAY "+ JSON.stringify(this.state.downloadData) )
+        // console.log("DATA ARRAY "+ JSON.stringify(this.state.downloadData) )
         return (
             <View style={this.styles.container}>
-            <FlatList 
+            {
+                this.state.downloadData.length == 0 ? 
+                <ActivityIndicator 
+                style= {{alignItems:'center',alignSelf:'center',justifyContent:'center'}}
+                animating={this.state.isLoading ? true : false} 
+                size="large" 
+                color="#0000ff" /> :
+                 <FlatList 
                  data={this.state.downloadData}
                  renderItem={this.renderItem}
             />
+            }
+           
+           
             {/* <Text>{this.state.downloadData}</Text> */}
             {/* <View style={this.styles.containerMargin}>
                 {this.state.isLoading ? 

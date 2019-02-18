@@ -59,7 +59,7 @@ export default class DownloadVersion extends Component {
           })
 
           this.setState({isLoading:true}, () => {
-            DownloadUtil.getVersions()
+            DownloadUtil.getAPIdData()
             .then(res => {
                 console.log("res = " + JSON.stringify(res))
                 console.log("len = " + res.version)
@@ -220,12 +220,8 @@ export default class DownloadVersion extends Component {
     // }
     
     async downloadBook(value){
-        console.log("item "+JSON.stringify(value))
-            await new USFMParser().parseFile(value)
-            
-            // const parsedData =  await new USFMParser().parseFile(value)
             const parsedData =  await new USFMParser()
-            var bookData = parsedData.parseFile(value)
+            var bookData = parsedData.parseFile(value.usfm_text)
 
             console.log("value "+JSON.stringify(bookData))
             this.setState({bookInfo:[...this.state.bookInfo,{
@@ -236,12 +232,16 @@ export default class DownloadVersion extends Component {
                 bookNumber:bookData.bookNumber
             }]
             })
-            this.props.navigation.navigate("Bible",{bookInfo:this.state.bookInfo})
+            var bookListData  = [{bookId: bookData.bookId,bookName: bookData.bookName,
+                section:bookData.section,  bookNumber:bookData.bookNumber,
+                languageCode: "HIN", versionCode: "IRV", numOfChapters:bookData.chapterModels.length }]
+            this.props.screenProps.updateBookList(bookListData)
+            this.props.navigation.navigate("Bible",{value})
     }
     renderItem = ({item,index})=>{
         return(
             <Card style={this.styles.cardStyle}>
-                <TouchableOpacity onPress={() => this.downloadBook(item.usfm_text)}>
+                <TouchableOpacity onPress={() => this.downloadBook(item)}>
                     <CardItem style={this.styles.cardItemStyle}>
                         <Text style={this.styles.textStyle}>{item.version}</Text>
                     </CardItem>
@@ -253,10 +253,17 @@ export default class DownloadVersion extends Component {
     render() {
         return (
             <View style={this.styles.container}>
+            {this.state.downloadVersionList.length == 0 ? 
+                <ActivityIndicator 
+                style= {{alignItems:'center',alignSelf:'center',justifyContent:'center'}}
+                animating={this.state.isLoading ? true : false} 
+                size="large" 
+                color="#0000ff" />:
               <FlatList
                     data={this.state.downloadVersionList}
                     renderItem={this.renderItem}
                 />
+            }
 
             {/* <View style={this.styles.containerMargin}>
             {this.state.isLoading ? 

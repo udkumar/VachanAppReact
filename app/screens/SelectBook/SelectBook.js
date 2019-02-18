@@ -75,7 +75,7 @@ export default class SelectBook extends Component {
       NTSize:this.getNTSize(this.props.screenProps.booksList),
       token:null
     }
-    console.log("IN SelectBook, bok len"  + this.props.screenProps.booksList.length)
+    console.log("IN SelectBook, bok len"  + JSON.stringify(this.props.screenProps.booksList))
     this.styles = SelectBookPageStyle(this.state.colorFile, this.state.sizeFile);
     
     this.viewabilityConfig = {
