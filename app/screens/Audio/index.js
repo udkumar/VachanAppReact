@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import ProgressBarAnimated from 'react-native-progress-bar-animated';
-import { AppRegistry, FlatList,translate,StyleSheet,Slider, Text,Button,Image,
+import { AppRegistry, FlatList,translate,StyleSheet,Slider,  Text,Button,Image,
    View ,TouchableWithoutFeedback,Dimensions} from 'react-native';
 
    import songlist from '../Songlist/tt.mp3'
@@ -9,12 +8,12 @@ import Video from 'react-native-video';
 
 var Sound = require('react-native-sound');
 
-song = new Sound('tt.mp3',Sound.MAIN_BUNDLE,(error) =>{
-  if (error) {
-      console.log('failed to load the sound', error);
-      return;
-    }
-})
+// song = new Sound('tt.mp3',Sound.MAIN_BUNDLE,(error) =>{
+//   if (error) {
+//       console.log('failed to load the sound', error);
+//       return;
+//     }
+// })
 
  function secondsToTime(time) {
   return ~~(time/60)+ ":" + (time % 60 <10 ? "0":"")+ time %60;
@@ -36,7 +35,7 @@ export default class Titusbible extends Component {
  
 constructor(props){
     super(props)
-    this.toggleplay= this.toggleplay.bind(this);
+    //this.toggleplay= this.toggleplay.bind(this);
     this.state = {
       isPlaying: false,
       paused:false,
@@ -76,23 +75,23 @@ handleEnd = () => {
   this.setState({ paused: true });
 };
 
-toggleplay(){
-  console.log("toggle")
-  if (this.state.progress >= 1) {
-    this.player.seek(0);
-  }
-  this.setState({ paused: !this.state.paused,})
-  if(song != null) {
-                if(this.state.paused)
-            song.play((success) => {
-                if (!success) 
-                  console.log('successfully finished playing');
-                 });
-                 else song.pause();
-                 this.setState({pause:!this.state.paused});
-                }
+// toggleplay(){
+//   console.log("toggle")
+//   if (this.state.progress >= 1) {
+//     this.player.seek(0);
+//   }
+//   this.setState({ paused: !this.state.paused,})
+//   if(song != null) {
+//                 if(this.state.paused)
+//             song.play((success) => {
+//                 if (!success) 
+//                   console.log('successfully finished playing');
+//                  });
+//                  else song.pause();
+//                  this.setState({pause:!this.state.paused});
+//                 }
               
-            }
+//             }
   
 
 
@@ -122,7 +121,7 @@ toggleplay(){
 source={require('../../assets/backmusic.jpg')}/>
  <Video
           paused={this.state.paused}
-          source={{uri:'https://www.ssaurel.com/tmp/mymusic.mp3'}}
+          source={songlist}
           onLoad={this.handleLoad}
           onProgress={this.handleProgress}
           ignoreSilentSwitch={"ignore"}

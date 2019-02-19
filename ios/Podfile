@@ -17,6 +17,10 @@ target 'AutographaGo_ReactNative' do
 
     pod 'react-native-video', :path => '../node_modules/react-native-video'
 
+    pod 'RNGoogleSignin', :path => '../node_modules/react-native-google-signin'
+
+    pod 'react-native-fbsdk', :path => '../node_modules/react-native-fbsdk'
+
   end
 
   target 'AutographaGo_ReactNativeTests' do

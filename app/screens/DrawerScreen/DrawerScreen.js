@@ -5,12 +5,13 @@ import {ScrollView, Text, View,Image, StyleSheet,ImageBackground} from 'react-na
 import { DrawerActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 class DrawerScreen extends Component {
-    constructor(props){
-        super(props);
-    }
+  
   render () {
+    const valueProps  = this.props.navigation.state.routes[0].index == 1 ? this.props.navigation.state.routes[0].routes[1].params.photorUl : null
     return (
+    
       <View>
+        
         <ScrollView>
           <View>
             {/* <View style={{
@@ -22,14 +23,14 @@ class DrawerScreen extends Component {
               Book
               </Text>
             </View> */}
-
+              
              <View style={styles.headerContainer}>
                 <ImageBackground source={require('../../assets/headerbook.jpeg')} style={{flex: 1, width: 280, justifyContent: 'center'}} >
                     <Text style={styles.headerText}>Header Portion</Text>
                    
-                     <Image source={require('../../assets/profile.png')}
+                     <Image source={{uri:valueProps}}
                      style={{width: 100, height: 100, borderRadius: 150/2, marginLeft: 120}}
-                   />
+                   />  
                 </ImageBackground>
             </View>
             <View style={{

@@ -18,7 +18,7 @@ export default class ChapterSelection extends Component {
 
   constructor(props){
     super(props)
-    console.log("props number : "+JSON.stringify(props.navigation))
+    //console.log("props number : "+JSON.stringify(props.navigation))
 
     this.state = {
       bookId: this.props.navigation.state.params.bookId,
@@ -27,7 +27,7 @@ export default class ChapterSelection extends Component {
       numOfChapters: this.props.navigation.state.params.numOfChapters,
       bookData: Array.from(new Array(this.props.navigation.state.params.numOfChapters), (x,i) => i+1),
     }
-
+console.log("bookdata"+ this.state.bookData)
     this.styles = numberSelection(props.screenProps.colorFile, props.screenProps.sizeFile);   
   }
 

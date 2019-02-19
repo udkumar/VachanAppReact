@@ -15,7 +15,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import {createResponder } from 'react-native-gesture-responder';
 
 import DbQueries from '../../utils/dbQueries'
-import VerseView from './VerseView'
+import VerseView from './VerseView';
+import   parsingurl  from '../SignupWithGoogle';
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import AsyncStorageConstants from '../../utils/AsyncStorageConstants';
 const Constants = require('../../utils/constants')
@@ -94,7 +95,8 @@ export default class Bible extends Component {
                 style={{marginHorizontal:8}} 
             />    
           </View>
-        )
+        ),
+       
     }
   }
 
@@ -102,7 +104,7 @@ export default class Bible extends Component {
     super(props);
     this.leftIsScrolling = false;
     this.rigthIsScrolling = false;
-    console.log("PROPS VALUE BIBLE "+JSON.stringify(props.screenProps))
+    console.log("PROPS VALUE BIBLE "+JSON.stringify(this.props.nav))
 
     this.mappingData = id_name_map;
     this.getSelectedReferences = this.getSelectedReferences.bind(this)
@@ -119,6 +121,7 @@ export default class Bible extends Component {
 
     this.updateCurrentChapter = this.updateCurrentChapter.bind(this)
     this.state = {
+      dataValue:'',
       languageCode: this.props.screenProps.languageCode,
       versionCode: this.props.screenProps.versionCode,
       modelData: [],
@@ -169,6 +172,23 @@ export default class Bible extends Component {
   }
 
   componentDidMount(){
+    // fetch('https://stagingapi.autographamt.com/newdb/bibles/usfm')
+    // .then((response)=>response.json())
+    // .then((responsejson)=>{
+    // const data =responsejson;
+    // console.log("jsondata"+JSON.stringify(data))
+    // this.setState({
+    //   dataValue:data.usfm_text
+      
+    // })
+    // })
+    // .catch((error)=>{
+    //   console.error(error);
+    // })
+
+
+
+
     this.gestureResponder = createResponder({
       onStartShouldSetResponder: (evt, gestureState) => true,
       onStartShouldSetResponderCapture: (evt, gestureState) => true,
@@ -232,7 +252,8 @@ export default class Bible extends Component {
         bookName: this.state.bookName,
         currentChapter:this.state.currentVisibleChapter,
         bibleLanguage: this.props.screenProps.languageName, 
-        bibleVersion: this.props.screenProps.versionCode
+        bibleVersion: this.props.screenProps.versionCode,
+        //userPic:this.props.navigation.state.params.photoUrl
     })  
      
     this.setState({isLoading: true}, () => {
@@ -468,10 +489,13 @@ export default class Bible extends Component {
     // const whiteHeight = this.state.index + height/4 
       return (
         <View style={this.styles.container} >
-          <MenuContext style={this.styles.verseWrapperText}>
+  <MenuContext style={this.styles.verseWrapperText}>
         {this.state.modelData.length>0 ? 
             <View>
-                <ScrollView  
+                 {/* {React.createElement(parsingurl, {}, null)} */}
+
+
+                {/* <ScrollView  
                    ref={(ref) => { this.scrollViewRef = ref; }}
                    onScroll={e => {
                       if (!this.leftIsScrolling) {
@@ -480,80 +504,13 @@ export default class Bible extends Component {
                         this.scrollViewRef.scrollTo({ y: scrollY });
                       }
                       this.leftIsScrolling = false;
-                    }}
-                
-                    // style={this.styles.recyclerListView}
-                  >
-                 {    (this.state.verseInLine) ?
-                          <View style={this.styles.chapterList}>
-                            <FlatList
-                            data={this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels}
-                            renderItem={({item, index}) => 
-                                  <Text letterSpacing={24} 
-                                     style={this.styles.verseWrapperText}> 
-                                        <VerseView
-                                            ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
-                                            verseData = {item}
-                                            index = {index}
-                                            styles = {this.styles}
-                                            selectedReferences = {this.state.selectedReferenceSet}
-                                            getSelection = {(verseIndex, chapterNumber, verseNumber) => {
-                                            this.getSelectedReferences(verseIndex, chapterNumber, verseNumber)
-                                            }}
-                                            makeHighlight={this.doHighlight}
-                                            makeNotes={this.addToNotes}
-                                            share={this.addToShare}
-                                            HighlightText={this.state.bottomHighlightText}
-                                            onPressfootNote = {this.onPressfootNote}
-                                            showFootNote = {this.state.showFootNote}
+                    }} >
+                  {/* <Text>{this.state.dataValue}</Text> */}
+               
+         
 
-                                        />
-                                     
-                                  </Text> 
-                            }
-                            ListFooterComponent={<View style={styles.addToSharefooterComponent} />}
-                            />
-                            </View>
-                        :
-
-                            <View style={this.styles.chapterList}>
-                                  
-                                    {this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels.map((verse, index) => 
-                                        <View>
-                                            {/* <Text letterSpacing={24}
-                                                 >   */}
-                                                <VerseView
-                                                    ref={child => (this[`child_${verse.chapterNumber}_${index}`] = child)}
-                                                    verseData = {verse}
-                                                    index = {index}
-                                                    styles = {this.styles}
-                                                    selectedReferences = {this.state.selectedReferenceSet}
-                                                    getSelection = {(verseIndex, chapterNumber, verseNumber) => {
-                                                    this.getSelectedReferences(verseIndex, chapterNumber,verseNumber)
-                                                    }}
-                                                    makeHighlight={this.doHighlight}
-                                                    makeNotes={this.addToNotes}
-                                                    share={this.addToShare}
-                                                    HighlightText={this.state.bottomHighlightText}
-                                                    onPressfootNote = {this.onPressfootNote}
-                                                    showFootNote = {this.state.showFootNote}
-                                                    
-                                                />
-                                               
-                                            {/* </Text> */}
-                                            
-                                            {index == this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels.length - 1
-                                            ? <View style={{height:25, marginBottom:4}} />
-                                            : null
-                                            }
-                                            
-                                          </View>
-                                    )}
-                            </View>
-                        }
-
-                </ScrollView>
-                
+                {/* </ScrollView>
+                 */} 
             </View>
             :
             <ActivityIndicator 
@@ -563,7 +520,7 @@ export default class Bible extends Component {
             
           }
          
-          </MenuContext>
+           </MenuContext> 
 
           <BottomTab
             colorFile={this.props.screenProps.colorFile}

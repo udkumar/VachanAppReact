@@ -1,61 +1,17 @@
 import React, { Component } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  Button,
-  TouchableHighlight,
-  Image,
-  Alert
-} from 'react-native';
-const FBSDK = require('react-native-fbsdk');
-const {
-  LoginButton,
-  AccessToken,
-  LoginManager,
-  ShareDialog
-} = FBSDK;
-import { createStackNavigator, createAppContainer } from 'react-navigation';
+import { AppRegistry, Text,StyleSheet,View ,Image} from 'react-native';
 import { GoogleSignin, GoogleSigninButton,statusCodes  } from 'react-native-google-signin';
-export default class SignUpView extends Component {
-  static navigationOptions = {
-    header: null
+ 
+export default class Googlesign extends Component {
+  constructor(props){
+  super(props)
+  this.state = {
+    userInfo:'',
+   isLoggedIn:false,
+   name: "",
+      photoUrl: ""
 }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      fullName: '',
-      email   : '',
-      password: '',
-      userInfo:'',
-      isLoggedIn:false,
-      name: "",
-      photoUrl: "",
-      fbpic:""
-    }
-
-    this.onLoginFB =this.onLoginFB.bind(this)
   }
-  onLoginFB(){
-  LoginManager.logInWithReadPermissions(['public_profile']).then(
-  function(result) {
-    console.log("resultfbbb"+JSON.stringify(result))
-this.setState({fbpic:result.cer})
-    if (result.isCancelled) {
-      alert('Login was cancelled');
-    } else {
-      alert('Login was successful with permissions: '
-        + result.grantedPermissions.toString());
-    }
-  },
-  function(error) {
-    alert('Login failed with error: ' + error);
-  }
-);
-  }
-
   signIn = async () => {
     console.log("google signin")
     try {
@@ -71,7 +27,6 @@ this.setState({fbpic:result.cer})
       console.log("username"+ userInfo.name)
       console.log("useremail"+ userInfo.email)
       console.log("userimage"+userInfo.photo)
-      this.props.navigation.navigate('Bible',{photorUl:this.state.photoUrl})
     } catch (error) {
       console.log("error "+error)
       console.log("statusCodes "+JSON.stringify(statusCodes))
@@ -85,9 +40,7 @@ this.setState({fbpic:result.cer})
         // some other error happened
       }
     }
-   
   }
-
   componentDidMount(){
     GoogleSignin.configure({
       iosClientId: '<FROM DEVELOPER CONSOLE>', // only for iOS
@@ -110,23 +63,10 @@ this.setState({fbpic:result.cer})
       console.error(error);
     }
 } 
-  onClickListener = () => {
-   this.props.navigation.navigate('Bible')
-  }
-  onClickListenersignup = () => {
-   
-    this.props.navigation.navigate('Signup')
-  }
+
   render() {
     return (
-      <View style={styles.container}>
-       
-<View>
-    <LoginButton
-          onLoginFinished={this.onLoginFB}
-/>
-</View>
-<View>
+      <View>
       <GoogleSigninButton
         style={{ width: 192, height: 48 }}
         size={GoogleSigninButton.Size.Icon}
@@ -139,54 +79,25 @@ this.setState({fbpic:result.cer})
           source={{uri:this.state.photoUrl}}
         />
     </View>
-      </View>
-    );
+    )
   }
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#00b5ec',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center"
   },
-  inputContainer: {
-      borderBottomColor: '#F5FCFF',
-      backgroundColor: '#FFFFFF',
-      borderRadius:30,
-      borderBottomWidth: 1,
-      width:250,
-      height:45,
-      marginBottom:20,
-      flexDirection: 'row',
-      alignItems:'center'
+  header: {
+    fontSize: 25
   },
-  inputs:{
-      height:45,
-      marginLeft:16,
-      borderBottomColor: '#FFFFFF',
-      flex:1,
-  },
-  inputIcon:{
-    width:30,
-    height:30,
-    marginLeft:15,
-    justifyContent: 'center'
-  },
-  buttonContainer: {
-    height:45,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom:20,
-    width:250,
-    borderRadius:30,
-  },
-  signupButton: {
-    backgroundColor: "#FF4DFF",
-  },
-  signUpText: {
-    color: 'white',
+  image: {
+    marginTop: 15,
+    width: 150,
+    height: 150,
+    borderColor: "rgba(0,0,0,0.2)",
+    borderWidth: 3,
+    borderRadius: 150
   }
-});
+})
