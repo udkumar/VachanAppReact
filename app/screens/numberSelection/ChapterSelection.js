@@ -36,7 +36,7 @@ console.log("bookdata"+ this.state.bookData)
     bookName: this.state.bookName, chapterNumber: item })
     var time =  new Date()
     DbQueries.addHistory(this.props.screenProps.languageCode, this.props.screenProps.versionCode, 
-    this.state.bookId, item, time);
+    this.state.bookId, item, time)
     this.props.screenProps.updateBookData(this.state.bookId, this.state.bookName,item)
   }
   

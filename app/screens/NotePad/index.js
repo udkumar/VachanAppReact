@@ -20,14 +20,14 @@ export default class Notepad extends Component {
     static navigationOptions = ({navigation}) =>{
         const { params = {} } = navigation.state;
             return{
-                headerTitle:(<Text style={{fontSize:16,color:"white",marginLeft:10}}>Notepad</Text>),
+                headerTitle:(<Text style={{fontSize:14,color:"white",marginLeft:10}}>Notepad</Text>),
                 headerRight:(
                     <Icon name="close"  style={{fontSize:20,marginRight:10,color:"#fff"}} onPress={() => {params.closeOnPress()}} />
                 ),
-                tabBarIcon: (<Icon name="content-paste" size={32} style={{color:'#fff'}}/>)
+                tabBarIcon: (<Icon name="content-paste" size={20} style={{color:'#fff'}}/>)
 
             }
-        }
+    }
 
     componentDidMount(){
         console.log("DID MOUNT OF NOTEPAD")
@@ -46,13 +46,13 @@ export default class Notepad extends Component {
             renderItem={({item}) =>
                 <TouchableOpacity
                     style={{
-                    flex:0.50,
-                    borderRightWidth:1, 
-                    borderBottomWidth:1,
-                    height:height/5.5, 
-                    justifyContent:"center"
-                }}
-                onPress={()=>{this.props.navigation.navigate(item.screen)}}>
+                        flex:0.50,
+                        borderRightWidth:1, 
+                        borderBottomWidth:1,
+                        height:height/6, 
+                        justifyContent:"center"
+                    }}
+                    onPress={()=>{this.props.navigation.navigate(item.screen)}}>
                     <Text style={{textAlign:"center", alignItems:"center"}}>{item.key}</Text>
                 </TouchableOpacity>
             }/>

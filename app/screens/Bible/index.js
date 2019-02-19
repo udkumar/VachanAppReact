@@ -116,7 +116,11 @@ export default class Bible extends Component {
     this.state = {
       languageCode: this.props.screenProps.languageCode,
       versionCode: this.props.screenProps.versionCode,
+<<<<<<< HEAD
       modelData: [] ,
+=======
+      modelData: this.props.navigation.state.params ? this.props.navigation.state.params.chapterModels : null ,
+>>>>>>> e6945b4f674ae17342a56cea19792e1ba088714d
       isLoading: false,
       showBottomBar: false,
       bookId: this.props.screenProps.bookId,
@@ -233,25 +237,25 @@ export default class Bible extends Component {
   }
   
   // render data onAPI Call 
-  async queryBookFromAPI() {
-    const parsedData =  await new USFMParser()
-    var bookData = parsedData.parseFile(value.usfm_text)
+  // async queryBookFromAPI() {
+  //   const parsedData =  await new USFMParser()
+  //   var bookData = parsedData.parseFile(value.usfm_text)
 
-    console.log("value "+JSON.stringify(bookData))
-    this.setState({bookInfo:[...this.state.bookInfo,{
-        bookId: bookData.bookId,
-        bookName: bookData.bookName,
-        chapterModels: bookData.chapterModels,
-        section:bookData.section,
-        bookNumber:bookData.bookNumber
-    }]
-    })
-    // this.props.screenProps.updateLanguage("HIN",value.language, "IRV", value.version);
-    var bookListData  = [{bookId: bookData.bookId,bookName: bookData.bookName,
-        section:bookData.section,  bookNumber:bookData.bookNumber,
-        languageCode: "HIN", versionCode: "IRV", numOfChapters:bookData.chapterModels.length }]
-    this.props.screenProps.updateBookList(bookListData)
-  }
+  //   console.log("value "+JSON.stringify(bookData))
+  //   this.setState({bookInfo:[...this.state.bookInfo,{
+  //       bookId: bookData.bookId,
+  //       bookName: bookData.bookName,
+  //       chapterModels: bookData.chapterModels,
+  //       section:bookData.section,
+  //       bookNumber:bookData.bookNumber
+  //   }]
+  //   })
+  //   // this.props.screenProps.updateLanguage("HIN",value.language, "IRV", value.version);
+  //   var bookListData  = [{bookId: bookData.bookId,bookName: bookData.bookName,
+  //       section:bookData.section,  bookNumber:bookData.bookNumber,
+  //       languageCode: "HIN", versionCode: "IRV", numOfChapters:bookData.chapterModels.length }]
+  //   this.props.screenProps.updateBookList(bookListData)
+  // }
   //render data from local db
   async queryBook() {
     let model = await DbQueries.queryBookWithId(this.props.screenProps.versionCode, 
@@ -563,7 +567,18 @@ export default class Bible extends Component {
               />
               }
         </View>
-    
+        // <View>
+        //   {/* <FlatList
+        //     data={this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels}
+        //     renderItem={({item, index}) => 
+        //           <Text letterSpacing={24} 
+        //               style={this.styles.verseWrapperText}> 
+                        
+        //           </Text> 
+        //     }
+        //     /> */}
+        //     <Text>Hi</Text>
+        // </View>
       );
   }
 

@@ -19,11 +19,11 @@ export default class Video extends Component {
 static navigationOptions = ({navigation}) =>{
   const { params = {} } = navigation.state;
       return{
-          headerTitle:(<Text style={{fontSize:16,color:"white",marginLeft:10}}>Video</Text>),
+          headerTitle:(<Text style={{fontSize:14,color:"white",marginLeft:10}}>Video</Text>),
           headerRight:(
               <Icon name="close"  style={{fontSize:20,marginRight:10,color:"#fff"}} onPress={() => {params.closeOnPress()}} />
           ),
-          tabBarIcon: (<Icon name="video-library" size={32} style={{color:'#fff'}}/>)
+          tabBarIcon: (<Icon name="video-library" size={20} style={{color:'#fff'}}/>)
 
 
       }

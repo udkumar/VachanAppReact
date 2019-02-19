@@ -199,10 +199,15 @@ export default class App extends Component {
     Realm.copyBundledRealmFiles();
       
     this.state = {
+        chapterModels:[],
+        //having bookname, bookid ,section,booknumber,bookSection,versioncode,languagecode,number of chapters
         booksList: [],
+        //initial render when app open show loader from routes page on bible page 
         isDbLoading: true,
+        //language selected async storage 
         languageCode: AsyncStorageConstants.Values.DefLanguageCode,
         versionCode: AsyncStorageConstants.Values.DefVersionCode,
+
         languageName:AsyncStorageConstants.Values.DefLanguageName,
         versionName:AsyncStorageConstants.Values.DefVersionName,
         colorMode: AsyncStorageConstants.Values.DayMode,
@@ -215,24 +220,36 @@ export default class App extends Component {
         verseInLine:false,
         lastRead:{}
     }
-
-		this.updateBooks = this.updateBooks.bind(this)
+    //update booklist for showing book on selectBook screen
+    this.updateBookList = this.updateBookList.bind(this)
+    //update size of text on changing seekbar in settings page 
     this.updateSize = this.updateSize.bind(this)
+    //update color for night and day mode 
     this.updateColor = this.updateColor.bind(this)
+    //update verse in line for showing verse in line or paragraph settings page 
     this.updateVerseInLine = this.updateVerseInLine.bind(this)
+    //update size of text on gesture change on pinch screen in bible page 
     this.changeSizeByOne = this.changeSizeByOne.bind(this)
+    //update last read for last read page which is bible page 
     this.updateLastRead = this.updateLastRead.bind(this)
+    //update language on language change from language change ot read another language page
     this.updateLanguage  = this.updateLanguage.bind(this)
+    //update book data for current reading chapter book id and book name form selected langauge and version from download version or language page 
     this.updateBookData  = this.updateBookData.bind(this)
 
+    this.updateChapterData = this.updateChapterData.bind(this)
 
     this.styles = styleFile(this.state.colorFile,this.state.sizeFile)
     this.DrawerNavigate = DrawerNavigate(this.styles)
     console.log("ALL HEADER COLOR /////// "+JSON.stringify(this.styles))
   }
 
-  updateBooks = (booksList) => {
+  updateBookList = (booksList) => {
     this.setState({booksList})
+  }
+
+  updateChapterData = (chapterModels) =>{
+    this.setState({chapterModels})
   }
 
   updateVerseInLine = (verseInLine) =>{
@@ -313,7 +330,7 @@ export default class App extends Component {
     // console.log("in ROTES update language")
     this.setState({languageCode, languageName,versionCode,versionName})
 
-    let models = await DbQueries.queryBookIdModels(versionCode, languageCode);
+    let models = await DbQueries.queryBookIdModels(versionCode, languageCode)
       // console.log("routes len =" + JSON.stringify(models))
       if (models && models.length > 0) {
         this.setState({booksList: models})
@@ -348,7 +365,7 @@ export default class App extends Component {
           updateColor: this.updateColor,
           updateSize: this.updateSize,
           updateVerseInLine:this.updateVerseInLine,
-          updateBooks: this.updateBooks,
+          updateBookList: this.updateBookList,
           changeSizeByOne: this.changeSizeByOne,
           updateLastRead: this.updateLastRead,
           updateLanguage: this.updateLanguage,
@@ -362,6 +379,7 @@ export default class App extends Component {
 
     
   async componentDidMount(){
+
     let res = await AsyncStorageUtil.getAllItems([
       AsyncStorageConstants.Keys.ColorMode, 
       AsyncStorageConstants.Keys.SizeMode,
@@ -441,5 +459,6 @@ export default class App extends Component {
 
     console.log("DSIDI mount value "+typeof this.state.sizeMode)
   }
+  
 
 }

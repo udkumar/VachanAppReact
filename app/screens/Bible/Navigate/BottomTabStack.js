@@ -50,7 +50,9 @@ const BottomTab = TabNavigator(
         tabBarPosition: 'bottom',
         activeTintColor:'#fff',
         inactiveTintColor:'#D3D3D3',
+        swipeEnabled:false,
         tabBarOptions: {
+            labelStyle: { fontSize: 10,margin:0,padding:0 },
             showIcon: true,
             showLabel: true,
             activeTintColor: '#fff',

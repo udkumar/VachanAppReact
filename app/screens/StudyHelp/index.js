@@ -20,13 +20,11 @@ export default class StudyHelp extends Component {
     static navigationOptions = ({navigation}) =>{
         const { params = {} } = navigation.state;
             return{
-                headerTitle:(<Text style={{fontSize:16,color:"white",marginLeft:10}}>Study Help</Text>),
+                headerTitle:(<Text style={{fontSize:14,color:"white",marginLeft:10}}>Study Help</Text>),
                 headerRight:(
                     <Icon name="close"  style={{fontSize:20,marginRight:10,color:"#fff"}} onPress={() => {params.closeOnPress()}} />
                 ),
-                tabBarIcon: (<Icon name="list" size={35} style={{color:'#fff'}}/>)
-
-
+                tabBarIcon: (<Icon name="list" size={20} style={{color:'#fff'}}/>)
             }
         }
     componentDidMount(){
@@ -48,7 +46,7 @@ export default class StudyHelp extends Component {
                     flex:0.50,
                     borderRightWidth:1, 
                     borderBottomWidth:1,
-                    height:height/5.5, 
+                    height:height/6, 
                     justifyContent:"center"
                 }}
                 onPress={()=>{this.props.navigation.navigate(item.screen)}}

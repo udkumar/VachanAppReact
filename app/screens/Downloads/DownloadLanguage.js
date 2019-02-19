@@ -10,6 +10,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import bible_data from '../../assets/TestLangApi.json'
 
 
+
 export default class DownloadLanguage extends Component {
 
     static navigationOptions = ({navigation}) => ({

@@ -17,10 +17,11 @@ export default class USFMParser {
         this.chapterList = [];
         this.verseList = [];
         this.mappingData = id_name_map;
-        this.languageCode = "";
-        this.languageName = "";
-        this.versionCode = "";
-        this.versionName = "";
+        this.bookModel = null
+        // this.languageCode = "";
+        // this.languageName = "";
+        // this.versionCode = "";
+        // this.versionName = "";
         // this.source = "BridgeConn";
         // this.year = 2017;
         // this.license = "CCSA";
@@ -47,16 +48,15 @@ export default class USFMParser {
     //             });
     //     }
     // }
-     parseFile(result, lCode, lName, vCode, vName, source, license, year) {
-        this.languageCode = lCode;
-        this.languageName = lName;
-        this.versionCode = vCode;
-        this.versionName = vName;
-        this.source = source;
-        this.license = license;
-        this.year = year;
-        this.parseFileContents(result);
-        
+     parseFile(result) {
+        // this.languageCode = lCode;
+        // this.languageName = lName;
+        // this.versionCode = vCode;
+        // this.versionName = vName;
+        // this.source = source;
+        // this.license = license;
+        // this.year = year;
+        return this.parseFileContents(result);
     }
 
     // parseFile() {
@@ -83,7 +83,7 @@ export default class USFMParser {
                 }
             }
             this.addComponentsToChapter();
-            this.addBookToContainer();
+            return this.addBookToContainer();
         } catch(exception) {
             console.log("error in parsing file : " + exception)
         }
@@ -328,15 +328,17 @@ export default class USFMParser {
         if (mapResult == null) {
             return;
         }
-        var bookModel = {bookId: this.bookId, bookName: mapResult.book_name, bookNumber: mapResult.number, 
+        const bookModel = {bookId: this.bookId, bookName: mapResult.book_name, bookNumber: mapResult.number, 
             section: mapResult.section, chapterModels: this.chapterList}
-        var versionModel = {versionName: this.versionName, versionCode: this.versionCode, bookModels: [],
-            source: this.source, license: this.license, year: this.year}
-        versionModel.bookModels.push(bookModel);
-        var languageModel = {languageCode: this.languageCode, languageName: this.languageName, versionModels: []}
-        languageModel.versionModels.push(versionModel);
-        console.log("ADD BOOK : " + this.bookId + " :: " + this.versionCode + " :: " + this.languageCode)
-        DbQueries.addNewBook(bookModel, versionModel, languageModel);
+            return bookModel
+
+        // var versionModel = {versionName: this.versionName, versionCode: this.versionCode, bookModels: [],
+        //     source: this.source, license: this.license, year: this.year}
+        // versionModel.bookModels.push(bookModel);
+        // var languageModel = {languageCode: this.languageCode, languageName: this.languageName, versionModels: []}
+        // languageModel.versionModels.push(versionModel);
+        console.log("ADD BOOK : " +this.bookModel)
+        // DbQueries.addNewBook(bookModel, versionModel, languageModel);
     }
 
     addFormattingToLastVerse(line) {
