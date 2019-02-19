@@ -14,10 +14,14 @@ var RNFS = require('react-native-fs');
 import { zip, unzip, unzipAssets, subscribe } from 'react-native-zip-archive'
 import USFMParser from '../../utils/USFMParser'
 import {downloadPageStyle} from './styles.js'
+
 import firebase from 'react-native-firebase';
 import { Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
+
+import bible_data from '../../assets/TestLangApi.json'
+import { NavigationActions } from 'react-navigation';
 
 export default class DownloadVersion extends Component {
     static navigationOptions = ({navigation}) => ({
@@ -47,7 +51,18 @@ export default class DownloadVersion extends Component {
     }
 
     componentDidMount() {
-       this.downloadBibleVer()
+    //    this.downloadBibleVer()
+
+        this.setState({downloadVersionList:[...this.state.downloadVersionList,bible_data.version_name]})
+        this.props.screenProps.updateLanguage(bible_data.language_code,bible_data.langauge_name, bible_data.version_code, bible_data.version_name);
+            console.log("PROPS NAVIGATION ON LANGUAGE "+JSON.stringify(this.props.navigation))
+        //     const resetAction = NavigationActions.reset({
+        //         index: 0,
+        //         actions: [
+        //         NavigationActions.navigate({ routeName: 'Bible'})
+        //         ]
+        //   })
+        //   this.props.navigation.dispatch(resetAction)
     }
     downloadBibleVer(){
         NetInfo.isConnected.fetch().then(isConnected => {
@@ -220,22 +235,6 @@ export default class DownloadVersion extends Component {
     // }
     
     async downloadBook(value){
-            const parsedData =  await new USFMParser()
-            var bookData = parsedData.parseFile(value.usfm_text)
-
-            console.log("value "+JSON.stringify(bookData))
-            this.setState({bookInfo:[...this.state.bookInfo,{
-                bookId: bookData.bookId,
-                bookName: bookData.bookName,
-                chapterModels: bookData.chapterModels,
-                section:bookData.section,
-                bookNumber:bookData.bookNumber
-            }]
-            })
-            var bookListData  = [{bookId: bookData.bookId,bookName: bookData.bookName,
-                section:bookData.section,  bookNumber:bookData.bookNumber,
-                languageCode: "HIN", versionCode: "IRV", numOfChapters:bookData.chapterModels.length }]
-            this.props.screenProps.updateBookList(bookListData)
             this.props.navigation.navigate("Bible",{value})
     }
     renderItem = ({item,index})=>{
@@ -243,7 +242,7 @@ export default class DownloadVersion extends Component {
             <Card style={this.styles.cardStyle}>
                 <TouchableOpacity onPress={() => this.downloadBook(item)}>
                     <CardItem style={this.styles.cardItemStyle}>
-                        <Text style={this.styles.textStyle}>{item.version}</Text>
+                        <Text style={this.styles.textStyle}>{item}</Text>
                     </CardItem>
                 </TouchableOpacity>
             </Card>

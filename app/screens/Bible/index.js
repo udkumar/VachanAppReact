@@ -228,30 +228,30 @@ export default class Bible extends Component {
     })  
      
     this.setState({isLoading: true}, () => {
-      // this.queryBook()
+      this.queryBook()
     })
   }
   
   // render data onAPI Call 
-  async queryBookFromAPI() {
-    const parsedData =  await new USFMParser()
-    var bookData = parsedData.parseFile(value.usfm_text)
+  // async queryBookFromAPI() {
+  //   const parsedData =  await new USFMParser()
+  //   var bookData = parsedData.parseFile(value.usfm_text)
 
-    console.log("value "+JSON.stringify(bookData))
-    this.setState({bookInfo:[...this.state.bookInfo,{
-        bookId: bookData.bookId,
-        bookName: bookData.bookName,
-        chapterModels: bookData.chapterModels,
-        section:bookData.section,
-        bookNumber:bookData.bookNumber
-    }]
-    })
-    // this.props.screenProps.updateLanguage("HIN",value.language, "IRV", value.version);
-    var bookListData  = [{bookId: bookData.bookId,bookName: bookData.bookName,
-        section:bookData.section,  bookNumber:bookData.bookNumber,
-        languageCode: "HIN", versionCode: "IRV", numOfChapters:bookData.chapterModels.length }]
-    this.props.screenProps.updateBookList(bookListData)
-  }
+  //   console.log("value "+JSON.stringify(bookData))
+  //   this.setState({bookInfo:[...this.state.bookInfo,{
+  //       bookId: bookData.bookId,
+  //       bookName: bookData.bookName,
+  //       chapterModels: bookData.chapterModels,
+  //       section:bookData.section,
+  //       bookNumber:bookData.bookNumber
+  //   }]
+  //   })
+  //   // this.props.screenProps.updateLanguage("HIN",value.language, "IRV", value.version);
+  //   var bookListData  = [{bookId: bookData.bookId,bookName: bookData.bookName,
+  //       section:bookData.section,  bookNumber:bookData.bookNumber,
+  //       languageCode: "HIN", versionCode: "IRV", numOfChapters:bookData.chapterModels.length }]
+  //   this.props.screenProps.updateBookList(bookListData)
+  // }
   //render data from local db
   async queryBook() {
     let model = await DbQueries.queryBookWithId(this.props.screenProps.versionCode, 

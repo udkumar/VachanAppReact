@@ -11,6 +11,8 @@ import DownloadUtil from '../../utils/DownloadUtil'
 import {Card, CardItem} from 'native-base'
 import {downloadPageStyle} from './styles.js'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import bible_data from '../../assets/TestLangApi.json'
+
 
 
 export default class DownloadLanguage extends Component {
@@ -31,7 +33,9 @@ export default class DownloadLanguage extends Component {
     }
 
     componentDidMount() {
-        this.downloadBible()
+        console.log("BIBLE DATA ON LAGUAGE PAGE  " +JSON.stringify(bible_data))
+        this.setState({downloadData:[...this.state.downloadData,bible_data.langauge_name]})
+        // this.downloadBible()
     }
     downloadBible(){
         NetInfo.isConnected.fetch().then(isConnected => {
@@ -72,8 +76,7 @@ export default class DownloadLanguage extends Component {
     }
 
     render() {
-        // if(this.state.dowsnloadData[0])
-        // console.log("DATA ARRAY "+ JSON.stringify(this.state.downloadData) )
+        console.log("DATA ARRAY "+ JSON.stringify(this.state.downloadData) )
         return (
             <View style={this.styles.container}>
             {
