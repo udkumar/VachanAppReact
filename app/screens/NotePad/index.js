@@ -40,7 +40,8 @@ export default class Notepad extends Component {
     return (
       <View>
             <FlatList
-            data={[{key:'BOOKMARKS',screen:'Bookmarks'},{key:'NOTES',screen:'Notes'},{key:'HIGHLIGHTS',screen:'HighLights'},{key:'HISTORY',screen:'History'}]}
+            data={[{key:'BOOKMARKS',screen:'Bookmarks'},{key:'NOTES',screen:'Notes'},
+            {key:'HIGHLIGHTS',screen:'HighLights'},{key:'HISTORY',screen:'History'}]}
             numColumns={2}
             renderItem={({item}) =>
                 <TouchableOpacity

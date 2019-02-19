@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Autographa Go</string>
+  <string name="facebook_app_id">627928460977932</string>
+
 </resources>

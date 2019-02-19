@@ -3,61 +3,60 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
 import { AppRegistry, FlatList,translate,StyleSheet,Slider, Text,Button,Image,
    View ,TouchableWithoutFeedback,Dimensions} from 'react-native';
+
+   import songlist from '../Songlist/tt.mp3'
 import Video from 'react-native-video';
 
 var Sound = require('react-native-sound');
 
-song = new Sound('tt.mp3',Sound.MAIN_BUNDLE,(error) =>{
-  if (error) {
-      console.log('failed to load the sound', error);
-      return;
-    }
-})
+// song = new Sound('tt.mp3',Sound.MAIN_BUNDLE,(error) =>{
+//   if (error) {
+//       console.log('failed to load the sound', error);
+//       return;
+//     }
+// })
+
  function secondsToTime(time) {
   return ~~(time/60)+ ":" + (time % 60 <10 ? "0":"")+ time %60;
 }
 
 
 
-//var song =null;
-
 export default class Titusbible extends Component {
   static navigationOptions = ({navigation}) =>{
-    const { params = {} } = navigation.state;
-        return{
-            headerTitle:(<Text style={{fontSize:16,color:"white",marginLeft:10}}>Audio</Text>),
-            headerRight:(
-                <Icon name="close"  style={{fontSize:20,marginRight:10,color:"#fff"}} onPress={() => {params.closeOnPress()}} />
-            ),
-            tabBarIcon: (<Icon name="library-music" size={32} style={{color:'#fff'}}/>)
-        }
+    return{
+        headerTitle:(<Text style={{fontSize:16,color:"white",marginLeft:10}}>Audio</Text>),
+        headerRight:(
+            <Icon name="close"  style={{fontSize:20,marginRight:10,color:"#fff"}}/>
+        )
     }
-  increase = (key, value) => {
-    this.setState({
-      [key]: this.state[key] + value,
-    });
-  }
+}
+ 
 
  
 constructor(props){
     super(props)
-    this.toggleplay= this.toggleplay.bind(this);
+    //this.toggleplay= this.toggleplay.bind(this);
     this.state = {
       isPlaying: false,
       paused:false,
-      close:this.props.screenProps.close,
       progress: 0,
       duration:0,
-      progressWithOnComplete: 0,
-      progressCustomized: 0,
+     
     };
 }
+handleMainButtonTouch = () => {
+  if (this.state.progress >= 1) {
+    this.player.seek(0);
+  }
+
+   this.setState({ paused: !this.state.paused,})
+};
 handleProgressPress = e => {
   const position = e.nativeEvent.locationX;
   const progress = (position / 250) * this.state.duration;
   const isPlaying = !this.state.paused;
-  
-  this.song.seek(progress);
+  this.player.seek(progress);
 };
 
 handleProgress=(progress)=>{
@@ -69,30 +68,31 @@ handleProgress=(progress)=>{
 handleLoad =(meta)=>{
 
 this.setState({
-  duration:meta.duration
+  duration:meta.duration,
+  paused: true
 })
 }
 handleEnd = () => {
   this.setState({ paused: true });
 };
 
-toggleplay(){
-  console.log("toggle")
-  if (this.state.progress >= 1) {
-    this.song.seek(0);
-  }
-  this.setState({ paused: !this.state.paused,})
-  if(song != null) {
-                if(this.state.paused)
-            song.play((success) => {
-                if (!success) 
-                  console.log('successfully finished playing');
-                 });
-                 else song.pause();
-                 this.setState({pause:!this.state.paused});
-                }
+// toggleplay(){
+//   console.log("toggle")
+//   if (this.state.progress >= 1) {
+//     this.player.seek(0);
+//   }
+//   this.setState({ paused: !this.state.paused,})
+//   if(song != null) {
+//                 if(this.state.paused)
+//             song.play((success) => {
+//                 if (!success) 
+//                   console.log('successfully finished playing');
+//                  });
+//                  else song.pause();
+//                  this.setState({pause:!this.state.paused});
+//                 }
               
-            }
+//             }
   
   componentDidMount(){
       console.log("DID MOUNT OF NOTEPAD")
@@ -102,55 +102,11 @@ toggleplay(){
   }
           
 
-// componentWillMount()
-// {
-//     song = new Sound('tt.mp3',Sound.MAIN_BUNDLE,(error) =>{
-//         if (error) {
-//             console.log('failed to load the sound', error);
-//             return;
-//           }
-//     })
-// }
-// onPressButton()
-// {
-//   song = new Sound('tt.mp3',Sound.MAIN_BUNDLE,(error) =>{
-//     if (error) {
-//         console.log('failed to load the sound', error);
-//         return;
-//       }
-//       else{
-//         song.play((success) =>
-//         {
-//           if (!success) {
-//             console.log('successfully finished playing');
-//           }
-//         });
-
-//       }
-// })
-    
-// }
-// onpauseButton(){
-//     if(song != null) {
-//             if(this.state.pause)
-//         song.play((success) => {
-//             if (!success) 
-//               console.log('successfully finished playing');
-//              });
-//              else song.pause();
-//              this.setState({pause:!this.state.pause});
-//             }
-          
-//         }
 
 
 
  render(){
   const barWidth = Dimensions.get('screen').width - 10;
-  const progressCustomStyles = {
-    backgroundColor: 'red', 
-    borderRadius: 0,
-    borderColor: 'orange'}
  
     return (
  <View style={styles.container}>
@@ -171,26 +127,31 @@ toggleplay(){
 }}
 source={require('../../assets/backmusic.jpg')}/>
  <Video
-          pause={this.state.pause}
-          source={{uri:'https://www.robtowns.com/music/blind_willie.mp3'}}
+          paused={this.state.paused}
+          source={songlist}
           onLoad={this.handleLoad}
-          
           onProgress={this.handleProgress}
+          ignoreSilentSwitch={"ignore"}
+          playWhenInactive={true}
+          playInBackground={true}
+          muted={false}
+          resizeMode={"cover"}
+          repeat={false}
           onEnd={this.handleEnd}
           ref={ref => {
-            this.song = ref;}}
+            this.player = ref;}}
           />
           
 <TouchableWithoutFeedback onPress={this.handleProgressPress} >
  <Slider style={{position: 'absolute',alignSelf: 'center',bottom:30}}
             width={barWidth}
             value={this.state.progress}
-            
-            
-          />
-</TouchableWithoutFeedback>
-        <Icon
-  onPress={this.toggleplay}
+            onSlidingStart={() => this.setState({paused: true})}
+            />
+</TouchableWithoutFeedback >
+<TouchableWithoutFeedback >
+        <Icon 
+onPress={this.handleMainButtonTouch}
    name={!this.state.paused ? "pause" : "play"}
     size={40}
    color='#3b5998'
@@ -198,7 +159,7 @@ source={require('../../assets/backmusic.jpg')}/>
  
     style={{height:90,width:90, top:30,position: 'absolute',alignSelf: 'center', justifyContent: 'center',flexDirection: 'column',
     alignItems: 'center'}}/>
-    
+    </TouchableWithoutFeedback>
      <Icon
  name='backward'
     size={30}
@@ -218,19 +179,7 @@ source={require('../../assets/backmusic.jpg')}/>
             </Text>
           </TouchableWithoutFeedback>
          
-  {/* <Icon
-  onPress={this.onPressButton.bind(this)}
-    name='play-circle'
-    size={60}
-   color='#3b5998'
-    style={{height:100,width:100}}/>
-    <Icon
-  onPress={this.onpauseButton.bind(this)}
-    name='pause-circle'
-    size={60}
-   color='#3b5998'
-    style={{height:100,width:100}}/>
-   */}
+ 
 </View>
 
 

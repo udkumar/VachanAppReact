@@ -1,7 +1,7 @@
 // all of our routes
 import React, { Component } from 'react'
 import {TouchableOpacity,View,Text} from 'react-native'
-import {StackNavigator, DrawerNavigator,DrawerActions,NavigationActions} from 'react-navigation'
+import {StackNavigator, DrawerNavigator,DrawerItems,DrawerActions,NavigationActions} from 'react-navigation'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import SelectBook from '../screens/SelectBook/SelectBook'
 import About from '../screens/About/About'
@@ -12,6 +12,7 @@ import Notes from '../screens/Note/Notes'
 import EditNote from '../screens/Note/EditNote'
 import Search from '../screens/Search/Search'
 import Settings from '../screens/settings/Settings'
+import Googlesign from '../screens/Googlesign'
 import Splash from '../screens/Splash/Splash'
 import ReferenceSelection from '../screens/numberSelection/ReferenceSelection'
 import ChapterSelection from '../screens/numberSelection/ChapterSelection'
@@ -22,6 +23,8 @@ import DownloadVersion from '../screens/Downloads/DownloadVersion'
 import BackupRestore from '../screens/backup/BackupRestore'
 import DrawerScreen from '../screens/DrawerScreen/DrawerScreen'
 import  Bible from '../screens/Bible'
+import languagelist from '../screens/LanguagesList'
+import VersionList from'../screens/Versionlist'
 const AsyncStorageConstants = require('./AsyncStorageConstants')
 import AsyncStorageUtil from './AsyncStorageUtil';
 import {nightColors, dayColors, constColors} from './colors.js'
@@ -29,6 +32,9 @@ import {extraSmallFont,smallFont,mediumFont,largeFont,extraLargeFont} from './di
 import { styleFile } from './styles.js'
 import DbQueries from '../utils/dbQueries'
 import Realm from 'realm'
+
+import SignupWithGoogle from '../screens/SignupWithGoogle'
+import Signin from '../screens/SignIn'
 import Video from '../screens/Video'
 import Audio from '../screens/Audio'
 import BottomTab from '../screens/Bible/BottomTab'
@@ -36,6 +42,14 @@ import GoogleMaps from  '../screens/GoogleMaps'
 import Images from '../screens/Images'
 
 const DrawerNavigate = (styles) => DrawerNavigator({
+  // Signin:{
+  //   screen:Signin
+  //   },
+    
+  // Signup:{
+  //   screen:Signup
+    
+  // },
   StackNavigate:{
     screen: StackNavigate
   },
@@ -43,7 +57,7 @@ const DrawerNavigate = (styles) => DrawerNavigator({
 },
 {
   // initialRouteName: 'Bible',
-  contentComponent: DrawerScreen,
+  contentComponent:DrawerScreen,
   drawerWidth: 250
 },
 );
@@ -54,7 +68,7 @@ const MenuIcon = (navigation) => {
           <Icon 
             name="dehaze"  
             color="#fff"
-            onPress={() => {navigation.navigate('DrawerToggle')}}
+            onPress={() => {navigation.navigate('DrawerToggle'),console.log("menu on press")}}
             style={{marginHorizontal:8,fontSize:20}}
           />
       );
@@ -67,22 +81,23 @@ const StackNavigate = StackNavigator(
       // Splash: {
       //   screen: Splash,
       // },
+      Signin:{
+        screen:Signin
+        },
+     
       Bible:{
         screen:Bible,
-          navigationOptions: ({ navigation }) => ({
-            // title: null,  // Title to appear in status bar
-            // header:null,
-            headerLeft :<MenuIcon navigate={navigation.navigate}/>,
-            headerTintColor: '#fff',
-            headerStyle:{
-              backgroundColor:"#3F51B5"
-            },
-            headerTitleStyle: {
-              fontWeight: 'normal',
-            },
+        navigationOptions: ({ navigation }) => ({
+          // title: null,  // Title to appear in status bar
+          // header:null,
+          headerLeft :<MenuIcon navigate={navigation.navigate}/>,
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
           
-          })
-        
+           
+        })
       },
       SelectBook: {
         screen: SelectBook,
@@ -152,9 +167,15 @@ const StackNavigate = StackNavigator(
       },
       Images:{
         screen:Images
+      },
+      SignupWithGoogle:{
+        screen:SignupWithGoogle
+          },
+      Googlesign:{
+        screen:Googlesign
       }
-     
   },
+  
   {
     navigationOptions: ({ navigation }) => ({
       headerTintColor: '#fff',
@@ -204,6 +225,7 @@ export default class App extends Component {
     this.updateLanguage  = this.updateLanguage.bind(this)
     this.updateBookData  = this.updateBookData.bind(this)
 
+
     this.styles = styleFile(this.state.colorFile,this.state.sizeFile)
     this.DrawerNavigate = DrawerNavigate(this.styles)
     console.log("ALL HEADER COLOR /////// "+JSON.stringify(this.styles))
@@ -231,6 +253,7 @@ export default class App extends Component {
   updateBookData = (bookId,bookName,chapterNumber) =>{
     this.setState({bookId,bookName,chapterNumber})
   }
+
 
 
   changeSizeByOne = (value) => {
@@ -320,6 +343,7 @@ export default class App extends Component {
           bookName:this.state.bookName,
           chapterNumber:this.state.chapterNumber,
           lastRead:this.state.lastRead,
+          userFoto:this.state.userFoto,
 
           updateColor: this.updateColor,
           updateSize: this.updateSize,
@@ -328,7 +352,9 @@ export default class App extends Component {
           changeSizeByOne: this.changeSizeByOne,
           updateLastRead: this.updateLastRead,
           updateLanguage: this.updateLanguage,
-          updateBookData: this.updateBookData
+          updateBookData: this.updateBookData,
+          updateUserInfo: this.updateUserInfo
+
         }}
       />
     );
@@ -353,7 +379,7 @@ export default class App extends Component {
     
     if (res == null) {
       return
-    }
+    }+
 
     console.log("ROUTES.... color mode "+res[0][1])
     this.setState({sizeMode: res[1][1] == null ? AsyncStorageConstants.Values.SizeModeNormal : parseInt(res[1][1])}, ()=> {

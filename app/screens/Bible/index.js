@@ -104,7 +104,7 @@ export default class Bible extends Component {
     super(props);
     this.leftIsScrolling = false;
     this.rigthIsScrolling = false;
-    console.log("PROPS VALUE BIBLE "+JSON.stringify(props.screenProps))
+    console.log("PROPS VALUE BIBLE "+JSON.stringify(props))
 
     this.mappingData = id_name_map;
     this.getSelectedReferences = this.getSelectedReferences.bind(this)
@@ -116,7 +116,7 @@ export default class Bible extends Component {
     this.state = {
       languageCode: this.props.screenProps.languageCode,
       versionCode: this.props.screenProps.versionCode,
-      modelData: [],
+      modelData: [] ,
       isLoading: false,
       showBottomBar: false,
       bookId: this.props.screenProps.bookId,
@@ -137,14 +137,15 @@ export default class Bible extends Component {
       top: height / 2,
 
       scrollDirection:'up',
-      close:true
+      close:true,
+      // bookInfo:this.props.navigation.state.params ? this.props.navigation.state.params.bookInfo : null 
     }
 
     this.pinchDiff = 0
     this.pinchTime = new Date().getTime()
     this.styles = styles(this.state.colorFile, this.state.sizeFile);    
     this.modelValue = "modal1"
-
+    
   }
 
   
@@ -231,6 +232,27 @@ export default class Bible extends Component {
     })
   }
   
+  // render data onAPI Call 
+  async queryBookFromAPI() {
+    const parsedData =  await new USFMParser()
+    var bookData = parsedData.parseFile(value.usfm_text)
+
+    console.log("value "+JSON.stringify(bookData))
+    this.setState({bookInfo:[...this.state.bookInfo,{
+        bookId: bookData.bookId,
+        bookName: bookData.bookName,
+        chapterModels: bookData.chapterModels,
+        section:bookData.section,
+        bookNumber:bookData.bookNumber
+    }]
+    })
+    // this.props.screenProps.updateLanguage("HIN",value.language, "IRV", value.version);
+    var bookListData  = [{bookId: bookData.bookId,bookName: bookData.bookName,
+        section:bookData.section,  bookNumber:bookData.bookNumber,
+        languageCode: "HIN", versionCode: "IRV", numOfChapters:bookData.chapterModels.length }]
+    this.props.screenProps.updateBookList(bookListData)
+  }
+  //render data from local db
   async queryBook() {
     let model = await DbQueries.queryBookWithId(this.props.screenProps.versionCode, 
         this.props.screenProps.languageCode, this.state.bookId);
@@ -409,11 +431,15 @@ export default class Bible extends Component {
   }
   render() {
     const thumbSize = this.state.thumbSize;
-    console.log("CLOSE VALUE FROM BIBLE PAGE  "+this.state.close)
+    console.log("CLOSE VALUE FROM BIBLE PAGE  BOOK INFO "+JSON.stringify(this.state.bookInfo))
       return (
         <View style={this.styles.container} >
           <MenuContext style={this.styles.verseWrapperText}>
-            {this.state.modelData.length>0 ? 
+            {this.state.modelData == null  ?   
+            <ActivityIndicator 
+            animating={this.state.isLoading ? true : false} 
+            size="large" 
+            color="#0000ff" />:
             <View>
                 <ScrollView  
                    ref={(ref) => { this.scrollViewRef = ref; }}
@@ -498,11 +524,7 @@ export default class Bible extends Component {
                 </ScrollView>
                 
             </View>
-            :
-            <ActivityIndicator 
-            animating={this.state.isLoading ? true : false} 
-            size="large" 
-            color="#0000ff" />
+          
           }
           </MenuContext>
           {/* {this.state.currentVisibleChapter == 1
@@ -541,10 +563,9 @@ export default class Bible extends Component {
               />
               }
         </View>
+    
       );
   }
 
 }
 
-
-  

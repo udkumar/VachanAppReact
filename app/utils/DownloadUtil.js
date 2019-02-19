@@ -1,6 +1,6 @@
 import ApiUtils from './ApiUtils'
 
-const API_BASE_URL = "https://raw.githubusercontent.com/friendsofagape/Autographa_Repo/master/Bibles/";
+const API_BASE_URL = "https://stagingapi.autographamt.com/newdb/bibles/usfm";
 const META_DATA_FILE_NAME = "package.json";
 const USFM_ZIP_FILE_NAME = "Archive.zip";
 

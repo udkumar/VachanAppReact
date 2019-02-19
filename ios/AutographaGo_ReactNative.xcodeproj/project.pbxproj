@@ -68,6 +68,10 @@
 		E1E48CBBE5D64AF1AEF0112C /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5BBD27D602384B1EA50660EA /* Octicons.ttf */; };
 		F7DDA6B1747B406EA4029E8F /* rubicon-icon-font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8D6B66F0D7CF45CD99FF752D /* rubicon-icon-font.ttf */; };
 		9A26F494AB184C7CA8681A0D /* libRNVideoPlayer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 21432339345344358F2697D7 /* libRNVideoPlayer.a */; };
+		1EF17A31AD4747DD82FACBEA /* libRNGoogleSignin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 07D4370F0983411BB09A51B0 /* libRNGoogleSignin.a */; };
+		3BA54A4BFB3F45FB979CA61C /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB34857966FB4289A3D70237 /* SafariServices.framework */; };
+		62BAF90FC23D4741A65EED20 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDED5D7FD0F040B4A8608B39 /* SystemConfiguration.framework */; };
+		C4704D81198945A988DBC9B6 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C3317749521496CB287A7DB /* AddressBook.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -466,6 +470,11 @@
 		FD1C4D8586D645C1AD6DE96A /* libc++.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		1F0F6A4ED6F64DE6B539E927 /* RNVideoPlayer.xcodeproj */ = {isa = PBXFileReference; name = "RNVideoPlayer.xcodeproj"; path = "../node_modules/react-native-native-video-player/ios/RNVideoPlayer.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		21432339345344358F2697D7 /* libRNVideoPlayer.a */ = {isa = PBXFileReference; name = "libRNVideoPlayer.a"; path = "libRNVideoPlayer.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		BE8C81F28A9747EB9D38F669 /* RNGoogleSignin.xcodeproj */ = {isa = PBXFileReference; name = "RNGoogleSignin.xcodeproj"; path = "../node_modules/react-native-google-signin/ios/RNGoogleSignin.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		07D4370F0983411BB09A51B0 /* libRNGoogleSignin.a */ = {isa = PBXFileReference; name = "libRNGoogleSignin.a"; path = "libRNGoogleSignin.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		BB34857966FB4289A3D70237 /* SafariServices.framework */ = {isa = PBXFileReference; name = "SafariServices.framework"; path = "System/Library/Frameworks/SafariServices.framework"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
+		DDED5D7FD0F040B4A8608B39 /* SystemConfiguration.framework */ = {isa = PBXFileReference; name = "SystemConfiguration.framework"; path = "System/Library/Frameworks/SystemConfiguration.framework"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
+		8C3317749521496CB287A7DB /* AddressBook.framework */ = {isa = PBXFileReference; name = "AddressBook.framework"; path = "System/Library/Frameworks/AddressBook.framework"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -505,6 +514,10 @@
 				AAC436E23C240E779C7FA1D9 /* libPods-AutographaGo_ReactNative.a in Frameworks */,
 				A3E76D9EF237447787F1224E /* libRNFS.a in Frameworks */,
 				9A26F494AB184C7CA8681A0D /* libRNVideoPlayer.a in Frameworks */,
+				1EF17A31AD4747DD82FACBEA /* libRNGoogleSignin.a in Frameworks */,
+				3BA54A4BFB3F45FB979CA61C /* SafariServices.framework in Frameworks */,
+				62BAF90FC23D4741A65EED20 /* SystemConfiguration.framework in Frameworks */,
+				C4704D81198945A988DBC9B6 /* AddressBook.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -725,6 +738,9 @@
 				4BE9A3F1CCA3EB3D806A9FBE /* libPods-AutographaGo_ReactNative-tvOS.a */,
 				22AB12EBAEB09D9B7EBF4336 /* libPods-AutographaGo_ReactNative-tvOSTests.a */,
 				3602E5E7BBCEAFAD0AD2B386 /* libPods-AutographaGo_ReactNativeTests.a */,
+				BB34857966FB4289A3D70237 /* SafariServices.framework */,
+				DDED5D7FD0F040B4A8608B39 /* SystemConfiguration.framework */,
+				8C3317749521496CB287A7DB /* AddressBook.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -784,6 +800,7 @@
 				98AA76C49CBF40C4A22F4FD8 /* React-Native-Webview-Bridge.xcodeproj */,
 				7E739EDAD5E64FD2A57AB713 /* RNZipArchive.xcodeproj */,
 				1F0F6A4ED6F64DE6B539E927 /* RNVideoPlayer.xcodeproj */,
+				BE8C81F28A9747EB9D38F669 /* RNGoogleSignin.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1601,12 +1618,14 @@
 					"$(SRCROOT)/../node_modules/react-native-zip-archive/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-native-video-player/ios/RNVideoPlayer",
+					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin/**",
 				);
 				INFOPLIST_FILE = AutographaGo_ReactNativeTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1639,12 +1658,14 @@
 					"$(SRCROOT)/../node_modules/react-native-zip-archive/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-native-video-player/ios/RNVideoPlayer",
+					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin/**",
 				);
 				INFOPLIST_FILE = AutographaGo_ReactNativeTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1678,6 +1699,7 @@
 					"$(SRCROOT)/../node_modules/react-native-zip-archive/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-native-video-player/ios/RNVideoPlayer",
+					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin/**",
 				);
 				INFOPLIST_FILE = AutographaGo_ReactNative/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1706,6 +1728,7 @@
 					"$(SRCROOT)/../node_modules/react-native-zip-archive/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-native-video-player/ios/RNVideoPlayer",
+					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin/**",
 				);
 				INFOPLIST_FILE = AutographaGo_ReactNative/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1741,11 +1764,13 @@
 					"$(SRCROOT)/../node_modules/react-native-zip-archive/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-native-video-player/ios/RNVideoPlayer",
+					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin/**",
 				);
 				INFOPLIST_FILE = "AutographaGo_ReactNative-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1788,11 +1813,13 @@
 					"$(SRCROOT)/../node_modules/react-native-zip-archive/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-native-video-player/ios/RNVideoPlayer",
+					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin/**",
 				);
 				INFOPLIST_FILE = "AutographaGo_ReactNative-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1836,6 +1863,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.AutographaGo_ReactNative-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1861,6 +1889,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
