@@ -12,6 +12,5 @@ ReferenceModel.schema = {
         verseNumber:'string',
         versionCode:'string',
         languageCode:'string'
-        
     }
 };

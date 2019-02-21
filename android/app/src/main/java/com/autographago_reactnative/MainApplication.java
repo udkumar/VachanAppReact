@@ -5,7 +5,6 @@ import com.facebook.reactnative.androidsdk.FBSDKPackage;
 import co.apptailor.googlesignin.RNGoogleSigninPackage;
 import com.facebook.CallbackManager;
 
-import com.zmxv.RNSound.RNSoundPackage;
 import com.brentvatne.react.ReactVideoPackage;
 import io.realm.react.RealmReactPackage;
 import com.rnziparchive.RNZipArchivePackage;
@@ -45,7 +44,6 @@ public class MainApplication extends Application implements ReactApplication {
           new MainReactPackage(),
             new FBSDKPackage(mCallbackManager),
             new RNGoogleSigninPackage(),
-            new RNSoundPackage(),
             new ReactVideoPackage(),
             new RealmReactPackage(),
             new RNZipArchivePackage(),

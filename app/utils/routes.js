@@ -81,9 +81,9 @@ const StackNavigate = StackNavigator(
       // Splash: {
       //   screen: Splash,
       // },
-      Signin:{
-        screen:Signin
-        },
+      // Signin:{
+      //   screen:Signin
+      //   },
      
       Bible:{
         screen:Bible,
@@ -168,12 +168,12 @@ const StackNavigate = StackNavigator(
       Images:{
         screen:Images
       },
-      SignupWithGoogle:{
-        screen:SignupWithGoogle
-          },
-      Googlesign:{
-        screen:Googlesign
-      }
+      // SignupWithGoogle:{
+      //   screen:SignupWithGoogle
+      //     },
+      // Googlesign:{
+      //   screen:Googlesign
+      // }
   },
   
   {

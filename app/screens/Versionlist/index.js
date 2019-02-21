@@ -26,7 +26,7 @@ export default class VersionList extends Component {
     <TouchableOpacity onPress={this._onLongPressButton}>
       <View>
         <Text style={{color: 'red'}} >
-        { this.props.navigation.state.params.data? this.props.navigation.state.params.data:null} 
+        { this.props.navigation.state.params? this.props.navigation.state.params.data:null} 
         </Text>
         </View>
     </TouchableOpacity>

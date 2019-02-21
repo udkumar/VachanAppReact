@@ -116,11 +116,7 @@ export default class Bible extends Component {
     this.state = {
       languageCode: this.props.screenProps.languageCode,
       versionCode: this.props.screenProps.versionCode,
-<<<<<<< HEAD
-      modelData: [] ,
-=======
       modelData: this.props.navigation.state.params ? this.props.navigation.state.params.chapterModels : null ,
->>>>>>> e6945b4f674ae17342a56cea19792e1ba088714d
       isLoading: false,
       showBottomBar: false,
       bookId: this.props.screenProps.bookId,
@@ -583,4 +579,3 @@ export default class Bible extends Component {
   }
 
 }
-

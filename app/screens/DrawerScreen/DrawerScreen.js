@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
 import {NavigationActions} from 'react-navigation';
 import PropTypes from 'prop-types';
-import {ScrollView, Text, View, StyleSheet,ImageBackground,TouchableOpacity} from 'react-native';
+import {ScrollView, Text, View, StyleSheet,ImageBackground,TouchableOpacity,Image} from 'react-native';
 import { DrawerActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 class DrawerScreen extends Component {
   
   render () {
-    const valueProps  = this.props.navigation.state.routes[0].index == 1 ? this.props.navigation.state.routes[0].routes[1].params.photorUl : null
+    const valueProps  = this.props.navigation.state.routes[0].index == 1 ? (this.props.navigation.state.routes[0].routes[1].params ? this.props.navigation.state.routes[0].routes[1].params.photorUl : null) : null
 
     const iconName = [
       {icon:'local-library',pressIcon:'Bible',},
@@ -32,7 +32,6 @@ class DrawerScreen extends Component {
           iconName.map((iconName,index)=>
          <View style={{
                     padding: 16,
-
                     borderWidth: 0.5,
                     borderColor: '#d6d7da'
                 }}>
