@@ -139,7 +139,6 @@ android {
 dependencies {
     implementation project(':react-native-video')
 
-    implementation project(':react-native-sound')
     implementation project(':react-native-fs')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-webview-bridge')

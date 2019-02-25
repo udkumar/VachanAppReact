@@ -414,19 +414,12 @@ export default class App extends Component {
       bookName: res[8][1] == null ? AsyncStorageConstants.Values.DefBookName:res[8][1],
       chapterNumber: res[8][1] == null ? AsyncStorageConstants.Values.DefBookChapter:parseInt(res[9][1])
     }, async ()=> {
-      // console.log("QUERY : " + this.state.versionCode + " ::  " + this.state.languageCode)
-      let models = await DbQueries.queryBookIdModels(this.state.versionCode, this.state.languageCode);
-      // console.log("routes len =" + JSON.stringify(models))
-      // console.log("VERSE VALUE ++++ " + res[2][1])
-      this.setState({isDbLoading: false})
-      if (models && models.length > 0) {
-        this.setState({booksList: models,bookId:models[0].bookId,bookName:models[0].bookName})
-        // var bookModel = []
-        // bookModel.push(models)
-        // console.log("book list book model in routes "+JSON.stringify(models))
-      }
+      // let models = await DbQueries.queryBookIdModels(this.state.versionCode, this.state.languageCode);
+      // this.setState({isDbLoading: false})
+      // if (models && models.length > 0) {
+      //   this.setState({booksList: models,bookId:models[0].bookId,bookName:models[0].bookName})
+      // }
     })
-    // console.log("")
     await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.LastReadReference, AsyncStorageConstants.Values.LastReadReference
       ).then((lastRead) => {
           this.setState({lastRead})

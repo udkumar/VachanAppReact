@@ -28,6 +28,8 @@ import { styles } from './styles.js';
 import id_name_map from '../../assets/mappings.json'
 
 import BottomTab from './BottomTab'
+import bible_data from '../../assets/TestLangApi.json'
+import USFMParser from '../../utils/USFMParser'
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -89,7 +91,7 @@ export default class Bible extends Component {
               <Icon name="arrow-drop-down" color="#fff" size={28}/>
             </TouchableOpacity>
             <Icon 
-                onPress={()=> {params.onIconPress()}} 
+                onPress={()=> {params.onBookmark(!params.isBookmark)}} 
                 name={'bookmark'} 
                 color={params.isBookmark ? "red" : "white"} 
                 size={24} 
@@ -218,7 +220,8 @@ export default class Bible extends Component {
     });
     console.log("book did mount "+this.state.bookName)
     this.props.navigation.setParams({
-        onIconPress: this.onBookmarkPress,
+        onBookmark: this.onBookmarkPress,
+        isBookmark:this.state.isBookmark,
         updateChapter:this.updateCurrentChapter,
         openLanguages:this.openLanguages,
         bookName: this.state.bookName,
@@ -228,30 +231,50 @@ export default class Bible extends Component {
     })  
      
     this.setState({isLoading: true}, () => {
-      this.queryBook()
+      // this.queryBook()
+      this.queryBookFromAPI()
+      
     })
   }
   
   // render data onAPI Call 
-  // async queryBookFromAPI() {
-  //   const parsedData =  await new USFMParser()
-  //   var bookData = parsedData.parseFile(value.usfm_text)
+  async queryBookFromAPI() {
+    const parsedData =  await new USFMParser()
+    var bookData = parsedData.parseFile(bible_data.usfm_text)
 
-  //   console.log("value "+JSON.stringify(bookData))
-  //   this.setState({bookInfo:[...this.state.bookInfo,{
-  //       bookId: bookData.bookId,
-  //       bookName: bookData.bookName,
-  //       chapterModels: bookData.chapterModels,
-  //       section:bookData.section,
-  //       bookNumber:bookData.bookNumber
-  //   }]
-  //   })
-  //   // this.props.screenProps.updateLanguage("HIN",value.language, "IRV", value.version);
-  //   var bookListData  = [{bookId: bookData.bookId,bookName: bookData.bookName,
-  //       section:bookData.section,  bookNumber:bookData.bookNumber,
-  //       languageCode: "HIN", versionCode: "IRV", numOfChapters:bookData.chapterModels.length }]
-  //   this.props.screenProps.updateBookList(bookListData)
-  // }
+    console.log("value "+JSON.stringify(bookData))
+      const bookInfo = { 
+        bookId: bookData.bookId,
+        bookName: bookData.bookName,
+        chapterModels: bookData.chapterModels,
+        section:bookData.section,
+        bookNumber:bookData.bookNumber
+    }
+    let model = await  DbQueries.queryBookmark(bible_data.language_code,bible_data.version_code,bookData.bookId,this.state.currentVisibleChapter)
+    if (model == null) {
+      console.log(" MODEL null")
+    }else{
+      if(model.length > 0){
+        console.log("model length "+JSON.stringify(model))
+        this.setState({bookmarksList:model,isBookmark: model.indexOf(this.state.currentVisibleChapter) > -1}, () => {
+          this.props.navigation.setParams({
+              isBookmark: this.state.isBookmark,
+              dataLength: bookInfo.chapterModels.length
+          })    
+        })
+      }
+    }
+    // let model = await DbQueries.queryBookWithId(this.props.screenProps.versionCode, 
+    //   this.props.screenProps.languageCode, this.state.bookId);
+    // this.props.screenProps.updateLanguage("HIN",value.language, "IRV", value.version);
+    var bookListData  = [{bookId: bookInfo.bookId,bookName: bookInfo.bookName,
+        section:bookInfo.section,  bookNumber:bookInfo.bookNumber,
+        languageCode: "HIN", versionCode: "IRV", numOfChapters:bookData.chapterModels.length }]
+    this.props.screenProps.updateBookList(bookListData)
+
+    this.setState({modelData:bookInfo.chapterModels,languageCode:"HIN",versionCode:"IRV"})
+       
+  }
   //render data from local db
   async queryBook() {
     let model = await DbQueries.queryBookWithId(this.props.screenProps.versionCode, 
@@ -273,10 +296,10 @@ export default class Bible extends Component {
     }
   }
 
-  async onBookmarkPress() {
+  async onBookmarkPress(toggleBookmark) {
     var index = this.state.bookmarksList.indexOf(this.state.currentVisibleChapter);
-    await DbQueries.updateBookmarkInBook(this.state.bookmarksList, this.state.currentVisibleChapter, index > -1 ? false : true);
-    this.setState({isBookmark: index > -1 ? false : true}, () => {
+    await DbQueries.updateBookmarkInBook(this.state.languageCode,this.state.versionCode,this.state.bookId,this.state.currentVisibleChapter, toggleBookmark);
+    this.setState({isBookmark: toggleBookmark}, () => {
         this.props.navigation.setParams({isBookmark: this.state.isBookmark})      
     })
 
@@ -310,20 +333,23 @@ export default class Bible extends Component {
       this.setState({showBottomBar: this.state.selectedReferenceSet.length > 0 ? true : false, bottomHighlightText: selectedCount == highlightCount ? false : true})
     })
   }
-
   doHighlight = async () => {
+    // await DbQueries.addOrUpdateNote(noteIndex, noteBody, crTime, moTime, refList);
     let modelData = [...this.state.modelData]
     if (this.state.bottomHighlightText == true) {
       // do highlight
       for (let item of this.state.selectedReferenceSet) {
         let tempVal = item.split('_')
-        await DbQueries.updateHighlightsInBook(this.state.modelData, tempVal[0] - 1, tempVal[1], true)
+        // await DbQueries.updateHighlightsInBook(this.state.modelData, tempVal[0] - 1, tempVal[1], true)
+        await DbQueries.updateHighlightsInVerse(this.state.languageCode,this.state.versionCode,this.state.bookId,parseInt(tempVal[0]), tempVal[2], true)
       }
     } else {
       // remove highlight
       for (let item of this.state.selectedReferenceSet) {
         let tempVal = item.split('_')
-        await DbQueries.updateHighlightsInBook(this.state.modelData, tempVal[0] - 1, tempVal[1], false)
+        // await DbQueries.updateHighlightsInBook(this.state.modelData, tempVal[0] - 1, tempVal[1], false)
+        await DbQueries.updateHighlightsInVerse(this.state.languageCode,this.state.versionCode,this.state.bookId,parseInt(tempVal[0]), tempVal[2], false)
+        
       }
     }
     this.setState({modelData, selectedReferenceSet: [], showBottomBar: false})
@@ -354,6 +380,27 @@ export default class Bible extends Component {
     }
     this.props.navigation.navigate('Notes', {referenceList: refList})
     this.setState({selectedReferenceSet: [], showBottomBar: false})
+  }
+  doHighlight = async () => {
+    // await DbQueries.addOrUpdateNote(noteIndex, noteBody, crTime, moTime, refList);
+    let modelData = [...this.state.modelData]
+    if (this.state.bottomHighlightText == true) {
+      // do highlight
+      for (let item of this.state.selectedReferenceSet) {
+        let tempVal = item.split('_')
+        // await DbQueries.updateHighlightsInBook(this.state.modelData, tempVal[0] - 1, tempVal[1], true)
+        await DbQueries.updateHighlightsInVerse(this.state.languageCode,this.state.versionCode,this.state.bookId,parseInt(tempVal[0]), tempVal[2], true)
+      }
+    } else {
+      // remove highlight
+      for (let item of this.state.selectedReferenceSet) {
+        let tempVal = item.split('_')
+        // await DbQueries.updateHighlightsInBook(this.state.modelData, tempVal[0] - 1, tempVal[1], false)
+        await DbQueries.updateHighlightsInVerse(this.state.languageCode,this.state.versionCode,this.state.bookId,parseInt(tempVal[0]), tempVal[2], false)
+        
+      }
+    }
+    this.setState({modelData, selectedReferenceSet: [], showBottomBar: false})
   }
 
   getVerseText(cNum, vIndex) {

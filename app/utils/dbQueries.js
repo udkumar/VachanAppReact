@@ -41,9 +41,9 @@ class DbQueries {
         return DbHelper.queryHighlights(verCode, langCode);
     }
 
-    updateHighlightsInBook(model, chapterIndex, verseIndex, isHighlight) {
-        return DbHelper.updateHighlightsInBook(model, chapterIndex, verseIndex, isHighlight)
-    }
+    // updateHighlightsInBook(model, chapterIndex, verseIndex, isHighlight) {
+    //     return DbHelper.updateHighlightsInBook(model, chapterIndex, verseIndex, isHighlight)
+    // }
 
     insert(model, value) {
         DbHelper.insert(model, value);
@@ -57,12 +57,14 @@ class DbQueries {
         DbHelper.updateHighlightsInVerse(langCode, verCode, bookId, chapterNumber, verseNumber, isHighlight);
     }
 
-    updateBookmarkInBook(model, chapterNumber, isBookmark) {
-        DbHelper.updateBookmarkInBook(model, chapterNumber, isBookmark);
+    // updateBookmarkInBook(model, chapterNumber, isBookmark) {
+    //     DbHelper.updateBookmarkInBook(model, chapterNumber, isBookmark);
+    // }
+    updateBookmarkInBook(langCode,verCode,bId,chapterNumber, isBookmark) {
+        DbHelper.updateBookmarkInBook(langCode,verCode,bId,chapterNumber, isBookmark);
     }
-
-    removeBookmarkFromBook(model, chapterNumber) {
-        DbHelper.removeBookmarkFromBook(model, chapterNumber);
+    queryBookmark(langCode,verCode,bId,chapterNumber){
+        return DbHelper.queryBookmark(langCode,verCode,bId,chapterNumber);
     }
 
     queryBookIdModels(verCode: string, langCode: string) {
