@@ -91,7 +91,7 @@ export default class Bible extends Component {
               <Icon name="arrow-drop-down" color="#fff" size={28}/>
             </TouchableOpacity>
             <Icon 
-                onPress={()=> {params.onBookmark(!params.isBookmark)}} 
+                onPress={()=> {params.onBookmark()}} 
                 name={'bookmark'} 
                 color={params.isBookmark ? "red" : "white"} 
                 size={24} 
@@ -296,13 +296,23 @@ export default class Bible extends Component {
     }
   }
 
-  async onBookmarkPress(toggleBookmark) {
+  async onBookmarkPress() {
     var index = this.state.bookmarksList.indexOf(this.state.currentVisibleChapter);
-    await DbQueries.updateBookmarkInBook(this.state.languageCode,this.state.versionCode,this.state.bookId,this.state.currentVisibleChapter, toggleBookmark);
-    this.setState({isBookmark: toggleBookmark}, () => {
-        this.props.navigation.setParams({isBookmark: this.state.isBookmark})      
+    console.log("index "+index)
+    
+    await DbQueries.updateBookmarkInBook(this.state.languageCode,this.state.versionCode,this.state.bookId,this.state.currentVisibleChapter, index > -1 ? false : true);
+    
+    this.setState({isBookmark: index > -1 ? false : true,}, () => {
+      console.log("bookmark "+this.state.isBookmark)
+        this.props.navigation.setParams({isBookmark: this.state.isBookmark}) 
+        if(index > -1){
+          this.state.bookmarksList.splice(index, 1)
+            console.log("BOOK MARK SLICE ")
+        } 
+        else{
+        this.setState({bookmarksList:[...this.state.bookmarksList,this.state.currentVisibleChapter]})
+        }
     })
-
   }
 
   getSelectedReferences(vIndex, chapterNum, vNum) {
@@ -455,8 +465,10 @@ export default class Bible extends Component {
             })
             this.scrollViewRef.scrollTo({x: 0, y: 0, animated: false})
         })
+
        
   }
+
   openLanguages = ()=>{
     this.props.navigation.navigate("Language", {updateLanguage:this.updateLanguage})
   } 
@@ -478,7 +490,9 @@ export default class Bible extends Component {
   }
   render() {
     const thumbSize = this.state.thumbSize;
-    console.log("CLOSE VALUE FROM BIBLE PAGE  BOOK INFO "+JSON.stringify(this.state.bookInfo))
+    console.log("BOOKMARK LIST "+JSON.stringify(this.state.bookmarksList))
+
+    console.log("is bookmark "+this.state.isBookmark+"chapter number "+this.state.currentVisibleChapter)
       return (
         <View style={this.styles.container} >
           <MenuContext style={this.styles.verseWrapperText}>

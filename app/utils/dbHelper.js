@@ -290,11 +290,9 @@ class DbHelper {
 			for(var i=0;i <=results.length-1;i++){
 				if(results[i].languageCode == langCode && results[i].versionCode == verCode && results[i].bookId == bId){
 					chapterNumbers.push(results[i].chapterNumber) 
+					console.log("chapter number "+results.chapterNumber)
 				}
-
 			}
-			console.log("chapter number "+chapterNumbers)
-
 			return chapterNumbers
 		}
 		return null;
