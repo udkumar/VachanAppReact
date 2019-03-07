@@ -59,10 +59,10 @@ class DbHelper {
     async queryVersionWithCode(verCode: string, langCode: string) {
 		let realm = await this.getRealm();
     	if (realm) {
-			let result = realm.objectForPrimaryKey("LanguageModel", langCode);
-			let resultsA = result.versionModels;
-			resultsA = resultsA.filtered('versionCode ==[c] "' + verCode + '"');
-			return resultsA;
+			// let result = realm.objectForPrimaryKey("LanguageModel", langCode);
+			// let resultsA = result.versionModels;
+			// resultsA = resultsA.filtered('versionCode ==[c] "' + verCode + '"');
+			// return resultsA;
 		}
 		return null;
 	}
@@ -103,16 +103,52 @@ class DbHelper {
 		}
 		return null;
 	}
-	async queryHighlights(verCode: string, langCode: string) {
+	// async queryHighlights(verCode: string, langCode: string) {
+	// 	let realm = await this.getRealm();
+    // 	if (realm) {
+	// 		let result1 = realm.objects("VerseComponentsModel");
+	// 		result1 = result1.filtered('languageCode ==[c] "' + langCode + 
+	// 			'" && versionCode ==[c] "' + verCode + '"');
+	// 		result1 = result1.filtered('highlighted == true')
+	// 		return result1;//.distinct('verseNumber', 'chapterNumber', 'bookId');
+	// 	}
+	// 	return null;
+	// }
+	async queryHighlights(langCode, verCode, bookId){
 		let realm = await this.getRealm();
-    	if (realm) {
-			let result1 = realm.objects("VerseComponentsModel");
-			result1 = result1.filtered('languageCode ==[c] "' + langCode + 
-				'" && versionCode ==[c] "' + verCode + '"');
-			result1 = result1.filtered('highlighted == true')
-			return result1;//.distinct('verseNumber', 'chapterNumber', 'bookId');
+			if (realm) {
+				let realm = await this.getRealm()
+					if (realm){
+						let result1 = realm.objects("HighlightsModel");
+						let highlight = result1.filtered('languageCode ==[c] "' + langCode + '" && versionCode ==[c] "' + verCode + '" &&  bookId == "' + bookId + '"')
+						return highlight
+					}
+				
 		}
-		return null;
+	}
+	async updateHighlightsInVerse(langCode, verCode, bId, cNum, vNum, isHighlight) {
+		let realm = await this.getRealm()
+		let  result1= realm.objects('HighlightsModel');
+		let highlight = result1.filtered('languageCode ==[c] "' + langCode + '" && versionCode ==[c] "' + verCode + '" &&  bookId == "' + bId + '" && chapterNumber == "'+cNum+'" && verseNumber == "'+vNum+'"')
+		console.log("LANG CODE "+langCode+"bVER CODE "+verCode+" BID "+bId+" CNUM "+cNum+" VNUM "+vNum+" ISHIGHLIGHT "+isHighlight)
+		if (realm) {
+			realm.write(() => {
+				if(isHighlight){
+				realm.create('HighlightsModel', {
+					languageCode: langCode,
+					versionCode: verCode,
+					bookId: bId,
+					chapterNumber: cNum,
+					verseNumber: vNum
+				})
+				}
+				else{
+					realm.delete(highlight); 
+				}
+				})
+		}
+
+		
 	}
 
 	async insert(model: string, value) {
@@ -198,42 +234,7 @@ class DbHelper {
 		return null;
 	}
 
-	async updateHighlightsInVerse(langCode, verCode, bId, cNum, vNum, isHighlight) {
-		let realm = await this.getRealm();
-		if (realm) {
-			realm.write(() => {
-				if(isHighlight){
-					realm.create('HighlightsModel', {
-						languageCode: langCode,
-						versionCode: verCode,
-						bookId: bId,
-						chapterNumber: cNum,
-					})
-				}
-				else{
-					let highlightData = realm.objects('HighlightsModel').filtered('verseNumber = $0', vNum)
-					console.log("len note : " + highlightData.length)
-					realm.delete(highlightData); // Deletes all
-				}
-				})
-		// 	let results = realm.objects('VerseComponentsModel');
-		// 		console.log("db len = " + results.length)
-		// 		results = results.filtered('languageCode ==[c] "' + langCode +
-		// 			'" && versionCode ==[c] "' + verCode + '" && bookId ==[c] "' +
-		// 			bookId + '" && chapterNumber == ' + chapterNumber +
-		// 			' && type ==[c] "v" && verseNumber ==[c] "' + verseNumber + '"' );
-		// 		realm.write(() => {
-		// 			for (var i=0;i<results.length;i++) {
-		// 				results[i].highlighted = isHighlight;
-		// 			}
-		// 			console.log("update highlight complete..")
-		// 		});
-		
-			
-		}
-
-		
-	}
+	
 
 	async updateBookmarkInBook(langCode,verCode,bId,cNum, isBookmark) {
 		let realm = await this.getRealm();

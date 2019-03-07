@@ -21,23 +21,12 @@ const { Popover } = renderers
 
 export default class VerseView extends Component {
 
-  constructor(){
-    super()
+  constructor(props){
+    super(props)
     this.state  = {
       opened:false
     }
   }
- 
-  // onPress(menuValue) {
-  //   console.log("get selection ")
-  //   this.props.getSelection(
-  //       this.props.index, 
-  //       this.props.verseData.chapterNumber,
-  //       this.props.verseData.verseNumber
-  //   )
-  //   Alert.alert(menuValue)
-  // }
-
 
   has(selectedReferences, obj) {
     for(var i = 0; i < selectedReferences.length; i++) {
@@ -62,11 +51,27 @@ export default class VerseView extends Component {
     this.menu.open()
   }
   };
-  
+  highlighted = (verse) =>{ 
+    var found = false;
+      for(var i=0; i<= this.props.HightlightedVerse.length-1; i++ ){
+        if(this.props.HightlightedVerse[i].verseNumber == verse && this.props.HightlightedVerse[i].chapterNumber == this.props.chapterNumber) {
+          console.log("verse "+verse+" highlighted verse "+this.props.HightlightedVerse[i].verseNumber)
+          found = true
+        }
+      }
+      console.log("found "+found)
+      // return found
+      if(found){
+        return true
+      }
+      else{
+        return false
+      }
+    }
   render() {
     let obj = this.props.verseData.chapterNumber + '_' + this.props.index + '_' + this.props.verseData.verseNumber;
     let isSelect = this.has(this.props.selectedReferences, obj)
-    let isHighlight = this.props.verseData.highlighted;
+    let isHighlight = this.highlighted(this.props.verseData.verseNumber)
 
     switch(this.props.verseData.type) {
       case Constants.MarkerTypes.VERSE: {
@@ -85,7 +90,7 @@ export default class VerseView extends Component {
                         onSelect={this.props.makeHighlight}  
                         style={{alignItems:'center' }}
                       >
-                        <Text >{this.props.HighlightText == true ? "Highlight" : "Remove Highlight"}</Text>
+                        <Text >{this.props.HighlightedText == true ? "Highlight" : "Remove Highlight"}</Text>
                       </MenuOption>
                       <MenuOption  onSelect={this.props.makeNotes} style={{alignItems:'center'}}>
                         <Text>Note</Text>
