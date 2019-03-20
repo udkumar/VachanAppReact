@@ -34,19 +34,19 @@ const Controls = ({
     {!paused ?
       <TouchableOpacity onPress={onPressPause}>
         <View style={styles.playButton}>
-        <Icon name="pause" size={30}/>
+        <Icon name="pause" size={30}  style={[forwardDisabled && {opacity: 0.3}]}/>
         </View>
       </TouchableOpacity> :
       <TouchableOpacity onPress={onPressPlay}>
         <View style={styles.playButton}>
-        <Icon name="play-arrow" size={30} />
+        <Icon name="play-arrow" size={30}/>
         </View>
       </TouchableOpacity>
     }
     <View style={{width: 20}} />
     <TouchableOpacity onPress={onForward}
       disabled={forwardDisabled}>
-      <Icon name="skip-next" size={30}  style={[forwardDisabled && {opacity: 0.3}]}/>
+      <Icon name="skip-next" size={30}  />
     </TouchableOpacity>
     <View style={{width: 40}} />
     {/* <TouchableOpacity activeOpacity={0.0} onPress={onPressRepeat}>

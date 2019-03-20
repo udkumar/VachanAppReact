@@ -309,7 +309,7 @@ export default class App extends Component {
     this.setState({languageCode, languageName,versionCode,versionName})
 
     let models = await DbQueries.queryBookIdModels(versionCode, languageCode)
-      // console.log("routes len =" + JSON.stringify(models))
+      console.log("ROUTES LENGTH =" + JSON.stringify(models))
       if (models && models.length > 0) {
         this.setState({booksList: models})
       }
