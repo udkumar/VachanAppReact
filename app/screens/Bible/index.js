@@ -28,13 +28,15 @@ import { styles } from './styles.js';
 import id_name_map from '../../assets/mappings.json'
 
 import BottomTab from './BottomTab'
+import bible_data from '../../assets/TestLangApi.json'
+import USFMParser from '../../utils/USFMParser'
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 export default class Bible extends Component {
   static navigationOptions = ({navigation}) =>{
-    const { params = {} } = navigation.state;
+    const { params = {} } = navigation.state
 
     return{
         headerTitle:(
@@ -89,7 +91,7 @@ export default class Bible extends Component {
               <Icon name="arrow-drop-down" color="#fff" size={28}/>
             </TouchableOpacity>
             <Icon 
-                onPress={()=> {params.onIconPress()}} 
+                onPress={()=> {params.onBookmark()}} 
                 name={'bookmark'} 
                 color={params.isBookmark ? "red" : "white"} 
                 size={24} 
@@ -121,7 +123,7 @@ export default class Bible extends Component {
       showBottomBar: false,
       bookId: this.props.screenProps.bookId,
       bookName:this.props.screenProps.bookName,
-      bottomHighlightText: true,
+      HighlightedText: false,
       bookmarksList: [],
       isBookmark: false,
       currentVisibleChapter:this.props.screenProps.chapterNumber,
@@ -130,7 +132,7 @@ export default class Bible extends Component {
 
       colorFile:this.props.screenProps.colorFile,
       sizeFile:this.props.screenProps.sizeFile,
-
+      HightlightedVerseArray:[],
       gestureState: {},
       thumbSize: 100,
       left: width / 2,
@@ -218,7 +220,8 @@ export default class Bible extends Component {
     });
     console.log("book did mount "+this.state.bookName)
     this.props.navigation.setParams({
-        onIconPress: this.onBookmarkPress,
+        onBookmark: this.onBookmarkPress,
+        isBookmark:this.state.isBookmark,
         updateChapter:this.updateCurrentChapter,
         openLanguages:this.openLanguages,
         bookName: this.state.bookName,
@@ -228,30 +231,60 @@ export default class Bible extends Component {
     })  
      
     this.setState({isLoading: true}, () => {
-      this.queryBook()
+      // this.queryBook()
+      this.queryBookFromAPI()
+      
     })
   }
   
   // render data onAPI Call 
-  // async queryBookFromAPI() {
-  //   const parsedData =  await new USFMParser()
-  //   var bookData = parsedData.parseFile(value.usfm_text)
+  async queryBookFromAPI() {
+    const parsedData =  await new USFMParser()
+    var bookData = parsedData.parseFile(bible_data.usfm_text)
+      const bookInfo = { 
+        bookId: bookData.bookId,
+        bookName: bookData.bookName,
+        chapterModels: bookData.chapterModels,
+        section:bookData.section,
+        bookNumber:bookData.bookNumber
+    }
 
-  //   console.log("value "+JSON.stringify(bookData))
-  //   this.setState({bookInfo:[...this.state.bookInfo,{
-  //       bookId: bookData.bookId,
-  //       bookName: bookData.bookName,
-  //       chapterModels: bookData.chapterModels,
-  //       section:bookData.section,
-  //       bookNumber:bookData.bookNumber
-  //   }]
-  //   })
-  //   // this.props.screenProps.updateLanguage("HIN",value.language, "IRV", value.version);
-  //   var bookListData  = [{bookId: bookData.bookId,bookName: bookData.bookName,
-  //       section:bookData.section,  bookNumber:bookData.bookNumber,
-  //       languageCode: "HIN", versionCode: "IRV", numOfChapters:bookData.chapterModels.length }]
-  //   this.props.screenProps.updateBookList(bookListData)
-  // }
+    let model2 = await  DbQueries.queryHighlights(bible_data.language_code,bible_data.version_code,bookData.bookId)
+      if(model2  == null ){
+        console.log("MODEL null 2")
+      }
+      else{
+        if(model2.length > 0){
+          console.log("model2 "+JSON.stringify(model2))
+          for(var i = 0; i<=model2.length-1;i++){
+            this.setState({HightlightedVerseArray:[...this.state.HightlightedVerseArray,{"chapterNumber":model2[i].chapterNumber,"verseNumber":model2[i].verseNumber}]})
+          }
+        }
+       
+    }
+    let model = await  DbQueries.queryBookmark(bible_data.language_code,bible_data.version_code,bookData.bookId)
+    if (model == null) {
+      console.log(" MODEL null")
+    }else{
+      if(model.length > 0){
+        this.setState({bookmarksList:model,isBookmark: model.indexOf(this.state.currentVisibleChapter) > -1}, () => {
+          this.props.navigation.setParams({
+              isBookmark: this.state.isBookmark,
+              dataLength: bookInfo.chapterModels.length
+          })    
+        })
+      }
+    }
+  
+    var bookListData  = [{bookId: bookInfo.bookId,bookName: bookInfo.bookName,
+        section:bookInfo.section,  bookNumber:bookInfo.bookNumber,
+        languageCode: "HIN", versionCode: "IRV", numOfChapters:bookData.chapterModels.length }]
+    this.props.screenProps.updateBookList(bookListData)
+
+    this.setState({modelData:bookInfo.chapterModels,languageCode:"HIN",versionCode:"IRV"})
+       
+  }
+
   //render data from local db
   async queryBook() {
     let model = await DbQueries.queryBookWithId(this.props.screenProps.versionCode, 
@@ -275,11 +308,21 @@ export default class Bible extends Component {
 
   async onBookmarkPress() {
     var index = this.state.bookmarksList.indexOf(this.state.currentVisibleChapter);
-    await DbQueries.updateBookmarkInBook(this.state.bookmarksList, this.state.currentVisibleChapter, index > -1 ? false : true);
-    this.setState({isBookmark: index > -1 ? false : true}, () => {
-        this.props.navigation.setParams({isBookmark: this.state.isBookmark})      
+    console.log("index "+index)
+    
+    await DbQueries.updateBookmarkInBook(this.state.languageCode,this.state.versionCode,this.state.bookId,this.state.currentVisibleChapter, index > -1 ? false : true);
+    
+    this.setState({isBookmark: index > -1 ? false : true,}, () => {
+      console.log("bookmark "+this.state.isBookmark)
+        this.props.navigation.setParams({isBookmark: this.state.isBookmark}) 
+        if(index > -1){
+          this.state.bookmarksList.splice(index, 1)
+            console.log("BOOK MARK SLICE ")
+        }
+        else{
+        this.setState({bookmarksList:[...this.state.bookmarksList,this.state.currentVisibleChapter]})
+        }
     })
-
   }
 
   getSelectedReferences(vIndex, chapterNum, vNum) {
@@ -297,37 +340,25 @@ export default class Bible extends Component {
     }
     if (!found) {
       selectedReferenceSet.push(obj)
+
     }
 
     this.setState({selectedReferenceSet}, () => {
       let selectedCount = this.state.selectedReferenceSet.length, highlightCount = 0;
       for (let item of this.state.selectedReferenceSet) {
           let tempVal = item.split('_')
-          if (this.state.modelData[tempVal[0] - 1].verseComponentsModels[tempVal[1]].highlighted) {
-            highlightCount++
+          for(var i=0; i<=this.state.HightlightedVerseArray.length-1; i++ ){
+            if (this.state.modelData[tempVal[0] - 1].verseComponentsModels[tempVal[1]].verseNumber == this.state.HightlightedVerseArray[i].verseNumber && this.state.modelData[tempVal[0] - 1].verseComponentsModels[tempVal[1]].chapterNumber == this.state.HightlightedVerseArray[i].chapterNumber) {
+              highlightCount++
+            }
+            console.log("highlightCount "+highlightCount)
           }
       }
-      this.setState({showBottomBar: this.state.selectedReferenceSet.length > 0 ? true : false, bottomHighlightText: selectedCount == highlightCount ? false : true})
+      console.log("highlightCount "+highlightCount+" selected count "+this.state.selectedReferenceSet.length)
+      this.setState({showBottomBar: this.state.selectedReferenceSet.length > 0 ? true : false, HighlightedText: selectedCount == highlightCount ? false : true})
     })
   }
-
-  doHighlight = async () => {
-    let modelData = [...this.state.modelData]
-    if (this.state.bottomHighlightText == true) {
-      // do highlight
-      for (let item of this.state.selectedReferenceSet) {
-        let tempVal = item.split('_')
-        await DbQueries.updateHighlightsInBook(this.state.modelData, tempVal[0] - 1, tempVal[1], true)
-      }
-    } else {
-      // remove highlight
-      for (let item of this.state.selectedReferenceSet) {
-        let tempVal = item.split('_')
-        await DbQueries.updateHighlightsInBook(this.state.modelData, tempVal[0] - 1, tempVal[1], false)
-      }
-    }
-    this.setState({modelData, selectedReferenceSet: [], showBottomBar: false})
-  }
+  
 
   getBookNameFromMapping(bookId) {
     var obj = this.mappingData.id_name_map;
@@ -354,6 +385,44 @@ export default class Bible extends Component {
     }
     this.props.navigation.navigate('Notes', {referenceList: refList})
     this.setState({selectedReferenceSet: [], showBottomBar: false})
+  }
+  doHighlight = async () => {
+    console.log("highlight text "+JSON.stringify(this.state.HightlightedVerseArray))
+    // var HightlightedVerseArray = [...this.state.HightlightedVerseArray]
+    console.log("ishighlight in do highlight "+this.state.HighlightedText)
+    if (this.state.HighlightedText == true) {
+      for (let item of this.state.selectedReferenceSet) {
+        let tempVal = item.split('_')
+        await DbQueries.updateHighlightsInVerse(this.state.languageCode, this.state.versionCode,this.state.bookId,JSON.parse(tempVal[0]), tempVal[2], true)
+        this.setState({HightlightedVerseArray:[...this.state.HightlightedVerseArray,{"chapterNumber":JSON.parse(tempVal[0]),"verseNumber":tempVal[2]}]})
+      }
+    } else {
+      for (let item of this.state.selectedReferenceSet) {
+        let tempVal = item.split('_')
+        await DbQueries.updateHighlightsInVerse(this.state.languageCode, this.state.versionCode,this.state.bookId,JSON.parse(tempVal[0]), tempVal[2], false)
+        for(var i=0; i<=this.state.HightlightedVerseArray.length-1; i++){
+          if(this.state.HightlightedVerseArray[i].chapterNumber ==JSON.parse(tempVal[0]) && this.state.HightlightedVerseArray[i].verseNumber ==tempVal[2]){
+            this.state.HightlightedVerseArray.splice(i, 1)
+            // this.setState({HightlightedVerseArray})
+          }
+          
+        }
+      }
+    }
+    this.setState({ selectedReferenceSet: [], showBottomBar: false})
+  }
+
+  getBookNameFromMapping(bookId) {
+    var obj = this.mappingData.id_name_map;
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            if (key == bookId) {
+                var val = obj[key];
+                return val.book_name;
+            }
+        }
+    }
+    return null;
   }
 
   getVerseText(cNum, vIndex) {
@@ -408,8 +477,10 @@ export default class Bible extends Component {
             })
             this.scrollViewRef.scrollTo({x: 0, y: 0, animated: false})
         })
+
        
   }
+
   openLanguages = ()=>{
     this.props.navigation.navigate("Language", {updateLanguage:this.updateLanguage})
   } 
@@ -419,19 +490,12 @@ export default class Bible extends Component {
       bibleVersion: version
     })
   }
-  // onScroll(event){
-  //   var currentOffset = event.nativeEvent.contentOffset.y;
-  //   var direction = currentOffset > this.state.offset ? 'down' : 'up';
-  //   this.state.offset = currentOffset;
-  //   this.setState({scrollDirection:direction})
-  //   console.log(direction);
-  // }
+
     closeSplitScreen = ()=>{
      this.setState({close:!this.state.close})
   }
   render() {
     const thumbSize = this.state.thumbSize;
-    console.log("CLOSE VALUE FROM BIBLE PAGE  BOOK INFO "+JSON.stringify(this.state.bookInfo))
       return (
         <View style={this.styles.container} >
           <MenuContext style={this.styles.verseWrapperText}>
@@ -473,9 +537,10 @@ export default class Bible extends Component {
                                             makeHighlight={this.doHighlight}
                                             makeNotes={this.addToNotes}
                                             share={this.addToShare}
-                                            HighlightText={this.state.bottomHighlightText}
+                                            HighlightedText={this.state.HighlightedText}
                                             showFootNote = {this.state.showFootNote}
-
+                                            HightlightedVerse = {this.state.HightlightedVerseArray}
+                                            chapterNumber ={this.state.currentVisibleChapter}
                                         />
                                      
                                   </Text> 
@@ -503,10 +568,11 @@ export default class Bible extends Component {
                                                     makeHighlight={this.doHighlight}
                                                     makeNotes={this.addToNotes}
                                                     share={this.addToShare}
-                                                    HighlightText={this.state.bottomHighlightText}
+                                                    HighlightedText={this.state.HighlightedText}
                                                     onPressfootNote = {this.onPressfootNote}
                                                     showFootNote = {this.state.showFootNote}
-                                                    
+                                                    HightlightedVerse = {this.state.HightlightedVerseArray}
+                                                    chapterNumber ={this.state.currentVisibleChapter}
                                                 />
                                                
                                             {/* </Text> */}

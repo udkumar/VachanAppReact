@@ -12,7 +12,7 @@ import DownloadUtil from '../../utils/DownloadUtil'
 import {Card, CardItem} from 'native-base'
 var RNFS = require('react-native-fs');
 import { zip, unzip, unzipAssets, subscribe } from 'react-native-zip-archive'
-import USFMParser from '../../utils/USFMParser'
+
 import {downloadPageStyle} from './styles.js'
 
 import firebase from 'react-native-firebase';

@@ -9,18 +9,22 @@ import ChapterModel from '../models/ChapterModel'
 import VerseComponentsModel from '../models/VerseComponentsModel'
 import StylingModel from '../models/StylingModel'
 import ReferenceModel from '../models/ReferenceModel'
+import BookmarksListModel from '../models/BookmarksListModel'
+import HighlightsModel from '../models/HighlightsModel'
+import HistoryModel from '../models/HistoryModel';
+
 
 import {
 	Platform,
 } from 'react-native';
 import { lang } from 'moment';
-import HistoryModel from '../models/HistoryModel';
 var RNFS = require('react-native-fs');
 
 class DbHelper {
 
     async getRealm() {
     	try {
+			console.log("realm open")
     		return await Realm.open({
 				schemaVersion: 1,
 				// deleteRealmIfMigrationNeeded: true, 
@@ -28,8 +32,9 @@ class DbHelper {
 					Platform.OS === 'ios'
 					? RNFS.MainBundlePath + '/autographa.realm'
 					: RNFS.DocumentDirectoryPath + '/autographa.realm',
-				schema: [LanguageModel, VersionModel, BookModel, ChapterModel, VerseComponentsModel, NoteModel, StylingModel, ReferenceModel, HistoryModel] });
+				schema: [LanguageModel, VersionModel, BookModel, ChapterModel, VerseComponentsModel, NoteModel, StylingModel, ReferenceModel, HistoryModel,BookmarksListModel,HighlightsModel] });
     	} catch (err) {
+			console.log("error in getItem"+err)
     		return null;
     	}
     }
@@ -54,10 +59,10 @@ class DbHelper {
     async queryVersionWithCode(verCode: string, langCode: string) {
 		let realm = await this.getRealm();
     	if (realm) {
-			let result = realm.objectForPrimaryKey("LanguageModel", langCode);
-			let resultsA = result.versionModels;
-			resultsA = resultsA.filtered('versionCode ==[c] "' + verCode + '"');
-			return resultsA;
+			// let result = realm.objectForPrimaryKey("LanguageModel", langCode);
+			// let resultsA = result.versionModels;
+			// resultsA = resultsA.filtered('versionCode ==[c] "' + verCode + '"');
+			// return resultsA;
 		}
 		return null;
 	}
@@ -98,16 +103,52 @@ class DbHelper {
 		}
 		return null;
 	}
-	async queryHighlights(verCode: string, langCode: string) {
+	// async queryHighlights(verCode: string, langCode: string) {
+	// 	let realm = await this.getRealm();
+    // 	if (realm) {
+	// 		let result1 = realm.objects("VerseComponentsModel");
+	// 		result1 = result1.filtered('languageCode ==[c] "' + langCode + 
+	// 			'" && versionCode ==[c] "' + verCode + '"');
+	// 		result1 = result1.filtered('highlighted == true')
+	// 		return result1;//.distinct('verseNumber', 'chapterNumber', 'bookId');
+	// 	}
+	// 	return null;
+	// }
+	async queryHighlights(langCode, verCode, bookId){
 		let realm = await this.getRealm();
-    	if (realm) {
-			let result1 = realm.objects("VerseComponentsModel");
-			result1 = result1.filtered('languageCode ==[c] "' + langCode + 
-				'" && versionCode ==[c] "' + verCode + '"');
-			result1 = result1.filtered('highlighted == true')
-			return result1;//.distinct('verseNumber', 'chapterNumber', 'bookId');
+			if (realm) {
+				let realm = await this.getRealm()
+					if (realm){
+						let result1 = realm.objects("HighlightsModel");
+						let highlight = result1.filtered('languageCode ==[c] "' + langCode + '" && versionCode ==[c] "' + verCode + '" &&  bookId == "' + bookId + '"')
+						return highlight
+					}
+				
 		}
-		return null;
+	}
+	async updateHighlightsInVerse(langCode, verCode, bId, cNum, vNum, isHighlight) {
+		let realm = await this.getRealm()
+		let  result1= realm.objects('HighlightsModel');
+		let highlight = result1.filtered('languageCode ==[c] "' + langCode + '" && versionCode ==[c] "' + verCode + '" &&  bookId == "' + bId + '" && chapterNumber == "'+cNum+'" && verseNumber == "'+vNum+'"')
+		console.log("LANG CODE "+langCode+"bVER CODE "+verCode+" BID "+bId+" CNUM "+cNum+" VNUM "+vNum+" ISHIGHLIGHT "+isHighlight)
+		if (realm) {
+			realm.write(() => {
+				if(isHighlight){
+				realm.create('HighlightsModel', {
+					languageCode: langCode,
+					versionCode: verCode,
+					bookId: bId,
+					chapterNumber: cNum,
+					verseNumber: vNum
+				})
+				}
+				else{
+					realm.delete(highlight); 
+				}
+				})
+		}
+
+		
 	}
 
 	async insert(model: string, value) {
@@ -160,15 +201,16 @@ class DbHelper {
 	  	}
 	}
 
-	async updateHighlightsInBook(model, chapterIndex, verseIndex, isHighlight) {
-		let realm = await this.getRealm();
-		if (realm) {
-			realm.write(() => {
-				model[chapterIndex].verseComponentsModels[verseIndex].highlighted = isHighlight				
-				console.log("update highlight complete..")
-			});
-		  }
-	}
+	// async updateHighlightsInBook(model, chapterIndex, verseIndex, isHighlight) {
+	// 	let realm = await this.getRealm();
+	// 	if (realm) {
+	// 		realm.write(() => {
+				
+	// 			// model[chapterIndex].verseComponentsModels[verseIndex].highlighted = isHighlight				
+	// 			console.log("update highlight complete..")
+	// 		});
+	// 	  }
+	// }
 
 	async queryBookIdModels(verCode: string, langCode: string) {
 		let realm = await this.getRealm();
@@ -192,64 +234,70 @@ class DbHelper {
 		return null;
 	}
 
-	async updateHighlightsInVerse(langCode, verCode, bookId, chapterNumber, verseNumber, isHighlight) {
-		let realm = await this.getRealm();
-		if (realm) {
-			let results = realm.objects('VerseComponentsModel');
-				console.log("db len = " + results.length)
-				results = results.filtered('languageCode ==[c] "' + langCode +
-					'" && versionCode ==[c] "' + verCode + '" && bookId ==[c] "' +
-					bookId + '" && chapterNumber == ' + chapterNumber +
-					' && type ==[c] "v" && verseNumber ==[c] "' + verseNumber + '"' );
-				realm.write(() => {
-					for (var i=0;i<results.length;i++) {
-						results[i].highlighted = isHighlight;
-					}
-					console.log("update highlight complete..")
-				});
-			
-		}
-	}
+	
 
-	async updateBookmarkInBook(model, chapterNumber, isBookmark) {
+	async updateBookmarkInBook(langCode,verCode,bId,cNum, isBookmark) {
 		let realm = await this.getRealm();
-		if (realm) {
+		// if (realm) {
+		// 	realm.write(() => {
+		// 		console.log("in db, isbokmark=" + isBookmark)
+		// 		if (isBookmark) {
+		// 			if (model) {
+		// 			} else {
+		// 				model = [];
+		// 			}
+		// 			model.push(chapterNumber)
+		// 			console.log("in db, push size=" + model.length)							
+		// 		} else {
+		// 			if (model) {
+		// 				var index = model.indexOf(chapterNumber)
+		// 				if (index > -1) {
+		// 					model.splice(index, 1);
+		// 				}
+		// 				console.log("in db, slice size=" + model.length)
+		// 			}				
+		// 		}
+		// 		console.log("update bookmark complete..")
+		// 	});
+		// }
+		if(realm){
+			console.log("bookmark realm ")
 			realm.write(() => {
-				console.log("in db, isbokmark=" + isBookmark)
-				if (isBookmark) {
-					if (model) {
-					} else {
-						model = [];
-					}
-					model.push(chapterNumber)
-					console.log("in db, push size=" + model.length)							
-				} else {
-					if (model) {
-						var index = model.indexOf(chapterNumber)
-						if (index > -1) {
-							model.splice(index, 1);
-						}
-						console.log("in db, slice size=" + model.length)
-					}				
+			if(isBookmark){
+				realm.create('BookmarksListModel',{
+					languageCode: langCode,
+					versionCode: verCode,
+					bookId: bId,
+					chapterNumber: cNum,
+				})
+				console.log("write.. bookmark complete..")
+			}
+			else{
+			let bookmarkData = realm.objects('BookmarksListModel').filtered('chapterNumber = $0', cNum)
+			realm.delete(bookmarkData); 
+			console.log("len note : " + bookmarkData.length)
+			console.log("write.. bookmark deleted..")
+			}
+
+			})
+		}
+
+	}
+	async queryBookmark(langCode,verCode,bId){
+		let realm = await this.getRealm()
+		if (realm) {
+			var chapterNumbers = []
+			let results = realm.objects('BookmarksListModel');
+			for(var i=0;i <=results.length-1;i++){
+				if(results[i].languageCode == langCode && results[i].versionCode == verCode && results[i].bookId == bId){
+					chapterNumbers.push(results[i].chapterNumber) 
+					console.log("chapter number "+results.chapterNumber)
 				}
-				console.log("update bookmark complete..")
-			});
+			}
+			return chapterNumbers
 		}
+		return null;
 	}
-
-	async removeBookmarkFromBook(model, chapterNumber) {
-		let realm = await this.getRealm();
-		if (realm) {
-			realm.write(() => {
-					var index = model.bookmarksList.indexOf(chapterNumber)
-					if (index > -1) {
-						model.bookmarksList.splice(index, 1);
-					}
-					console.log("in db, slice size=" + model.bookmarksList.length)
-			});
-		}
-	}
-
 	async queryNotes() {
 		let realm = await this.getRealm();
     	if (realm) {

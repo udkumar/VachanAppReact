@@ -36,14 +36,18 @@ class DbQueries {
     querySearchVerse(verCode: string, langCode: string, text: string) {
         return DbHelper.queryInVerseText(verCode, langCode, text);
     }
-
-    queryHighlights(verCode: string, langCode: string) {
-        return DbHelper.queryHighlights(verCode, langCode);
+    //for api data 
+    queryHighlights(langCode, verCode, bookId, chapterNumber) {
+            return DbHelper.queryHighlights(langCode, verCode, bookId,chapterNumber);
     }
 
-    updateHighlightsInBook(model, chapterIndex, verseIndex, isHighlight) {
-        return DbHelper.updateHighlightsInBook(model, chapterIndex, verseIndex, isHighlight)
-    }
+    // queryHighlights(verCode: string, langCode: string) {
+    //     return DbHelper.queryHighlights(verCode, langCode);
+    // }
+
+    // updateHighlightsInBook(model, chapterIndex, verseIndex, isHighlight) {
+    //     return DbHelper.updateHighlightsInBook(model, chapterIndex, verseIndex, isHighlight)
+    // }
 
     insert(model, value) {
         DbHelper.insert(model, value);
@@ -53,17 +57,23 @@ class DbQueries {
         DbHelper.insertNewBook(bookModel, versionModel, languageModel);
     }
 
+    // updateHighlightsInVerse(langCode, verCode, bookId, chapterNumber, verseNumber, isHighlight) {
+    //     DbHelper.updateHighlightsInVerse(langCode, verCode, bookId, chapterNumber, verseNumber, isHighlight);
+    // }
     updateHighlightsInVerse(langCode, verCode, bookId, chapterNumber, verseNumber, isHighlight) {
         DbHelper.updateHighlightsInVerse(langCode, verCode, bookId, chapterNumber, verseNumber, isHighlight);
     }
 
-    updateBookmarkInBook(model, chapterNumber, isBookmark) {
-        DbHelper.updateBookmarkInBook(model, chapterNumber, isBookmark);
+    // updateBookmarkInBook(model, chapterNumber, isBookmark) {
+    //     DbHelper.updateBookmarkInBook(model, chapterNumber, isBookmark);
+    // }
+    updateBookmarkInBook(langCode,verCode,bId,chapterNumber, isBookmark) {
+        DbHelper.updateBookmarkInBook(langCode,verCode,bId,chapterNumber, isBookmark);
     }
-
-    removeBookmarkFromBook(model, chapterNumber) {
-        DbHelper.removeBookmarkFromBook(model, chapterNumber);
+    queryBookmark(langCode,verCode,bId){
+        return DbHelper.queryBookmark(langCode,verCode,bId);
     }
+  
 
     queryBookIdModels(verCode: string, langCode: string) {
         return DbHelper.queryBookIdModels(verCode, langCode);

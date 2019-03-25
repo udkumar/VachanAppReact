@@ -95,7 +95,7 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = false
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     defaultConfig {
         applicationId "com.autographago_reactnative"
         minSdkVersion 16
@@ -164,11 +164,10 @@ dependencies {
  
     // implementation 'com.android.support:multidex:2.0.0'
 
-    api "com.android.support:appcompat-v7:27.1.0"
+    api "com.android.support:appcompat-v7:27.1.0+"
     api "com.facebook.react:react-native:+"  // From node_modules
-    implementation ("com.facebook.react:react-native:0.54.0") {
-         force = true 
-    } 
+    // implementation"com.facebook.react:react-native:0.54.0"
+          
 
 }
 
