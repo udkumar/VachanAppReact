@@ -13,6 +13,7 @@
     "install": "^0.10.4",
     "moment": "^2.22.1",
     "native-base": "^2.12.1",
+    "prop-types": "^15.7.2",
     "react": "^16.8.4",
     "react-native": "^0.59.1",
     "react-native-collapsible": "^0.12.0",
