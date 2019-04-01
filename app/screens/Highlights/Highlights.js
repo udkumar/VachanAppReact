@@ -24,62 +24,18 @@ export default class HighLights extends Component {
     super(props)
 
     this.mappingData = id_name_map;
-    this.removeHighlight = this.removeHighlight.bind(this)
-
-    this.state = {
-      modelData: [],
-      isLoading:false
-    }
     this.styles = highlightstyle(props.screenProps.colorFile, props.screenProps.sizeFile);  
-    this.refreshData = this.refreshData.bind(this) 
     
   }
 
 
-
-  componentDidMount() {
-   this.refreshData()
-  }
-
-  refreshData(){
-    this.setState({isLoading: true}, async () => {
-      let modelData = await DbQueries.queryHighlights(this.props.screenProps.versionCode, 
-      this.props.screenProps.languageCode);
-      this.setState({modelData,isLoading:false})
-    })
-  }
-  updateHighlights = ()=>{
-    this.refreshData()
-  }
-  // getItemLayout = (data, index) => {
-  //   return { length: height, offset: height * index, index };
-  // }
-
-  
-
-  removeHighlight(index) {
-    DbQueries.updateHighlightsInVerse(this.props.screenProps.languageCode, 
-      this.props.screenProps.versionCode, this.state.modelData[index].bookId, 
-      this.state.modelData[index].chapterNumber, this.state.modelData[index].verseNumber, false)
-
-    var modelData = [...this.state.modelData]
-    modelData.splice(index, 1);
-    this.setState({modelData})
-  }
-
   render() {
-    console.log("value of loader "+this.state.isLoading)
     return (
       <View style={this.styles.container}>
-      {
-      this.state.isLoading ? 
-      <ActivityIndicator animate={true}/> 
-      : <FlatList
-      contentContainerStyle={this.state.modelData.length === 0 && this.styles.centerEmptySet}
-      // contentContainerStyle={this.styles.flatListContainer}
-      data={this.state.modelData}
+      <FlatList
+      contentContainerStyle={this.props.screenProps.HightlightedVerseArray.length === 0 && this.styles.centerEmptySet}
+      data={this.props.screenProps.HightlightedVerseArray}
       ListEmptyComponent={
-        
         <View style={this.styles.emptyMessageContainer}>
         <Icon name="border-color" style={this.styles.emptyMessageIcon}/>
           <Text
@@ -92,21 +48,19 @@ export default class HighLights extends Component {
       // getItemLayout={this.getItemLayout}
       renderItem={({item, index}) =>
       <TouchableOpacity style={this.styles.highlightsView}
-        onPress={()=>this.props.navigation.navigate('Bible', {bookId: item.bookId, 
-          bookName: getBookNameFromMapping(item.bookId), 
-          chapterNumber: item.chapterNumber, verseNumber: item.verseNumber,
-          updateHighlights:this.updateHighlights,prevScreen:'highlights'
-          })}>
+        // onPress={()=>this.props.navigation.navigate('Bible', {bookId: item.bookId, 
+        //   bookName: getBookNameFromMapping(item.bookId), 
+        //   chapterNumber: item.chapterNumber, verseNumber: item.verseNumber,
+        //   updateHighlights:this.updateHighlights,prevScreen:'highlights'
+        //   })}
+          >
          <Text style={this.styles.hightlightsText}>
-            {getBookNameFromMapping(item.bookId)} {item.chapterNumber} {':'} {item.verseNumber}
+             {item.chapterNumber} {':'} {item.verseNumber}
           </Text>
-        <Icon name='delete-forever' style={this.styles.iconCustom}  onPress={() => {this.removeHighlight(index)}} />
+        <Icon name='delete-forever' style={this.styles.iconCustom}  onPress={() => {this.props.screenProps.removeHighlight(item.chapterNumber,item.verseNumber)}} />
       </TouchableOpacity>
     }
       />
-        
-      }
-    
       </View>
     );
   }

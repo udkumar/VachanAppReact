@@ -6,13 +6,11 @@ import {
 
 
 
-export default class Languagelist extends Component {
+export default class LanguagesList extends Component {
 
     static navigationOptions = ({navigation}) => ({
         headerTitle: 'Languages',
     });
-
-
 
     constructor(props) {
  

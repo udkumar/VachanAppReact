@@ -1,10 +1,4 @@
-import LanguageModel from '../models/LanguageModel'
-import VersionModel from '../models/VersionModel'
-import BookModel from '../models/BookModel'
-import ChapterModel from '../models/ChapterModel'
-import VerseComponentsModel from '../models/VerseComponentsModel'
 import DbQueries from './dbQueries'
-import parsingurl from '../screens/SignupWithGoogle'
 import id_name_map from '../assets/mappings.json'
 const Constants = require('./constants')
 

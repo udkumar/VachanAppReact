@@ -55,11 +55,10 @@ export default class VerseView extends Component {
     var found = false;
       for(var i=0; i<= this.props.HightlightedVerse.length-1; i++ ){
         if(this.props.HightlightedVerse[i].verseNumber == verse && this.props.HightlightedVerse[i].chapterNumber == this.props.chapterNumber) {
-          console.log("verse "+verse+" highlighted verse "+this.props.HightlightedVerse[i].verseNumber)
+          // console.log("verse "+verse+" highlighted verse "+this.props.HightlightedVerse[i].verseNumber)
           found = true
         }
       }
-      console.log("found "+found)
       // return found
       if(found){
         return true

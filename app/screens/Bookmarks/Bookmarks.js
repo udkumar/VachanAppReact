@@ -23,21 +23,21 @@ export default class BookMarks extends Component {
     super(props)
 
     this.mappingData = id_name_map;
-    this.removeBookmark = this.removeBookmark.bind(this)
-    this.refreshData = this.refreshData.bind(this)
+    // this.removeBookmark = this.removeBookmark.bind(this)
+    // this.refreshData = this.refreshData.bind(this)
 
     this.state = {
-      bookmarkList: [],
-      modelData: [],
+      // bookmarkList: [],
+      // modelData: [],
       isLoading:false
     }
     
     this.styles = bookStyle(props.screenProps.colorFile, props.screenProps.sizeFile);   
-    this.refreshData = this.refreshData.bind(this)
+    // this.refreshData = this.refreshData.bind(this)
   }
 
   async componentDidMount() {
-    this.refreshData()  
+    // this.refreshData()  
   } 
 
   // getItemLayout = (data, index) => {
@@ -53,40 +53,28 @@ export default class BookMarks extends Component {
   // }
 
 
-  removeBookmark(bookId, chapterNumber, index) {
-    for (var i=0; i<this.state.modelData.length; i++) {
-      if (this.state.modelData[i].bookId == bookId) {
-          DbQueries.removeBookmarkFromBook(this.state.modelData[i], chapterNumber);
-          break;  
-      }
-    }
-    var bookmarkList = [...this.state.bookmarkList]
-    bookmarkList.splice(index, 1);
-    this.setState({bookmarkList})
-  }
-
-  refreshData(){
-    this.setState({isLoading: true}, async () => {
-      let modelData = await DbQueries.queryBooks(this.props.screenProps.versionCode, 
-      this.props.screenProps.languageCode);
-      console.log("model len= " + modelData.length)
-      this.setState({modelData})
-      var bookmarkList = []
-      for (var i=0; i<modelData.length; i++) {
-        var list = modelData[i].bookmarksList
-        if (list) {
-          console.log("loist len = "+modelData[i].bookId+" : "+modelData[i].bookmarksList.length)
-          for (var j=0; j<list.length; j++) {
-            var model={bookId: modelData[i].bookId, bookName: getBookNameFromMapping(modelData[i].bookId), 
-              chapterNumber: list[j]}
-            bookmarkList.push(model)
-          }
-        }
-      }
-      this.setState({bookmarkList,isLoading:false})
-    }
-  )
-  }
+  // refreshData(){
+  //   this.setState({isLoading: true}, async () => {
+  //     let modelData = await DbQueries.queryBooks(this.props.screenProps.versionCode, 
+  //     this.props.screenProps.languageCode);
+  //     console.log("model len= " + modelData.length)
+  //     this.setState({modelData})
+  //     var bookmarkList = []
+  //     for (var i=0; i<modelData.length; i++) {
+  //       var list = modelData[i].bookmarksList
+  //       if (list) {
+  //         console.log("loist len = "+modelData[i].bookId+" : "+modelData[i].bookmarksList.length)
+  //         for (var j=0; j<list.length; j++) {
+  //           var model={bookId: modelData[i].bookId, bookName: getBookNameFromMapping(modelData[i].bookId), 
+  //             chapterNumber: list[j]}
+  //           bookmarkList.push(model)
+  //         }
+  //       }
+  //     }
+  //     this.setState({bookmarkList,isLoading:false})
+  //   }
+  // )
+  // }
 
   updateBookmark = ()=>{
     this.refreshData()
@@ -97,35 +85,27 @@ export default class BookMarks extends Component {
   // }
   
   render() {
+    console.log("book mark list from bookmark page "+this.props.screenProps.bookmarksList)
     return (
         <View style={this.styles.container}>
-        {
-        this.state.isLoading ? <ActivityIndicator animate={true}/>
-          : 
         <FlatList
-          data={this.state.bookmarkList}
-          contentContainerStyle={this.state.bookmarkList.length === 0 && this.styles.centerEmptySet}
+          data={this.props.screenProps.bookmarksList}
+          contentContainerStyle={this.props.screenProps.bookmarksList.length === 0 && this.styles.centerEmptySet}
           // getItemLayout={this.getItemLayout}
           renderItem={({item, index}) => 
             <TouchableOpacity style={this.styles.bookmarksView}
-              onPress={()=>this.props.navigation.navigate('Book', {bookId: item.bookId, 
-                bookName: item.bookName, chapterNumber: item.chapterNumber,
-                updateBookmark:this.updateBookmark,prevScreen:'bookmark'
-              })}>
+              >
 
               <Text style={this.styles.bookmarksText}>
-                {item.bookName} {item.chapterNumber}
+                Chapter Number {item}
               </Text>
-              <Icon name='delete-forever' style={this.styles.iconCustom}   onPress={() => {
-                this.removeBookmark(item.bookId, item.chapterNumber, index)
-                }
-                } 
+              <Icon name='delete-forever' style={this.styles.iconCustom}   
+                onPress={() => { this.props.screenProps.onBookmarkRemove(item)} } 
               />
           
             </TouchableOpacity>
           }
           ListEmptyComponent={
-
             <View style={this.styles.emptyMessageContainer}>
             <Icon name="collections-bookmark" style={this.styles.emptyMessageIcon}/>
               <Text
@@ -136,9 +116,8 @@ export default class BookMarks extends Component {
               
             </View>
           }
+          extraData={this.props}
         />
-        }
-          
         </View>
     );
   }

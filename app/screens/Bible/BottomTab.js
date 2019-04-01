@@ -26,6 +26,10 @@ export default class BottomTab extends Component {
                     bookId:this.props.bookId,
                     close:this.props.close,
                     closeSplitScreen:this.props.closeSplitScreen,
+                    HightlightedVerseArray:this.props.HightlightedVerseArray,
+                    removeHighlight:this.props.removeHighlight,
+                    bookmarksList:this.props.bookmarksList,
+                    onBookmarkRemove:this.props.onBookmarkRemove
                 }}
             />
         )

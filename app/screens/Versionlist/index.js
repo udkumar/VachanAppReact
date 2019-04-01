@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { AppRegistry, Text,TouchableOpacity ,Alert} from 'react-native';
 import { View } from 'native-base';
 
-export default class VersionList extends Component {
+export default class Versionlist extends Component {
     constructor(props) {
  
         super(props);

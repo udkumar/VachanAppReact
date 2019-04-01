@@ -60,10 +60,10 @@ export default class Language extends Component{
   render() {
  
     return(
-      <Tabs screenProps={{
-        Navigatehome: this.Navigatehome
-      }}
-     
+      <Tabs 
+        screenProps={{
+          Navigatehome: this.Navigatehome
+        }}
       />
 
     )

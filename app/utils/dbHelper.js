@@ -24,7 +24,6 @@ class DbHelper {
 
     async getRealm() {
     	try {
-			console.log("realm open")
     		return await Realm.open({
 				schemaVersion: 1,
 				// deleteRealmIfMigrationNeeded: true, 
@@ -238,45 +237,24 @@ class DbHelper {
 
 	async updateBookmarkInBook(langCode,verCode,bId,cNum, isBookmark) {
 		let realm = await this.getRealm();
-		// if (realm) {
-		// 	realm.write(() => {
-		// 		console.log("in db, isbokmark=" + isBookmark)
-		// 		if (isBookmark) {
-		// 			if (model) {
-		// 			} else {
-		// 				model = [];
-		// 			}
-		// 			model.push(chapterNumber)
-		// 			console.log("in db, push size=" + model.length)							
-		// 		} else {
-		// 			if (model) {
-		// 				var index = model.indexOf(chapterNumber)
-		// 				if (index > -1) {
-		// 					model.splice(index, 1);
-		// 				}
-		// 				console.log("in db, slice size=" + model.length)
-		// 			}				
-		// 		}
-		// 		console.log("update bookmark complete..")
-		// 	});
-		// }
 		if(realm){
-			console.log("bookmark realm ")
 			realm.write(() => {
+			let chapter = realm.objects('BookmarksListModel').filtered('languageCode ==[c] "' + langCode + '" && versionCode ==[c] "' + verCode + '" &&  bookId == "' + bId + '" && chapterNumber == "'+cNum+'"')
+
 			if(isBookmark){
+				console.log(" if bookmark "+isBookmark)
 				realm.create('BookmarksListModel',{
 					languageCode: langCode,
 					versionCode: verCode,
 					bookId: bId,
 					chapterNumber: cNum,
 				})
-				console.log("write.. bookmark complete..")
 			}
 			else{
+			console.log("else bookmark "+isBookmark)
 			let bookmarkData = realm.objects('BookmarksListModel').filtered('chapterNumber = $0', cNum)
+			console.log("len bookmark : " + bookmarkData)
 			realm.delete(bookmarkData); 
-			console.log("len note : " + bookmarkData.length)
-			console.log("write.. bookmark deleted..")
 			}
 
 			})
@@ -291,7 +269,7 @@ class DbHelper {
 			for(var i=0;i <=results.length-1;i++){
 				if(results[i].languageCode == langCode && results[i].versionCode == verCode && results[i].bookId == bId){
 					chapterNumbers.push(results[i].chapterNumber) 
-					console.log("chapter number "+results.chapterNumber)
+					// console.log("chapter number "+results.chapterNumber)
 				}
 			}
 			return chapterNumbers
