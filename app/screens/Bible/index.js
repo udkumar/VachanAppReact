@@ -21,6 +21,9 @@ import AsyncStorageConstants from '../../utils/AsyncStorageConstants';
 const Constants = require('../../utils/constants')
 
 import {getResultText} from '../../utils/UtilFunctions';
+
+import {getBookNameFromMapping} from '../../utils/UtilFunctions';
+
 import {
   MenuContext
 } from 'react-native-popup-menu';
@@ -530,6 +533,14 @@ export default class Bible extends Component {
     closeSplitScreen = ()=>{
      this.setState({close:!this.state.close})
   }
+
+  changeBookFromSplit = ( id,chapterNum) => {
+    this.setState({bookId:id,currentVisibleChapter:chapterNum,bookName:getBookNameFromMapping(id)})
+    this.props.navigation.setParams({
+      currentChapter:chapterNum,
+      bookName:getBookNameFromMapping(id),
+    })
+  }
   render() {
     console.log("bookmark "+this.state.isBookmark )
     const thumbSize = this.state.thumbSize;
@@ -667,6 +678,8 @@ export default class Bible extends Component {
                   removeHighlight = {this.removeHighlight}
                   bookmarksList={this.state.bookmarksList}
                   onBookmarkRemove = {this.onBookmarkRemove}
+                  changeBookFromSplit={this.changeBookFromSplit}
+
               />
               }
         </View>

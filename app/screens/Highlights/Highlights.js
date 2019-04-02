@@ -48,12 +48,8 @@ export default class HighLights extends Component {
       // getItemLayout={this.getItemLayout}
       renderItem={({item, index}) =>
       <TouchableOpacity style={this.styles.highlightsView}
-        // onPress={()=>this.props.navigation.navigate('Bible', {bookId: item.bookId, 
-        //   bookName: getBookNameFromMapping(item.bookId), 
-        //   chapterNumber: item.chapterNumber, verseNumber: item.verseNumber,
-        //   updateHighlights:this.updateHighlights,prevScreen:'highlights'
-        //   })}
-          >
+        onPress = { ()=> {this.props.screenProps.changeBookFromSplit(item.bookId,item.chapterNumber)}}
+      >
          <Text style={this.styles.hightlightsText}>
           {getBookNameFromMapping(item.bookId)} {':'} {item.chapterNumber} {':'} {item.verseNumber}
           </Text>

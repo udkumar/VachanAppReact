@@ -29,7 +29,8 @@ export default class BottomTab extends Component {
                     HightlightedVerseArray:this.props.HightlightedVerseArray,
                     removeHighlight:this.props.removeHighlight,
                     bookmarksList:this.props.bookmarksList,
-                    onBookmarkRemove:this.props.onBookmarkRemove
+                    onBookmarkRemove:this.props.onBookmarkRemove,
+                    changeBookFromSplit:this.props.changeBookFromSplit
                 }}
             />
         )

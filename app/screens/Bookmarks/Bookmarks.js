@@ -94,13 +94,14 @@ export default class BookMarks extends Component {
           // getItemLayout={this.getItemLayout}
           renderItem={({item, index}) => 
             <TouchableOpacity style={this.styles.bookmarksView}
+              onPress = { ()=> {this.props.screenProps.changeBookFromSplit(item.bookId,item.chapterNumber)}}
               >
 
               <Text style={this.styles.bookmarksText}>
               {getBookNameFromMapping(item.bookId)} {":"} {item.chapterNumber}
               </Text>
               <Icon name='delete-forever' style={this.styles.iconCustom}   
-                onPress={() => { this.props.screenProps.onBookmarkRemove(item.bookId,item.chapterNumber)} } 
+                onPress={() => {this.props.screenProps.onBookmarkRemove(item.bookId,item.chapterNumber)} } 
               />
           
             </TouchableOpacity>
