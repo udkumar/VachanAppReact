@@ -115,15 +115,12 @@ class DbHelper {
 	// }
 	async queryHighlights(langCode, verCode, bookId){
 		let realm = await this.getRealm();
-			if (realm) {
-				let realm = await this.getRealm()
 					if (realm){
 						let result1 = realm.objects("HighlightsModel");
-						let highlight = result1.filtered('languageCode ==[c] "' + langCode + '" && versionCode ==[c] "' + verCode + '" &&  bookId == "' + bookId + '"')
+						let highlight = result1.filtered('languageCode ==[c] "' + langCode + '" && versionCode ==[c] "' + verCode + '"')
 						return highlight
 					}
 				
-		}
 	}
 	async updateHighlightsInVerse(langCode, verCode, bId, cNum, vNum, isHighlight) {
 		let realm = await this.getRealm()
@@ -263,18 +260,12 @@ class DbHelper {
 	}
 	async queryBookmark(langCode,verCode,bId){
 		let realm = await this.getRealm()
-		if (realm) {
-			var chapterNumbers = []
-			let results = realm.objects('BookmarksListModel');
-			for(var i=0;i <=results.length-1;i++){
-				if(results[i].languageCode == langCode && results[i].versionCode == verCode && results[i].bookId == bId){
-					chapterNumbers.push(results[i].chapterNumber) 
-					// console.log("chapter number "+results.chapterNumber)
-				}
+
+			if (realm){
+				let result1 = realm.objects("BookmarksListModel");
+				let bookmarks = result1.filtered('languageCode ==[c] "' + langCode + '" && versionCode ==[c] "' + verCode + '"')
+				return bookmarks
 			}
-			return chapterNumbers
-		}
-		return null;
 	}
 	async queryNotes() {
 		let realm = await this.getRealm();

@@ -257,7 +257,7 @@ export default class Bible extends Component {
         if(model2.length > 0){
           console.log("model2 "+JSON.stringify(model2))
           for(var i = 0; i<=model2.length-1;i++){
-            this.setState({HightlightedVerseArray:[...this.state.HightlightedVerseArray,{"chapterNumber":model2[i].chapterNumber,"verseNumber":model2[i].verseNumber}]})
+            this.setState({HightlightedVerseArray:[...this.state.HightlightedVerseArray,{"bookId":model2[i].bookId,"chapterNumber":model2[i].chapterNumber,"verseNumber":model2[i].verseNumber}]})
           }
         }
     }
@@ -267,14 +267,24 @@ export default class Bible extends Component {
     }else{
       console.log("bookmark list did mount "+JSON.stringify(model))
       if(model.length > 0){
-        var index = model.indexOf(this.state.currentVisibleChapter)
-        this.setState({bookmarksList:model,isBookmark: index > -1 ? true : false}, () => {
-          this.props.navigation.setParams({
-              isBookmark: this.state.isBookmark,
-              dataLength: bookInfo.chapterModels.length
-          })    
-        })
+        console.log("model book mark "+JSON.stringify(model))
+        for(var i = 0; i<=model.length-1;i++){
+          var index =  model.findIndex(chapInd => chapInd.chapterNumber === this.state.currentVisibleChapter)
+          console.log("BOOKMARK INDEX index "+index)
+          this.setState({ bookmarksList:[...this.state.bookmarksList,{"bookId":model[i].bookId,"chapterNumber":model[i].chapterNumber}]}, () => {
+            this.setState({isBookmark: this.state.bookmarksList.findIndex(chapInd => chapInd.chapterNumber === this.state.currentVisibleChapter) > -1 ? true : false}, () => {
+             
+              this.props.navigation.setParams({
+                  isBookmark: this.state.isBookmark,
+                  dataLength: bookInfo.chapterModels.length
+              })      
+            })
+          })
+   
+        }
       }
+
+
     }
   
     var bookListData  = [{bookId: bookInfo.bookId,bookName: bookInfo.bookName,
@@ -286,7 +296,7 @@ export default class Bible extends Component {
        
   }
 
-  //render data from local db
+  // render data from local db
   async queryBook() {
     let model = await DbQueries.queryBookWithId(this.props.screenProps.versionCode, 
         this.props.screenProps.languageCode, this.state.bookId);
@@ -308,9 +318,9 @@ export default class Bible extends Component {
   }
 
   async onBookmarkPress( ) {
-    var index = this.state.bookmarksList.indexOf(this.state.currentVisibleChapter);
+    index = this.state.bookmarksList.findIndex(chapInd => chapInd.chapterNumber ===this.state.currentVisibleChapter);
     console.log("index "+index)
-    
+
     await DbQueries.updateBookmarkInBook(this.state.languageCode,this.state.versionCode,this.state.bookId,this.state.currentVisibleChapter, index > -1 ? false : true);
     this.setState({isBookmark: index > -1 ? false : true}, () => {
       this.props.navigation.setParams({isBookmark: this.state.isBookmark}) 
@@ -319,23 +329,24 @@ export default class Bible extends Component {
             console.log("BOOK MARK SLICE ")
         }
         else{
-          this.setState({bookmarksList:[...this.state.bookmarksList,this.state.currentVisibleChapter]})
+          this.setState({bookmarksList:[...this.state.bookmarksList,{bookId:this.state.bookId,chapterNumber:this.state.currentVisibleChapter}]})
+          
           console.log("bookmark list "+JSON.stringify(this.state.bookmarksList))
       }
     })
 
   }
-  onBookmarkRemove = async( chapterNum ) =>{
+  onBookmarkRemove = async( id,chapterNum ) =>{
     console.log("chapter "+chapterNum)
-    await DbQueries.updateBookmarkInBook(this.state.languageCode,this.state.versionCode,this.state.bookId,chapterNum,false);
+    index = this.state.bookmarksList.findIndex(chapInd => chapInd.chapterNumber ===this.state.currentVisibleChapter);
     for(var i = 0; i<=this.state.bookmarksList.length;i++ ){
-      console.log("book list  "+this.state.bookmarksList[i])
-      if(this.state.bookmarksList[i] == chapterNum){
+      console.log("book list  "+this.state.bookmarksList[i].chapterNumber)
+      if(this.state.bookmarksList[i].chapterNumber == chapterNum && this.state.bookmarksList[i].bookId == id ){
       this.props.navigation.setParams({isBookmark:false }) 
+        await DbQueries.updateBookmarkInBook(this.state.languageCode,this.state.versionCode,id,chapterNum,false);
         console.log("chapter "+chapterNum+"book mark list "+this.state.bookmarksList[i])
-        let index = this.state.bookmarksList.indexOf(chapterNum)
         this.state.bookmarksList.splice(index, 1)
-        this.setState({bookmarksList:this.state.bookmarksList})
+        this.setState({bookmarksList:this.state.bookmarksList,isBookmark:false})
       } 
     }
   
@@ -405,13 +416,12 @@ export default class Bible extends Component {
 
   doHighlight = async () => {
     console.log("highlight text "+JSON.stringify(this.state.HightlightedVerseArray))
-    // var HightlightedVerseArray = [...this.state.HightlightedVerseArray]
     console.log("ishighlight in do highlight "+this.state.HighlightedText)
     if (this.state.HighlightedText == true) {
       for (let item of this.state.selectedReferenceSet) {
         let tempVal = item.split('_')
         await DbQueries.updateHighlightsInVerse(this.state.languageCode, this.state.versionCode,this.state.bookId,JSON.parse(tempVal[0]), tempVal[2], true)
-        this.setState({HightlightedVerseArray:[...this.state.HightlightedVerseArray,{"chapterNumber":JSON.parse(tempVal[0]),"verseNumber":tempVal[2]}]})
+        this.setState({HightlightedVerseArray:[...this.state.HightlightedVerseArray,{"bookId":this.state.bookId,"chapterNumber":JSON.parse(tempVal[0]),"verseNumber":tempVal[2]}]})
       }
     } else {
       for (let item of this.state.selectedReferenceSet) {
@@ -420,7 +430,6 @@ export default class Bible extends Component {
         for(var i=0; i<=this.state.HightlightedVerseArray.length-1; i++){
           if(this.state.HightlightedVerseArray[i].chapterNumber ==JSON.parse(tempVal[0]) && this.state.HightlightedVerseArray[i].verseNumber ==tempVal[2]){
             this.state.HightlightedVerseArray.splice(i, 1)
-            // this.setState({HightlightedVerseArray})
           }
         }
       }
@@ -494,8 +503,11 @@ export default class Bible extends Component {
 
   updateCurrentChapter(val){
     let currChapter = this.state.currentVisibleChapter + val;
-    this.setState({currentVisibleChapter: currChapter, 
-            isBookmark: this.state.bookmarksList.indexOf(currChapter) > -1}, () => {
+    this.setState({
+        currentVisibleChapter: currChapter,
+        isBookmark: this.state.bookmarksList.findIndex(chapInd => chapInd.chapterNumber === currChapter) > -1 ? true : false
+      }, () => {
+
             this.props.navigation.setParams({
                 isBookmark: this.state.isBookmark,
                 currentChapter:this.state.currentVisibleChapter,
@@ -503,8 +515,6 @@ export default class Bible extends Component {
             })
             this.scrollViewRef.scrollTo({x: 0, y: 0, animated: false})
         })
-
-       
   }
 
   openLanguages = ()=>{
@@ -521,6 +531,7 @@ export default class Bible extends Component {
      this.setState({close:!this.state.close})
   }
   render() {
+    console.log("bookmark "+this.state.isBookmark )
     const thumbSize = this.state.thumbSize;
       return (
         <View style={this.styles.container} >

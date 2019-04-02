@@ -55,7 +55,7 @@ export default class HighLights extends Component {
         //   })}
           >
          <Text style={this.styles.hightlightsText}>
-             {item.chapterNumber} {':'} {item.verseNumber}
+          {getBookNameFromMapping(item.bookId)} {':'} {item.chapterNumber} {':'} {item.verseNumber}
           </Text>
         <Icon name='delete-forever' style={this.styles.iconCustom}  onPress={() => {this.props.screenProps.removeHighlight(item.chapterNumber,item.verseNumber)}} />
       </TouchableOpacity>

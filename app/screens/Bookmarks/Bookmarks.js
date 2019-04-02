@@ -97,10 +97,10 @@ export default class BookMarks extends Component {
               >
 
               <Text style={this.styles.bookmarksText}>
-                Chapter Number {item}
+              {getBookNameFromMapping(item.bookId)} {":"} {item.chapterNumber}
               </Text>
               <Icon name='delete-forever' style={this.styles.iconCustom}   
-                onPress={() => { this.props.screenProps.onBookmarkRemove(item)} } 
+                onPress={() => { this.props.screenProps.onBookmarkRemove(item.bookId,item.chapterNumber)} } 
               />
           
             </TouchableOpacity>
