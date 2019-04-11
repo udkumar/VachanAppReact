@@ -539,6 +539,7 @@ export default class Bible extends Component {
     this.props.navigation.setParams({
       currentChapter:chapterNum,
       bookName:getBookNameFromMapping(id),
+      isBookmark:true
     })
   }
   render() {

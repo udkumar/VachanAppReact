@@ -24,8 +24,7 @@ export default class Notepad extends Component {
                 headerRight:(
                     <Icon name="close"  style={{fontSize:20,marginRight:10,color:"#fff"}} onPress={() => {params.closeOnPress()}} />
                 ),
-                tabBarIcon: (<Icon name="content-paste" size={20} style={{color:'#fff'}}/>)
-
+                tabBarIcon: (<Icon name="content-paste" size={20} style={{color:'#fff'}} />)
             }
     }
 
@@ -33,6 +32,7 @@ export default class Notepad extends Component {
         console.log("DID MOUNT OF NOTEPAD")
         this.props.navigation.setParams({ 
             closeOnPress: this.props.screenProps.closeSplitScreen,
+            navigateTo:this.props.navigation.navigate('')
         })
     }
     
