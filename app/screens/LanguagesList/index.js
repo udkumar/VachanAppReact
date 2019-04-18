@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
-import {
-    Text, StyleSheet, View, ListView, TextInput, ActivityIndicator, Alert,
-  
-} from 'react-native';
+import { Text, StyleSheet, View, FlatList, TextInput, ActivityIndicator} from 'react-native';
 
 
 
@@ -20,27 +17,28 @@ export default class LanguagesList extends Component {
    
         isLoading: true,
         text: '',
+        languages:[]
       
       }
    
-      this.arrayholder = [] ;
     }
    
     componentDidMount() {
    
-      return fetch('https://reactnativecode.000webhostapp.com/FruitsList.php')
+      return fetch('https://stagingapi.autographamt.com/app/languages')
         .then((response) => response.json())
         .then((responseJson) => {
-          let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+          var lanVer = []
+          for(var key in responseJson){
+            lanVer.push({"language":key,"languageCode":responseJson[key]})
+          }
           this.setState({
             isLoading: false,
-            dataSource: ds.cloneWithRows(responseJson),
-          }, function() {
-   
-            // In this block you can do something with new state.
-            this.arrayholder = responseJson ;
-   
-          });
+             languages: lanVer,
+            })
+        
+          // console.log("json data "+JSON.stringify(responseJson))
+        
         })
         .catch((error) => {
           console.error(error);
@@ -49,24 +47,9 @@ export default class LanguagesList extends Component {
     }
    
     GetListViewItem (value) {
-      
-    
-     this.props.navigation.navigate('VersionList',  {data: value });
+     this.props.navigation.navigate('VersionList',  {languages: value });
     }
     
-     SearchFilterFunction(text){
-       
-       const newData = this.arrayholder.filter(function(item){
-           const itemData = item.fruit_name.toUpperCase()
-           const textData = text.toUpperCase()
-           return itemData.indexOf(textData) > -1
-       })
-       this.setState({
-           dataSource: this.state.dataSource.cloneWithRows(newData),
-           text: text
-       })
-   }
-   
     ListViewItemSeparator = () => {
       return (
         <View
@@ -81,42 +64,32 @@ export default class LanguagesList extends Component {
    
    
     render() {
-      if (this.state.isLoading) {
-        return (
-          <View style={{flex: 1, paddingTop: 20}}>
-            <ActivityIndicator />
-          </View>
-        );
-      }
-   
+      console.log("lANGUAGES .....",this.state.languages)
       return (
-   
         <View style={styles.MainContainer}>
-   
-        <TextInput 
+        {/* <TextInput 
          style={styles.TextInputStyleClass}
          onChangeText={(text) => this.SearchFilterFunction(text)}
          value={this.state.text}
          underlineColorAndroid='transparent'
          placeholder="Search Here"
+          /> */}
+          {this.state.languages.length > 0 ? 
+          <FlatList 
+            data={this.state.languages}
+            extraData={this.state}
+            renderItem={({item}) => (
+              <Text onPress={this.GetListViewItem.bind(this, item)}>{item.language}</Text>)
+            }
+            // renderRow={({rowData}) => <Text style={styles.rowViewContainer} 
+            // onPress={this.GetListViewItem.bind(this, rowData)}>{rowData}</Text>}
+   
+            // enableEmptySections={true}
+   
+            // style={{marginTop: 10}}
+   
           />
-   
-          <ListView
-   
-            dataSource={this.state.dataSource}
-   
-            renderSeparator= {this.ListViewItemSeparator}
-   
-            renderRow={(rowData) => <Text style={styles.rowViewContainer} 
-   
-            onPress={this.GetListViewItem.bind(this, rowData.id)} >{rowData.fruit_name}</Text>}
-   
-            enableEmptySections={true}
-   
-            style={{marginTop: 10}}
-   
-          />
-   
+          :null}
         </View>
       );
     }

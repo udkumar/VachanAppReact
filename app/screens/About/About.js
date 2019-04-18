@@ -20,11 +20,11 @@ export default class About extends Component {
   render() {
     const bulletIcon = '\u2022  '
     return (
-      <ScrollView  contentContainerStyle={this.styles.container}>
-      <View style={this.styles.textContainer}>
-        <Text style={this.styles.textStyle}>
-          <Text>Version {packageJson.version}{"\n\n"}</Text>
-          <Text>
+      <ScrollView  contentContainerStyle={this.styles.container} >
+      <View style={this.styles.textContainer} >
+        <Text style={this.styles.textStyle} testID={"check"}>
+          <Text testID={"check-2"}>Version {packageJson.version}{"\n\n"}</Text>
+          <Text testID={"check-1"}>
             <Text style={this.styles.italicText}>Autographa </Text>
             literally refers to the original copies of the writings that now form your Bible.{"\n\n"}
           </Text>

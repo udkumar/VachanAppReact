@@ -1,28 +1,31 @@
-// import 'react-native';
-// import React from 'react';
-// import App from '../App';
-
-// // Note: test renderer must be required after react-native.
-// import renderer from 'react-test-renderer';
-
-// it('renders correctly', () => {
-//   const tree = renderer.create(
-//     <App />
-//   );
-// });
-
-
-
-import 'react-native';
-// import React from 'react';
-import * as React from 'react'
-
-import renderer from 'react-test-renderer';
+import React from 'react';
 import About from '../app/screens/About/About'
 
-it('renders correctly', () => {
-  const tree = renderer.create(
-    <About />
-    ).toJSON();
-  expect(tree).toMatchSnapshot();
-});
+import { shallow ,configure} from "enzyme";
+import Adapter from "enzyme-adapter-react-16";
+
+configure({ adapter: new Adapter() });
+
+const findElement = function (tree,value){
+  for(var key in tree.children.props.children){
+    if(tree.children.props.children[key].props.testID == value){
+      return value
+    }
+  }
+
+}
+
+describe('Testing navigation', () => {
+const props = {
+  screenProps:{
+    colorFile:'#fff',
+    sizeFile:18
+  }
+}
+  it('should test navigation',  () => {
+    const wrapper = shallow(<About {...props}/>).props();
+    expect(findElement(wrapper,"check")).toBe("check");
+    // console.log(JSON.stringify(wrapper.children.props.children.props))
+    expect(wrapper).toMatchSnapshot()
+  })
+})

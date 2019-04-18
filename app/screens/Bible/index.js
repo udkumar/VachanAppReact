@@ -543,7 +543,7 @@ export default class Bible extends Component {
     })
   }
   render() {
-    console.log("bookmark "+this.state.isBookmark )
+    // console.log("bookmark "+this.state.isBookmark )
     const thumbSize = this.state.thumbSize;
       return (
         <View style={this.styles.container} >
