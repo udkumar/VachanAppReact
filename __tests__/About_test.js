@@ -3,6 +3,7 @@ import About from '../app/screens/About/About'
 
 import { shallow ,configure} from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
+import {Card} from 'native-base'
 
 configure({ adapter: new Adapter() });
 

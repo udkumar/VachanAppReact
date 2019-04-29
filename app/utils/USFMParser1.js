@@ -42,7 +42,8 @@ export default class USFMParser {
     //             });
     //     }
     // }
-     parseFile(result) {
+    
+    parseFile(result,chapter) {
          console.log("result in parse file "+JSON.stringify(result))
         // this.languageCode = lCode;
         // this.languageName = lName;
@@ -51,7 +52,7 @@ export default class USFMParser {
         // this.source = source;
         // this.license = license;
         // this.year = year;
-        return this.parseFileContents(result);
+        return this.parseFileContents(result,chapter);
     }
 
     // parseFile() {
@@ -65,15 +66,17 @@ export default class USFMParser {
         
     // }
 
-    parseFileContents(result) {
+    parseFileContents(result,chapter) {
+        console.log("CHAPTER in parse CONTENT "+chapter)
         console.log("result "+result)
         try {
             // console.log("line length",result.length)
+            // if(id == )
             var lines = result.split("\n")
-            for(var i = 0; i < lines.length; i++) {
+            for(var i = 0; i <lines.length; i++) {
                 
                 //code here using lines[i] which will give you each line
-                if (!this.processLine(lines[i])) {
+                if (!this.processLine(lines[i],chapter)) {
                     return false;
                 }
             }
@@ -84,7 +87,9 @@ export default class USFMParser {
         }
     }
 
-    processLine(line) {
+    processLine(line,chapter){
+        console.log("CHAPTER in process "+chapter)
+
         var splitString = line.split(/\s+/);
         if (splitString.length == 0) {
             return true;
@@ -98,7 +103,7 @@ export default class USFMParser {
                 break;
             }
             case Constants.MarkerConstants.MARKER_CHAPTER_NUMBER: {
-                this.addChapter(splitString[1]);
+                this.addChapter(splitString[1],chapter)
                 break;
             }
             case Constants.MarkerConstants.MARKER_NEW_PARAGRAPH: {
@@ -106,7 +111,7 @@ export default class USFMParser {
                 break;
             }
             case Constants.MarkerConstants.MARKER_VERSE_NUMBER: {
-                this.addVerse(splitString);
+                this.addVerse(splitString)
                 break;
             }
             case Constants.MarkerConstants.MARKER_SECTION_HEADING: {
@@ -150,32 +155,41 @@ export default class USFMParser {
     }
 
     addBook(value) {
-        this.bookId = value.toString().trim();
+        console.log("boook id in parser "+value)
+        this.bookId = value.toString().trim()
         return true;
+       
     }
 
-    addChapter(num){
-        this.addComponentsToChapter();
-        var number = parseInt(num.toString().trim() , 10);
+    addChapter(num,chapter){
+        console.log("CHAPTER  "+chapter)
+        var n = parseInt(num.toString().trim() , 10)
+        if(n == chapter){
+        console.log("HI IM CHAPTER IF ")
+        console.log("HI IM CHAPTER  "+n)
+        this.addComponentsToChapter()
+        var number = chapter
         var chapterModel = {chapterNumber: number, numberOfVerses: 0, verseComponentsModels: []};
         this.chapterList.push(chapterModel);
+        console.log("chapter id in parser "+JSON.stringify(this.chapterList))
+        }
     }
 
     addChunk() {
         var verseComponentsModel = {type: Constants.MarkerTypes.CHUNK, verseNumber: "", 
-            text: "", highlighted: false, added: true, 
+            text: "",added: true, 
             languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
             chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber};
         this.verseList.push(verseComponentsModel);
     }
 
-    addSection(markerType, line, splitString) {
+    addSection(markerType, line, splitString){
         var res = "";
         if (splitString.length > 1) {
-            var res = line.slice(3);
+            var res = line.slice(3)
         }
         var verseComponentsModel = {type: markerType, verseNumber: "", 
-            text: res, highlighted: false, added: true, 
+            text: res,added: true, 
             languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
             chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber};
         this.verseList.push(verseComponentsModel);
@@ -187,7 +201,7 @@ export default class USFMParser {
             res = line.slice(3);
         }
         var verseComponentsModel = {type: Constants.MarkerTypes.PARAGRAPH, verseNumber: "", 
-            text: res, highlighted: false, added: true, 
+            text: res, added: true, 
             languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
             chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber};
         this.verseList.push(verseComponentsModel);
@@ -229,53 +243,44 @@ export default class USFMParser {
             }
         }
         var result = res + tempRes.join(" ");
-        const tagRemove = result.replace(/\\it\*\*|\\it/g,'')
-        const verseData = tagRemove.replace(/(\\f(.*?)\\f\*)|(\\bdit(.*?)\\bdit\*)/g,"")
-        const footnote = tagRemove.match(/\\f(.*?)\\f\*/g)
-
         var verseComponentsModel = {type: Constants.MarkerTypes.VERSE, verseNumber: splitString[1], 
-            text: verseData, highlighted: false, added: true, 
+            text: result, added: true, 
             languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
             chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber};
         this.verseList.push(verseComponentsModel);
-
-        if(footnote == null){
-            return
-        }
-        this.addFootNotes(footnote,splitString[1])
     }
 
-    addFootNotes(notes,verseNum){
-        const noteData = notes.toString()
-        if(notes.length == 0) {
-            return 
-        }
-        // const fullStringNote = /((\\f\s+\+\s+\\fr\s+)(\d+\.\d+)(.*?)(\\f\*))/g
-        const fqTag = /((\\fr(.*?)\\fq\s+)(.*?)(\\ft))/g
-        const fullStringNote =/((\\fr(.*?)\\fq)((.*?)\\ft.*))/g
-        const fTag = /((\\f\s+\+)(.*?)(\\f\*))/g
-        const noteContent = noteData.replace(fTag,'$3')
+    // addFootNotes(notes,verseNum){
+    //     const noteData = notes.toString()
+    //     if(notes.length == 0) {
+    //         return 
+    //     }
+    //     // const fullStringNote = /((\\f\s+\+\s+\\fr\s+)(\d+\.\d+)(.*?)(\\f\*))/g
+    //     const fqTag = /((\\fr(.*?)\\fq\s+)(.*?)(\\ft))/g
+    //     const fullStringNote =/((\\fr(.*?)\\fq)((.*?)\\ft.*))/g
+    //     const fTag = /((\\f\s+\+)(.*?)(\\f\*))/g
+    //     const noteContent = noteData.replace(fTag,'$3')
 
-        // const foootNoteRef = noteData.replace(fullStringNote,'$3')
-        const footNotequotation = noteContent.replace(fullStringNote,'$5')
-        const foootNoteText = noteContent.replace(fqTag,'')
+    //     // const foootNoteRef = noteData.replace(fullStringNote,'$3')
+    //     const footNotequotation = noteContent.replace(fullStringNote,'$5')
+    //     const foootNoteText = noteContent.replace(fqTag,'')
 
-        // console.log("FOOTNOTE TEXT "+foootNoteText+" FOOTNOTE REFERENCE "+foootNoteRef+" FOOTNOTES QUOTATION "+footNotequotation)
-        var verseComponentsModel = {type:Constants.MarkerTypes.MARKER_FOOT_NOTES_QUOTATION, 
-        verseNumber:verseNum, 
-        text:footNotequotation, highlighted: false, added: true, 
-        languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
-        chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber};
-        this.verseList.push(verseComponentsModel)
+    //     // console.log("FOOTNOTE TEXT "+foootNoteText+" FOOTNOTE REFERENCE "+foootNoteRef+" FOOTNOTES QUOTATION "+footNotequotation)
+    //     var verseComponentsModel = {type:Constants.MarkerTypes.MARKER_FOOT_NOTES_QUOTATION, 
+    //     verseNumber:verseNum, 
+    //     text:footNotequotation, highlighted: false, added: true, 
+    //     languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
+    //     chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber};
+    //     this.verseList.push(verseComponentsModel)
 
-        var verseComponentsModel = {type:Constants.MarkerTypes.MARKER_FOOT_NOTES_TEXT, 
-            verseNumber:verseNum, 
-            text:foootNoteText, highlighted: false, added: true, 
-            languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
-            chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber};
-        this.verseList.push(verseComponentsModel)
+    //     var verseComponentsModel = {type:Constants.MarkerTypes.MARKER_FOOT_NOTES_TEXT, 
+    //         verseNumber:verseNum, 
+    //         text:foootNoteText, highlighted: false, added: true, 
+    //         languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
+    //         chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber};
+    //     this.verseList.push(verseComponentsModel)
 
-    }
+    // }
 
     addComponentsToChapter() {
         if (this.chapterList.length > 0) {
@@ -323,17 +328,10 @@ export default class USFMParser {
         if (mapResult == null) {
             return;
         }
-        const bookModel = {bookId: this.bookId, bookName: mapResult.book_name, bookNumber: mapResult.number, 
-            section: mapResult.section, chapterModels: this.chapterList}
+        const bookModel = {chapterModels: this.chapterList}
             return bookModel
-
-        // var versionModel = {versionName: this.versionName, versionCode: this.versionCode, bookModels: [],
-        //     source: this.source, license: this.license, year: this.year}
-        // versionModel.bookModels.push(bookModel);
-        // var languageModel = {languageCode: this.languageCode, languageName: this.languageName, versionModels: []}
-        // languageModel.versionModels.push(versionModel);
+       
         console.log("ADD BOOK : " +this.bookModel)
-        // DbQueries.addNewBook(bookModel, versionModel, languageModel);
     }
 
     addFormattingToLastVerse(line) {
@@ -345,7 +343,7 @@ export default class USFMParser {
 
     addFormattingToNextVerse(line) {
         var verseComponentsModel = {type: "", verseNumber: "", 
-            text: " " + line + " ", highlighted: false, added: false, 
+            text: " " + line + " ", added: false, 
             languageCode: this.languageCode, versionCode: this.versionCode, bookId: this.bookId, 
             chapterNumber: this.chapterList.length == 0 ? 1 : this.chapterList[this.chapterList.length - 1].chapterNumber};
         this.verseList.push(verseComponentsModel);

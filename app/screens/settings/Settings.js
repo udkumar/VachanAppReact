@@ -231,7 +231,7 @@ export default class Setting extends Component {
                 </CardItem>
               </TouchableOpacity>
             </Card>
-            
+          {/*             
             <Card>
               <TouchableOpacity onPress={()=>this.props.navigation.navigate('Hints')}>
                 <CardItem style={this.styles.cardItemStyle}>
@@ -240,7 +240,7 @@ export default class Setting extends Component {
                 </CardItem>
               </TouchableOpacity>
             </Card>
-            
+             */}
             <Card>
             <TouchableOpacity onPress={()=>this.props.navigation.navigate('About')}>
               <CardItem style={this.styles.cardItemStyle}>

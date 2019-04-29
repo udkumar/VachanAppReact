@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { Text, StyleSheet, View, FlatList, TextInput, ActivityIndicator} from 'react-native';
+import {Card} from 'native-base'
 
-
-
-export default class LanguagesList extends Component {
+export default class LanguageList extends Component {
 
     static navigationOptions = ({navigation}) => ({
         headerTitle: 'Languages',
@@ -17,10 +16,10 @@ export default class LanguagesList extends Component {
    
         isLoading: true,
         text: '',
-        languages:[]
-      
+        languages:[],
+        searchList:[]
       }
-   
+      
     }
    
     componentDidMount() {
@@ -35,6 +34,7 @@ export default class LanguagesList extends Component {
           this.setState({
             isLoading: false,
              languages: lanVer,
+             searchList:lanVer
             })
         
           // console.log("json data "+JSON.stringify(responseJson))
@@ -46,10 +46,22 @@ export default class LanguagesList extends Component {
         
     }
    
-    GetListViewItem (value) {
+    goToVersionScreen (value) {
      this.props.navigation.navigate('VersionList',  {languages: value });
     }
-    
+    SearchFilterFunction(text){
+      const newData = this.state.searchList.filter(function(item){
+          const itemData = item.language
+          const textData = text
+          return itemData.indexOf(textData) > -1
+      })
+      console.log("new DATA "+newData+" TEXT "+text)
+      this.setState({
+          text: text,
+          languages:newData
+      })
+  }
+  
     ListViewItemSeparator = () => {
       return (
         <View
@@ -67,27 +79,23 @@ export default class LanguagesList extends Component {
       console.log("lANGUAGES .....",this.state.languages)
       return (
         <View style={styles.MainContainer}>
-        {/* <TextInput 
-         style={styles.TextInputStyleClass}
-         onChangeText={(text) => this.SearchFilterFunction(text)}
-         value={this.state.text}
-         underlineColorAndroid='transparent'
-         placeholder="Search Here"
-          /> */}
+          <TextInput 
+           style={styles.TextInputStyleClass}
+           onChangeText={(text) => this.SearchFilterFunction(text)}
+           value={this.state.text}
+           underlineColorAndroid='transparent'
+           placeholder="Search Here"
+         />
           {this.state.languages.length > 0 ? 
           <FlatList 
             data={this.state.languages}
             extraData={this.state}
             renderItem={({item}) => (
-              <Text onPress={this.GetListViewItem.bind(this, item)}>{item.language}</Text>)
-            }
-            // renderRow={({rowData}) => <Text style={styles.rowViewContainer} 
-            // onPress={this.GetListViewItem.bind(this, rowData)}>{rowData}</Text>}
-   
-            // enableEmptySections={true}
-   
-            // style={{marginTop: 10}}
-   
+                <Card style={{padding:8}}>
+                  <Text onPress={this.goToVersionScreen.bind(this, item)}>{item.language}</Text>
+                </Card>
+            )}
+      
           />
           :null}
         </View>
@@ -98,11 +106,8 @@ export default class LanguagesList extends Component {
 const styles = StyleSheet.create({
  
     MainContainer :{
-    
-     justifyContent: 'center',
      flex:1,
-     margin: 7,
-    
+     margin:8
      },
     
     rowViewContainer: {
@@ -111,9 +116,11 @@ const styles = StyleSheet.create({
      },
     
      TextInputStyleClass:{
-           
+      // position:'absolute',
+      // top:0,
       textAlign: 'center',
       height: 40,
+
       borderWidth: 1,
       borderColor: '#009688',
       borderRadius: 7 ,

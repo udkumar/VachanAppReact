@@ -11,7 +11,7 @@ class DrawerScreen extends Component {
 
     const iconName = [
       {icon:'local-library',pressIcon:'Bible',},
-      {icon:'history',pressIcon:'History'},
+      {icon:'info',pressIcon:'About'},
       {icon:'search',pressIcon:'Search'},
       {icon:'settings',pressIcon:'Settings'},
       {icon:'map',pressIcon:'GoogleMaps'},

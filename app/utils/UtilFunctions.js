@@ -29,6 +29,19 @@ export function getBookNumberFromMapping(bookId) {
     return null;
 }
 
+export function getBookSectionFromMapping(bookId) {
+    var obj = id_name_map.id_name_map;
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            if (key == bookId) {
+                var val = obj[key];
+                return val.section;
+            }
+        }
+    }
+    return null;
+}
+
 export function getResultText(text) {
     if (text == null) {
         return "";

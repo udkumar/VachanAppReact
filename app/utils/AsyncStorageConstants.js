@@ -11,7 +11,8 @@ module.exports = {
         BookId:'book_id',
         BookName:'book_name',
         BackupRestoreEmail:'backup_restore_email',
-        ChapterNumber:"chapter_number"
+        ChapterNumber:"chapter_number",
+        versionId:'version_id'
 
     },
     Values: {
@@ -27,20 +28,20 @@ module.exports = {
         VerseInLine:false,
 
         LastReadReference: {
-            languageCode:'ENG',
-            versionCode:'ULT',
+            languageCode:'Hindi',
+            versionCode:'IRV',
             bookId:'GEN',
             chapterNumber:1,
         },
 
-        DefLanguageCode:'ENG',
-        DefLanguageName:'English',
-        DefVersionCode:'ULT',
-        DefVersionName:'unfoldingWord Literal Text',
+        DefLanguageCode:'Hin',
+        DefLanguageName:'Hindi',
+        DefVersionCode:'IRV',
+        DefVersionName:'Indian Revised Version',
         DefBookId:'GEN',
         DefBookName:'Genesis',
-        DefBookChapter:1
-
+        DefBookChapter:1,
+        versionId:2,
        
     }
 }

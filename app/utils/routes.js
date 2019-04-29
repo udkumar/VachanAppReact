@@ -17,14 +17,12 @@ import Splash from '../screens/Splash/Splash'
 import ReferenceSelection from '../screens/numberSelection/ReferenceSelection'
 import ChapterSelection from '../screens/numberSelection/ChapterSelection'
 import Hints from '../screens/Hints/Hints'
-import Language from '../screens/Language/Language'
+// import Language from '../screens/Language/Language'
 import DownloadLanguage from '../screens/Downloads/DownloadLanguage'
 import DownloadVersion from '../screens/Downloads/DownloadVersion'
 import BackupRestore from '../screens/backup/BackupRestore'
 import DrawerScreen from '../screens/DrawerScreen/DrawerScreen'
 import  Bible from '../screens/Bible'
-import languagelist from '../screens/LanguagesList'
-import VersionList from'../screens/Versionlist'
 const AsyncStorageConstants = require('./AsyncStorageConstants')
 import AsyncStorageUtil from './AsyncStorageUtil';
 import {nightColors, dayColors, constColors} from './colors.js'
@@ -40,6 +38,8 @@ import Audio from '../screens/Audio'
 import BottomTab from '../screens/Bible/BottomTab'
 import GoogleMaps from  '../screens/GoogleMaps'
 import Images from '../screens/Images'
+import LanguageList from '../screens/LanguageList' 
+import  VersionList from "../screens/VersionList";
 
 const DrawerNavigate = (styles) => DrawerNavigator({
   // Signin:{
@@ -138,9 +138,9 @@ const StackNavigate = StackNavigator(
       Hints: {
         screen: Hints,
       },
-      Language:{
-        screen:Language
-      },
+      // Language:{
+      //   screen:Language
+      // },
       DownloadLanguage: {
         screen: DownloadLanguage
       },
@@ -168,6 +168,13 @@ const StackNavigate = StackNavigator(
       Images:{
         screen:Images
       },
+      LanguageList:{
+        screen:LanguageList
+      },
+      VersionList:{
+        screen:VersionList
+      },
+
       // SignupWithGoogle:{
       //   screen:SignupWithGoogle
       //     },
@@ -218,7 +225,8 @@ export default class App extends Component {
         colorFile:dayColors,
         sizeFile:mediumFont,
         verseInLine:false,
-        lastRead:{}
+        lastRead:{},
+        versionId:2
     }
     //update booklist for showing book on selectBook screen
     this.updateBookList = this.updateBookList.bind(this)
@@ -234,10 +242,11 @@ export default class App extends Component {
     this.updateLastRead = this.updateLastRead.bind(this)
     //update language on language change from language change ot read another language page
     this.updateLanguage  = this.updateLanguage.bind(this)
-    //update book data for current reading chapter book id and book name form selected langauge and version from download version or language page 
+    //update book data for current reading chapter book id and book name from selected langauge and version from download version or language page 
     this.updateBookData  = this.updateBookData.bind(this)
 
     this.updateChapterData = this.updateChapterData.bind(this)
+    this.updateVersionId = this.updateVersionId.bind(this) 
 
     this.styles = styleFile(this.state.colorFile,this.state.sizeFile)
     this.DrawerNavigate = DrawerNavigate(this.styles)
@@ -269,6 +278,9 @@ export default class App extends Component {
   }
   updateBookData = (bookId,bookName,chapterNumber) =>{
     this.setState({bookId,bookName,chapterNumber})
+  }
+  updateVersionId = ( versionId)=>{
+    this.setState({versionId})
   }
 
 
@@ -327,14 +339,14 @@ export default class App extends Component {
   }
 
   updateLanguage = async(languageCode,languageName,versionCode,versionName) =>{
-    // console.log("in ROTES update language")
+    console.log("in ROTES update language"+languageCode+" "+languageName+" "+versionCode+" "+versionName)
     this.setState({languageCode, languageName,versionCode,versionName})
 
-    let models = await DbQueries.queryBookIdModels(versionCode, languageCode)
-      console.log("ROUTES LENGTH =" + JSON.stringify(models))
-      if (models && models.length > 0) {
-        this.setState({booksList: models})
-      }
+    // let models = await DbQueries.queryBookIdModels(versionCode, languageCode)
+    //   console.log("ROUTES LENGTH =" + JSON.stringify(models))
+    //   if (models && models.length > 0) {
+    //     this.setState({booksList: models})
+    //   }
 
   }
  
@@ -361,6 +373,7 @@ export default class App extends Component {
           chapterNumber:this.state.chapterNumber,
           lastRead:this.state.lastRead,
           userFoto:this.state.userFoto,
+          versionId:this.state.versionId,
 
           updateColor: this.updateColor,
           updateSize: this.updateSize,
@@ -370,7 +383,8 @@ export default class App extends Component {
           updateLastRead: this.updateLastRead,
           updateLanguage: this.updateLanguage,
           updateBookData: this.updateBookData,
-          updateUserInfo: this.updateUserInfo
+          updateUserInfo: this.updateUserInfo,
+          updateVersionId:this.updateVersionId
 
         }}
       />
@@ -391,13 +405,15 @@ export default class App extends Component {
       AsyncStorageConstants.Keys.VersionName,
       AsyncStorageConstants.Keys.BookId,
       AsyncStorageConstants.Keys.BookName,
-      AsyncStorageConstants.Keys.ChapterNumber
+      AsyncStorageConstants.Keys.ChapterNumber,
+      AsyncStorageConstants.Keys.versionId,
 
     ])
-    
+    console.log("res of asynstorage value "+JSON.stringify(res))
     if (res == null) {
       return
-    }+
+
+    }
 
     console.log("ROUTES.... color mode "+res[0][1])
     this.setState({sizeMode: res[1][1] == null ? AsyncStorageConstants.Values.SizeModeNormal : parseInt(res[1][1])}, ()=> {
@@ -437,7 +453,8 @@ export default class App extends Component {
       versionName:  res[6][1] == null ? AsyncStorageConstants.Values.DefVersionName : res[6][1],
       bookId: res[7][1] == null ? AsyncStorageConstants.Values.DefBookId:res[7][1],
       bookName: res[8][1] == null ? AsyncStorageConstants.Values.DefBookName:res[8][1],
-      chapterNumber: res[8][1] == null ? AsyncStorageConstants.Values.DefBookChapter:parseInt(res[9][1])
+      chapterNumber: res[9][1] == null ? AsyncStorageConstants.Values.DefBookChapter:parseInt(res[9][1]),
+      versionId:res[10][1] == null ? AsyncStorageConstants.Values.DefBookChapter:parseInt(res[10][1])
     }, async ()=> {
       // let models = await DbQueries.queryBookIdModels(this.state.versionCode, this.state.languageCode);
       // this.setState({isDbLoading: false})
