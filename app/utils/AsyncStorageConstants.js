@@ -41,7 +41,7 @@ module.exports = {
         DefBookId:'GEN',
         DefBookName:'Genesis',
         DefBookChapter:1,
-        versionId:2,
+        DefVersionId:2,
        
     }
 }

@@ -18,7 +18,7 @@ export default class About extends Component {
     this.styles = aboutPage(props.screenProps.colorFile, props.screenProps.sizeFile);   
   }
   render() {
-    const bulletIcon = '\u2022  '
+    const bulletIcon = '\u2022'
     return (
       <ScrollView  contentContainerStyle={this.styles.container} >
       <View style={this.styles.textContainer} >

@@ -226,7 +226,7 @@ export default class App extends Component {
         sizeFile:mediumFont,
         verseInLine:false,
         lastRead:{},
-        versionId:2
+        versionId:AsyncStorageConstants.Values.DefVersionId
     }
     //update booklist for showing book on selectBook screen
     this.updateBookList = this.updateBookList.bind(this)
@@ -454,7 +454,7 @@ export default class App extends Component {
       bookId: res[7][1] == null ? AsyncStorageConstants.Values.DefBookId:res[7][1],
       bookName: res[8][1] == null ? AsyncStorageConstants.Values.DefBookName:res[8][1],
       chapterNumber: res[9][1] == null ? AsyncStorageConstants.Values.DefBookChapter:parseInt(res[9][1]),
-      versionId:res[10][1] == null ? AsyncStorageConstants.Values.DefBookChapter:parseInt(res[10][1])
+      versionId:res[10][1] == null ? AsyncStorageConstants.Values.DefVersionId:parseInt(res[10][1])
     }, async ()=> {
       // let models = await DbQueries.queryBookIdModels(this.state.versionCode, this.state.languageCode);
       // this.setState({isDbLoading: false})

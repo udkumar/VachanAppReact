@@ -253,9 +253,8 @@ export default class Bible extends Component {
             if(key.toUpperCase() == this.state.bookId){
               var bookData =  parsedData.parseFile(responseJson[key],this.state.currentVisibleChapter)
               this.setState({
-                modelData:bookData.chapterModels,
+                modelData:bookData,
               })
-              console.log("book data ........||||"+JSON.stringify(bookData))
             }
           })
           var bookList  = {bookId: key.toUpperCase(),bookName: getBookNameFromMapping(key.toUpperCase()),
@@ -327,7 +326,7 @@ export default class Bible extends Component {
               this.setState({isBookmark: this.state.bookmarksList.indexOf(this.state.currentVisibleChapter) > -1}, () => {
                 this.props.navigation.setParams({
                     isBookmark: this.state.isBookmark,
-                    dataLength: model[0].chapterModels.length
+                    // dataLength: model[0].chapterModels.length
                 })      
               })
         })
@@ -501,14 +500,14 @@ export default class Bible extends Component {
         currentVisibleChapter: currChapter,
         isBookmark: this.state.bookmarksList.findIndex(chapInd => chapInd.chapterNumber === currChapter) > -1 ? true : false
       }, () => {
-
             this.props.navigation.setParams({
                 isBookmark: this.state.isBookmark,
                 currentChapter:this.state.currentVisibleChapter,
-                dataLength:this.state.modelData.length
+                // dataLength:this.state.modelData.length
             })
             this.scrollViewRef.scrollTo({x: 0, y: 0, animated: false})
         })
+        this.queryBookFromAPI()
   }
 
   openLanguages = ()=>{
@@ -535,7 +534,7 @@ export default class Bible extends Component {
     })
   }
   render() {
-    // console.log("bookmark "+this.state.isBookmark )
+    // console.log("model data ... "+this.state.modelData.length == null ?  null : this.state.modelData.length)
     const thumbSize = this.state.thumbSize;
       return (
         <View style={this.styles.container} >
