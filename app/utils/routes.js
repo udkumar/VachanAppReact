@@ -174,7 +174,6 @@ const StackNavigate = StackNavigator(
       VersionList:{
         screen:VersionList
       },
-
       // SignupWithGoogle:{
       //   screen:SignupWithGoogle
       //     },

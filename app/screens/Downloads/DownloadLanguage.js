@@ -3,11 +3,9 @@ import {
     Text, StyleSheet, View, ListView, TextInput, ActivityIndicator, Alert,
   NetInfo
 } from 'react-native';
-import DownloadUtil from '../../utils/DownloadUtil'
 import {Card, CardItem} from 'native-base'
 import {downloadPageStyle} from './styles.js'
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import bible_data from '../../assets/TestLangApi.json'
 
 
 

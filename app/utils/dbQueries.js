@@ -6,6 +6,7 @@ import BookModel from '../models/BookModel'
 import ChapterModel from '../models/ChapterModel'
 import VerseComponentsModel from '../models/VerseComponentsModel'
 import NoteModel from '../models/NoteModel';
+import dbHelper from './dbHelper';
 
 class DbQueries {
 
@@ -41,13 +42,7 @@ class DbQueries {
             return DbHelper.queryHighlights(langCode, verCode, bookId,chapterNumber);
     }
 
-    // queryHighlights(verCode: string, langCode: string) {
-    //     return DbHelper.queryHighlights(verCode, langCode);
-    // }
-
-    // updateHighlightsInBook(model, chapterIndex, verseIndex, isHighlight) {
-    //     return DbHelper.updateHighlightsInBook(model, chapterIndex, verseIndex, isHighlight)
-    // }
+  
 
     insert(model, value) {
         DbHelper.insert(model, value);
@@ -57,16 +52,11 @@ class DbQueries {
         DbHelper.insertNewBook(bookModel, versionModel, languageModel);
     }
 
-    // updateHighlightsInVerse(langCode, verCode, bookId, chapterNumber, verseNumber, isHighlight) {
-    //     DbHelper.updateHighlightsInVerse(langCode, verCode, bookId, chapterNumber, verseNumber, isHighlight);
-    // }
     updateHighlightsInVerse(langCode, verCode, bookId, chapterNumber, verseNumber, isHighlight) {
         DbHelper.updateHighlightsInVerse(langCode, verCode, bookId, chapterNumber, verseNumber, isHighlight);
     }
 
-    // updateBookmarkInBook(model, chapterNumber, isBookmark) {
-    //     DbHelper.updateBookmarkInBook(model, chapterNumber, isBookmark);
-    // }
+   
     updateBookmarkInBook(langCode,verCode,bId,chapterNumber, isBookmark) {
         DbHelper.updateBookmarkInBook(langCode,verCode,bId,chapterNumber, isBookmark);
     }
@@ -112,6 +102,14 @@ class DbQueries {
 
     queryVersions() {
         return DbHelper.query('VersionModel');
+    }
+
+    // add list of languages to db
+    addLangaugeList(langName,langCode){
+        dbHelper.addLangaugeList(langName,langCode)
+    }
+    getLangaugeList(){
+        dbHelper.getLangaugeList()
     }
 }
 

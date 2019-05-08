@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Text, StyleSheet, View, FlatList, TextInput, ActivityIndicator} from 'react-native';
 import {Card} from 'native-base'
-
+import dbQueries from '../../utils/dbQueries'
+import APIFetch from '../../utils/APIFetch'
 export default class LanguageList extends Component {
 
     static navigationOptions = ({navigation}) => ({
@@ -22,33 +23,37 @@ export default class LanguageList extends Component {
       
     }
    
-    componentDidMount() {
-   
-      return fetch('https://stagingapi.autographamt.com/app/languages')
-        .then((response) => response.json())
-        .then((responseJson) => {
-          var lanVer = []
-          for(var key in responseJson){
-            lanVer.push({"language":key,"languageCode":responseJson[key]})
-          }
-          this.setState({
-            isLoading: false,
-             languages: lanVer,
-             searchList:lanVer
-            })
-        
-          // console.log("json data "+JSON.stringify(responseJson))
-        
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+     componentDidMount() {
+      const languageRes = APIFetch.getLanguages()
+      console.log("langauge response "+languageRes)
+
+    //   return fetch('https://stagingapi.autographamt.com/app/languages')
+    //     .then((response) => response.json())
+    //     .then((responseJson) => {
+    //       var lanVer = []
+    //       for(var key in responseJson){
+    //         lanVer.push({"language":key,"languageCode":responseJson[key]})
+    //         // dbQueries.addLangaugeList(key,responseJson[key])
+    //       }
+    //       this.setState({
+    //         isLoading: false,
+    //          languages: lanVer,
+    //          searchList:lanVer
+    //         })
+    //       dbQueries.getLangaugeList()
+    //       // console.log("language list "+langList)
+    //       // console.log("json data "+JSON.stringify(responseJson))
+    //     })
+    //     .catch((error) => {
+    //       console.error(error);
+    //     });
         
     }
    
     goToVersionScreen (value) {
      this.props.navigation.navigate('VersionList',  {languages: value });
     }
+
     SearchFilterFunction(text){
       const newData = this.state.searchList.filter(function(item){
           const itemData = item.language
@@ -76,7 +81,7 @@ export default class LanguageList extends Component {
    
    
     render() {
-      console.log("lANGUAGES .....",this.state.languages)
+      // console.log("lANGUAGES .....",this.state.languages)
       return (
         <View style={styles.MainContainer}>
           <TextInput 

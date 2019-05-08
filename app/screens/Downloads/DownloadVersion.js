@@ -8,7 +8,6 @@ import {
   ActivityIndicator,
   NetInfo
 } from 'react-native';
-import DownloadUtil from '../../utils/DownloadUtil'
 import {Card, CardItem} from 'native-base'
 var RNFS = require('react-native-fs');
 import { zip, unzip, unzipAssets, subscribe } from 'react-native-zip-archive'
@@ -20,7 +19,6 @@ import { Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
 
-import bible_data from '../../assets/TestLangApi.json'
 import { NavigationActions } from 'react-navigation';
 
 export default class DownloadVersion extends Component {

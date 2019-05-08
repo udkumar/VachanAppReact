@@ -14,7 +14,7 @@ import {createResponder } from 'react-native-gesture-responder';
 
 import DbQueries from '../../utils/dbQueries'
 import VerseView from './VerseView'
-import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
+import USFMChapterParser from '../../utils/USFMChapterParser';
 import AsyncStorageConstants from '../../utils/AsyncStorageConstants';
 const Constants = require('../../utils/constants')
 
@@ -28,7 +28,10 @@ import { styles } from './styles.js';
 import id_name_map from '../../assets/mappings.json'
 
 import BottomTab from './BottomTab'
-import USFMParser from '../../utils/USFMParser'
+
+import APIFetch from '../../utils/APIFetch'
+
+
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -241,36 +244,38 @@ export default class Bible extends Component {
       console.log("VERASION ID IN BIBLE PAGE")
       return
     }
-      return fetch('https://stagingapi.autographamt.com/app/content/'+this.state.versionId)
-      // return fetch('https://stagingapi.autographamt.com/app/content/2')
-      .then((response) => response.json())
-      .then((responseJson) => {
-        const parsedData =  new USFMParser()
-        var bookListData = []
+    var bibleContent = APIFetch.getContent(this.state.versionId)
+    console.log("bible content "+JSON.stringify(bibleContent))
+    //   return fetch('https://stagingapi.autographamt.com/app/content/'+this.state.versionId)
+    //   .then((response) => response.json())
+    //   .then((responseJson) => {
+    //     console.log("usfm file data "+JSON.stringify(responseJson))
+    //     const parsedData =  new USFMChapterParser()
+    //     var bookListData = []
 
-        for(var key in responseJson){
-          this.setState({isLoading:true},()=>{
-            if(key.toUpperCase() == this.state.bookId){
-              var bookData =  parsedData.parseFile(responseJson[key],this.state.currentVisibleChapter)
-              this.setState({
-                modelData:bookData,
-              })
-            }
-          })
-          var bookList  = {bookId: key.toUpperCase(),bookName: getBookNameFromMapping(key.toUpperCase()),
-            section:getBookSectionFromMapping(key.toUpperCase()),bookNumber:getBookNumberFromMapping(key.toUpperCase()),
-            languageCode: this.state.languageCode, versionCode:this.state.versionCode, numOfChapters:50}
-            bookListData.push(bookList)
-      }
-      var result = bookListData.sort(function(a, b) {
-        return parseFloat(a.bookNumber) - parseFloat(b.bookNumber);  
-      });
-      this.props.screenProps.updateBookList(result)
-    },
-    )
-      .catch((error) => {
-        console.error(error);
-      });
+    //     for(var key in responseJson){
+    //       this.setState({isLoading:true},()=>{
+    //         if(key.toUpperCase() == this.state.bookId){
+    //           var bookData =  parsedData.parseFile(responseJson[key],this.state.currentVisibleChapter)
+    //           this.setState({
+    //             modelData:bookData,
+    //           })
+    //         }
+    //       })
+    //       var bookList  = {bookId: key.toUpperCase(),bookName: getBookNameFromMapping(key.toUpperCase()),
+    //         section:getBookSectionFromMapping(key.toUpperCase()),bookNumber:getBookNumberFromMapping(key.toUpperCase()),
+    //         languageCode: this.state.languageCode, versionCode:this.state.versionCode, numOfChapters:50}
+    //         bookListData.push(bookList)
+    //   }
+    //   var result = bookListData.sort(function(a, b) {
+    //     return parseFloat(a.bookNumber) - parseFloat(b.bookNumber);  
+    //   });
+    //   this.props.screenProps.updateBookList(result)
+    // },
+    // )
+      // .catch((error) => {
+      //   console.error(error);
+      // });
     
  
 

@@ -25,7 +25,7 @@ class DbHelper {
     async getRealm() {
     	try {
     		return await Realm.open({
-				schemaVersion: 1,
+				schemaVersion: 2,
 				// deleteRealmIfMigrationNeeded: true, 
 				path:
 					Platform.OS === 'ios'
@@ -102,17 +102,6 @@ class DbHelper {
 		}
 		return null;
 	}
-	// async queryHighlights(verCode: string, langCode: string) {
-	// 	let realm = await this.getRealm();
-    // 	if (realm) {
-	// 		let result1 = realm.objects("VerseComponentsModel");
-	// 		result1 = result1.filtered('languageCode ==[c] "' + langCode + 
-	// 			'" && versionCode ==[c] "' + verCode + '"');
-	// 		result1 = result1.filtered('highlighted == true')
-	// 		return result1;//.distinct('verseNumber', 'chapterNumber', 'bookId');
-	// 	}
-	// 	return null;
-	// }
 	async queryHighlights(langCode, verCode, bookId){
 		let realm = await this.getRealm();
 					if (realm){
@@ -196,17 +185,6 @@ class DbHelper {
             }
 	  	}
 	}
-
-	// async updateHighlightsInBook(model, chapterIndex, verseIndex, isHighlight) {
-	// 	let realm = await this.getRealm();
-	// 	if (realm) {
-	// 		realm.write(() => {
-				
-	// 			// model[chapterIndex].verseComponentsModels[verseIndex].highlighted = isHighlight				
-	// 			console.log("update highlight complete..")
-	// 		});
-	// 	  }
-	// }
 
 	async queryBookIdModels(verCode: string, langCode: string) {
 		let realm = await this.getRealm();
@@ -359,7 +337,37 @@ class DbHelper {
 			console.log("language deleted")
 		})
 	}
-	
+	//add langauge list from api to db 
+	async addLangaugeList(langName,langCode){
+		// console.log("langauge list in db helper "+JSON.stringify(langName)+" language code "+JSON.stringify(langCode))
+		let realm = await this.getRealm();
+		// let code = resultsA.filtered('languageCode == [c] "' + langCode + '"')
+		if(realm){
+			try {
+				realm.write(() => {
+				  realm.create('LanguageModel', {languageCode:langCode, languageName: langName});
+				});
+			  } catch (e) {
+				console.log("Error on creation "+e)
+			  }
+		}
+	}
+	async getLangaugeList(){
+		console.log(" GET LANGAUGE ")
+		let realm = await this.getRealm();
+		if(realm){
+			try {
+				realm.write(() => {
+					let result = realm.objects("LanguageModel");
+					console.log("result "+JSON.stringify(result))
+
+				});
+			  } catch (e) {
+				console.log("Error on  "+e)
+			  }
+			// console.log(" GET LANGAUGE if ")
+		}
+	}
 }
 
 export default new DbHelper();

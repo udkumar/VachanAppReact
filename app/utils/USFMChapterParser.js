@@ -3,7 +3,7 @@ const Constants = require('./constants')
 
 var RNFS = require('react-native-fs');
 
-export default class USFMParser {
+export default class USFMChapterParser {
 
     constructor() {
         this.bookId = null;
@@ -110,7 +110,6 @@ export default class USFMParser {
                 }
             }
         }
-
         return true;
     }
 
