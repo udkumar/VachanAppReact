@@ -9,7 +9,6 @@ import {
   NetInfo
 } from 'react-native';
 import {Card, CardItem} from 'native-base'
-var RNFS = require('react-native-fs');
 import { zip, unzip, unzipAssets, subscribe } from 'react-native-zip-archive'
 
 import {downloadPageStyle} from './styles.js'

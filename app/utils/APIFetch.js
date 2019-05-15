@@ -1,15 +1,11 @@
-
 import ApiUtils from './ApiUtils'
-import timestamp from '../assets/timestamp'
+// import timestamp from '../assets/timestamp'
 const API_BASE_URL = 'https://stagingapi.autographamt.com/app/'
-const LANGUAGE = "language"
-const VERSION = "version"
-const CONTENT = "content"
 
-var DownloadUtil = {
+var APIFetch = {
     async getLanguages() {
         try {
-            return await fetch(API_BASE_URL + LANGUAGE, {  
+            return await fetch(API_BASE_URL + "languages", {  
               method: 'GET',
               headers: {
                 'Accept': 'application/json',
@@ -25,8 +21,8 @@ var DownloadUtil = {
     },
 
     async getVersions() {
-        try {
-            return await fetch(API_BASE_URL + VERSION, {  
+        try {      
+            return await fetch(API_BASE_URL + "versions", {  
               method: 'GET',
               headers: {
                 'Accept': 'application/json',
@@ -42,7 +38,7 @@ var DownloadUtil = {
     },
     async getContent(versionId) {
         try {
-            return await fetch(API_BASE_URL + CONTENT, {  
+            return await fetch(API_BASE_URL + "content" +'/'+ versionId, {  
               method: 'GET',
               headers: {
                 'Accept': 'application/json',
@@ -57,4 +53,4 @@ var DownloadUtil = {
         }
     },
 }
-export default DownloadUtil;
+export default APIFetch;

@@ -8,6 +8,7 @@ LanguageModel.schema = {
     primaryKey: 'languageCode',
     properties: {
     	languageCode: 'string',
-    	languageName: 'string',
+        languageName: 'string',
+        versionModels: 'VersionModel[]'
     }
 };

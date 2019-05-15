@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, StyleSheet, View, FlatList, TextInput, ActivityIndicator} from 'react-native';
+import { Text, StyleSheet, View, FlatList, TextInput, ActivityIndicator,TouchableOpacity} from 'react-native';
 import {Card} from 'native-base'
 import dbQueries from '../../utils/dbQueries'
 import APIFetch from '../../utils/APIFetch'
@@ -15,7 +15,7 @@ export default class LanguageList extends Component {
    
       this.state = {
    
-        isLoading: true,
+        isLoading: false,
         text: '',
         languages:[],
         searchList:[]
@@ -23,31 +23,22 @@ export default class LanguageList extends Component {
       
     }
    
-     componentDidMount() {
-      const languageRes = APIFetch.getLanguages()
+    async  componentDidMount() {
+      this.setState({isLoading:true})
+      const languageRes = await APIFetch.getLanguages()
       console.log("langauge response "+languageRes)
-
-    //   return fetch('https://stagingapi.autographamt.com/app/languages')
-    //     .then((response) => response.json())
-    //     .then((responseJson) => {
-    //       var lanVer = []
-    //       for(var key in responseJson){
-    //         lanVer.push({"language":key,"languageCode":responseJson[key]})
-    //         // dbQueries.addLangaugeList(key,responseJson[key])
-    //       }
-    //       this.setState({
-    //         isLoading: false,
-    //          languages: lanVer,
-    //          searchList:lanVer
-    //         })
-    //       dbQueries.getLangaugeList()
-    //       // console.log("language list "+langList)
-    //       // console.log("json data "+JSON.stringify(responseJson))
-    //     })
-    //     .catch((error) => {
-    //       console.error(error);
-    //     });
-        
+      var lanVer = []
+          for(var key in languageRes){
+            lanVer.push({"languageName":key,"languageCode":languageRes[key]})
+            // dbQueries.addLangaugeList(key,responseJson[key])
+          }
+          this.setState({
+            isLoading: false,
+             languages: lanVer,
+             searchList: lanVer
+            })
+          // dbQueries.getLangaugeList()
+        this.setState({isLoading:false})
     }
    
     goToVersionScreen (value) {
@@ -56,8 +47,8 @@ export default class LanguageList extends Component {
 
     SearchFilterFunction(text){
       const newData = this.state.searchList.filter(function(item){
-          const itemData = item.language
-          const textData = text
+          const itemData = item.languageName
+          const textData = text.toLowerCase()
           return itemData.indexOf(textData) > -1
       })
       console.log("new DATA "+newData+" TEXT "+text)
@@ -96,9 +87,11 @@ export default class LanguageList extends Component {
             data={this.state.languages}
             extraData={this.state}
             renderItem={({item}) => (
+              <TouchableOpacity  onPress={this.goToVersionScreen.bind(this, item)}>
                 <Card style={{padding:8}}>
-                  <Text onPress={this.goToVersionScreen.bind(this, item)}>{item.language}</Text>
+                  <Text >{item.languageName}</Text>
                 </Card>
+              </TouchableOpacity >
             )}
       
           />
@@ -134,4 +127,3 @@ const styles = StyleSheet.create({
       }
     
    });
-   

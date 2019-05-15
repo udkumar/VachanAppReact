@@ -78,7 +78,6 @@ export default class SelectBook extends Component {
         OTSize:this.getOTSize(props.screenProps.booksList),
         NTSize:this.getNTSize(props.screenProps.booksList)
       })
-    console.log("OT SIZE " +this.state.OTSize)
    
     this.styles = SelectBookPageStyle(props.screenProps.colorFile, props.screenProps.sizeFile);   
   }

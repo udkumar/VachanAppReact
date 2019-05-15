@@ -25,7 +25,7 @@ class DbHelper {
     async getRealm() {
     	try {
     		return await Realm.open({
-				schemaVersion: 2,
+				schemaVersion: 3,
 				// deleteRealmIfMigrationNeeded: true, 
 				path:
 					Platform.OS === 'ios'
@@ -51,7 +51,6 @@ class DbHelper {
 			}
 			return results;
 		}
-		
 		return null;
 	}
 

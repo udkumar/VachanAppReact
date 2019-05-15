@@ -18,8 +18,8 @@ import ReferenceSelection from '../screens/numberSelection/ReferenceSelection'
 import ChapterSelection from '../screens/numberSelection/ChapterSelection'
 import Hints from '../screens/Hints/Hints'
 // import Language from '../screens/Language/Language'
-import DownloadLanguage from '../screens/Downloads/DownloadLanguage'
-import DownloadVersion from '../screens/Downloads/DownloadVersion'
+// import DownloadLanguage from '../screens/Downloads/DownloadLanguage'
+// import DownloadVersion from '../screens/Downloads/DownloadVersion'
 import BackupRestore from '../screens/backup/BackupRestore'
 import DrawerScreen from '../screens/DrawerScreen/DrawerScreen'
 import  Bible from '../screens/Bible'
@@ -63,7 +63,6 @@ const DrawerNavigate = (styles) => DrawerNavigator({
 );
 
 const MenuIcon = (navigation) => {
-      console.log("navigation of drawer "+JSON.stringify(navigation))
       return (
           <Icon 
             name="dehaze"  
@@ -141,12 +140,12 @@ const StackNavigate = StackNavigator(
       // Language:{
       //   screen:Language
       // },
-      DownloadLanguage: {
-        screen: DownloadLanguage
-      },
-      DownloadVersion: {
-        screen: DownloadVersion
-      },
+      // DownloadLanguage: {
+      //   screen: DownloadLanguage
+      // },
+      // DownloadVersion: {
+      //   screen: DownloadVersion
+      // },
       Search: {
         screen: Search,
       },

@@ -6,13 +6,12 @@ export default class VersionModel extends Realm.Object {}
 VersionModel.schema = {
     name: 'VersionModel',
     properties: {
-		languageCode:'string',
     	versionName: 'string',
     	versionCode: 'string',
     	// bookModels: 'BookModel[]',
     	source: 'string',
     	license: 'string',
     	year: 'int',
-        // versionOwner: {type: 'linkingObjects', objectType: 'LanguageModel', property: 'versionModels' }
+        versionOwner: {type: 'linkingObjects', objectType: 'LanguageModel', property: 'versionModels' }
     }
 };

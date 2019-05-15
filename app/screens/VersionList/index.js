@@ -3,13 +3,15 @@ import { ActivityIndicator, Text,TouchableOpacity ,Alert,FlatList,View} from 're
 import {Card} from 'native-base'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil'
 import AsyncStorageConstants from '../../utils/AsyncStorageConstants'
+import APIFetch from '../../utils/APIFetch'
+
 
 export default class VersionList extends Component {
     constructor(props) {
         super(props);
         console.log("propsvalues........."+JSON.stringify(this.props.navigation.state.params))
         this.state = {
-          langaugeProp:this.props.navigation.state.params ? this.props.navigation.state.params.languages.language : null,
+          langaugeProp:this.props.navigation.state.params ? this.props.navigation.state.params.languages.languageName : null,
           versionData:[],
           isLoading:false
         }
@@ -20,35 +22,31 @@ export default class VersionList extends Component {
     _onLongPressButton =()=> {
       this.props.screenProps.Navigatehome()
     }
-    componentDidMount(){
-      return fetch('https://stagingapi.autographamt.com/app/versions')
-        .then((response) => response.json())
-        .then((responseJson) => {
-          var data = []
-          for(var key in responseJson.bible){
-              if(key == this.state.langaugeProp){
-                console.log("VERSION RESPONSE KEY"+JSON.stringify(responseJson.bible[key]))
-                data.push(responseJson.bible[key])
-              }
+    async componentDidMount(){
+      this.setState({isLoading:true})
+      const versionRes = await APIFetch.getVersions()
+      var data = []
+      for(var key in versionRes.bible){
+          if(key == this.state.langaugeProp){
+            console.log("VERSION RESPONSE KEY"+JSON.stringify(versionRes.bible[key]))
+            data.push(versionRes.bible[key])
           }
-          this.setState({
-            isLoading: false,
-            versionData:data
-            })
+      }
+      this.setState({
+        isLoading: false,
+        versionData:data
         })
-        .catch((error) => {
-          console.error(error);
-        });
+     
     }
   
     fetchContent =(versionInfo)=>{
       for(var versionCode in versionInfo){
         console.log("version info "+versionCode)
-        this.props.screenProps.updateLanguage(this.props.navigation.state.params.languages.languageCode,this.props.navigation.state.params.languages.language,versionCode,"Indian Revised Version")
+        this.props.screenProps.updateLanguage(this.props.navigation.state.params.languages.languageCode,this.props.navigation.state.params.languages.languageName,versionCode,"Indian Revised Version")
         this.props.navigation.navigate('Bible',{versionId:versionInfo[versionCode].version_id})
         this.props.screenProps.updateVersionId(versionInfo[versionCode].version_id)
         AsyncStorageUtil.setAllItems([[AsyncStorageConstants.Keys.LanguageCode, this.props.navigation.state.params.languages.languageCode],
-          [AsyncStorageConstants.Keys.LanguageName,this.props.navigation.state.params.languages.language],
+          [AsyncStorageConstants.Keys.LanguageName,this.props.navigation.state.params.languages.languageName],
           [AsyncStorageConstants.Keys.VersionCode,versionCode],
           [AsyncStorageConstants.Keys.VersionName,"Indian Revised Version"]
         ]);
@@ -56,12 +54,9 @@ export default class VersionList extends Component {
     
   }
   render() {
+    console.log("version data "+JSON.stringify(this.state.versionData))
     return (
       <View style={{flex:1}}>
-      {
-        this.state.isLoading ? <ActivityIndicator/>  :null
-      }
-      
       {
          this.state.versionData.length > 0 ?  
          this.state.versionData.map((item)=>{
@@ -73,7 +68,10 @@ export default class VersionList extends Component {
           </TouchableOpacity>
         )
          })
-         : null
+         :  <ActivityIndicator 
+         animating={this.state.isLoading ? true : false} 
+         size="large" 
+         color="#0000ff" />
        } 
      </View>
     );
