@@ -358,10 +358,9 @@ class DbHelper {
 			try {
 					let result = realm.objects('LanguageModel');
 					return result
-					// console.log("result")
-					// console.log("result "+JSON.stringify(result))
-					// return result
-					
+					// realm.write(() => {
+					// 	realm.delete(result); 
+					// })
 
 			  } catch (e) {
 				console.log("Error on  "+e)

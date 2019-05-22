@@ -234,24 +234,18 @@ export default class Bible extends Component {
         bibleLanguage: this.props.screenProps.languageName, 
         bibleVersion: this.props.screenProps.versionCode
     })  
-      connectionInfo.addEventToConnection("connectionChange",async()=>{
-      var connection = await connectionInfo.isConnection()
-      // this.setState({isLoading:true},()=>{
-        this.queryBookFromAPI(connection)
+      // connectionInfo.addEventToConnection("connectionChange",async()=>{
+      // var connection = await connectionInfo.isConnection()
+        this.queryBookFromAPI()
       // })
-      })
   }
   
   // render data onAPI Call 
-  async queryBookFromAPI(netCon){
-    // this.setState({isLoading:true})
-    console.log ("query api data "+netCon)
+  async queryBookFromAPI(){
     if(this.state.versionId == null){
       return
     }
-    if(netCon && this.state.modelData.length == 0){
-      console.log("fetch api again")
-      this.setState({isLoading:true})
+    // if(this.state.modelData.length == 0){
       var bibleContent = await APIFetch.getContent(this.state.versionId)
       console.log("bible content "+ JSON.stringify(bibleContent))
       const parsedData =  new USFMChapterParser()
@@ -277,12 +271,9 @@ export default class Bible extends Component {
         this.getBookMarks(bookData)
       }     
     }
-  }
+  // }
   
-  else if(!netCon && this.state.modelData.length > 0) {
-    console.log("model data if connection not there "+JSON.stringify(this.state.modelData))
-  }
-
+ 
   }
   
   async getHighlights(){
@@ -492,9 +483,6 @@ export default class Bible extends Component {
     else if(this.props.navigation.state.params.prevScreen == 'highlights'){
       this.props.navigation.state.params.updateHighlights()
     }
-    connectionInfo.removeEventToConnection("connectionChange",async()=>{
-        this.queryBookFromAPI(connection)
-      })
   }
 
   updateCurrentChapter(val){

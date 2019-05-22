@@ -26,38 +26,33 @@ export default class LanguageList extends Component {
       
     }
    
-    async componentDidMount(){ 
+    componentDidMount(){ 
       console.log("data coming this page")
-      connectionInfo.addEventToConnection("connectionChange",async()=>{
-        var connection = await connectionInfo.isConnection()
-          this.fetchLanguages(connection)
-        })
-        
+      // connectionInfo.addEventToConnection("connectionChange",async()=>{
+        // var connection = await connectionInfo.isConnection()
+          this.fetchLanguages()
+      // })
     }
-    async fetchLanguages(netCon){
+    async fetchLanguages(){
       var lanVer = []
       var oneDay = 24*60*60*1000; 
       var d = new Date('1-Feb-2000');
       var ud = new Date(timestamp.languageUpdate)
-    
       var diffDays = Math.round(Math.abs((d.getTime() - ud.getTime())/(oneDay)))
-      console.log("hi fetch languages")
-      console.log("difference of days "+diffDays)
   
         if(diffDays <= 20 ){
-          console.log("days difference is less  "+diffDays)
-          // var languageList =  await dbQueries.getLangaugeList()
-            // console.log("language list "+JSON.stringify(languageList))
-            // lanVer.push(languageList)
+          var languageList =  await dbQueries.getLangaugeList()
+            for(var i =0 ; i<languageList.length-1;i++){
+            lanVer.push(languageList[i])
+            }
          }
         else{
-        console.log("hi in else")
-        if(netCon){
+        // if(netCon && this.state.languages.length == 0){
           const languageRes = await APIFetch.getLanguages()
+          console.log("language res "+JSON.stringify(languageRes ))
           for(var langaugeKey in languageRes){
             const versionRes = await APIFetch.getVersions()
             for(var versionKey in versionRes.bible){
-
               if(versionKey == langaugeKey){
                 var versions = []
                 console.log("VERSION RESPONSE KEY"+JSON.stringify(langaugeKey))
@@ -72,7 +67,7 @@ export default class LanguageList extends Component {
             }
           }
         }
-      }
+      // }
       this.setState({
         languages: lanVer,
         searchList: lanVer
@@ -88,18 +83,13 @@ export default class LanguageList extends Component {
           const textData = text.toLowerCase()
           return itemData.indexOf(textData) > -1
       })
-      console.log("new DATA "+newData+" TEXT "+text)
       this.setState({
           text: text,
           languages:newData
       })
   }
 
-  componentWillMount(){
-    // connectionInfo.removeEventToConnection("connectionChange",async()=>{
-    //   this.fetchLanguages()
-    // })
-  }
+
     ListViewItemSeparator = () => {
       return (
         <View
@@ -114,11 +104,10 @@ export default class LanguageList extends Component {
    
    
     render() {
-
       return (
         <View style={styles.MainContainer}>
           {this.state.languages.length == 0 ? 
-           <View style={{alignItems: 'center'}}>   
+           <View style={{flex:1,alignItems: 'center',justifyContent:'center'}}>   
            <ActivityIndicator 
            size="large" 
            color="#0000ff"/></View>
@@ -154,7 +143,6 @@ const styles = StyleSheet.create({
  
     MainContainer :{
      flex:1,
-     justifyContent:'center',
      margin:8
      },
     
