@@ -9,9 +9,9 @@ VersionModel.schema = {
     	versionName: 'string',
     	versionCode: 'string',
     	// bookModels: 'BookModel[]',
-    	source: 'string',
-    	license: 'string',
-    	year: 'int',
-        versionOwner: {type: 'linkingObjects', objectType: 'LanguageModel', property: 'versionModels' }
+    	// source: 'string',
+    	// license: 'string',
+    	// year: 'int',
+        // versionOwner: {type: 'linkingObjects', objectType: 'LanguageModel', property: 'versionModels' }
     }
 };

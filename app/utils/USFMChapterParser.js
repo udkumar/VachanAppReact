@@ -65,7 +65,6 @@ export default class USFMParser {
     // }
 
     parseFileContents(result) {
-        console.log("result "+result)
         try {
             // console.log("line length",result.length)
             var lines = result.split("\n")
@@ -97,7 +96,7 @@ export default class USFMParser {
                 break;
             }
             case Constants.MarkerConstants.MARKER_CHAPTER_NUMBER: {
-                
+
                 this.addChapter(splitString[1]);
                 break;
             }
@@ -154,7 +153,7 @@ export default class USFMParser {
         return true;
     }
 
-    addChapter(num) {
+    addChapter(num){
         this.addComponentsToChapter();
         var number = parseInt(num.toString().trim() , 10);
         var chapterModel = {chapterNumber: number, numberOfVerses: 0, verseComponentsModels: []};

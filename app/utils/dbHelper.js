@@ -25,7 +25,7 @@ class DbHelper {
     async getRealm() {
     	try {
     		return await Realm.open({
-				schemaVersion: 3,
+				schemaVersion: 4,
 				// deleteRealmIfMigrationNeeded: true, 
 				path:
 					Platform.OS === 'ios'
@@ -337,30 +337,32 @@ class DbHelper {
 		})
 	}
 	//add langauge list from api to db 
-	async addLangaugeList(langName,langCode){
-		// console.log("langauge list in db helper "+JSON.stringify(langName)+" language code "+JSON.stringify(langCode))
+	async addLangaugeList(languageModel){
+		console.log("langauge list in db helper "+JSON.stringify(languageModel))
 		let realm = await this.getRealm();
 		// let code = resultsA.filtered('languageCode == [c] "' + langCode + '"')
 		if(realm){
 			try {
 				realm.write(() => {
-				  realm.create('LanguageModel', {languageCode:langCode, languageName: langName});
-				});
+					realm.create('LanguageModel', languageModel);
+				})
 			  } catch (e) {
 				console.log("Error on creation "+e)
 			  }
 		}
 	}
 	async getLangaugeList(){
-		console.log(" GET LANGAUGE ")
 		let realm = await this.getRealm();
 		if(realm){
+			console.log(" GET LANGAUGE ")
 			try {
-				realm.write(() => {
-					let result = realm.objects("LanguageModel");
-					console.log("result "+JSON.stringify(result))
+					let result = realm.objects('LanguageModel');
+					return result
+					// console.log("result")
+					// console.log("result "+JSON.stringify(result))
+					// return result
+					
 
-				});
 			  } catch (e) {
 				console.log("Error on  "+e)
 			  }

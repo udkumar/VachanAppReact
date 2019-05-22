@@ -1,19 +1,41 @@
 import {NetInfo} from "react-native"
 
-export  var connectionInfo = () =>{
-    NetInfo.isConnected.fetch().then(isConnected => {
-        console.log('First, is ' + (isConnected ? 'online' : 'offline'));
-      });
-      function handleFirstConnectivityChange(isConnected) {
-        console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
+    var connectionInfo = {
+    // connectionCheck: (id,callback)=>{return connectionInfo.isConnection(id,callback)},
+    isConnection: async ()=>{ 
+        try{
+            return await NetInfo.isConnected.fetch()
+            .then(isConnected => {
+                if(isConnected){
+                    return true
+                }
+                else {
+                    return false
+                }
+            })
+            .catch(error => error )
+        }
+    
+        catch(error){
+            return error
+        }
+        
+    },
+
+    addEventToConnection:  (id,callback)=>{
+        NetInfo.isConnected.addEventListener(
+            id,
+            callback
+        )},
+
+    removeEventToConnection:(id,callback)=>{
         NetInfo.isConnected.removeEventListener(
-          'connectionChange',
-          handleFirstConnectivityChange
-        );
-      }
-      NetInfo.isConnected.addEventListener(
-        'connectionChange',
-        handleFirstConnectivityChange
-      );
+            id,
+            callback
+        )}
+
 
 } 
+
+
+export { connectionInfo as default };

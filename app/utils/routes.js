@@ -1,6 +1,6 @@
 // all of our routes
 import React, { Component } from 'react'
-import {TouchableOpacity,View,Text} from 'react-native'
+import {NetInfo} from 'react-native'
 import {StackNavigator, DrawerNavigator,DrawerItems,DrawerActions,NavigationActions} from 'react-navigation'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import SelectBook from '../screens/SelectBook/SelectBook'
@@ -17,9 +17,6 @@ import Splash from '../screens/Splash/Splash'
 import ReferenceSelection from '../screens/numberSelection/ReferenceSelection'
 import ChapterSelection from '../screens/numberSelection/ChapterSelection'
 import Hints from '../screens/Hints/Hints'
-// import Language from '../screens/Language/Language'
-// import DownloadLanguage from '../screens/Downloads/DownloadLanguage'
-// import DownloadVersion from '../screens/Downloads/DownloadVersion'
 import BackupRestore from '../screens/backup/BackupRestore'
 import DrawerScreen from '../screens/DrawerScreen/DrawerScreen'
 import  Bible from '../screens/Bible'
@@ -42,21 +39,13 @@ import LanguageList from '../screens/LanguageList'
 import  VersionList from "../screens/VersionList";
 
 const DrawerNavigate = (styles) => DrawerNavigator({
-  // Signin:{
-  //   screen:Signin
-  //   },
-    
-  // Signup:{
-  //   screen:Signup
-    
-  // },
+ 
   StackNavigate:{
     screen: StackNavigate
   },
 
 },
 {
-  // initialRouteName: 'Bible',
   contentComponent:DrawerScreen,
   drawerWidth: 250
 },
@@ -77,18 +66,10 @@ const MenuIcon = (navigation) => {
 
 const StackNavigate = StackNavigator(
   {  
-      // Splash: {
-      //   screen: Splash,
-      // },
-      // Signin:{
-      //   screen:Signin
-      //   },
-     
+      
       Bible:{
         screen:Bible,
         navigationOptions: ({ navigation }) => ({
-          // title: null,  // Title to appear in status bar
-          // header:null,
           headerLeft :<MenuIcon navigate={navigation.navigate}/>,
           headerTintColor: '#fff',
           headerTitleStyle: {
@@ -137,15 +118,6 @@ const StackNavigate = StackNavigator(
       Hints: {
         screen: Hints,
       },
-      // Language:{
-      //   screen:Language
-      // },
-      // DownloadLanguage: {
-      //   screen: DownloadLanguage
-      // },
-      // DownloadVersion: {
-      //   screen: DownloadVersion
-      // },
       Search: {
         screen: Search,
       },
@@ -173,12 +145,7 @@ const StackNavigate = StackNavigator(
       VersionList:{
         screen:VersionList
       },
-      // SignupWithGoogle:{
-      //   screen:SignupWithGoogle
-      //     },
-      // Googlesign:{
-      //   screen:Googlesign
-      // }
+     
   },
   
   {
@@ -224,7 +191,8 @@ export default class App extends Component {
         sizeFile:mediumFont,
         verseInLine:false,
         lastRead:{},
-        versionId:AsyncStorageConstants.Values.DefVersionId
+        versionId:AsyncStorageConstants.Values.DefVersionId,
+        // isConnected:true        
     }
     //update booklist for showing book on selectBook screen
     this.updateBookList = this.updateBookList.bind(this)
@@ -245,6 +213,7 @@ export default class App extends Component {
 
     this.updateChapterData = this.updateChapterData.bind(this)
     this.updateVersionId = this.updateVersionId.bind(this) 
+    // this.connectionCheck = this.connectionCheck.bind(this)
 
     this.styles = styleFile(this.state.colorFile,this.state.sizeFile)
     this.DrawerNavigate = DrawerNavigate(this.styles)
@@ -347,49 +316,29 @@ export default class App extends Component {
     //   }
 
   }
+  // async connectionCheck(){ 
+  //   return await NetInfo.isConnected.fetch()
+  //   .then(isConnected => {
+  //     this.setState({isConnected})
+  //       console.log('First, is ' + (isConnected ? 'online' : 'offline'));
+  //   })
+  // }
+
+  // _handleConnectivityChange = (isConnected) => {
+  //   console.log("change connection")
+  //   this.setState({
+  //     isConnected
+  //   });
+  // }
  
+  // componentWillUnmount(){
+  //   NetInfo.isConnected.removeEventListener(
+  //     'connectionChange',
+  //     this._handleConnectivityChange
+  // )
+  // }
 
-  render(){
-    // console.log("bookList "+JSON.stringify(this.state.booksList[0].bookId))
-    let  DrawerNavigate = this.DrawerNavigate
-    return(
-      <DrawerNavigate 
-        screenProps={{
-          colorMode: this.state.colorMode, 
-          sizeMode: parseInt(this.state.sizeMode), 
-          colorFile:this.state.colorFile,
-          sizeFile:this.state.sizeFile,
-          booksList: this.state.booksList, 
-          isDbLoading: this.state.isDbLoading,
-          verseInLine:this.state.verseInLine,
-          languageCode: this.state.languageCode,
-          languageName:this.state.languageName, 
-          versionCode: this.state.versionCode,
-          versionName:this.state.versionName,
-          bookId:this.state.bookId,
-          bookName:this.state.bookName,
-          chapterNumber:this.state.chapterNumber,
-          lastRead:this.state.lastRead,
-          userFoto:this.state.userFoto,
-          versionId:this.state.versionId,
-
-          updateColor: this.updateColor,
-          updateSize: this.updateSize,
-          updateVerseInLine:this.updateVerseInLine,
-          updateBookList: this.updateBookList,
-          changeSizeByOne: this.changeSizeByOne,
-          updateLastRead: this.updateLastRead,
-          updateLanguage: this.updateLanguage,
-          updateBookData: this.updateBookData,
-          updateUserInfo: this.updateUserInfo,
-          updateVersionId:this.updateVersionId
-
-        }}
-      />
-    );
-  }
-
-    
+   
   async componentDidMount(){
 
     let res = await AsyncStorageUtil.getAllItems([
@@ -464,9 +413,51 @@ export default class App extends Component {
       ).then((lastRead) => {
           this.setState({lastRead})
     })
-
-    console.log("DSIDI mount value "+typeof this.state.sizeMode)
+  //   NetInfo.isConnected.addEventListener(
+  //     'connectionChange',
+  //     this._handleConnectivityChange
+  // );
+    // this.connectionCheck()
   }
   
+  render(){
+    // console.log("CONNECTION INFO "+this.state.isConnected)
+    let  DrawerNavigate = this.DrawerNavigate
+    return(
+      <DrawerNavigate 
+        screenProps={{
+          colorMode: this.state.colorMode, 
+          sizeMode: parseInt(this.state.sizeMode), 
+          colorFile:this.state.colorFile,
+          sizeFile:this.state.sizeFile,
+          booksList: this.state.booksList, 
+          isDbLoading: this.state.isDbLoading,
+          verseInLine:this.state.verseInLine,
+          languageCode: this.state.languageCode,
+          languageName:this.state.languageName, 
+          versionCode: this.state.versionCode,
+          versionName:this.state.versionName,
+          bookId:this.state.bookId,
+          bookName:this.state.bookName,
+          chapterNumber:this.state.chapterNumber,
+          lastRead:this.state.lastRead,
+          userFoto:this.state.userFoto,
+          versionId:this.state.versionId,
+          // isConnected:this.state.isConnected,
 
+          updateColor: this.updateColor,
+          updateSize: this.updateSize,
+          updateVerseInLine:this.updateVerseInLine,
+          updateBookList: this.updateBookList,
+          changeSizeByOne: this.changeSizeByOne,
+          updateLastRead: this.updateLastRead,
+          updateLanguage: this.updateLanguage,
+          updateBookData: this.updateBookData,
+          updateUserInfo: this.updateUserInfo,
+          updateVersionId:this.updateVersionId
+
+        }}
+      />
+    );
+  }
 }

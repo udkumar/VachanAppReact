@@ -11,7 +11,8 @@ export const styles =(colorFile, sizeFile) =>{
     },
     verseWrapperText:{
         fontSize:sizeFile.contentText,
-        color:colorFile.textColor
+        color:colorFile.textColor,
+        justifyContent:'center'
     },
     chapterList:{
         margin:16

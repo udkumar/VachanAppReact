@@ -105,11 +105,11 @@ class DbQueries {
     }
 
     // add list of languages to db
-    addLangaugeList(langName,langCode){
-        dbHelper.addLangaugeList(langName,langCode)
+    addLangaugeList(langVer){
+        dbHelper.addLangaugeList(langVer)
     }
     getLangaugeList(){
-        dbHelper.getLangaugeList()
+       return dbHelper.getLangaugeList()
     }
 }
 

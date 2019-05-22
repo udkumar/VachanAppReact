@@ -29,7 +29,8 @@
     "react-native-zip-archive": "^2.2.6",
     "react-native-zss-rich-text-editor": "^1.1.0",
     "react-navigation": "^1.5.12",
-    "realm": "^2.5.0"
+    "realm": "^2.5.0",
+    "usfm-grammar": "^0.1.2"
   },
   "devDependencies": {
     "@babel/core": "^7.4.0",

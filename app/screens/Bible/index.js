@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Dimensions,
   TouchableOpacity,
+  NetInfo,
   LayoutAnimation,
   Share,
 } from 'react-native';
@@ -21,7 +22,6 @@ import AsyncStorageConstants from '../../utils/AsyncStorageConstants';
 const Constants = require('../../utils/constants')
 
 import {getResultText} from '../../utils/UtilFunctions';
-import {connectionInfo} from '../../utils/connectionInfo'
 import {getBookNameFromMapping,getBookSectionFromMapping,getBookNumberFromMapping} from '../../utils/UtilFunctions';
 import APIFetch from '../../utils/APIFetch'
 import {
@@ -30,11 +30,15 @@ import {
 import { styles } from './styles.js';
 import id_name_map from '../../assets/mappings.json'
 
+
 import BottomTab from './BottomTab'
 import USFMChapterParser from '../../utils/USFMChapterParser'
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
+
+import connectionInfo from '../../utils/connectionInfo'
+// import grammar from 'usfm-grammar'
 
 export default class Bible extends Component {
   static navigationOptions = ({navigation}) =>{
@@ -120,8 +124,8 @@ export default class Bible extends Component {
     this.state = {
       languageCode: this.props.screenProps.languageCode,
       versionCode: this.props.screenProps.versionCode,
-      modelData: this.props.navigation.state.params ? this.props.navigation.state.params.chapterModels : null ,
-      isLoading: false,
+      modelData: [],
+      // isLoading: false,
       showBottomBar: false,
       bookId: this.props.screenProps.bookId,
       bookName:this.props.screenProps.bookName,
@@ -142,8 +146,7 @@ export default class Bible extends Component {
 
       scrollDirection:'up',
       close:true,
-      versionId: this.props.screenProps.versionId
-      // bookInfo:this.props.navigation.state.params ? this.props.navigation.state.params.bookInfo : null 
+      versionId: this.props.screenProps.versionId,
     }
 
     this.pinchDiff = 0
@@ -165,7 +168,7 @@ export default class Bible extends Component {
     this.styles = styles(props.screenProps.colorFile, props.screenProps.sizeFile);   
   }
 
-  componentDidMount(){
+  async componentDidMount(){
     this.gestureResponder = createResponder({
       onStartShouldSetResponder: (evt, gestureState) => true,
       onStartShouldSetResponderCapture: (evt, gestureState) => true,
@@ -221,7 +224,6 @@ export default class Bible extends Component {
       moveThreshold: 2,
       debug: false
     });
-    console.log("book did mount "+this.state.bookName)
     this.props.navigation.setParams({
         onBookmark: this.onBookmarkPress,
         isBookmark:this.state.isBookmark,
@@ -232,46 +234,57 @@ export default class Bible extends Component {
         bibleLanguage: this.props.screenProps.languageName, 
         bibleVersion: this.props.screenProps.versionCode
     })  
-     
-    this.setState({isLoading: true}, () => {
-      // this.queryBook()
-      this.queryBookFromAPI()
-      
-    })
+      connectionInfo.addEventToConnection("connectionChange",async()=>{
+      var connection = await connectionInfo.isConnection()
+      // this.setState({isLoading:true},()=>{
+        this.queryBookFromAPI(connection)
+      // })
+      })
   }
   
   // render data onAPI Call 
-  async queryBookFromAPI(){
+  async queryBookFromAPI(netCon){
+    // this.setState({isLoading:true})
+    console.log ("query api data "+netCon)
     if(this.state.versionId == null){
       return
     }
-    console.log("CONNECTION INFO ........ ")
-    connectionInfo()
-    var bibleContent = await APIFetch.getContent(this.state.versionId)
-    console.log("bible content "+JSON.stringify(bibleContent))
-    const parsedData =  new USFMChapterParser()
-        var bookList = []
-        bookData = []
-        for(var key in bibleContent){
-            if(key.toUpperCase() == this.state.bookId){
-              var book = await parsedData.parseFile(bibleContent[key])
-
-                bookData.push(book)
-                this.setState({isLoading:false, modelData: bookData[0].chapterModels})
-                console.log("model data book data "+JSON.stringify(bookData.length))
-            }
-            var bookListData  = {bookId: key.toUpperCase(),bookName: getBookNameFromMapping(key.toUpperCase()),
-              section:getBookSectionFromMapping(key.toUpperCase()),bookNumber:getBookNumberFromMapping(key.toUpperCase()),
-              languageCode: this.state.languageCode, versionCode:this.state.versionCode, numOfChapters:50}
-              bookList.push(bookListData)
-          var result = bookList.sort(function(a, b) {
-            return parseFloat(a.bookNumber) - parseFloat(b.bookNumber);  
-          });
-          this.props.screenProps.updateBookList(result)
-        }
-          this.getHighlights(bookData)
-          this.getBookMarks(bookData)
+    if(netCon && this.state.modelData.length == 0){
+      console.log("fetch api again")
+      this.setState({isLoading:true})
+      var bibleContent = await APIFetch.getContent(this.state.versionId)
+      console.log("bible content "+ JSON.stringify(bibleContent))
+      const parsedData =  new USFMChapterParser()
+      var bookList = []
+      bookData = []
+      for(var key in bibleContent){
+          if(key.toUpperCase() == this.state.bookId){
+            var book = await parsedData.parseFile(bibleContent[key])
+              bookData.push(book)
+          }
+          var bookListData  = {bookId: key.toUpperCase(),bookName: getBookNameFromMapping(key.toUpperCase()),
+            section:getBookSectionFromMapping(key.toUpperCase()),bookNumber:getBookNumberFromMapping(key.toUpperCase()),
+            languageCode: this.state.languageCode, versionCode:this.state.versionCode, numOfChapters:50}
+            bookList.push(bookListData)
+        var result = bookList.sort(function(a, b) {
+          return parseFloat(a.bookNumber) - parseFloat(b.bookNumber);  
+        });
+        this.props.screenProps.updateBookList(result)
+      // }
+      if(bookData.length > 0){
+        this.setState({modelData: bookData[0].chapterModels})
+        this.getHighlights(bookData)
+        this.getBookMarks(bookData)
+      }     
+    }
   }
+  
+  else if(!netCon && this.state.modelData.length > 0) {
+    console.log("model data if connection not there "+JSON.stringify(this.state.modelData))
+  }
+
+  }
+  
   async getHighlights(){
     let model2 = await  DbQueries.queryHighlights(this.state.languageCode,this.state.versionCode,this.state.bookId)
     if(model2  == null ){
@@ -310,7 +323,6 @@ export default class Bible extends Component {
   async queryBook() {
     let model = await DbQueries.queryBookWithId(this.props.screenProps.versionCode, 
         this.props.screenProps.languageCode, this.state.bookId);
-    this.setState({isLoading:false})
     if (model == null) {
       // console.log("mode lnull")
     } else {
@@ -327,7 +339,7 @@ export default class Bible extends Component {
     }
   }
 
-  async onBookmarkPress( ) {
+  async onBookmarkPress() {
     index = this.state.bookmarksList.findIndex(chapInd => chapInd.chapterNumber ===this.state.currentVisibleChapter);
     console.log("index "+index)
 
@@ -480,7 +492,9 @@ export default class Bible extends Component {
     else if(this.props.navigation.state.params.prevScreen == 'highlights'){
       this.props.navigation.state.params.updateHighlights()
     }
-   
+    connectionInfo.removeEventToConnection("connectionChange",async()=>{
+        this.queryBookFromAPI(connection)
+      })
   }
 
   updateCurrentChapter(val){
@@ -526,11 +540,11 @@ export default class Bible extends Component {
       return (
         <View style={this.styles.container} >
           <MenuContext style={this.styles.verseWrapperText}>
-            {this.state.modelData == null  ?   
+            {this.state.modelData.length == 0   ?
+            <View style={{alignItems: 'center'}}>   
             <ActivityIndicator 
-            animating={this.state.isLoading ? true : false} 
             size="large" 
-            color="#0000ff" />:
+            color="#0000ff"/></View>:
             <View>
                 <ScrollView  
                    ref={(ref) => { this.scrollViewRef = ref; }}
@@ -620,24 +634,6 @@ export default class Bible extends Component {
           
           }
           </MenuContext>
-          {/* {this.state.currentVisibleChapter == 1
-                ? null :
-                <View style={[this.styles.bottomBarPrevView]}>
-                    <Icon name={'chevron-left'} color="black" size={36} 
-                        style={this.styles.bottomBarChevrontIcon} 
-                        onPress={()=> this.updateCurrentChapter(-1)}
-                        />
-                </View>
-                }
-                {this.state.currentVisibleChapter == this.state.modelData.length 
-                ? null :
-                <View style={this.styles.bottomBarNextView}>
-                    <Icon name={'chevron-right'} 
-                        style={this.styles.bottomBarChevrontIcon} 
-                        onPress={()=> this.updateCurrentChapter(1)}
-                        />
-                </View>
-                } */}
           {
               this.state.close == true ? 
               <TouchableOpacity style={{backgroundColor:"#3F51B5",flexDirection:'row',justifyContent:'flex-end'}} onPress={()=>this.setState({close:!this.state.close})}>
@@ -662,18 +658,6 @@ export default class Bible extends Component {
               />
               }
         </View>
-        // <View>
-        //   {/* <FlatList
-        //     data={this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels}
-        //     renderItem={({item, index}) => 
-        //           <Text letterSpacing={24} 
-        //               style={this.styles.verseWrapperText}> 
-                        
-        //           </Text> 
-        //     }
-        //     /> */}
-        //     <Text>Hi</Text>
-        // </View>
       )
   }
 

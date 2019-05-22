@@ -54,6 +54,7 @@ export default class VersionList extends Component {
     
   }
   render() {
+    // console.log("is connected in version page "+this.props.screenProps.isConnected)
     console.log("version data "+JSON.stringify(this.state.versionData))
     return (
       <View style={{flex:1}}>
