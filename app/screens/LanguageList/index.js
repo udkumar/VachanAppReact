@@ -5,7 +5,7 @@ import dbQueries from '../../utils/dbQueries'
 import APIFetch from '../../utils/APIFetch'
 import connectionInfo from '../../utils/connectionInfo'
 import timestamp from '../../assets/timestamp.json'
-import { version } from 'moment';
+import { version, lang } from 'moment';
 export default class LanguageList extends Component {
 
     static navigationOptions = ({navigation}) => ({
@@ -36,38 +36,41 @@ export default class LanguageList extends Component {
     async fetchLanguages(){
       var lanVer = []
       var oneDay = 24*60*60*1000; 
-      var d = new Date('1-Feb-2000');
+      var d = new Date('1-feb-2000')
       var ud = new Date(timestamp.languageUpdate)
       var diffDays = Math.round(Math.abs((d.getTime() - ud.getTime())/(oneDay)))
-  
         if(diffDays <= 20 ){
           var languageList =  await dbQueries.getLangaugeList()
             for(var i =0 ; i<languageList.length-1;i++){
             lanVer.push(languageList[i])
             }
-         }
-        else{
-        // if(netCon && this.state.languages.length == 0){
-          const languageRes = await APIFetch.getLanguages()
-          console.log("language res "+JSON.stringify(languageRes ))
-          for(var langaugeKey in languageRes){
-            const versionRes = await APIFetch.getVersions()
-            for(var versionKey in versionRes.bible){
-              if(versionKey == langaugeKey){
-                var versions = []
-                console.log("VERSION RESPONSE KEY"+JSON.stringify(langaugeKey))
-                  for(var versionCode in versionRes.bible[versionKey]){
-                    console.log("version code "+JSON.stringify(versionCode))
-                    versions.push({"versionCode":versionCode,"versionName":'Indian Revised Version'})
+            if(languageList.length == 0){
+              const languageRes = await APIFetch.getLanguages()
+              for(var langaugeKey in languageRes){
+                const versionRes = await APIFetch.getVersions()
+                for(var versionKey in versionRes.bible){
+                  if(versionKey == langaugeKey){
+                    var langObj = {"languageName":langaugeKey,"languageCode":languageRes[langaugeKey],versionModels:{"versionCode":"irv","versionName":'Indian Revised Version'}}
+                    dbQueries.addLangaugeList(langObj,{"versionCode":"irv","versionName":'Indian Revised Version'})
+                    lanVer.push(langObj)
                   }
-                var langObj = {"languageName":langaugeKey,"languageCode":languageRes[langaugeKey],versionModels:versions}
-                lanVer.push(langObj)
-                dbQueries.addLangaugeList(langObj)
+                }
               }
             }
-          }
+         }
+        else {
+          const languageRes = await APIFetch.getLanguages()
+              for(var langaugeKey in languageRes){
+                const versionRes = await APIFetch.getVersions()
+                for(var versionKey in versionRes.bible){
+                  if(versionKey == langaugeKey){
+                    var langObj = {"languageName":langaugeKey,"languageCode":languageRes[langaugeKey],versionModels:{"versionCode":"irv","versionName":'Indian Revised Version'}}
+                    dbQueries.addLangaugeList(langObj,{"versionCode":"irv","versionName":'Indian Revised Version'})
+                    lanVer.push(langObj)
+                  }
+                }
+              }
         }
-      // }
       this.setState({
         languages: lanVer,
         searchList: lanVer
@@ -89,6 +92,34 @@ export default class LanguageList extends Component {
       })
   }
 
+  // async fetchApiData(){
+  //   var lanVer = []
+  //   const languageRes = await APIFetch.getLanguages()
+  //   for(var langaugeKey in languageRes){
+  //     const versionRes = await APIFetch.getVersions()
+  //     for(var versionKey in versionRes.bible){
+  //       if(versionKey == langaugeKey){
+          // var versions = []
+          // console.log("VERSION RESPONSE KEY"+JSON.stringify(langaugeKey))
+          //   for(var versionCode in versionRes.bible[versionKey]){
+          //     console.log("version code "+JSON.stringify(versionCode))
+          //     versions.push({"versionCode":versionCode,"versionName":'Indian Revised Version'})
+          //   }
+          // var langObj = {"languageName":langaugeKey,"languageCode":languageRes[langaugeKey],versionModels:versions}
+          // dbQueries.addLangaugeList(langObj,versions)
+          // lanVer.push(langObj)
+          // return lanVer
+
+
+          //for now adding version dynamically 
+  //         var langObj = {"languageName":langaugeKey,"languageCode":languageRes[langaugeKey],versionModels:[{"versionCode":"irv","versionName":'Indian Revised Version'}]}
+  //         dbQueries.addLangaugeList(langObj,[{"versionCode":"irv","versionName":'Indian Revised Version'}])
+  //         lanVer.push(langObj)
+  //       }
+  //     }
+  //   }
+  //   // return lanVer
+  // }
 
     ListViewItemSeparator = () => {
       return (

@@ -337,15 +337,33 @@ class DbHelper {
 		})
 	}
 	//add langauge list from api to db 
-	async addLangaugeList(languageModel){
-		console.log("langauge list in db helper "+JSON.stringify(languageModel))
-		let realm = await this.getRealm();
+	async addLangaugeList(languageModel,versionModel){
+		console.log("langauge list in db helper "+JSON.stringify(languageModel.languageCode))
+		let realm = await this.getRealm()
 		// let code = resultsA.filtered('languageCode == [c] "' + langCode + '"')
+			
 		if(realm){
+			let result = realm.objectForPrimaryKey('LanguageModel', languageModel.languageCode);
+			console.log("result "+result)
 			try {
-				realm.write(() => {
-					realm.create('LanguageModel', languageModel);
-				})
+				if(result){
+					for (var i=0; i<result.versionModels.length; i++){
+						var vModel = result.versionModels[i]
+						console.log("version code in table "+vModel.versionCode+ "version code from json "+JSON.stringify(versionModel))
+						if (vModel.versionCode == versionModel.versionCode) {
+							return
+						}
+						realm.write(() => {
+							result.versionModels.push(versionModel)
+						})
+					}
+				}
+				else{
+					realm.write(() => {
+						realm.create('LanguageModel', languageModel)
+					})
+				}
+				
 			  } catch (e) {
 				console.log("Error on creation "+e)
 			  }
@@ -365,7 +383,6 @@ class DbHelper {
 			  } catch (e) {
 				console.log("Error on  "+e)
 			  }
-			// console.log(" GET LANGAUGE if ")
 		}
 	}
 }
