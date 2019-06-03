@@ -9,7 +9,9 @@
     "version": "./version-ios.sh"
   },
   "dependencies": {
+    "@react-native-community/netinfo": "^3.2.0",
     "buffer": "^5.2.1",
+    "events": "^3.0.0",
     "moment": "^2.22.1",
     "native-base": "^2.12.1",
     "prop-types": "^15.7.2",
@@ -30,7 +32,7 @@
     "react-native-zss-rich-text-editor": "^1.1.0",
     "react-navigation": "^1.5.12",
     "realm": "^2.5.0",
-    "usfm-grammar": "^0.1.2"
+    "usfm-grammar": "^1.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.4.0",

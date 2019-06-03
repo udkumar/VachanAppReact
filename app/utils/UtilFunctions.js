@@ -29,6 +29,18 @@ export function getBookNumberFromMapping(bookId) {
     return null;
 }
 
+export function getBookChaptersFromMapping(bookId){
+    var obj = id_name_map.id_name_map;
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            if (key == bookId) {
+                var val = obj[key];
+                return val.total_chapters;
+            }
+        }
+    }
+    return null;
+}
 export function getBookSectionFromMapping(bookId) {
     var obj = id_name_map.id_name_map;
     for (var key in obj) {

@@ -1,11 +1,5 @@
 import DbHelper from './dbHelper';
 
-import LanguageModel from '../models/LanguageModel'
-import VersionModel from '../models/VersionModel'
-import BookModel from '../models/BookModel'
-import ChapterModel from '../models/ChapterModel'
-import VerseComponentsModel from '../models/VerseComponentsModel'
-import NoteModel from '../models/NoteModel';
 import dbHelper from './dbHelper';
 
 class DbQueries {

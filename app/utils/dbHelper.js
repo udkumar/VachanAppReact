@@ -25,7 +25,7 @@ class DbHelper {
     async getRealm() {
     	try {
     		return await Realm.open({
-				schemaVersion: 4,
+				schemaVersion: 5,
 				// deleteRealmIfMigrationNeeded: true, 
 				path:
 					Platform.OS === 'ios'
@@ -338,20 +338,19 @@ class DbHelper {
 	}
 	//add langauge list from api to db 
 	async addLangaugeList(languageModel,versionModel){
-		console.log("langauge list in db helper "+JSON.stringify(languageModel.languageCode))
 		let realm = await this.getRealm()
-		// let code = resultsA.filtered('languageCode == [c] "' + langCode + '"')
 			
 		if(realm){
-			let result = realm.objectForPrimaryKey('LanguageModel', languageModel.languageCode);
-			console.log("result "+result)
+			let result = realm.objectForPrimaryKey('LanguageModel', languageModel.languageName)
 			try {
 				if(result){
-					for (var i=0; i<result.versionModels.length; i++){
+					console.log("result key found primary key" +JSON.stringify(result.versionModels)+"langauge name"+languageModel.languageName)
+					for (var i=0; i<=result.versionModels.length-1; i++){
 						var vModel = result.versionModels[i]
-						console.log("version code in table "+vModel.versionCode+ "version code from json "+JSON.stringify(versionModel))
-						if (vModel.versionCode == versionModel.versionCode) {
-							return
+						for(var j=0; j<=versionModel.length-1; j++){
+							if (vModel.versionCode == versionModel[j].versionCode) {
+								return
+							}
 						}
 						realm.write(() => {
 							result.versionModels.push(versionModel)
@@ -360,13 +359,16 @@ class DbHelper {
 				}
 				else{
 					realm.write(() => {
+						console.log("langauge added")
 						realm.create('LanguageModel', languageModel)
 					})
 				}
 				
+				
 			  } catch (e) {
 				console.log("Error on creation "+e)
 			  }
+			
 		}
 	}
 	async getLangaugeList(){

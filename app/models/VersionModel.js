@@ -7,7 +7,8 @@ VersionModel.schema = {
     name: 'VersionModel',
     properties: {
     	versionName: 'string',
-    	versionCode: 'string',
+		versionCode: 'string',
+		versionId:'int'
     	// bookModels: 'BookModel[]',
     	// source: 'string',
     	// license: 'string',

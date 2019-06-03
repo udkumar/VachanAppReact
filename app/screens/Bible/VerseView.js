@@ -71,9 +71,9 @@ export default class VerseView extends Component {
     let obj = this.props.verseData.chapterNumber + '_' + this.props.index + '_' + this.props.verseData.verseNumber;
     let isSelect = this.has(this.props.selectedReferences, obj)
     let isHighlight = this.highlighted(this.props.verseData.verseNumber)
-
-    switch(this.props.verseData.type) {
-      case Constants.MarkerTypes.VERSE: {
+    console.log("")
+    // switch(this.props.verseData.type) {
+      // case Constants.MarkerTypes.VERSE: {
         return (
           <View >
           <TouchableWithoutFeedback onLongPress={this.openMenu}>
@@ -111,14 +111,14 @@ export default class VerseView extends Component {
                       ? this.props.styles.verseTextNotSelectedHighlighted
                       : this.props.styles.verseTextSelectedNotHighlighted}
                       >
-                {getResultText(this.props.verseData.text)}
+                {getResultText(this.props.verseData.verseText)}
               </Text> 
             </Text>
             </View>
         </TouchableWithoutFeedback>   
         </View>
         );
-      }
+      // }
       // case Constants.MarkerTypes.PARAGRAPH: {
       //   if (this.props.verseData.verseNumber == "1" || 
       //       this.props.verseData.verseNumber.startsWith("1-")) {
@@ -134,39 +134,36 @@ export default class VerseView extends Component {
       //     </Text>
       //   )
       // }
-      case Constants.MarkerTypes.SECTION_HEADING: {
-      }
-      case Constants.MarkerTypes.SECTION_HEADING_ONE: {
-        return (
-          <Text style={this.props.styles.headingOne} >
-            {this.props.verseData.text}
-          </Text>
-        );        
-      }
-      case Constants.MarkerTypes.SECTION_HEADING_TWO: {
-        return (
-          <Text style={this.props.styles.headingTwo} >
-            {this.props.verseData.text}
-          </Text>
-        );
-      }
-      case Constants.MarkerTypes.SECTION_HEADING_THREE: {
-        return (
-          <Text style={this.props.styles.headingThree} >
-            {this.props.verseData.text}
-          </Text>
-        );
-      }
-      case Constants.MarkerTypes.SECTION_HEADING_FOUR: {
-        return (
-          <Text style={this.props.styles.headingFour} >
-            {this.props.verseData.text}
-          </Text>
-        );      
-      }
-      default: {
-        return null;
-      }
-    }
+      // case Constants.MarkerTypes.SECTION_HEADING: {
+      // }
+      // case Constants.MarkerTypes.SECTION_HEADING_ONE: {
+      //   return (
+      //     <Text style={this.props.styles.headingOne} >
+      //       {this.props.verseData.verseText}
+      //     </Text>
+      //   );        
+      // }
+      // case Constants.MarkerTypes.SECTION_HEADING_TWO: {
+      //   return (
+      //     <Text style={this.props.styles.headingTwo} >
+      //       {this.props.verseData.text}
+      //     </Text>
+      //   );
+      // }
+      // case Constants.MarkerTypes.SECTION_HEADING_THREE: {
+      //   return (
+      //     <Text style={this.props.styles.headingThree} >
+      //       {this.props.verseData.teverseTextxt}
+      //     </Text>
+      //   );
+      // }
+      // case Constants.MarkerTypes.SECTION_HEADING_FOUR: {
+      //   return (
+      //     <Text style={this.props.styles.headingFour} >
+      //       {this.props.verseData.verseText}
+      //     </Text>
+      //   );      
+      // }
+    // }
   }
 }

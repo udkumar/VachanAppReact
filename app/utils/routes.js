@@ -1,7 +1,7 @@
 // all of our routes
 import React, { Component } from 'react'
 import {NetInfo} from 'react-native'
-import {StackNavigator, DrawerNavigator,DrawerItems,DrawerActions,NavigationActions} from 'react-navigation'
+import {StackNavigator, DrawerNavigator,DrawerItems,DrawerActions,NavigationActions,} from 'react-navigation'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import SelectBook from '../screens/SelectBook/SelectBook'
 import About from '../screens/About/About'
@@ -168,7 +168,7 @@ export default class App extends Component {
 
   constructor(props){
     super(props)
-    Realm.copyBundledRealmFiles();
+    // Realm.copyBundledRealmFiles();
       
     this.state = {
         chapterModels:[],
@@ -192,7 +192,7 @@ export default class App extends Component {
         verseInLine:false,
         lastRead:{},
         versionId:AsyncStorageConstants.Values.DefVersionId,
-        // isConnected:true        
+        isConnected:false
     }
     //update booklist for showing book on selectBook screen
     this.updateBookList = this.updateBookList.bind(this)
@@ -213,7 +213,6 @@ export default class App extends Component {
 
     this.updateChapterData = this.updateChapterData.bind(this)
     this.updateVersionId = this.updateVersionId.bind(this) 
-    // this.connectionCheck = this.connectionCheck.bind(this)
 
     this.styles = styleFile(this.state.colorFile,this.state.sizeFile)
     this.DrawerNavigate = DrawerNavigate(this.styles)
@@ -316,29 +315,28 @@ export default class App extends Component {
     //   }
 
   }
-  // async connectionCheck(){ 
-  //   return await NetInfo.isConnected.fetch()
-  //   .then(isConnected => {
-  //     this.setState({isConnected})
-  //       console.log('First, is ' + (isConnected ? 'online' : 'offline'));
-  //   })
-  // }
 
-  // _handleConnectivityChange = (isConnected) => {
-  //   console.log("change connection")
-  //   this.setState({
-  //     isConnected
-  //   });
-  // }
- 
-  // componentWillUnmount(){
-  //   NetInfo.isConnected.removeEventListener(
-  //     'connectionChange',
-  //     this._handleConnectivityChange
-  // )
-  // }
-
+  handleFirstConnectivityChange = (isConnected)=> {
+    console.log("is connected in routes "+isConnected)
+    if (isConnected == true) {
+      this.setState({
+        isConnected: true
+      });
+    } else {
+      this.setState({
+        isConnected: false
+      });
+      alert("Connection Fail")
+    }
+  }
    
+  componentWillUnmount(){
+    NetInfo.removeEventListener(
+      'connectionChange',
+      this.handleFirstConnectivityChange
+    )
+  }
+
   async componentDidMount(){
 
     let res = await AsyncStorageUtil.getAllItems([
@@ -361,6 +359,22 @@ export default class App extends Component {
       return
 
     }
+    NetInfo.isConnected.fetch().done((isConnected) => {
+      console.log("IS CONNECTION  "+isConnected)
+      if(isConnected == true)
+      {
+        this.setState({isConnected : true})
+      }
+      else
+      {
+        this.setState({isConnected : false})
+      }
+
+    });
+    NetInfo.isConnected.addEventListener(
+      'connectionChange',
+      this.handleFirstConnectivityChange
+    )
 
     console.log("ROUTES.... color mode "+res[0][1])
     this.setState({sizeMode: res[1][1] == null ? AsyncStorageConstants.Values.SizeModeNormal : parseInt(res[1][1])}, ()=> {
@@ -413,15 +427,10 @@ export default class App extends Component {
       ).then((lastRead) => {
           this.setState({lastRead})
     })
-  //   NetInfo.isConnected.addEventListener(
-  //     'connectionChange',
-  //     this._handleConnectivityChange
-  // );
-    // this.connectionCheck()
+
   }
   
   render(){
-    // console.log("CONNECTION INFO "+this.state.isConnected)
     let  DrawerNavigate = this.DrawerNavigate
     return(
       <DrawerNavigate 
@@ -443,7 +452,7 @@ export default class App extends Component {
           lastRead:this.state.lastRead,
           userFoto:this.state.userFoto,
           versionId:this.state.versionId,
-          // isConnected:this.state.isConnected,
+          isConnected:this.state.isConnected,
 
           updateColor: this.updateColor,
           updateSize: this.updateSize,

@@ -2,15 +2,12 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
-  Button,
   ScrollView,
   FlatList,
   ActivityIndicator,
   Dimensions,
   TouchableOpacity,
-  NetInfo,
-  LayoutAnimation,
-  Share,
+  Share
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {createResponder } from 'react-native-gesture-responder';
@@ -22,7 +19,7 @@ import AsyncStorageConstants from '../../utils/AsyncStorageConstants';
 const Constants = require('../../utils/constants')
 
 import {getResultText} from '../../utils/UtilFunctions';
-import {getBookNameFromMapping,getBookSectionFromMapping,getBookNumberFromMapping} from '../../utils/UtilFunctions';
+import {getBookNameFromMapping,getBookSectionFromMapping,getBookNumberFromMapping,getBookChaptersFromMapping} from '../../utils/UtilFunctions';
 import APIFetch from '../../utils/APIFetch'
 import {
   MenuContext
@@ -30,15 +27,10 @@ import {
 import { styles } from './styles.js';
 import id_name_map from '../../assets/mappings.json'
 
-
+import  grammar from 'usfm-grammar'
 import BottomTab from './BottomTab'
-import USFMChapterParser from '../../utils/USFMChapterParser'
-
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-
-import connectionInfo from '../../utils/connectionInfo'
-// import grammar from 'usfm-grammar'
 
 export default class Bible extends Component {
   static navigationOptions = ({navigation}) =>{
@@ -147,6 +139,7 @@ export default class Bible extends Component {
       scrollDirection:'up',
       close:true,
       versionId: this.props.screenProps.versionId,
+      booksId:[]
     }
 
     this.pinchDiff = 0
@@ -163,67 +156,70 @@ export default class Bible extends Component {
       sizeFile:props.screenProps.sizeFile,
       // bookId:props.screenProps.bookId,
       // bookName:props.screenProps.bookName,
-      // currentChapter:props.screenProps.currentChapter
+      currentChapter:props.screenProps.currentChapter
     })
-    this.styles = styles(props.screenProps.colorFile, props.screenProps.sizeFile);   
+
+    
+  //   console.log("WILL RECIEVE PROPS VALUE"+JSON.stringify(props))
+  //   this.styles = styles(props.screenProps.colorFile, props.screenProps.sizeFile);   
   }
 
   async componentDidMount(){
-    this.gestureResponder = createResponder({
-      onStartShouldSetResponder: (evt, gestureState) => true,
-      onStartShouldSetResponderCapture: (evt, gestureState) => true,
-      onMoveShouldSetResponder: (evt, gestureState) => true,
-      onMoveShouldSetResponderCapture: (evt, gestureState) => true,
-      onResponderGrant: (evt, gestureState) => {},
-      onResponderMove: (evt, gestureState) => {
-        let thumbSize = this.state.thumbSize;
-        if (gestureState.pinch && gestureState.previousPinch) {
-          thumbSize *= (gestureState.pinch / gestureState.previousPinch)
-          let currentDate = new Date().getTime()
-          let diff = currentDate - this.pinchTime
-          console.log("time diff : " + diff + " prev diff : " + this.pinchDiff)
-          if (diff > this.pinchDiff) {
-              console.log("gesture pinch diff = " + (gestureState.pinch - gestureState.previousPinch))
-             if (gestureState.pinch - gestureState.previousPinch > 5) {
-                // large
-                console.log("large")
-                this.props.screenProps.changeSizeByOne(1)              
-            } else if (gestureState.previousPinch - gestureState.pinch > 5) {
-                console.log("small")
-                // small
-                this.props.screenProps.changeSizeByOne(-1)              
-            }
-          }
-          this.pinchDiff = diff
-          this.pinchTime = currentDate
-        }
-        let {left, top} = this.state;
-        left += (gestureState.moveX - gestureState.previousMoveX);
-        top += (gestureState.moveY - gestureState.previousMoveY);
-        this.setState({
-          gestureState: {
-            ...gestureState
-          },
-          left, top, thumbSize
-        })  
-      },
-      onResponderTerminationRequest: (evt, gestureState) => true,
-      onResponderRelease: (evt, gestureState) => {
-        this.setState({
-          gestureState: {
-            ...gestureState
-          }
-        })
-      },
-      onResponderTerminate: (evt, gestureState) => {},
+    // this.gestureResponder = createResponder({
+    //   onStartShouldSetResponder: (evt, gestureState) => true,
+    //   onStartShouldSetResponderCapture: (evt, gestureState) => true,
+    //   onMoveShouldSetResponder: (evt, gestureState) => true,
+    //   onMoveShouldSetResponderCapture: (evt, gestureState) => true,
+    //   onResponderGrant: (evt, gestureState) => {},
+    //   onResponderMove: (evt, gestureState) => {
+    //     let thumbSize = this.state.thumbSize;
+    //     if (gestureState.pinch && gestureState.previousPinch) {
+    //       thumbSize *= (gestureState.pinch / gestureState.previousPinch)
+    //       let currentDate = new Date().getTime()
+    //       let diff = currentDate - this.pinchTime
+    //       console.log("time diff : " + diff + " prev diff : " + this.pinchDiff)
+    //       if (diff > this.pinchDiff) {
+    //           console.log("gesture pinch diff = " + (gestureState.pinch - gestureState.previousPinch))
+    //          if (gestureState.pinch - gestureState.previousPinch > 5) {
+    //             // large
+    //             console.log("large")
+    //             this.props.screenProps.changeSizeByOne(1)              
+    //         } else if (gestureState.previousPinch - gestureState.pinch > 5) {
+    //             console.log("small")
+    //             // small
+    //             this.props.screenProps.changeSizeByOne(-1)              
+    //         }
+    //       }
+    //       this.pinchDiff = diff
+    //       this.pinchTime = currentDate
+    //     }
+    //     let {left, top} = this.state;
+    //     left += (gestureState.moveX - gestureState.previousMoveX);
+    //     top += (gestureState.moveY - gestureState.previousMoveY);
+    //     this.setState({
+    //       gestureState: {
+    //         ...gestureState
+    //       },
+    //       left, top, thumbSize
+    //     })  
+    //   },
+    //   onResponderTerminationRequest: (evt, gestureState) => true,
+    //   onResponderRelease: (evt, gestureState) => {
+    //     this.setState({
+    //       gestureState: {
+    //         ...gestureState
+    //       }
+    //     })
+    //   },
+    //   onResponderTerminate: (evt, gestureState) => {},
       
-      onResponderSingleTapConfirmed: (evt, gestureState) => {
-        console.log('onResponderSingleTapConfirmed...' + JSON.stringify(gestureState));
-      },
+    //   onResponderSingleTapConfirmed: (evt, gestureState) => {
+    //     console.log('onResponderSingleTapConfirmed...' + JSON.stringify(gestureState));
+    //   },
       
-      moveThreshold: 2,
-      debug: false
-    });
+    //   moveThreshold: 2,
+    //   debug: false
+    // });
     this.props.navigation.setParams({
         onBookmark: this.onBookmarkPress,
         isBookmark:this.state.isBookmark,
@@ -233,47 +229,57 @@ export default class Bible extends Component {
         currentChapter:this.state.currentVisibleChapter,
         bibleLanguage: this.props.screenProps.languageName, 
         bibleVersion: this.props.screenProps.versionCode
-    })  
-      // connectionInfo.addEventToConnection("connectionChange",async()=>{
-      // var connection = await connectionInfo.isConnection()
-        this.queryBookFromAPI()
-      // })
+    }) 
+    console.log("DID  MOUNT "+this.props.screenProps.isConnected)
+      // this.queryBookFromAPI()
   }
   
   // render data onAPI Call 
   async queryBookFromAPI(){
-    if(this.state.versionId == null){
-      return
-    }
-    // if(this.state.modelData.length == 0){
-      var bibleContent = await APIFetch.getContent(this.state.versionId)
-      console.log("bible content "+ JSON.stringify(bibleContent))
-      const parsedData =  new USFMChapterParser()
-      var bookList = []
-      bookData = []
-      for(var key in bibleContent){
-          if(key.toUpperCase() == this.state.bookId){
-            var book = await parsedData.parseFile(bibleContent[key])
-              bookData.push(book)
+      console.log("VERSION ID "+this.state.versionId)
+      if(this.state.versionId == null){
+        return
+      }
+      console.log("data length model "+this.state.modelData.length)
+    // if(this.props.screenProps.isConnected == true ){
+
+      if(this.state.modelData.length === 0 ){
+        console.log("data length model in if "+this.state.modelData.length)
+        var bibleContent = await APIFetch.getContent(this.state.versionId)
+        if(bibleContent){
+        console.log("bible content "+ JSON.stringify(bibleContent))
+        var booksKey = []
+        var bookData = []
+        // var foundBookId = false
+        for(var key in bibleContent){
+            if(key.toUpperCase() == this.state.bookId){
+            foundBookId = true
+              var jsonOutput = grammar.parse(bibleContent[key],grammar.SCRIPTURE)
+                bookData.push(jsonOutput)
+            }
+            // this.setState({booklistKey:key})
+            // var bookListData  = {bookId: key.toUpperCase(),bookName: getBookNameFromMapping(key.toUpperCase()),
+            //   section:getBookSectionFromMapping(key.toUpperCase()),bookNumber:getBookNumberFromMapping(key.toUpperCase()),
+            //   languageCode: this.state.languageCode, versionCode:this.state.versionCode, numOfChapters:getBookChaptersFromMapping(key.toUpperCase())}
+              // booksKey.push(key)
+            // var result = bookList.sort(function(a, b){
+            //   return parseFloat(a.bookNumber) - parseFloat(b.bookNumber);  
+            // })
+            // this.props.screenProps.updateBookList(result)
           }
-          var bookListData  = {bookId: key.toUpperCase(),bookName: getBookNameFromMapping(key.toUpperCase()),
-            section:getBookSectionFromMapping(key.toUpperCase()),bookNumber:getBookNumberFromMapping(key.toUpperCase()),
-            languageCode: this.state.languageCode, versionCode:this.state.versionCode, numOfChapters:50}
-            bookList.push(bookListData)
-        var result = bookList.sort(function(a, b) {
-          return parseFloat(a.bookNumber) - parseFloat(b.bookNumber);  
-        });
-        this.props.screenProps.updateBookList(result)
+          if(bookData.length > 0){
+            this.setState({modelData: bookData[0].chapters})
+            this.getHighlights(bookData)
+            this.getBookMarks(bookData)
+          }
+        }
       // }
-      if(bookData.length > 0){
-        this.setState({modelData: bookData[0].chapterModels})
-        this.getHighlights(bookData)
-        this.getBookMarks(bookData)
-      }     
-    }
-  // }
   
- 
+    }
+    // else {
+    //   console.log("already have data "+JSON.stringify(this.state.modelData))
+    //   return
+    // }
   }
   
   async getHighlights(){
@@ -300,14 +306,12 @@ export default class Bible extends Component {
              
               this.props.navigation.setParams({
                   isBookmark: this.state.isBookmark,
-                  dataLength: book[0].chapterModels.length
+                  dataLength:this.state.modelData.length
               })      
             })
           })
         }
       }
-
-
     }
   }
   // render data from local db
@@ -322,7 +326,7 @@ export default class Bible extends Component {
               this.setState({isBookmark: this.state.bookmarksList.indexOf(this.state.currentVisibleChapter) > -1}, () => {
                 this.props.navigation.setParams({
                     isBookmark: this.state.isBookmark,
-                    dataLength: model[0].chapterModels.length
+                    dataLength:this.state.modelData.length
                 })      
               })
         })
@@ -483,6 +487,7 @@ export default class Bible extends Component {
     else if(this.props.navigation.state.params.prevScreen == 'highlights'){
       this.props.navigation.state.params.updateHighlights()
     }
+
   }
 
   updateCurrentChapter(val){
@@ -510,7 +515,6 @@ export default class Bible extends Component {
       bibleVersion: version
     })
   }
-
     closeSplitScreen = ()=>{
      this.setState({close:!this.state.close})
   }
@@ -523,132 +527,35 @@ export default class Bible extends Component {
       isBookmark:true
     })
   }
+  componentDidUpdate(){
+    console.log("update value "+this.props.screenProps.isConnected)
+    if(this.props.screenProps.isConnected==true){
+      console.log("update call ")
+      this.queryBookFromAPI()
+    }
+    // console.log("books keys "+this.state.booksId)
+  }
   render() {
+    console.log("RENDER FUNCTION "+this.props.screenProps.isConnected)
+    console.log("RENDER FUNCTION "+JSON.stringify(this.state.modelData.length))
+
     const thumbSize = this.state.thumbSize;
       return (
-        <View style={this.styles.container} >
-          <MenuContext style={this.styles.verseWrapperText}>
-            {this.state.modelData.length == 0   ?
+        <View style={this.styles.container}>
+            {this.props.screenProps.isConnected == true ? (this.state.modelData.length == 0 ? 
             <View style={{alignItems: 'center'}}>   
-            <ActivityIndicator 
-            size="large" 
-            color="#0000ff"/></View>:
-            <View>
-                <ScrollView  
-                   ref={(ref) => { this.scrollViewRef = ref; }}
-                  //  onScroll={e => {
-                  //     if (!this.leftIsScrolling) {
-                  //       this.rigthIsScrolling = true;
-                  //       var scrollY = e.nativeEvent.contentOffset.y;
-                  //       this.scrollViewRef.scrollTo({ y: scrollY });
-                  //     }
-                  //     this.leftIsScrolling = false;
-                  //   }}
-                
-                    // style={this.styles.recyclerListView}
-                  >
-                 {    (this.state.verseInLine) ?
-                          <View style={this.styles.chapterList}>
-                            <FlatList
-                            data={this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels}
-                            renderItem={({item, index}) => 
-                                  <Text letterSpacing={24} 
-                                     style={this.styles.verseWrapperText}> 
-                                        <VerseView
-                                            ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
-                                            verseData = {item}
-                                            index = {index}
-                                            styles = {this.styles}
-                                            selectedReferences = {this.state.selectedReferenceSet}
-                                            getSelection = {(verseIndex, chapterNumber, verseNumber) => {
-                                            this.getSelectedReferences(verseIndex, chapterNumber, verseNumber)
-                                            }}
-                                            makeHighlight={this.doHighlight}
-                                            makeNotes={this.addToNotes}
-                                            share={this.addToShare}
-                                            HighlightedText={this.state.HighlightedText}
-                                            showFootNote = {this.state.showFootNote}
-                                            HightlightedVerse = {this.state.HightlightedVerseArray}
-                                            chapterNumber ={this.state.currentVisibleChapter}
-                                        />
-                                     
-                                  </Text> 
-                            }
-                            ListFooterComponent={<View style={styles.addToSharefooterComponent} />}
-                            />
-                            </View>
-                        :
-
-                            <View style={this.styles.chapterList}>
-                                  
-                                    {this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels.map((verse, index) => 
-                                        <View>
-                                            {/* <Text letterSpacing={24}
-                                                 >   */}
-                                                <VerseView
-                                                    ref={child => (this[`child_${verse.chapterNumber}_${index}`] = child)}
-                                                    verseData = {verse}
-                                                    index = {index}
-                                                    styles = {this.styles}
-                                                    selectedReferences = {this.state.selectedReferenceSet}
-                                                    getSelection = {(verseIndex, chapterNumber, verseNumber) => {
-                                                    this.getSelectedReferences(verseIndex, chapterNumber,verseNumber)
-                                                    }}
-                                                    makeHighlight={this.doHighlight}
-                                                    makeNotes={this.addToNotes}
-                                                    share={this.addToShare}
-                                                    HighlightedText={this.state.HighlightedText}
-                                                    onPressfootNote = {this.onPressfootNote}
-                                                    showFootNote = {this.state.showFootNote}
-                                                    HightlightedVerse = {this.state.HightlightedVerseArray}
-                                                    chapterNumber ={this.state.currentVisibleChapter}
-                                                />
-                                               
-                                            {/* </Text> */}
-                                            
-                                            {index == this.state.modelData[this.state.currentVisibleChapter - 1].verseComponentsModels.length - 1
-                                            ? <View style={{height:25, marginBottom:4}} />
-                                            : null
-                                            }
-                                            
-                                          </View>
-                                    )}
-                            </View>
-                        }
-
-                </ScrollView>
-                
-            </View>
-          
-          }
-          </MenuContext>
-          {
-              this.state.close == true ? 
-              <TouchableOpacity style={{backgroundColor:"#3F51B5",flexDirection:'row',justifyContent:'flex-end'}} onPress={()=>this.setState({close:!this.state.close})}>
-                <Text style={{color:'#fff',textAlign:'center',fontSize:16}}>See More </Text>
-                <Icon name="expand-less" size={24} color="#fff" style={{paddingHorizontal:16}}/>
-              </TouchableOpacity>:
-                <BottomTab
-                  colorFile={this.props.screenProps.colorFile}
-                  sizeFile={this.props.screenProps.sizeFile}
-                  currentVisibleChapter={this.state.currentVisibleChapter}
-                  bookId = {this.state.bookId}
-                  versionCode = {this.state.versionCode}
-                  languageCode = {this.state.languageCode}
-                  close={this.state.close}
-                  closeSplitScreen ={this.closeSplitScreen}
-                  HightlightedVerseArray= {this.state.HightlightedVerseArray}
-                  removeHighlight = {this.removeHighlight}
-                  bookmarksList={this.state.bookmarksList}
-                  onBookmarkRemove = {this.onBookmarkRemove}
-                  changeBookFromSplit={this.changeBookFromSplit}
-
-              />
-              }
-        </View>
-      )
+              <ActivityIndicator 
+              size="large" 
+              color="#0000ff"/>
+              </View> :
+            <Text>{JSON.stringify(this.state.modelData)}</Text>
+          ) :  (this.state.modelData.length > 0) ? 
+            <Text>{JSON.stringify(this.state.modelData)}</Text>
+           : <Text>No internet connection</Text>
   }
-
+   </View>
+   )
+  }
 }
 
 
