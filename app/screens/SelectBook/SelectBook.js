@@ -18,6 +18,7 @@ const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 const AsyncStorageConstants = require('../../utils/AsyncStorageConstants')
 import {NavigationActions} from 'react-navigation'
+import {getBookNameFromMapping,getBookSectionFromMapping,getBookNumberFromMapping,getBookChaptersFromMapping} from '../../utils/UtilFunctions';
 
 export default class SelectBook extends Component {
 
@@ -30,20 +31,18 @@ export default class SelectBook extends Component {
         </View>
       ),
  
-    }
-   
-  
+    } 
   }
 
   constructor(props){
     super(props)
-
+    console.log("props "+JSON.stringify(props))
     this.state = {
       colorFile:this.props.screenProps.colorFile,
       sizeFile:this.props.screenProps.sizeFile,
       colorMode:this.props.screenProps.colorMode,
       activeTab:true,
-      booksList: this.props.screenProps.booksList,
+      booksList: [],
       OTSize:this.getOTSize(this.props.screenProps.booksList),
       NTSize:this.getNTSize(this.props.screenProps.booksList),
     }
@@ -66,15 +65,13 @@ export default class SelectBook extends Component {
       this.flatlistRef.scrollToIndex({index:0,viewPosition:0,animated: false,viewOffset:0})
     }
   }
-
-
    componentWillReceiveProps(props){
      this.setState({
         colorFile:props.screenProps.colorFile,
         colorMode: props.screenProps.colorMode,
         sizeFile:props.screenProps.sizeFile,
         lastRead: props.screenProps.lastRead,
-        booksList: props.screenProps.booksList,
+        // booksList: props.screenProps.booksList,
         OTSize:this.getOTSize(props.screenProps.booksList),
         NTSize:this.getNTSize(props.screenProps.booksList)
       })
@@ -86,7 +83,24 @@ export default class SelectBook extends Component {
     { length: 48, offset: 48 * index, index }
   )
 
-
+  componentDidMount(){
+    var booksid = this.props.navigation.state.params.booksKey
+    // console.log("books key "+booksid.length)
+    var bookListData=[]
+    for(var i=0; i<=booksid.length-1; i++){
+      var bookId =  booksid[i].toUpperCase()
+      var bookList = {bookId:bookId,bookName: getBookNameFromMapping(bookId),
+          section:getBookSectionFromMapping(bookId),bookNumber:getBookNumberFromMapping(bookId),
+          languageCode: this.props.screenProps.languageCode, versionCode:this.props.screenProps.versionCode, numOfChapters:getBookChaptersFromMapping(bookId)}
+          bookListData.push(bookList)
+       console.log( "bookid in select page "+getBookNameFromMapping(bookId))
+    }
+    var result = bookListData.sort(function(a, b){
+      return parseFloat(a.bookNumber) - parseFloat(b.bookNumber);  
+    })
+    this.setState({booksList:result})
+    this.props.screenProps.updateBookList(result)
+  }
 renderItem = ({item, index})=> {
     return (
       <TouchableOpacity 

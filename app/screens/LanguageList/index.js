@@ -41,38 +41,50 @@ export default class LanguageList extends Component {
             for(var i =0 ; i<languageList.length-1;i++){
             lanVer.push(languageList[i])
             }
-            if(languageList.length ==0){
-              const versionRes = await APIFetch.getVersions()
-              if(versionRes){
-                for(var language in versionRes.bible){
-                  var versions = []
-                  console.log(" langauge code "+language+" version res "+JSON.stringify(versionRes.bible[language]))
-                  for(var versionCode in versionRes.bible[language]){
-                    var version = {"versionCode":versionCode,"versionName":'Indian Revised Version',versionId:versionRes.bible[language][versionCode].version_id}
-                    versions.push(version)
-                    var langObj = {"languageName":language,versionModels:versions}
+            var langObj = {}
+            var versions = []
+            APIFetch.getContent(this.state.versionId)
+            .then(versionRes =>{
+              if(languageList.length ==0){
+                if(versionRes){
+                  for(var language in versionRes.bible){
+                    var versions = []
+                    console.log(" langauge code "+language+" version res "+JSON.stringify(versionRes.bible[language]))
+                    for(var versionCode in versionRes.bible[language]){
+                      var version = {"versionCode":versionCode,"versionName":'Indian Revised Version',versionId:versionRes.bible[language][versionCode].version_id}
+                      versions.push(version)
+                      var langObj = {"languageName":language,versionModels:versions}
+                    }
+                   
+                    lanVer.push(langObj)
                   }
-                  await dbQueries.addLangaugeList(langObj,versions)
-                  lanVer.push(langObj)
                 }
               }
-            }
+            })
+            await dbQueries.addLangaugeList(langObj,versions)
         }
         else{
-          const versionRes = await APIFetch.getVersions()
-          if(versionRes){
-            for(var language in versionRes.bible){
-              var versions = []
-              console.log(" langauge code "+language+" version res "+JSON.stringify(versionRes.bible[language]))
-              for(var versionCode in versionRes.bible[language]){
-                var version = {"versionCode":versionCode,"versionName":'Indian Revised Version',versionId:versionRes.bible[language][versionCode].version_id}
-                versions.push(version)
-                var langObj = {"languageName":language,versionModels:versions}
+          var langObj = {}
+          var versions = []
+          APIFetch.getContent(this.state.versionId)
+            .then(versionRes =>{
+              if(languageList.length ==0){
+                if(versionRes){
+                  for(var language in versionRes.bible){
+                    var versions = []
+                    console.log(" langauge code "+language+" version res "+JSON.stringify(versionRes.bible[language]))
+                    for(var versionCode in versionRes.bible[language]){
+                      var version = {"versionCode":versionCode,"versionName":'Indian Revised Version',versionId:versionRes.bible[language][versionCode].version_id}
+                      versions.push(version)
+                      var langObj = {"languageName":language,versionModels:versions}
+                    }
+                    
+                    lanVer.push(langObj)
+                  }
+                }
               }
-              await dbQueries.addLangaugeList(langObj,versions)
-              lanVer.push(langObj)
-            }
-          }
+          })
+          await dbQueries.addLangaugeList(langObj,versions)
         }
       this.setState({
         languages: lanVer,
