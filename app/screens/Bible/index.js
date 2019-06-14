@@ -230,7 +230,7 @@ export default class Bible extends Component {
         bibleVersion: this.props.screenProps.versionCode
     }) 
     console.log("DID  MOUNT "+this.props.screenProps.isConnected)
-      // this.queryBookFromAPI()
+      this.queryBookFromAPI()
   }
   
   // render data onAPI Call 
@@ -276,7 +276,7 @@ export default class Bible extends Component {
   }
   
   async getHighlights(){
-    let model2 = await  DbQueries.queryHighlights(this.state.languageCode,this.state.versionCode,this.state.bookId)
+    let model2 = await  DbQueries.queryHighlights(this.state.languageName,this.state.versionCode,this.state.bookId)
     if(model2  == null ){
     }
     else{
@@ -362,6 +362,7 @@ export default class Bible extends Component {
 
   getSelectedReferences(vIndex, chapterNum, vNum) {
     let obj = chapterNum + '_' + vIndex + '_' + vNum
+    console.log("obj "+ chapterNum + '_' + vIndex + '_' + vNum)
     
     let selectedReferenceSet = [...this.state.selectedReferenceSet]
     
@@ -383,7 +384,7 @@ export default class Bible extends Component {
       for (let item of this.state.selectedReferenceSet) {
           let tempVal = item.split('_')
           for(var i=0; i<=this.state.HightlightedVerseArray.length-1; i++ ){
-            if (this.state.modelData[tempVal[0] - 1].verseComponentsModels[tempVal[1]].verseNumber == this.state.HightlightedVerseArray[i].verseNumber && this.state.modelData[tempVal[0] - 1].verseComponentsModels[tempVal[1]].chapterNumber == this.state.HightlightedVerseArray[i].chapterNumber) {
+            if (this.state.modelData[tempVal[0] - 1].verses[tempVal[1]].verseNumber == this.state.HightlightedVerseArray[i].verseNumber && this.state.currentVisibleChapter == this.state.HightlightedVerseArray[i].chapterNumber) {
               highlightCount++
             }
             console.log("highlightCount "+highlightCount)
@@ -414,14 +415,17 @@ export default class Bible extends Component {
     console.log("ishighlight in do highlight "+this.state.HighlightedText)
     if (this.state.HighlightedText == true) {
       for (let item of this.state.selectedReferenceSet) {
+
         let tempVal = item.split('_')
-        await DbQueries.updateHighlightsInVerse(this.state.languageCode, this.state.versionCode,this.state.bookId,JSON.parse(tempVal[0]), tempVal[2], true)
+        console.log("json parser temp 1"+item)
+        await DbQueries.updateHighlightsInVerse( this.props.screenProps.languageName, this.state.versionCode,this.state.bookId,JSON.parse(tempVal[0]), tempVal[2], true)
         this.setState({HightlightedVerseArray:[...this.state.HightlightedVerseArray,{"bookId":this.state.bookId,"chapterNumber":JSON.parse(tempVal[0]),"verseNumber":tempVal[2]}]})
       }
     } else {
       for (let item of this.state.selectedReferenceSet) {
         let tempVal = item.split('_')
-        await DbQueries.updateHighlightsInVerse(this.state.languageCode, this.state.versionCode,this.state.bookId,JSON.parse(tempVal[0]), tempVal[2], false)
+        console.log("json parser temp 2"+item)
+        await DbQueries.updateHighlightsInVerse( this.props.screenProps.languageName, this.state.versionCode,this.state.bookId,JSON.parse(tempVal[0]), tempVal[2], false)
         for(var i=0; i<=this.state.HightlightedVerseArray.length-1; i++){
           if(this.state.HightlightedVerseArray[i].chapterNumber ==JSON.parse(tempVal[0]) && this.state.HightlightedVerseArray[i].verseNumber ==tempVal[2]){
             this.state.HightlightedVerseArray.splice(i, 1)
@@ -433,7 +437,7 @@ export default class Bible extends Component {
   }
 
   removeHighlight = async( chapterNum,verseNum)=>{
-    await DbQueries.updateHighlightsInVerse(this.state.languageCode, this.state.versionCode,this.state.bookId,chapterNum, verseNum, false)
+    await DbQueries.updateHighlightsInVerse(this.props.screenProps.languageName, this.state.versionCode,this.state.bookId,chapterNum, verseNum, false)
     for(var i=0; i<=this.state.HightlightedVerseArray.length-1; i++){
       if(this.state.HightlightedVerseArray[i].chapterNumber == chapterNum && this.state.HightlightedVerseArray[i].verseNumber == verseNum){
         this.state.HightlightedVerseArray.splice(i, 1)
@@ -519,205 +523,126 @@ export default class Bible extends Component {
       isBookmark:true
     })
   }
-  componentDidUpdate(){
-    if(this.props.screenProps.isConnected==true){
-      this.queryBookFromAPI()
-    }
-  }
+  // componentDidUpdate(){
+  //   if(this.props.screenProps.isConnected==true){
+  //     this.queryBookFromAPI()
+  //   }
+  // }
   render() {
-    console.log("books keys "+JSON.stringify(this.state.booksId))
-    console.log("model data in render  "+this.state.modelData.length)
-
+     console.log("current visible chapter "+this.state.currentVisibleChapter)
     const thumbSize = this.state.thumbSize;
       return (
-  <View style={this.styles.container} >
-  <MenuContext style={this.styles.verseWrapperText}>
-  {this.props.screenProps.isConnected == true ? (this.state.modelData.length == 0 ? 
-    <View style={{alignItems: 'center'}}>   
-    <ActivityIndicator 
-    size="large" 
-    color="#0000ff"/>
-    </View> :
-    <View>
-        <ScrollView  
-           ref={(ref) => { this.scrollViewRef = ref; }}
-          >
-         {    (this.state.verseInLine) ?
-                  <View style={this.styles.chapterList}>
-                    <FlatList
-                    data={this.state.modelData[this.state.currentVisibleChapter - 1].verses}
-                    renderItem={({item, index}) => 
-                          <Text letterSpacing={24} 
-                             style={this.styles.verseWrapperText}> 
-                                <VerseView
-                                    ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
-                                    verseData = {item}
-                                    index = {index}
-                                    styles = {this.styles}
-                                    selectedReferences = {this.state.selectedReferenceSet}
-                                    getSelection = {(verseIndex, chapterNumber, verseNumber) => {
-                                    this.getSelectedReferences(verseIndex, chapterNumber, verseNumber)
-                                    }}
-                                    makeHighlight={this.doHighlight}
-                                    makeNotes={this.addToNotes}
-                                    share={this.addToShare}
-                                    HighlightedText={this.state.HighlightedText}
-                                    showFootNote = {this.state.showFootNote}
-                                    HightlightedVerse = {this.state.HightlightedVerseArray}
-                                    chapterNumber ={this.state.currentVisibleChapter}
-                                />
-                             
-                          </Text> 
-                    }
-                    ListFooterComponent={<View style={styles.addToSharefooterComponent} />}
-                    />
-                    </View>
-                :
-
-                    <View style={this.styles.chapterList}>
-                          
-                            {this.state.modelData[this.state.currentVisibleChapter - 1].verses.map((verse, index) => 
-                                <View>
-                                    {/* <Text letterSpacing={24}
-                                         >   */}
+        <View style={this.styles.container} >
+          <MenuContext style={this.styles.verseWrapperText}>
+            {this.state.modelData.length == 0   ?
+            <View style={{alignItems: 'center'}}>   
+            <ActivityIndicator 
+            size="large" 
+            color="#0000ff"/></View>:
+            <View>
+                <ScrollView  
+                   ref={(ref) => { this.scrollViewRef = ref; }}
+                  >
+                 {    (this.state.verseInLine) ?
+                          <View style={this.styles.chapterList}>
+                            <FlatList
+                            data={this.state.modelData[this.state.currentVisibleChapter - 1].verses}
+                            renderItem={({item, index}) => 
+                                  <Text letterSpacing={24} 
+                                     style={this.styles.verseWrapperText}> 
                                         <VerseView
-                                            ref={child => (this[`child_${verse.chapterNumber}_${index}`] = child)}
-                                            verseData = {verse}
+                                            // ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
+                                            verseData = {item}
                                             index = {index}
                                             styles = {this.styles}
                                             selectedReferences = {this.state.selectedReferenceSet}
                                             getSelection = {(verseIndex, chapterNumber, verseNumber) => {
-                                            this.getSelectedReferences(verseIndex, chapterNumber,verseNumber)
+                                            this.getSelectedReferences(verseIndex, chapterNumber, verseNumber)
                                             }}
                                             makeHighlight={this.doHighlight}
                                             makeNotes={this.addToNotes}
                                             share={this.addToShare}
                                             HighlightedText={this.state.HighlightedText}
-                                            onPressfootNote = {this.onPressfootNote}
                                             showFootNote = {this.state.showFootNote}
                                             HightlightedVerse = {this.state.HightlightedVerseArray}
                                             chapterNumber ={this.state.currentVisibleChapter}
                                         />
-                                       
-                                    {/* </Text> */}
-                                    
-                                    {index == this.state.modelData[this.state.currentVisibleChapter - 1].verses.length - 1
-                                    ? <View style={{height:25, marginBottom:4}} />
-                                    : null
-                                    }
-                                    
-                                  </View>
-                            )}
-                    </View>
-                }
+                                     
+                                  </Text> 
+                            }
+                            ListFooterComponent={<View style={styles.addToSharefooterComponent} />}
+                            />
+                            </View>
+                        :
 
-        </ScrollView>
-    </View>
-  ) :  (this.state.modelData.length > 0) ? 
-  <View>
-        <ScrollView  
-           ref={(ref) => { this.scrollViewRef = ref; }}
-          >
-         {    (this.state.verseInLine) ?
-                  <View style={this.styles.chapterList}>
-                    <FlatList
-                    data={this.state.modelData[this.state.currentVisibleChapter - 1].verses}
-                    renderItem={({item, index}) => 
-                          <Text letterSpacing={24} 
-                             style={this.styles.verseWrapperText}> 
-                                <VerseView
-                                    ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
-                                    verseData = {item}
-                                    index = {index}
-                                    styles = {this.styles}
-                                    selectedReferences = {this.state.selectedReferenceSet}
-                                    getSelection = {(verseIndex, chapterNumber, verseNumber) => {
-                                    this.getSelectedReferences(verseIndex, chapterNumber, verseNumber)
-                                    }}
-                                    makeHighlight={this.doHighlight}
-                                    makeNotes={this.addToNotes}
-                                    share={this.addToShare}
-                                    HighlightedText={this.state.HighlightedText}
-                                    showFootNote = {this.state.showFootNote}
-                                    HightlightedVerse = {this.state.HightlightedVerseArray}
-                                    chapterNumber ={this.state.currentVisibleChapter}
-                                />
-                             
-                          </Text> 
-                    }
-                    ListFooterComponent={<View style={styles.addToSharefooterComponent} />}
-                    />
-                    </View>
-                :
+                            <View style={this.styles.chapterList}>
+                                  
+                                    {this.state.modelData[this.state.currentVisibleChapter - 1].verses.map((verse, index) => 
+                                        <View>
+                                            {/* <Text letterSpacing={24}
+                                                 >   */}
+                                                <VerseView
+                                                    ref={child => (this[`child_${verse.chapterNumber}_${index}`] = child)}
+                                                    verseData = {verse}
+                                                    index = {index}
+                                                    styles = {this.styles}
+                                                    selectedReferences = {this.state.selectedReferenceSet}
+                                                    getSelection = {(verseIndex, chapterNumber, verseNumber) => {
+                                                    this.getSelectedReferences(verseIndex, chapterNumber,verseNumber)
+                                                    }}
+                                                    makeHighlight={this.doHighlight}
+                                                    makeNotes={this.addToNotes}
+                                                    share={this.addToShare}
+                                                    HighlightedText={this.state.HighlightedText}
+                                                    onPressfootNote = {this.onPressfootNote}
+                                                    showFootNote = {this.state.showFootNote}
+                                                    HightlightedVerse = {this.state.HightlightedVerseArray}
+                                                    chapterNumber ={this.state.currentVisibleChapter}
+                                                />
+                                               
+                                            {/* </Text> */}
+                                            
+                                            {index ==this.state.modelData[this.state.currentVisibleChapter - 1].verses - 1
+                                            ? <View style={{height:25, marginBottom:4}} />
+                                            : null
+                                            }
+                                            
+                                          </View>
+                                    )}
+                            </View>
+                        }
 
-                    <View style={this.styles.chapterList}>
-                          
-                            {this.state.modelData[this.state.currentVisibleChapter - 1].verses.map((verse, index) => 
-                                <View>
-                                    {/* <Text letterSpacing={24}
-                                         >   */}
-                                        <VerseView
-                                            ref={child => (this[`child_${verse.chapterNumber}_${index}`] = child)}
-                                            verseData = {verse}
-                                            index = {index}
-                                            styles = {this.styles}
-                                            selectedReferences = {this.state.selectedReferenceSet}
-                                            getSelection = {(verseIndex, chapterNumber, verseNumber) => {
-                                            this.getSelectedReferences(verseIndex, chapterNumber,verseNumber)
-                                            }}
-                                            makeHighlight={this.doHighlight}
-                                            makeNotes={this.addToNotes}
-                                            share={this.addToShare}
-                                            HighlightedText={this.state.HighlightedText}
-                                            onPressfootNote = {this.onPressfootNote}
-                                            showFootNote = {this.state.showFootNote}
-                                            HightlightedVerse = {this.state.HightlightedVerseArray}
-                                            chapterNumber ={this.state.currentVisibleChapter}
-                                        />
-                                       
-                                    {/* </Text> */}
-                                    
-                                    {index == this.state.modelData[this.state.currentVisibleChapter - 1].verses.length - 1
-                                    ? <View style={{height:25, marginBottom:4}} />
-                                    : null
-                                    }
-                                    
-                                  </View>
-                            )}
-                    </View>
-                }
+                </ScrollView>
+                
+            </View>
+          
+          }
+          </MenuContext>
+          {
+              this.state.close == true ? 
+              <TouchableOpacity style={{backgroundColor:"#3F51B5",flexDirection:'row',justifyContent:'flex-end'}} onPress={()=>this.setState({close:!this.state.close})}>
+                <Text style={{color:'#fff',textAlign:'center',fontSize:16}}>See More </Text>
+                <Icon name="expand-less" size={24} color="#fff" style={{paddingHorizontal:16}}/>
+              </TouchableOpacity>:
+                <BottomTab
+                  colorFile={this.props.screenProps.colorFile}
+                  sizeFile={this.props.screenProps.sizeFile}
+                  currentVisibleChapter={this.state.currentVisibleChapter}
+                  bookId = {this.state.bookId}
+                  versionCode = {this.state.versionCode}
+                  languageCode = {this.state.languageCode}
+                  close={this.state.close}
+                  closeSplitScreen ={this.closeSplitScreen}
+                  HightlightedVerseArray= {this.state.HightlightedVerseArray}
+                  removeHighlight = {this.removeHighlight}
+                  bookmarksList={this.state.bookmarksList}
+                  onBookmarkRemove = {this.onBookmarkRemove}
+                  changeBookFromSplit={this.changeBookFromSplit}
 
-        </ScrollView>
-    </View>
-  : <View style={{justifyContent:'center',alignItems:'center'}} ><Text>No internet connection</Text></View>
-  }
-  
-  </MenuContext>
-  {
-      this.state.close == true ? 
-      <TouchableOpacity style={{backgroundColor:"#3F51B5",flexDirection:'row',justifyContent:'flex-end'}} onPress={()=>this.setState({close:!this.state.close})}>
-        <Text style={{color:'#fff',textAlign:'center',fontSize:16}}>See More </Text>
-        <Icon name="expand-less" size={24} color="#fff" style={{paddingHorizontal:16}}/>
-      </TouchableOpacity>:
-        <BottomTab
-          colorFile={this.props.screenProps.colorFile}
-          sizeFile={this.props.screenProps.sizeFile}
-          currentVisibleChapter={this.state.currentVisibleChapter}
-          bookId = {this.state.bookId}
-          versionCode = {this.state.versionCode}
-          languageCode = {this.state.languageCode}
-          close={this.state.close}
-          closeSplitScreen ={this.closeSplitScreen}
-          HightlightedVerseArray= {this.state.HightlightedVerseArray}
-          removeHighlight = {this.removeHighlight}
-          bookmarksList={this.state.bookmarksList}
-          onBookmarkRemove = {this.onBookmarkRemove}
-          changeBookFromSplit={this.changeBookFromSplit}
-
-      />
-      }
-</View>
-   )
+              />
+              }
+        </View>
+      )
   }
 }
 

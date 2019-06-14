@@ -5,7 +5,9 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator
+  ActivityIndicator,
+  Dimensions,
+  TextInput
 } from 'react-native';
 import DbQueries from '../../utils/dbQueries';
 import { View } from 'native-base';
@@ -20,6 +22,22 @@ var moment = require('moment');
 export default class History extends Component{
   static navigationOptions = {
     headerTitle: 'History',
+    headerRight:(
+      <View style={{flexDirection:"row",justifyContent:"flex-end"}}>
+      <TextInput
+      // placeholder="Search"
+      underlineColorAndroid = '#fff'
+      placeholderTextColor={'#fff'} 
+      returnKeyType="search"
+      multiline={false}
+      numberOfLines={1}
+      style={{width:Dimensions.get('window').width/4}}
+     
+    />
+      <Icon name='search' color="#fff" size={28} style={{marginHorizontal:8}} />
+    </View>
+    )
+  
   };
   
   constructor(props){

@@ -38,7 +38,7 @@ export default class StudyHelp extends Component {
     return (
       <View>
             <FlatList
-            data={[{key:'SUMMARY',screen:'Summary'},{key:'FOOTNOTES',screen:'Footnotes'},{key:'COMMENTRY',screen:'Commentry'},{key:'DICTIONARY',screen:'Dictionary'}]}
+            data={[{key:'SUMMARY',screen:'Summary'},{key:'FOOTNOTES',screen:'Footnotes'},{key:'COMMENTARY',screen:'Commentary'},{key:'DICTIONARY',screen:'Dictionary'}]}
             numColumns={2}
             renderItem={({item}) =>
                 <TouchableOpacity

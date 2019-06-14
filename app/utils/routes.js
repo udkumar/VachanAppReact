@@ -12,8 +12,7 @@ import Notes from '../screens/Note/Notes'
 import EditNote from '../screens/Note/EditNote'
 import Search from '../screens/Search/Search'
 import Settings from '../screens/settings/Settings'
-import Googlesign from '../screens/Googlesign'
-import Splash from '../screens/Splash/Splash'
+import Account from '../screens/Account'
 import ReferenceSelection from '../screens/numberSelection/ReferenceSelection'
 import ChapterSelection from '../screens/numberSelection/ChapterSelection'
 import Hints from '../screens/Hints/Hints'
@@ -66,7 +65,7 @@ const MenuIcon = (navigation) => {
 
 const StackNavigate = StackNavigator(
   {  
-      
+
       Bible:{
         screen:Bible,
         navigationOptions: ({ navigation }) => ({
@@ -142,9 +141,13 @@ const StackNavigate = StackNavigator(
       LanguageList:{
         screen:LanguageList
       },
+      
       VersionList:{
         screen:VersionList
       },
+      Account:{
+        screen:Account
+      }
      
   },
   
@@ -192,7 +195,7 @@ export default class App extends Component {
         verseInLine:false,
         lastRead:{},
         versionId:AsyncStorageConstants.Values.DefVersionId,
-        isConnected:false
+        isConnected:true
     }
     //update booklist for showing book on selectBook screen
     this.updateBookList = this.updateBookList.bind(this)

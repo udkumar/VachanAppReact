@@ -42,10 +42,10 @@ export default class VerseView extends Component {
   openMenu = () => {
     this.props.getSelection(
       this.props.index, 
-      this.props.verseData.chapterNumber,
+      this.props.chapterNumber,
       this.props.verseData.verseNumber
   )
-  let obj = this.props.verseData.chapterNumber + '_' + this.props.index + '_' + this.props.verseData.verseNumber;
+  let obj = this.props.chapterNumber + '_' + this.props.index + '_' + this.props.verseData.verseNumber;
   let isSelect = this.has(this.props.selectedReferences, obj)
   if(isSelect){
     this.menu.open()
@@ -68,10 +68,12 @@ export default class VerseView extends Component {
       }
     }
   render() {
-    let obj = this.props.verseData.chapterNumber + '_' + this.props.index + '_' + this.props.verseData.verseNumber;
+    let obj = this.props.chapterNumber + '_' + this.props.index + '_' + this.props.verseData.verseNumber;
     let isSelect = this.has(this.props.selectedReferences, obj)
     let isHighlight = this.highlighted(this.props.verseData.verseNumber)
-    console.log("")
+    // console.log("is highlight "+isHighlight)
+    // console.log("verse data  "+JSON.stringify(this.props.verseData))
+
     // switch(this.props.verseData.type) {
       // case Constants.MarkerTypes.VERSE: {
         return (

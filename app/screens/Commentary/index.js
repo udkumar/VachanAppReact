@@ -5,12 +5,12 @@ import {
   TextInput,
   Dimensions
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons'
 // import DbQueries from '../utils/dbQueries'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 
-export default class Footnotes extends Component {
+export default class Commentary extends Component {
   static navigationOptions = {
-    headerTitle: 'Footnotes',
+    headerTitle: 'Commentary',
     headerRight:(
       <View style={{flexDirection:"row",justifyContent:"flex-end"}}>
       <TextInput
@@ -29,10 +29,9 @@ export default class Footnotes extends Component {
   };
 
   render() {
-
     return (
       <View>
-       <Text>Footnotes</Text>
+       <Text>Commentary</Text>
       </View>
     );
   }

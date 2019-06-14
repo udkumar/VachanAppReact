@@ -21,7 +21,7 @@ var moment = require('moment');
 export default class Notes extends Component {
 
   static navigationOptions = ({navigation}) => ({
-    headerTitle: 'Notes',
+    headerTitle: 'My Content',
     headerRight:(
       <TouchableOpacity style={{margin:8}} onPress={() => navigation.state.params.newNote(-1)}>
          <Icon name="note-add" size={24} color="#fff"/>

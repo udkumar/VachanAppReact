@@ -5,7 +5,7 @@ import Audio from '../../Audio'
 import Video from '../../Video'
 import Foonotes from'../../Footnotes'
 import Summary from'../../Summary'
-import Commentry from'../../Commentry'
+import Commentary from'../../Commentary'
 import Dictionary from'../../Dictionary'
 import HighLights from '../../Highlights/Highlights'
 import Notes from '../../Note/Notes'
@@ -20,7 +20,7 @@ const BottomTab = TabNavigator(
     NotePad:{
         screen:NotePad,
         navigationOptions: {
-            tabBarLabel: 'NotePad',
+            tabBarLabel: 'My Content',
             // tabBarIcon: () => <Icon name="list" size={35} style={{color:'#fff'}}/>,
         }
     },
@@ -78,8 +78,8 @@ const BottomTabNav = StackNavigator({
 	Summary:{
 		screen:Summary
     },
-    Commentry:{
-        screen:Commentry
+    Commentary:{
+        screen:Commentary
     },
     Dictionary:{
         screen:Dictionary

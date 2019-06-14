@@ -44,7 +44,7 @@ export default class Search extends Component {
           />
         ),
         headerRight:(
-          <Icon name='cancel' size={28} style={{marginHorizontal:8}} onPress={(text)=>params.clearData()}/>
+          <Icon name={params.text !== '' ? 'cancel' : 'search'} size={28} color="#fff" style={{marginHorizontal:8}} />
         )
       }
   }
@@ -64,7 +64,8 @@ export default class Search extends Component {
     this.onSearchText = this.onSearchText.bind(this)
     this.toggleButton = this.toggleButton.bind(this)
     this.clearData = this.clearData.bind(this)
-    this.styles = searchStyle(props.screenProps.colorFile, props.screenProps.sizeFile);   
+
+    this.styles = searchStyle(props.screenProps.colorFile, props.screenProps.sizeFile);  
   }
   
   onSearchText(){
@@ -175,9 +176,14 @@ export default class Search extends Component {
       onChangeText:this.onChangeText,
       clearData:this.clearData,
       headerStyle:this.styles.headerText,
+      // text:this.state.text
     })
   }
-
+  componentWillMount(){
+    this.props.navigation.setParams({
+      text:this.state.text
+    })
+  }
   toggleButton(activeTab){
     if (this.state.activeTab == activeTab) {
       return;

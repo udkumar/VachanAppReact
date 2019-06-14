@@ -6,6 +6,8 @@ import {
   Button,
   TouchableOpacity,
   FlatList,
+  TextInput,
+  Dimensions,
   ActivityIndicator
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -13,10 +15,37 @@ import DbQueries from '../../utils/dbQueries'
 import id_name_map from '../../assets/mappings.json'
 import { bookStyle } from './styles.js'
 import {getBookNameFromMapping} from '../../utils/UtilFunctions';
+import {SearchBar} from "react-native-elements"
+Dimensions.get('window').width
 
 export default class BookMarks extends Component {
   static navigationOptions = {
     headerTitle: 'Bookmarks',
+    // headerTitle: (
+     
+    // ),
+    headerRight:(
+      <View style={{flexDirection:"row",justifyContent:"flex-end"}}>
+      <TextInput
+      // placeholder="Search"
+      underlineColorAndroid = '#fff'
+      placeholderTextColor={'#fff'} 
+      returnKeyType="search"
+      multiline={false}
+      numberOfLines={1}
+      style={{width:Dimensions.get('window').width/4}}
+     
+    />
+      <Icon name='search' color="#fff" size={28} style={{marginHorizontal:8}} />
+    </View>
+    )
+    // headerRight:(
+    //   // <SearchBar
+    //   //   placeholder="Type Here..."
+    //   //   onChangeText={this.updateSearch}
+    //   //   value={search}
+    //   // />
+    // )
   };
   
   constructor(props) {

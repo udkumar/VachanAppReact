@@ -6,7 +6,9 @@ import {
   Button,
   TouchableOpacity,
   FlatList,
-  ActivityIndicator
+  TextInput,
+  ActivityIndicator,
+  Dimensions
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import DbQueries from '../../utils/dbQueries'
@@ -18,6 +20,21 @@ import { highlightstyle } from './styles'
 export default class HighLights extends Component {
   static navigationOptions = {
     headerTitle: 'Highlights',
+    headerRight:(
+      <View style={{flexDirection:"row",justifyContent:"flex-end"}}>
+      <TextInput
+      // placeholder="Search"
+      underlineColorAndroid = '#fff'
+      placeholderTextColor={'#fff'} 
+      returnKeyType="search"
+      multiline={false}
+      numberOfLines={1}
+      style={{width:Dimensions.get('window').width/4}}
+     
+    />
+      <Icon name='search' color="#fff" size={28} style={{marginHorizontal:8}} />
+    </View>
+    )
   };
 
   constructor(props) {

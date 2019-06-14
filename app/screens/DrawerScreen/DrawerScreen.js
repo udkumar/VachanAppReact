@@ -10,19 +10,22 @@ class DrawerScreen extends Component {
     const valueProps  = this.props.navigation.state.routes[0].index == 1 ? (this.props.navigation.state.routes[0].routes[1].params ? this.props.navigation.state.routes[0].routes[1].params.photorUl : null) : null
 
     const iconName = [
-      {icon:'local-library',pressIcon:'Bible',},
+      {icon:'local-library',pressIcon:'Home',},
       {icon:'info',pressIcon:'About'},
       {icon:'search',pressIcon:'Search'},
-      {icon:'settings',pressIcon:'Settings'},
-      {icon:'map',pressIcon:'GoogleMaps'},
-      {icon:'image',pressIcon:'Images'}
+      {icon:'description',pressIcon:'Articles'},
+      {icon:'thumb-up',pressIcon:'Subscribe'},
+      {icon:'help',pressIcon:'FAQ & Help Videos'},
+      {icon:'comment',pressIcon:'Feedback'},
+      {icon:'contacts',pressIcon:'Contact Us'},
+      {icon:'account-circle',pressIcon:'Account'},
+      {icon:'settings',pressIcon:'Settings'}
     ]
     return (
-      <ScrollView>
+      <ScrollView style={{flex:1}}> 
           <View style={styles.headerContainer}>
                 <ImageBackground source={require('../../assets/headerbook.jpeg')} style={{flex: 1, width: 280, justifyContent: 'center'}} >
                     <Text style={styles.headerText}>Header Portion</Text>
-                   
                      <Image source={{uri:valueProps}}
                      style={{width: 100, height: 100, borderRadius: 150/2, marginLeft: 120}}
                    />  
@@ -30,26 +33,26 @@ class DrawerScreen extends Component {
             </View>
         {
           iconName.map((iconName,index)=>
-         <View style={{
-                    padding: 16,
-                    borderWidth: 0.5,
+                <TouchableOpacity 
+                onPress={()=>{this.props.navigation.navigate(iconName.pressIcon)}} 
+                style={{
+                  flex:1,
+                    flexDirection:"row",
+                    padding:8,
+                    borderWidth: 0.3,
                     borderColor: '#d6d7da'
                 }}>
-                <View>
-                <TouchableOpacity onPress={()=>{this.props.navigation.navigate(iconName.pressIcon)}} style={{flex:1,flexDirection:"row"}}>
-                  <Icon name={iconName.icon} size={32}/>
+                  <Icon name={iconName.icon} size={20} style={{paddingRight:16}}/>
                   <Text 
-                    style={{padding:6,fontSize:16}}>
+                    style={{fontSize:16}}>
                     {iconName.pressIcon}
                   </Text>
               </TouchableOpacity>
-            </View>
-            </View>
           )
-
         }
-        
+      
       </ScrollView>
+
     );
   }
 }

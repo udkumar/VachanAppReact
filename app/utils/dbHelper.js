@@ -25,7 +25,7 @@ class DbHelper {
     async getRealm() {
     	try {
     		return await Realm.open({
-				schemaVersion: 5,
+				schemaVersion: 6,
 				// deleteRealmIfMigrationNeeded: true, 
 				path:
 					Platform.OS === 'ios'
@@ -101,25 +101,25 @@ class DbHelper {
 		}
 		return null;
 	}
-	async queryHighlights(langCode, verCode, bookId){
+	async queryHighlights(langName, verCode, bookId){
 		let realm = await this.getRealm();
 					if (realm){
 						let result1 = realm.objects("HighlightsModel");
-						let highlight = result1.filtered('languageCode ==[c] "' + langCode + '" && versionCode ==[c] "' + verCode + '"')
+						let highlight = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '"')
 						return highlight
 					}
 				
 	}
-	async updateHighlightsInVerse(langCode, verCode, bId, cNum, vNum, isHighlight) {
+	async updateHighlightsInVerse(langName, verCode, bId, cNum, vNum, isHighlight){
 		let realm = await this.getRealm()
 		let  result1= realm.objects('HighlightsModel');
-		let highlight = result1.filtered('languageCode ==[c] "' + langCode + '" && versionCode ==[c] "' + verCode + '" &&  bookId == "' + bId + '" && chapterNumber == "'+cNum+'" && verseNumber == "'+vNum+'"')
-		console.log("LANG CODE "+langCode+"bVER CODE "+verCode+" BID "+bId+" CNUM "+cNum+" VNUM "+vNum+" ISHIGHLIGHT "+isHighlight)
+		let highlight = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" &&  bookId == "' + bId + '" && chapterNumber == "'+cNum+'" && verseNumber == "'+vNum+'"')
+		console.log("LANG CODE "+langName+"bVER CODE "+verCode+" BID "+bId+" CNUM "+cNum+" VNUM "+vNum+" ISHIGHLIGHT "+isHighlight)
 		if (realm) {
 			realm.write(() => {
 				if(isHighlight){
 				realm.create('HighlightsModel', {
-					languageCode: langCode,
+					languageName: langName,
 					versionCode: verCode,
 					bookId: bId,
 					chapterNumber: cNum,
@@ -381,7 +381,6 @@ class DbHelper {
 					// realm.write(() => {
 					// 	realm.delete(result); 
 					// })
-
 			  } catch (e) {
 				console.log("Error on  "+e)
 			  }
