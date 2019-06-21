@@ -10,6 +10,6 @@ BookmarksListModel.schema = {
         bookId:'string',
         chapterNumber:'int',
         versionCode:'string',
-        languageCode:'string',
+        languageCode:'string'
     }
 };

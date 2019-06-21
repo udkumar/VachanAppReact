@@ -11,6 +11,5 @@ export default class HighlightsModel extends Realm.Object {}
         bookId:'string',
         chapterNumber:'int',
         verseNumber:'string'
-        
     }
 }

@@ -49,15 +49,15 @@ export default class SelectVerse extends Component {
         let verseList = [];
         for (var i=0; i<model[0].chapterModels.length; i++) {
           if (model[0].chapterModels[i].chapterNumber == this.state.selectedChapterNumber) {
-            for (var j=0; j<model[0].chapterModels[i].verseComponentsModels.length; j++) {
+            for (var j=0; j<model[0].chapterModels[i].verseModels.length; j++) {
               if (verseList.length > 0) {
-                if (model[0].chapterModels[i].verseComponentsModels[j].verseNumber == verseList[verseList.length - 1]) {
+                if (model[0].chapterModels[i].verseModels[j].verseNumber == verseList[verseList.length - 1]) {
                   continue;
                 } else {
-                  verseList.push(model[0].chapterModels[i].verseComponentsModels[j].verseNumber)
+                  verseList.push(model[0].chapterModels[i].verseModels[j].verseNumber)
                 }
               } else {
-                verseList.push(model[0].chapterModels[i].verseComponentsModels[j].verseNumber)
+                verseList.push(model[0].chapterModels[i].verseModels[j].verseNumber)
               }
             }
             break;

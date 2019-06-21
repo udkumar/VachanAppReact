@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import firebase from 'react-native-firebase';
+// import firebase from 'react-native-firebase';
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import colorConstants from '../../utils/colorConstants'
 const AsyncStorageConstants = require('../../utils/AsyncStorageConstants')
@@ -44,20 +44,20 @@ export default class Login extends Component {
     
             console.log("SENDING")
 
-            firebase.auth().sendSignInLinkToEmail(this.state.email, actionCodeSettings)
-                .then(() => {
-                    // The link was successfully sent. Inform the user.
-                    // Save the email locally so you don't need to ask the user for it again
-                    // if they open the link on the same device.
-                    console.log("ON SUCCESS SEND SIGN IN LINK TO MAIL  : " + this.state.email)
-                    AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.BackupRestoreEmail, this.state.email);
-                })
-                .catch(function(error) {
-                    // Some error occurred, you can inspect the code: error.code
-                    console.log("sendSignInLinkToEmail  error : " + error.code)
-                    Alert.alert("Error", 
-                        "There is some error in sending sign in link to your email. " + error.code)
-                });
+            // firebase.auth().sendSignInLinkToEmail(this.state.email, actionCodeSettings)
+            //     .then(() => {
+            //         // The link was successfully sent. Inform the user.
+            //         // Save the email locally so you don't need to ask the user for it again
+            //         // if they open the link on the same device.
+            //         console.log("ON SUCCESS SEND SIGN IN LINK TO MAIL  : " + this.state.email)
+            //         AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.BackupRestoreEmail, this.state.email);
+            //     })
+            //     .catch(function(error) {
+            //         // Some error occurred, you can inspect the code: error.code
+            //         console.log("sendSignInLinkToEmail  error : " + error.code)
+            //         Alert.alert("Error", 
+            //             "There is some error in sending sign in link to your email. " + error.code)
+            //     });
         })
     }
 

@@ -446,7 +446,7 @@ export default class Bible extends Component {
     }
   }
   getVerseText(cNum, vIndex) {
-    return getResultText(this.state.modelData[cNum - 1].verseComponentsModels[vIndex].text)
+    return getResultText(this.state.modelData[cNum - 1].verseModels[vIndex].text)
   }
 
   addToShare = () => {

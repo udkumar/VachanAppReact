@@ -6,7 +6,7 @@ import {
   FlatList,
   Alert,
   ActivityIndicator,
-  NetInfo
+
 } from 'react-native';
 import {Card, CardItem} from 'native-base'
 import { zip, unzip, unzipAssets, subscribe } from 'react-native-zip-archive'

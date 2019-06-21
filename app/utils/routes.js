@@ -1,6 +1,5 @@
 // all of our routes
 import React, { Component } from 'react'
-import {NetInfo} from 'react-native'
 import {StackNavigator, DrawerNavigator,DrawerItems,DrawerActions,NavigationActions,} from 'react-navigation'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import SelectBook from '../screens/SelectBook/SelectBook'
@@ -27,7 +26,6 @@ import { styleFile } from './styles.js'
 import DbQueries from '../utils/dbQueries'
 import Realm from 'realm'
 
-import SignupWithGoogle from '../screens/SignupWithGoogle'
 import Signin from '../screens/SignIn'
 import Video from '../screens/Video'
 import Audio from '../screens/Audio'
@@ -66,6 +64,9 @@ const MenuIcon = (navigation) => {
 const StackNavigate = StackNavigator(
   {  
 
+    // LanguageList:{
+    //   screen:LanguageList
+    // },
       Bible:{
         screen:Bible,
         navigationOptions: ({ navigation }) => ({
@@ -334,10 +335,10 @@ export default class App extends Component {
   }
    
   componentWillUnmount(){
-    NetInfo.removeEventListener(
-      'connectionChange',
-      this.handleFirstConnectivityChange
-    )
+    // NetInfo.removeEventListener(
+    //   'connectionChange',
+    //   this.handleFirstConnectivityChange
+    // )
   }
 
   async componentDidMount(){
@@ -362,22 +363,22 @@ export default class App extends Component {
       return
 
     }
-    NetInfo.isConnected.fetch().done((isConnected) => {
-      console.log("IS CONNECTION  "+isConnected)
-      if(isConnected == true)
-      {
-        this.setState({isConnected : true})
-      }
-      else
-      {
-        this.setState({isConnected : false})
-      }
+    // NetInfo.isConnected.fetch().done((isConnected) => {
+    //   console.log("IS CONNECTION  "+isConnected)
+    //   if(isConnected == true)
+    //   {
+    //     this.setState({isConnected : true})
+    //   }
+    //   else
+    //   {
+    //     this.setState({isConnected : false})
+    //   }
 
-    });
-    NetInfo.isConnected.addEventListener(
-      'connectionChange',
-      this.handleFirstConnectivityChange
-    )
+    // });
+    // NetInfo.isConnected.addEventListener(
+    //   'connectionChange',
+    //   this.handleFirstConnectivityChange
+    // )
 
     console.log("ROUTES.... color mode "+res[0][1])
     this.setState({sizeMode: res[1][1] == null ? AsyncStorageConstants.Values.SizeModeNormal : parseInt(res[1][1])}, ()=> {

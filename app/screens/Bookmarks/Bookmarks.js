@@ -15,7 +15,6 @@ import DbQueries from '../../utils/dbQueries'
 import id_name_map from '../../assets/mappings.json'
 import { bookStyle } from './styles.js'
 import {getBookNameFromMapping} from '../../utils/UtilFunctions';
-import {SearchBar} from "react-native-elements"
 Dimensions.get('window').width
 
 export default class BookMarks extends Component {

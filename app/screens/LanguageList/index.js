@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, StyleSheet,ScrollView, View,ActivityIndicator,TextInput,FlatList,LayoutAnimation,UIManager,Platform,TouchableOpacity} from 'react-native';
+import { Text, StyleSheet,ScrollView,Dimensions, Modal,View,ActivityIndicator,TextInput,FlatList,LayoutAnimation,UIManager,Platform,TouchableOpacity} from 'react-native';
 import {Card} from 'native-base'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import dbQueries from '../../utils/dbQueries'
@@ -7,16 +7,19 @@ import APIFetch from '../../utils/APIFetch'
 import timestamp from '../../assets/timestamp.json'
 import  grammar from 'usfm-grammar'
 import { getBookNameFromMapping, getBookSectionFromMapping, getBookNumberFromMapping } from '../../utils/UtilFunctions';
+const width = Dimensions.get('window').width;
+var height =  Dimensions.get('window').width;
 
 class ExpandableItemComponent extends Component {
   constructor() {
     super();
     this.state = {
       layoutHeight: 0,
+      modalVisible:true
     };
   }
   componentWillReceiveProps(nextProps){
-    console.log("next props "+JSON.stringify(nextProps))
+    // console.log("next props "+JSON.stringify(nextProps))
     if (nextProps.item.isExpanded) {
       this.setState(() => {
         return {
@@ -32,18 +35,15 @@ class ExpandableItemComponent extends Component {
     }
   }
   shouldComponentUpdate(nextProps, nextState) {
-    console.log("should update next props "+JSON.stringify(nextProps)+ "next state "+nextState)
+    // console.log("should update next props "+JSON.stringify(nextProps)+ "next state "+nextState)
     if (this.state.layoutHeight !== nextState.layoutHeight) {
       return true;
     }
     return false;
   }
 
-//   DownloadBible(){}
-
  
   render() {
-      console.log("version model "+JSON.stringify(this.props.item.isExpanded))
     return (
       <View>
       <Card>
@@ -63,13 +63,15 @@ class ExpandableItemComponent extends Component {
           {/*Content under the header of the Expandable List Item*/}
           {this.props.item.versionModels.map((item, key) => (
             <TouchableOpacity
-           
+            // onPress={this.props.setModalVisible}
               style={styles.content}>
               <Text style={styles.text}>
                  {item.versionName}
               </Text>
               {/* <TouchableOpacity > */}
-              <Icon name="file-download" size={24}  onPress={this.props.DownloadBible(item.versionId)}/>
+              <Icon name="file-download" size={24} 
+               onPress={()=>{this.props.DownloadBible(item,this.props.item.languageName)}}
+               />
               {/* </TouchableOpacity> */}
               {/* <View style={styles.separator} /> */}
             </TouchableOpacity>
@@ -135,7 +137,7 @@ export default class LanguageList extends Component {
                   if(versionRes){
                     for(var language in versionRes.bible){
                       var versions = []
-                      console.log(" langauge code "+language+" version res "+JSON.stringify(versionRes.bible[language]))
+                      // console.log(" langauge code "+language+" version res "+JSON.stringify(versionRes.bible[language]))
                       for(var versionCode in versionRes.bible[language]){
                         var version = {"versionName":'Indian Revised Version',"versionCode":versionCode,versionId:versionRes.bible[language][versionCode].version_id}
                         versions.push(version)
@@ -187,54 +189,57 @@ export default class LanguageList extends Component {
           languages:newData
         })
     }
-    async DownloadBible(id){
-        console.log("id "+id)
-        if(id == null){
-            return
-          }
-        var content = await APIFetch.getContent(id)
-        console.log("content "+JSON.stringify(content))
-        for(var key in content ){
-                var jsonOutput = grammar.parse(content[key],grammar.SCRIPTURE)
-                console.log("book id "+key)
-                console.log("jsonOutput "+JSON.stringify(jsonOutput))
-                
-                // console.log("json output "+JSON.stringify(jsonOutput))
-                var bookKey = key.toUpperCase()
-                // console.log("book key "+bookKey)
-                // var bookModel = {
-                //     languageName:versionData.languageName,
-                //     versionCode:item.versionCode,
-                //     bookId: bookKey,
-                //     bookName:getBookNameFromMapping(bookKey),
-                //     chapterModels: [],
-                //     section: getBookSectionFromMapping(bookKey),
-                //     bookNumber: getBookNumberFromMapping(bookKey)
-                // }
-                // bookModels.push(bookModel)
-        }
-        // console.log("book models "+JSON.stringify(bookModels))
-        // var ChapterModel = {
-        //     chapterNumber: 'int',
-        //     numberOfVerses: 'int',
-        //     verseComponentsModels: 'VerseComponentsModel[]',
-        // }
-        // var versionModel = {
-        //     type: 'string',
-        //     verseNumber: {type: 'string', indexed: true},
-        //     text: {type: 'string', indexed: true},
-        //     highlighted: 'bool',
-        //     languageCode: 'string',
-        //     versionCode: 'string',
-        //     bookId: {type: 'string', indexed: true},
-        //     chapterNumber: {type: 'int', indexed: true},
-        // }
-       
-        // console.log("content "+JSON.stringify(content))
-    }
 
+    DownloadBible = async(item,langName)=>{
+      console.log("item "+JSON.stringify(item)+ "language name "+langName)
+      console.log("DOWNLOAD FUNCTION PRESS")
+      var bookModel = []
+      var chapterModel = []
+      var verseModel = []
+      var content = await APIFetch.getContent(item.versionId)
+      console.log("constent key "+content["gen"])
+      var jsonOutput =   grammar.parse(content["gen"],grammar.SCRIPTURE)
+      console.log(JSON.stringify(jsonOutput)+ " JSON OBJECT ")
+      if(jsonOutput !=null){
+      for(var i=0;i<jsonOutput.chapters.length-1;i++){
+        for(var j=0; j< jsonOutput.chapters[i].verses.length; j++){
+          let verseModels = {
+            verseText:jsonOutput.chapters[i].verses[j].verseText,
+            VerseNumber:jsonOutput.chapters[i].verses[j].VerseNumber
+          }
+            verseModel.push(verseModels)
+        }
+        var numberOfVerses = jsonOutput.chapters[i].verses.length
+        var chapterNum = jsonOutput.chapters[i].chapterTitle 
+        let chapterModels = { 
+          chapterNumber: chapterNum,
+          numberOfVerses: numberOfVerses,
+          verseModel:verseModel,
+        }
+          chapterModel.push(chapterModels)
+      }
+    }
+      const bookKey  = 'GEN'
+      let bookModels = {
+        languageName:langName,
+        versionCode:item.versionCode,
+        bookId: bookKey,
+        bookName:getBookNameFromMapping(bookKey),
+        chapterModel: chapterModel,
+        section: getBookSectionFromMapping(bookKey),
+        bookNumber: getBookNumberFromMapping(bookKey)
+      }
+      bookModel.push(bookModels)
+      dbQueries.addNewVersion(langName,item.versionCode,bookModel)
+      console.log("book model "+JSON.stringify(bookModel))
+      // this.setState({modalVisible:this.state.modalVisible})
+    }
+    setModalVisible=()=>{
+      this.setState({modalVisible:!this.state.modalVisible})
+    }
     render(){
-       console.log("langauge length "+JSON.stringify(this.state.languages))
+      console.log("render visible "+this.state.modalVisible)
+      //  console.log("langauge length "+JSON.stringify(this.state.languages))
       return (
             <View style={styles.MainContainer}>
             {this.state.languages.length == 0 ? 
@@ -258,20 +263,106 @@ export default class LanguageList extends Component {
                     // key={item}
                     onClickFunction={this.updateLayout.bind(this, index)}
                     item={item}
-                    DownloadBible = {this.DownloadBible.bind(this)}
+                    DownloadBible = {this.DownloadBible}
+                    // setModalVisible={this.setModalVisible}
+                    // modalVisible={this.state.modalVisible}
                   />
                 ))}
               </ScrollView>
             </View>
             }
+            
+             {/* {this.state.modalVisible == true ?
+              <Modal
+              animationType="fade"
+              // presentationStyle="presentationStyle"
+              transparent={true}
+              visible={this.state.modalVisible}
+              onRequestClose={() => {
+              alert('Modal has been closed.');
+              }}>
+              <View style={{flex:1,marginVertical:height/3}}>
+                <View 
+                  style={{
+                    flex:1,
+                    width:width,
+                    height:height,
+                    justifyContent:'center',
+                    alignItems:'center',
+                    backgroundColor:"red"
+                  }}>
+                    <FlatList
+                      numColumns={4}
+                      data={["1","2","3","4","5","6","8","9","10","11","12","13","14","15"]}
+                      renderItem={({item, index}) => 
+                      <TouchableOpacity 
+                      style={{
+                        backgroundColor:'transparent',
+                        borderRightWidth:1, 
+                        borderBottomWidth:1,
+                        height:height/4,
+                        width:width/4, 
+                        justifyContent:"center",
+                        alignItems:'center'
+                      }}
+                        onPress={this.setModalVisible}
+                        >
+                              <Text>{item}</Text>
+                          </TouchableOpacity>
+                      }
+                    />
+                </View>
+              </View>
+            </Modal>
+             : null 
+            } */}
+      
+        {/* <TouchableOpacity
+          onPress={() => {
+            this.setModalVisible(true);
+          }}>
+          <Text>Show Modal</Text>
+        </TouchableOpacity> */}
+      
+          {/* <Modal
+            visible={this.state.modalVisible}
+            animationType='slide'
+            onRequestClose={() => {console.log('Modal has been closed.');}}
+            transparent={true}
+         >
+         <View
+         style={{
+           width:width,
+           height:height,
+           justifyContent:'center',
+           alignItems:'center'
+         }}
+          > 
+          <View style={{
+             alignItems: 'center',
+             backgroundColor: 'red',
+             justifyContent: 'center',
+             height: height,
+             width:width
+          }}>
+           <TouchableOpacity
+            onPress={() => {
+                  this.setModalVisible(!this.state.modalVisible);
+                }}
+            >
+            <Text>Close</Text>
+            </TouchableOpacity>
             </View>
+          </View>
+          </Modal> */}
+        </View>
       )
     }
 }
 const styles = StyleSheet.create({
  
     MainContainer :{
-     flex:1,
+    //  flex:1,
      margin:8
      },
     

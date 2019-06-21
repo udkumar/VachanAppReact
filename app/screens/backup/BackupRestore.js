@@ -10,7 +10,7 @@ import {
   FlatList,
 } from 'react-native';
 import {Card} from 'native-base'
-import firebase from 'react-native-firebase';
+// import firebase from 'react-native-firebase';
 import Login from './Login';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {backupPageStyle} from './styles.js'
@@ -32,7 +32,7 @@ export default class BackupRestore extends Component {
         this.state = {
             downloadData:[],
             isLoading: false,
-            user: firebase.auth().currentUser,
+            // user: firebase.auth().currentUser,
             url: props.navigation.getParam('url', null),
             dataSource: [],
 
@@ -42,9 +42,9 @@ export default class BackupRestore extends Component {
     }
 
     async componentDidMount() {
-        this.unsubscriber = firebase.auth().onAuthStateChanged((user) => {
-            this.setState({ user });
-        });
+        // this.unsubscriber = firebase.auth().onAuthStateChanged((user) => {
+            // this.setState({ user });
+        // });
         
         this.doList()
 
@@ -57,34 +57,34 @@ export default class BackupRestore extends Component {
         const routeName = route.split('/')[0];
 
         // Confirm the link is a sign-in with email link.
-        if (firebase.auth().isSignInWithEmailLink(url)) {
-            console.log("it is sign in link : " + url)
-            // Get the email if available. This should be available if the user completes
-            // the flow on the same device where they started it.
-            var email = await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.BackupRestoreEmail, null)
-            console.log("email from async : " + email)
-            if (email == null) {
-            // User opened the link on a different device. To prevent session fixation
-            // attacks, ask the user to provide the associated email again. For example:
-                Alert.alert("Email", "Please enter email");
-            } else {
-                this.continueSignIn(email, url)
-            }
-        }
+        // if (firebase.auth().isSignInWithEmailLink(url)) {
+        //     console.log("it is sign in link : " + url)
+        //     // Get the email if available. This should be available if the user completes
+        //     // the flow on the same device where they started it.
+        //     var email = await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.BackupRestoreEmail, null)
+        //     console.log("email from async : " + email)
+        //     if (email == null) {
+        //     // User opened the link on a different device. To prevent session fixation
+        //     // attacks, ask the user to provide the associated email again. For example:
+        //         Alert.alert("Email", "Please enter email");
+        //     } else {
+        //         this.continueSignIn(email, url)
+        //     }
+        // }
     }
 
     continueSignIn = (email, url) => {
-        firebase.auth().signInWithEmailLink(email, url)
-            .then(function(result) {
-                AsyncStorageUtil.removeItem(AsyncStorageConstants.Keys.BackupRestoreEmail)
-                // You can access the new user via result.user
-                this.setState({user: result.user})
-            })
-            .catch(function(error) {
-                // Alert.alert("Error", "There is some error " + error.code)
-                // Some error occurred, you can inspect the code: error.code
-                // Common errors could be invalid email and invalid or expired OTPs.
-            });
+        // firebase.auth().signInWithEmailLink(email, url)
+        //     .then(function(result) {
+        //         AsyncStorageUtil.removeItem(AsyncStorageConstants.Keys.BackupRestoreEmail)
+        //         // You can access the new user via result.user
+        //         this.setState({user: result.user})
+        //     })
+        //     .catch(function(error) {
+        //         // Alert.alert("Error", "There is some error " + error.code)
+        //         // Some error occurred, you can inspect the code: error.code
+        //         // Common errors could be invalid email and invalid or expired OTPs.
+        //     });
     }
 
     componentWillReceiveProps(props) {
@@ -110,7 +110,7 @@ export default class BackupRestore extends Component {
         var self = this;
 
         // Points to the root reference
-        var storageRef = firebase.app().storage().ref();
+        // var storageRef = firebase.app().storage().ref();
         // Points to 'databases'
         var dbRef = storageRef.child('databases/' + emailId + '/' + uid);
         // Points to 'databases/autographa.realm'
@@ -126,68 +126,68 @@ export default class BackupRestore extends Component {
         // 1. 'state_changed' observer, called any time the state changes
         // 2. Error observer, called on failure
         // 3. Completion observer, called on successful completion
-        uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, function(snapshot){
-            // Observe state change events such as progress, pause, and resume
-            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log('Upload is ' + progress + '% done');
-            switch (snapshot.state) {
-                case firebase.storage.TaskState.PAUSED: // or 'paused'
-                    console.log('Upload is paused');
-                    break;
-                case firebase.storage.TaskState.RUNNING: // or 'running'
-                    console.log('Upload is running');
-                    break;
-                case firebase.storage.TaskState.SUCCESS: 
-                    console.log("in success uid = " + uid);
-                    console.log("DO WRITE")
-                    var fdate = new Date(snapshot.metadata.timeCreated);
-                    console.log(" date = "+ fdate)
-                    var a = snapshot.metadata.size;
-                    var sizeFormat = a;
-                    if(0==a) {
-                        sizeFormat = "0 Bytes";
-                    } else {
-                        var c=1024,
-                            d=2,
-                            e=["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"],
-                            f=Math.floor(Math.log(a)/Math.log(c));
-                        sizeFormat = parseFloat((a/Math.pow(c,f)).toFixed(d))+" "+e[f]
-                    }
+        // uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, function(snapshot){
+        //     // Observe state change events such as progress, pause, and resume
+        //     // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+        //     var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        //     console.log('Upload is ' + progress + '% done');
+        //     switch (snapshot.state) {
+        //         case firebase.storage.TaskState.PAUSED: // or 'paused'
+        //             console.log('Upload is paused');
+        //             break;
+        //         case firebase.storage.TaskState.RUNNING: // or 'running'
+        //             console.log('Upload is running');
+        //             break;
+        //         case firebase.storage.TaskState.SUCCESS: 
+        //             console.log("in success uid = " + uid);
+        //             console.log("DO WRITE")
+        //             var fdate = new Date(snapshot.metadata.timeCreated);
+        //             console.log(" date = "+ fdate)
+        //             var a = snapshot.metadata.size;
+        //             var sizeFormat = a;
+        //             if(0==a) {
+        //                 sizeFormat = "0 Bytes";
+        //             } else {
+        //                 var c=1024,
+        //                     d=2,
+        //                     e=["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"],
+        //                     f=Math.floor(Math.log(a)/Math.log(c));
+        //                 sizeFormat = parseFloat((a/Math.pow(c,f)).toFixed(d))+" "+e[f]
+        //             }
                     
-                    firebase.app().firestore().collection("users/" + emailId 
-                        + "/backups").doc(uid)
-                        .set({
-                            size: sizeFormat,
-                            timestamp: fdate,
-                            url: snapshot.downloadURL
-                        })
-                    self.setState({isLoading: false})
-                    self.doList();
-                    break;
-                case firebase.storage.TaskState.CANCELLED: 
-                    console.log('in cancelled')
-                    break;
-                case firebase.storage.TaskState.ERROR: 
-                    console.log('in error')
-                    break;
-            }
-        }, function(error) {
-            // Handle unsuccessful uploads
-            // A full list of error codes is available at
-            // https://firebase.google.com/docs/storage/web/handle-errors
-            switch (error.code) {
-                case 'storage/unauthorized':
-                    console.log("error : User doesn't have permission to access the object")
-                    break;
-                case 'storage/canceled':
-                    console.log("error : User canceled the upload")
-                    break;
-                case 'storage/unknown':
-                    console.log("error : Unknown error occurred, inspect error.serverResponse")
-                    break;
-            }
-        });
+        //             firebase.app().firestore().collection("users/" + emailId 
+        //                 + "/backups").doc(uid)
+        //                 .set({
+        //                     size: sizeFormat,
+        //                     timestamp: fdate,
+        //                     url: snapshot.downloadURL
+        //                 })
+        //             self.setState({isLoading: false})
+        //             self.doList();
+        //             break;
+        //         case firebase.storage.TaskState.CANCELLED: 
+        //             console.log('in cancelled')
+        //             break;
+        //         case firebase.storage.TaskState.ERROR: 
+        //             console.log('in error')
+        //             break;
+        //     }
+        // }, function(error) {
+        //     // Handle unsuccessful uploads
+        //     // A full list of error codes is available at
+        //     // https://firebase.google.com/docs/storage/web/handle-errors
+        //     switch (error.code) {
+        //         case 'storage/unauthorized':
+        //             console.log("error : User doesn't have permission to access the object")
+        //             break;
+        //         case 'storage/canceled':
+        //             console.log("error : User canceled the upload")
+        //             break;
+        //         case 'storage/unknown':
+        //             console.log("error : Unknown error occurred, inspect error.serverResponse")
+        //             break;
+        //     }
+        // });
     }
 
     doBackup = () => {
@@ -208,14 +208,14 @@ export default class BackupRestore extends Component {
         } else {
             console.log("DO READ.. " + emailId)
             let dataSource = []
-            firebase.app().firestore().collection("users/" + emailId + "/backups")
-                .get().then((querySnapshot) => {
-                    querySnapshot.forEach((doc) => {
-                        dataSource.push(doc.data())
-                        console.log(`${doc.id} => ${doc.data().url}`);
-                    })
-                    this.setState({dataSource})
-                })
+            // firebase.app().firestore().collection("users/" + emailId + "/backups")
+                // .get().then((querySnapshot) => {
+                //     querySnapshot.forEach((doc) => {
+                //         dataSource.push(doc.data())
+                //         console.log(`${doc.id} => ${doc.data().url}`);
+                //     })
+                //     this.setState({dataSource})
+                // })
         }
     }
 

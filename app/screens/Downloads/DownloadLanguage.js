@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
     Text, StyleSheet, View, ListView, TextInput, ActivityIndicator, Alert,
-  NetInfo
+  
 } from 'react-native';
 import {Card, CardItem} from 'native-base'
 import {downloadPageStyle} from './styles.js'

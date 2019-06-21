@@ -6,7 +6,7 @@ import VersionModel from '../models/VersionModel'
 import BookModel from '../models/BookModel'
 import NoteModel from '../models/NoteModel'
 import ChapterModel from '../models/ChapterModel'
-import VerseComponentsModel from '../models/VerseComponentsModel'
+import VerseModel from '../models/VerseModel'
 import StylingModel from '../models/StylingModel'
 import ReferenceModel from '../models/ReferenceModel'
 import BookmarksListModel from '../models/BookmarksListModel'
@@ -25,13 +25,13 @@ class DbHelper {
     async getRealm() {
     	try {
     		return await Realm.open({
-				schemaVersion: 6,
+				schemaVersion: 8,
 				// deleteRealmIfMigrationNeeded: true, 
 				path:
 					Platform.OS === 'ios'
 					? RNFS.MainBundlePath + '/autographa.realm'
 					: RNFS.DocumentDirectoryPath + '/autographa.realm',
-				schema: [LanguageModel, VersionModel, BookModel, ChapterModel, VerseComponentsModel, NoteModel, StylingModel, ReferenceModel, HistoryModel,BookmarksListModel,HighlightsModel] });
+				schema: [LanguageModel, VersionModel, BookModel, ChapterModel, VerseModel, NoteModel, StylingModel, ReferenceModel, HistoryModel,BookmarksListModel,HighlightsModel] });
     	} catch (err) {
 			console.log("error in getItem"+err)
     		return null;
@@ -94,7 +94,7 @@ class DbHelper {
 	async queryInVerseText(verCode: string, langCode: string, text: string) {
 		let realm = await this.getRealm();
     	if (realm) {
-			let result1 = realm.objects("VerseComponentsModel");
+			let result1 = realm.objects("VerseModel");
 			result1 = result1.filtered('languageCode ==[c] "' + langCode + '" && versionCode ==[c] "' + verCode + '"');
 			result1 = result1.filtered('text CONTAINS[c] "' + text + '"');
 			return result1;
@@ -343,28 +343,28 @@ class DbHelper {
 		if(realm){
 			let result = realm.objectForPrimaryKey('LanguageModel', languageModel.languageName)
 			try {
-				if(result){
-					console.log("result key found primary key" +JSON.stringify(result.versionModels)+"langauge name"+languageModel.languageName)
-					for (var i=0; i<=result.versionModels.length-1; i++){
-						var vModel = result.versionModels[i]
-						for(var j=0; j<=versionModel.length-1; j++){
-							if (vModel.versionCode == versionModel[j].versionCode) {
-								return
-							}
-						}
-						realm.write(() => {
-							result.versionModels.push(versionModel)
-						})
-					}
-				}
-				else{
+				if(result.length>0){
+					let language = realm.objects('LanguageModel');
 					realm.write(() => {
 						console.log("langauge added")
-						realm.create('LanguageModel', languageModel)
+						realm.delete(language)
 					})
+					// for (var i=0; i<=result.versionModels.length-1; i++){
+					// 	var vModel = result.versionModels[i]
+					// 	for(var j=0; j<=versionModel.length-1; j++){
+					// 		if (vModel.versionCode == versionModel[j].versionCode) {
+					// 			return
+					// 		}
+					// 	}
+					// 	realm.write(() => {
+					// 		result.versionModels.push(versionModel)
+					// 	})
+					// }
 				}
-				
-				
+				realm.write(() => {
+					console.log("langauge added")
+					realm.create('LanguageModel', languageModel)
+				})
 			  } catch (e) {
 				console.log("Error on creation "+e)
 			  }
@@ -384,6 +384,39 @@ class DbHelper {
 			  } catch (e) {
 				console.log("Error on  "+e)
 			  }
+		}
+	}
+
+	async addNewVersion(langName,verCode,bookmodel){
+		let realm = await this.getRealm();
+		if(realm){
+			var result = realm.objects('BookModel').filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '"')
+			// var book = realm.objects('BookModel').filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId ==[c] "' + bookmodel[i].bookId + '"');
+			console.log("result "+JSON.stringify(result.length))
+			if(result == 0){
+				for(var i=0;i<=bookmodel.length-1;i++){
+					realm.write(() => {
+						console.log("uniquee add "+bookmodel[i].bookId)
+						realm.create('BookModel', bookmodel[i])
+					})
+					console.log("written...........")
+				}
+			}
+			else{
+				console.log("result in add new version "+JSON.stringify(result[0].bookId ))
+			}
+		}
+	}
+
+	async queryVersion(langName,verCode){
+		let realm = await this.getRealm();
+		if (realm){
+			var result = realm.objects('BookModel').filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId ==[c] "' + bookId + '"');
+			if(result){
+				var result = realm.objects('BookModel')
+				console.log("result "+JSON.stringify(result))
+				return result
+			}
 		}
 	}
 }
