@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   FlatList,
   Linking,
+  ActivityIndicator,
   Platform,
   Alert
 } from 'react-native';
@@ -17,6 +18,7 @@ import { SelectBookPageStyle } from './styles.js';
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 const AsyncStorageConstants = require('../../utils/AsyncStorageConstants')
+import APIFetch from '../../utils/APIFetch'
 import {NavigationActions} from 'react-navigation'
 import {getBookNameFromMapping,getBookSectionFromMapping,getBookNumberFromMapping,getBookChaptersFromMapping} from '../../utils/UtilFunctions';
 
@@ -83,10 +85,13 @@ export default class SelectBook extends Component {
     { length: 48, offset: 48 * index, index }
   )
 
-  componentDidMount(){
-    var booksid = this.props.navigation.state.params.booksKey
-    // console.log("books key "+booksid.length)
+  async componentDidMount(){
+      var booksid = await APIFetch.availableBooks(15)
+      console.log("booklist "+JSON.stringify(booksid))
+    // var booksid = this.props.navigation.state.params.booksKey
+    // // console.log("books key "+booksid.length)
     var bookListData=[]
+
     for(var i=0; i<=booksid.length-1; i++){
       var bookId =  booksid[i].toUpperCase()
       var bookList = {bookId:bookId,bookName: getBookNameFromMapping(bookId),
@@ -106,6 +111,7 @@ renderItem = ({item, index})=> {
       <TouchableOpacity 
           onPress={
             ()=>this.props.navigation.navigate('ChapterSelection', {bookId: item.bookId, 
+                bookNumber:getBookNumberFromMapping(item.bookId),
                 bookName: item.bookName, bookIndex: index, numOfChapters: item.numOfChapters})
           }>
           <View 
@@ -176,7 +182,13 @@ renderItem = ({item, index})=> {
    
     return (
       <View style={this.styles.container}>
-       
+       {this.state.booksList.length == 0 ?
+        <View style={{justifyContent:"center",alignItems:"center",flex:1}}>   
+        <ActivityIndicator 
+        size="large" 
+        color="#0000ff"/>
+        </View> 
+       :
         <View style={this.styles.bookNameContainer}>
             <Segment>
               {
@@ -233,6 +245,7 @@ renderItem = ({item, index})=> {
               viewabilityConfig={this.viewabilityConfig}
             />
         </View> 
+       }
       </View>
     );
   }

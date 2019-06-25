@@ -1,3 +1,6 @@
+import {getBookNameFromMapping,getBookNumberFromMapping} from './UtilFunctions';
+
+
 module.exports = {
     Keys: {
         ColorMode : 'color_mode',
@@ -12,6 +15,7 @@ module.exports = {
         BookName:'book_name',
         BackupRestoreEmail:'backup_restore_email',
         ChapterNumber:"chapter_number",
+        BookNumber:"book_number",
         versionId:'version_id'
 
     },
@@ -38,9 +42,10 @@ module.exports = {
         DefLanguageName:'Hindi',
         DefVersionCode:'IRV',
         DefVersionName:'Indian Revised Version',
-        DefBookId:'GEN',
-        DefBookName:'Genesis',
+        DefBookId:"mat",
+        DefBookName:getBookNameFromMapping("mat"),
         DefBookChapter:1,
+        DefBookNumber:getBookNumberFromMapping("mat"),
         DefVersionId:2,
        
     }

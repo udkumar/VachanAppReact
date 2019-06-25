@@ -133,18 +133,24 @@ export default class LanguageList extends Component {
             lanVer.push(languageList[i])
             }
             if(languageList.length == 0 ){
+
             var  versionRes = await APIFetch.getVersions()
+            console.log("lanaguage list "+versionRes.versionContentCode)
+            
+
+
                   if(versionRes){
-                    for(var language in versionRes.bible){
+                    for(var i=0;i<=versionRes.length-1; i++){
                       var versions = []
-                      // console.log(" langauge code "+language+" version res "+JSON.stringify(versionRes.bible[language]))
-                      for(var versionCode in versionRes.bible[language]){
-                        var version = {"versionName":'Indian Revised Version',"versionCode":versionCode,versionId:versionRes.bible[language][versionCode].version_id}
+                      if(versionRes[i].sourceId==15){
+                        console.log(" langauge name "+versionRes[i].languageName+" version code "+versionRes[i].versionContentCode+" version name ")
+                        var version = {"versionName":versionRes[i].versionContentDescription,"versionCode":versionRes[i].versionContentCode}
                         versions.push(version)
-                        var langObj = {"languageName":language,versionModels:versions}
+                        var langObj = {"languageName":versionRes[i].languageName,versionModels:versions}
+                        lanVer.push(langObj)
                       }
-                      lanVer.push(langObj)
-                      await dbQueries.addLangaugeList(langObj,versions)
+                      
+                      // await dbQueries.addLangaugeList(langObj,versions)
                     }
                    
                   }
@@ -153,20 +159,20 @@ export default class LanguageList extends Component {
         else{
           var versionRes = await APIFetch.getVersions()
                 console.log("versionRes "+JSON.stringify(versionRes))
-                if(versionRes){
-                  for(var language in versionRes.bible){
-                    var versions = []
-                    console.log(" langauge code "+language+" version res "+JSON.stringify(versionRes.bible[language]))
-                    for(var versionCode in versionRes.bible[language]){
-                      var version = {"versionName":'Indian Revised Version',"versionCode":versionCode,versionId:versionRes.bible[language][versionCode].version_id}
-                      versions.push(version)
-                      var langObj = {"languageName":language,versionModels:versions}
-                    }
-                    lanVer.push(langObj)
-                    await dbQueries.addLangaugeList(langObj,versions)
-                  }
+                // if(versionRes){
+                  // for(var language in versionRes){
+                  //   var versions = []
+                  //   console.log(" langauge code "+language+" version res "+JSON.stringify(versionRes.bible[language]))
+                  //   // for(var versionCode in versionRes.bible[language]){
+                  //   //   var version = {"versionName":'Indian Revised Version',"versionCode":versionCode,versionId:versionRes.bible[language][versionCode].version_id}
+                  //   //   versions.push(version)
+                  //   //   var langObj = {"languageName":language,versionModels:versions}
+                  //   // }
+                  //   // lanVer.push(langObj)
+                  //   await dbQueries.addLangaugeList(langObj,versions)
+                  // }
                  
-                }
+                // }
         }
         this.setState({
           languages: lanVer,

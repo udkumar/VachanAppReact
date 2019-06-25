@@ -1,6 +1,5 @@
 import ApiUtils from './ApiUtils'
-// import timestamp from '../assets/timestamp'
-const API_BASE_URL = 'https://stagingapi.autographamt.com/app/'
+const API_BASE_URL = 'https://stagingapi.autographamt.com/v1/'
 
 var APIFetch = {
     async getLanguages() {
@@ -22,7 +21,7 @@ var APIFetch = {
 
     async getVersions() {
         try {      
-            return await fetch(API_BASE_URL + "versions", {  
+            return await fetch(API_BASE_URL + "versiondetails", {  
               method: 'GET',
               headers: {
                 'Accept': 'application/json',
@@ -36,9 +35,9 @@ var APIFetch = {
             return error;
         }
     },
-    async getContent(versionId) {
+    async getContent(sourceId,type,bookNum,chapterNum) {
         try {
-            return await fetch(API_BASE_URL + "content" +'/'+ versionId, {  
+            return await fetch(API_BASE_URL + "sources" +'/'+ sourceId +'/'+type+'/'+bookNum+'/'+chapterNum, {  
               method: 'GET',
               headers: {
                 'Accept': 'application/json',
@@ -52,5 +51,21 @@ var APIFetch = {
             return error;
         }
     },
+    async availableBooks(sourceId){
+        try {
+            return await fetch(API_BASE_URL + "books" +'/'+ sourceId , {  
+              method: 'GET',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              }
+            })
+            .then(ApiUtils.checkStatus)
+            .then((response) => response.json())
+            .catch(e => e)
+        } catch(error) {
+            return error;
+        }
+    }
 }
 export default APIFetch;

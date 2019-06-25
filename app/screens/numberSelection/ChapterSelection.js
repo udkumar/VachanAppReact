@@ -10,6 +10,9 @@ import DbQueries from '../../utils/dbQueries'
 import { numberSelectionPageStyle } from './styles.js';
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
+import AsyncStorageConstants from '../../utils/AsyncStorageConstants'
+import AsyncStorageUtil from '../../utils/AsyncStorageUtil'
+
 import {nightColors, dayColors} from '../../utils/colors.js'
 import {extraSmallFont,smallFont,mediumFont,largeFont,extraLargeFont} from '../../utils/dimens.js'
 import { numberSelection } from './styles.js';
@@ -25,22 +28,31 @@ export default class ChapterSelection extends Component {
       bookName: this.props.navigation.state.params.bookName,
       bookIndex: this.props.navigation.state.params.bookIndex,
       numOfChapters: this.props.navigation.state.params.numOfChapters,
+      bookNumber:this.props.navigation.state.params.bookNumber,
       bookData: Array.from(new Array(this.props.navigation.state.params.numOfChapters), (x,i) => i+1),
     }
-console.log("bookdata"+ this.state.bookData)
+     console.log("bookdata"+ this.state.bookData)
     this.styles = numberSelection(props.screenProps.colorFile, props.screenProps.sizeFile);   
   }
 
   onNumPress(item) {
-    this.props.navigation.replace('Bible', {bookId: this.state.bookId, 
+    this.props.navigation.replace('Bible', {bookId: this.state.bookId, bookNumber:this.state.bookNumber,
     bookName: this.state.bookName, chapterNumber: item })
     var time =  new Date()
-    DbQueries.addHistory(this.props.screenProps.languageCode, this.props.screenProps.versionCode, 
-    this.state.bookId, item, time)
-    this.props.screenProps.updateBookData(this.state.bookId, this.state.bookName,item)
+    // AsyncStorageUtil.setAllItems([
+    //   [AsyncStorageConstants.Keys.BookId, this.state.bookId],
+    //   [AsyncStorageConstants.Key.BookName, this.state.bookName],
+    //   [AsyncStorageConstants.Key.ChapterNumber, item],
+    //   [AsyncStorageConstants.Key.BookNumber, this.state.bookNumber]
+    // ])
+    // AsyncStorageUtil.setItem([AsyncStorageConstants.Keys.BookId, this.state.bookId]);
+    // DbQueries.addHistory(this.props.screenProps.languageCode, this.props.screenProps.versionCode, 
+    // this.state.bookId, item, time)
+    this.props.screenProps.updateBookData(this.state.bookId, this.state.bookName,item,this.state.bookNumber)
   }
   
   render() {
+    console.log("book data "+JSON.stringify(this.state.bookData))
     return (
       <View style={this.styles.chapterSelectionContainer}>
         <FlatList

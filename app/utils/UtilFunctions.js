@@ -2,10 +2,11 @@ import id_name_map from '../assets/mappings.json'
 const Constants = require('./constants')
 
 
-export function getBookNameFromMapping(bookId) {
+export function getBookNameFromMapping(id) {
         var obj = id_name_map.id_name_map;
         for (var key in obj) {
             if (obj.hasOwnProperty(key)) {
+                var bookId =  id.toUpperCase()
                 if (key == bookId) {
                     var val = obj[key];
                     return val.book_name;
@@ -16,10 +17,12 @@ export function getBookNameFromMapping(bookId) {
   }
   
 
-export function getBookNumberFromMapping(bookId) {
+export function getBookNumberFromMapping(id) {
     var obj = id_name_map.id_name_map;
     for (var key in obj) {
         if (obj.hasOwnProperty(key)) {
+            var bookId =  id.toUpperCase()
+
             if (key == bookId) {
                 var val = obj[key];
                 return val.number;
@@ -29,10 +32,12 @@ export function getBookNumberFromMapping(bookId) {
     return null;
 }
 
-export function getBookChaptersFromMapping(bookId){
+export function getBookChaptersFromMapping(id){
     var obj = id_name_map.id_name_map;
     for (var key in obj) {
+        
         if (obj.hasOwnProperty(key)) {
+            var bookId =  id.toUpperCase()
             if (key == bookId) {
                 var val = obj[key];
                 return val.total_chapters;
@@ -41,10 +46,11 @@ export function getBookChaptersFromMapping(bookId){
     }
     return null;
 }
-export function getBookSectionFromMapping(bookId) {
+export function getBookSectionFromMapping(id) {
     var obj = id_name_map.id_name_map;
     for (var key in obj) {
         if (obj.hasOwnProperty(key)) {
+        var bookId =  id.toUpperCase()
             if (key == bookId) {
                 var val = obj[key];
                 return val.section;

@@ -190,6 +190,7 @@ export default class App extends Component {
         bookId:AsyncStorageConstants.Values.DefBookId,
         bookName:AsyncStorageConstants.Values.DefBookName,
         chapterNumber:AsyncStorageConstants.Values.DefBookChapter,
+        bookNumber:AsyncStorageConstants.Values.DefBookNumber,
         sizeMode: AsyncStorageConstants.Values.SizeModeNormal,
         colorFile:dayColors,
         sizeFile:mediumFont,
@@ -246,8 +247,8 @@ export default class App extends Component {
   updateSize = (sizeMode, sizeFile) => {
     this.setState({sizeMode, sizeFile})
   }
-  updateBookData = (bookId,bookName,chapterNumber) =>{
-    this.setState({bookId,bookName,chapterNumber})
+  updateBookData = (bookId,bookName,chapterNumber,bookNumber) =>{
+    this.setState({bookId,bookName,chapterNumber,bookNumber})
   }
   updateVersionId = ( versionId)=>{
     this.setState({versionId})
@@ -355,6 +356,7 @@ export default class App extends Component {
       AsyncStorageConstants.Keys.BookId,
       AsyncStorageConstants.Keys.BookName,
       AsyncStorageConstants.Keys.ChapterNumber,
+      AsyncStorageConstants.Keys.BookNumber,
       AsyncStorageConstants.Keys.versionId,
 
     ])
@@ -419,7 +421,8 @@ export default class App extends Component {
       bookId: res[7][1] == null ? AsyncStorageConstants.Values.DefBookId:res[7][1],
       bookName: res[8][1] == null ? AsyncStorageConstants.Values.DefBookName:res[8][1],
       chapterNumber: res[9][1] == null ? AsyncStorageConstants.Values.DefBookChapter:parseInt(res[9][1]),
-      versionId:res[10][1] == null ? AsyncStorageConstants.Values.DefVersionId:parseInt(res[10][1])
+      chapterNumber: res[10][1] == null ? AsyncStorageConstants.Values.DefBookChapter:parseInt(res[10][1]),
+      versionId:res[11][1] == null ? AsyncStorageConstants.Values.DefVersionId:parseInt(res[11][1])
     }, async ()=> {
       // let models = await DbQueries.queryBookIdModels(this.state.versionCode, this.state.languageCode);
       // this.setState({isDbLoading: false})
@@ -453,6 +456,7 @@ export default class App extends Component {
           bookId:this.state.bookId,
           bookName:this.state.bookName,
           chapterNumber:this.state.chapterNumber,
+          bookNumber:this.state.bookNumber,
           lastRead:this.state.lastRead,
           userFoto:this.state.userFoto,
           versionId:this.state.versionId,

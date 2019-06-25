@@ -25,7 +25,6 @@ import {
   MenuContext
 } from 'react-native-popup-menu';
 import { styles } from './styles.js';
-import id_name_map from '../../assets/mappings.json'
 
 import  grammar from 'usfm-grammar'
 import BottomTab from './BottomTab'
@@ -52,7 +51,7 @@ export default class Bible extends Component {
                   
                   />
             </TouchableOpacity>
-            <TouchableOpacity style={{flexDirection:'row'}} onPress={()=>{navigation.navigate("SelectBook",{booksKey:params.booksId})}}>
+            <TouchableOpacity style={{flexDirection:'row'}} onPress={()=>{navigation.navigate("SelectBook")}}>
               <Text 
                 style={{fontSize:16,color:"#fff",alignSelf:'center',alignItems:'center',marginHorizontal:4}}
                 >{params.bookName}
@@ -106,7 +105,6 @@ export default class Bible extends Component {
     this.rigthIsScrolling = false;
     console.log("PROPS VALUE BIBLE "+JSON.stringify(props))
 
-    this.mappingData = id_name_map;
     this.getSelectedReferences = this.getSelectedReferences.bind(this)
     this.queryBook = this.queryBook.bind(this)
     this.onBookmarkPress = this.onBookmarkPress.bind(this)
@@ -125,6 +123,7 @@ export default class Bible extends Component {
       bookmarksList: [],
       isBookmark: false,
       currentVisibleChapter:this.props.screenProps.chapterNumber,
+      bookNumber:this.props.screenProps.bookNumber,
       selectedReferenceSet: [],
       verseInLine: this.props.screenProps.verseInLine,
 
@@ -138,8 +137,7 @@ export default class Bible extends Component {
 
       scrollDirection:'up',
       close:true,
-      versionId: this.props.screenProps.versionId,
-      booksId:[],
+      verses:null
     }
 
     this.pinchDiff = 0
@@ -164,6 +162,7 @@ export default class Bible extends Component {
   }
 
   async componentDidMount(){
+    console.log("hi did miount call")
     // this.gestureResponder = createResponder({
     //   onStartShouldSetResponder: (evt, gestureState) => true,
     //   onStartShouldSetResponderCapture: (evt, gestureState) => true,
@@ -235,37 +234,38 @@ export default class Bible extends Component {
   
   // render data onAPI Call 
    queryBookFromAPI(){
-      console.log("VERSION ID "+this.state.versionId)
-      if(this.state.versionId == null){
-        return
-      }
-        APIFetch.getContent(this.state.versionId)
-        .then(bibleContent =>{
-          if(this.state.modelData.length === 0 ){
-            console.log("response "+JSON.stringify(bibleContent))
-            if(bibleContent){
-              var booksKey = []
-              var bookData = []
-              for(var key in bibleContent){
-                  if(key.toUpperCase() == this.state.bookId){
-                  foundBookId = true
-                    var jsonOutput = grammar.parse(bibleContent[key],grammar.SCRIPTURE)
-                      bookData.push(jsonOutput)
-                  }
-                  booksKey.push(key)
-                }
-                if(bookData.length > 0){
-                  this.setState({modelData: bookData[0].chapters,booksId:booksKey},()=>{
-                    this.props.navigation.setParams({
-                      booksId:this.state.booksId
-                    })
-                  })
-                  this.getHighlights(bookData)
-                  this.getBookMarks(bookData)
+     
+      console.log("booknumber "+this.state.bookNumber +" chapternumber "+ this.state.currentVisibleChapter)
+        APIFetch.getContent(15,"json",this.state.bookNumber,this.state.currentVisibleChapter).then(bibleContent =>{
+         
+          console.log("response "+JSON.stringify(bibleContent))
+          this.setState({verses:bibleContent.verses})
+
+          // if(this.state.modelData.length === 0 ){
+          //   console.log("response "+JSON.stringify(bibleContent))
+          //   if(bibleContent){
+          //     var booksKey = []
+          //     var bookData = []
+          //     for(var key in bibleContent){
+          //         if(key.toUpperCase() == this.state.bookId){
+          //         foundBookId = true
+          //           var jsonOutput = grammar.parse(bibleContent[key],grammar.SCRIPTURE)
+          //             bookData.push(jsonOutput)
+          //         }
+          //         booksKey.push(key)
+          //       }
+          //       if(bookData.length > 0){
+          //         this.setState({modelData: bookData[0].chapters,booksId:booksKey},()=>{
+          //           this.props.navigation.setParams({
+          //             booksId:this.state.booksId
+          //           })
+          //         })
+          //         this.getHighlights(bookData)
+          //         this.getBookMarks(bookData)
                   
-                }
-              }
-          }
+          //       }
+          //     }
+          // }
         })
 
         
@@ -528,102 +528,59 @@ export default class Bible extends Component {
   //     this.queryBookFromAPI()
   //   }
   // }
+  _renderItem = ({item}) => (
+    <View>
+    <Text 
+    style={{
+      fontSize: 16,
+      textAlign: 'justify',
+      lineHeight: 24
+    }}
+    >{item.number } { item.text }</Text>
+    <Text>
+    {
+      item.metadata == null ? null : 
+      item.metadata.map((val)=>{
+        <Text>{val.styling.map((tag)=><Text>{tag}</Text>)}</Text>
+      })   
+    }
+    </Text>
+    </View>
+  )
+  _keyExtractor = (item, index) => item.number;
+
   render() {
      console.log("current visible chapter "+this.state.currentVisibleChapter)
     const thumbSize = this.state.thumbSize;
+    console.log("verses "+JSON.stringify(this.state.verses))
       return (
-        <View style={this.styles.container} >
-          <MenuContext style={this.styles.verseWrapperText}>
-            {this.state.modelData.length == 0   ?
-            <View style={{alignItems: 'center'}}>   
+        <View style={this.styles.container}>
+          {/* <MenuContext style={this.styles.verseWrapperText}> */}
+            {this.state.verses == null   ?
+            <View style={{alignItems: 'center',justifyContent:'center',flex:1}}>   
             <ActivityIndicator 
             size="large" 
-            color="#0000ff"/></View>:
-            <View>
-                <ScrollView  
-                   ref={(ref) => { this.scrollViewRef = ref; }}
-                  >
-                 {    (this.state.verseInLine) ?
-                          <View style={this.styles.chapterList}>
-                            <FlatList
-                            data={this.state.modelData[this.state.currentVisibleChapter - 1].verses}
-                            renderItem={({item, index}) => 
-                                  <Text letterSpacing={24} 
-                                     style={this.styles.verseWrapperText}> 
-                                        <VerseView
-                                            // ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
-                                            verseData = {item}
-                                            index = {index}
-                                            styles = {this.styles}
-                                            selectedReferences = {this.state.selectedReferenceSet}
-                                            getSelection = {(verseIndex, chapterNumber, verseNumber) => {
-                                            this.getSelectedReferences(verseIndex, chapterNumber, verseNumber)
-                                            }}
-                                            makeHighlight={this.doHighlight}
-                                            makeNotes={this.addToNotes}
-                                            share={this.addToShare}
-                                            HighlightedText={this.state.HighlightedText}
-                                            showFootNote = {this.state.showFootNote}
-                                            HightlightedVerse = {this.state.HightlightedVerseArray}
-                                            chapterNumber ={this.state.currentVisibleChapter}
-                                        />
-                                     
-                                  </Text> 
-                            }
-                            ListFooterComponent={<View style={styles.addToSharefooterComponent} />}
-                            />
-                            </View>
-                        :
-
-                            <View style={this.styles.chapterList}>
-                                  
-                                    {this.state.modelData[this.state.currentVisibleChapter - 1].verses.map((verse, index) => 
-                                        <View>
-                                            {/* <Text letterSpacing={24}
-                                                 >   */}
-                                                <VerseView
-                                                    ref={child => (this[`child_${verse.chapterNumber}_${index}`] = child)}
-                                                    verseData = {verse}
-                                                    index = {index}
-                                                    styles = {this.styles}
-                                                    selectedReferences = {this.state.selectedReferenceSet}
-                                                    getSelection = {(verseIndex, chapterNumber, verseNumber) => {
-                                                    this.getSelectedReferences(verseIndex, chapterNumber,verseNumber)
-                                                    }}
-                                                    makeHighlight={this.doHighlight}
-                                                    makeNotes={this.addToNotes}
-                                                    share={this.addToShare}
-                                                    HighlightedText={this.state.HighlightedText}
-                                                    onPressfootNote = {this.onPressfootNote}
-                                                    showFootNote = {this.state.showFootNote}
-                                                    HightlightedVerse = {this.state.HightlightedVerseArray}
-                                                    chapterNumber ={this.state.currentVisibleChapter}
-                                                />
-                                               
-                                            {/* </Text> */}
-                                            
-                                            {index ==this.state.modelData[this.state.currentVisibleChapter - 1].verses - 1
-                                            ? <View style={{height:25, marginBottom:4}} />
-                                            : null
-                                            }
-                                            
-                                          </View>
-                                    )}
-                            </View>
-                        }
-
-                </ScrollView>
-                
-            </View>
-          
+            color="#0000ff"/>
+            </View> :
+            <ScrollView  
+            ref={(ref) => { this.scrollViewRef = ref; }}
+            >
+                <FlatList
+                style={{padding:10}}
+                data={this.state.verses}
+                extraData={this.state}
+                renderItem={this._renderItem}
+                keyExtractor={this._keyExtractor}
+                />
+          </ScrollView>
           }
-          </MenuContext>
+          {/* </MenuContext> */}
           {
               this.state.close == true ? 
-              <TouchableOpacity style={{backgroundColor:"#3F51B5",flexDirection:'row',justifyContent:'flex-end'}} onPress={()=>this.setState({close:!this.state.close})}>
+              <TouchableOpacity style={{bottom:0,position:'absolute',width:width,backgroundColor:"#3F51B5",flexDirection:'row',justifyContent:'flex-end'}} onPress={()=>this.setState({close:!this.state.close})}>
                 <Text style={{color:'#fff',textAlign:'center',fontSize:16}}>See More </Text>
                 <Icon name="expand-less" size={24} color="#fff" style={{paddingHorizontal:16}}/>
-              </TouchableOpacity>:
+              </TouchableOpacity>  :
                 <BottomTab
                   colorFile={this.props.screenProps.colorFile}
                   sizeFile={this.props.screenProps.sizeFile}
@@ -638,7 +595,6 @@ export default class Bible extends Component {
                   bookmarksList={this.state.bookmarksList}
                   onBookmarkRemove = {this.onBookmarkRemove}
                   changeBookFromSplit={this.changeBookFromSplit}
-
               />
               }
         </View>
