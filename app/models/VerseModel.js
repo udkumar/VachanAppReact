@@ -6,8 +6,10 @@ export default class VerseModel extends Realm.Object {}
 VerseModel.schema = {
     name: 'VerseModel',
     properties: {
-    	verseText: {type: 'string', indexed: true},
-    	VerseNumber: {type: 'string', indexed: true},
+    	text: {type: 'string', indexed: true},
+        number: {type: 'string', indexed: true},
+        metadata: {type: 'list'},
         verseOwner: {type: 'linkingObjects', objectType: 'ChapterModel', property: 'verseModels' }
     }
 };
+

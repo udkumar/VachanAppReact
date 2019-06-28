@@ -31,6 +31,8 @@ import BottomTab from './BottomTab'
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
+
+
 export default class Bible extends Component {
   static navigationOptions = ({navigation}) =>{
     const { params = {} } = navigation.state
@@ -38,19 +40,7 @@ export default class Bible extends Component {
     return{
         headerTitle:(
           <View style={{flexDirection:'row',flex:1}}>
-           <TouchableOpacity onPress={()=> params.currentChapter == 1 ? null : params.updateChapter(-1)}>
-              <Icon name={'chevron-left'} color="black" size={36} 
-                  style={{
-                      alignItems:'center',
-                      zIndex:2, 
-                      alignSelf:'center',
-                      color:"#fff",
-                      fontSize: 22,
-                      marginTop:2
-                  }} 
-                  
-                  />
-            </TouchableOpacity>
+          
             <TouchableOpacity style={{flexDirection:'row'}} onPress={()=>{navigation.navigate("SelectBook")}}>
               <Text 
                 style={{fontSize:16,color:"#fff",alignSelf:'center',alignItems:'center',marginHorizontal:4}}
@@ -62,18 +52,7 @@ export default class Bible extends Component {
               </Text>
               
             </TouchableOpacity>
-            <TouchableOpacity onPress={()=>params.currentChapter == params.dataLength ? null : params.updateChapter(1)}>
-                <Icon name={'chevron-right'} 
-                  style={{
-                      alignItems:'center',
-                      zIndex:2, 
-                      alignSelf:'center',
-                      color:"#fff",
-                      fontSize:22,
-                      marginTop:2
-                  }} 
-                  />
-            </TouchableOpacity>
+         
       </View>
        
       ), 
@@ -137,7 +116,8 @@ export default class Bible extends Component {
 
       scrollDirection:'up',
       close:true,
-      verses:null
+      verses:null,
+      message:''
     }
 
     this.pinchDiff = 0
@@ -221,7 +201,6 @@ export default class Bible extends Component {
     this.props.navigation.setParams({
         onBookmark: this.onBookmarkPress,
         isBookmark:this.state.isBookmark,
-        updateChapter:this.updateCurrentChapter,
         openLanguages:this.openLanguages,
         bookName: this.state.bookName,
         currentChapter:this.state.currentVisibleChapter,
@@ -234,39 +213,19 @@ export default class Bible extends Component {
   
   // render data onAPI Call 
    queryBookFromAPI(){
-     
+      this.state.verses = []
       console.log("booknumber "+this.state.bookNumber +" chapternumber "+ this.state.currentVisibleChapter)
-        APIFetch.getContent(15,"json",this.state.bookNumber,this.state.currentVisibleChapter).then(bibleContent =>{
-         
-          console.log("response "+JSON.stringify(bibleContent))
+        APIFetch.getContent(18,"json",this.state.bookNumber,this.state.currentVisibleChapter).then(bibleContent =>{
+          console.log("response "+JSON.stringify(bibleContent.message))
+          if(bibleContent.success == false){
+            this.setState({message:"book Not Available "})
+          }
+          else{
           this.setState({verses:bibleContent.verses})
+          }
 
-          // if(this.state.modelData.length === 0 ){
-          //   console.log("response "+JSON.stringify(bibleContent))
-          //   if(bibleContent){
-          //     var booksKey = []
-          //     var bookData = []
-          //     for(var key in bibleContent){
-          //         if(key.toUpperCase() == this.state.bookId){
-          //         foundBookId = true
-          //           var jsonOutput = grammar.parse(bibleContent[key],grammar.SCRIPTURE)
-          //             bookData.push(jsonOutput)
-          //         }
-          //         booksKey.push(key)
-          //       }
-          //       if(bookData.length > 0){
-          //         this.setState({modelData: bookData[0].chapters,booksId:booksKey},()=>{
-          //           this.props.navigation.setParams({
-          //             booksId:this.state.booksId
-          //           })
-          //         })
-          //         this.getHighlights(bookData)
-          //         this.getBookMarks(bookData)
-                  
-          //       }
-          //     }
-          // }
         })
+        // .catch(erorr=>alert("error"))
 
         
     // else {
@@ -298,7 +257,7 @@ export default class Bible extends Component {
             this.setState({isBookmark: this.state.bookmarksList.findIndex(chapInd => chapInd.chapterNumber === this.state.currentVisibleChapter) > -1 ? true : false}, () => {
               this.props.navigation.setParams({
                   isBookmark: this.state.isBookmark,
-                  dataLength:this.state.modelData.length
+                  dataLength:getBookChaptersFromMapping(this.state.bookId)
               })      
             })
           })
@@ -318,7 +277,7 @@ export default class Bible extends Component {
               this.setState({isBookmark: this.state.bookmarksList.indexOf(this.state.currentVisibleChapter) > -1}, () => {
                 this.props.navigation.setParams({
                     isBookmark: this.state.isBookmark,
-                    dataLength:this.state.modelData.length
+                    dataLength:getBookChaptersFromMapping(this.state.bookId)
                 })      
               })
         })
@@ -490,16 +449,16 @@ export default class Bible extends Component {
     let currChapter = this.state.currentVisibleChapter + val;
     this.setState({
         currentVisibleChapter: currChapter,
-        isBookmark: this.state.bookmarksList.findIndex(chapInd => chapInd.chapterNumber === currChapter) > -1 ? true : false
-      }, () => {
-
+        // isBookmark: this.state.bookmarksList.findIndex(chapInd => chapInd.chapterNumber === currChapter) > -1 ? true : false
+      }, () => { 
+            this.queryBookFromAPI()
             this.props.navigation.setParams({
                 isBookmark: this.state.isBookmark,
                 currentChapter:this.state.currentVisibleChapter,
-                dataLength:this.state.modelData.length
+                // dataLength:getBookChaptersFromMapping(this.state.bookId)
             })
-            this.scrollViewRef.scrollTo({x: 0, y: 0, animated: false})
         })
+
   }
 
   openLanguages = ()=>{
@@ -550,7 +509,9 @@ export default class Bible extends Component {
   _keyExtractor = (item, index) => item.number;
 
   render() {
+
      console.log("current visible chapter "+this.state.currentVisibleChapter)
+    //  console.log("verses length "+this.state.verses == null ? "nothing " : this.state.verses.length)
     const thumbSize = this.state.thumbSize;
     console.log("verses "+JSON.stringify(this.state.verses))
       return (
@@ -561,27 +522,55 @@ export default class Bible extends Component {
             <ActivityIndicator 
             size="large" 
             color="#0000ff"/>
-            </View> :
-            <ScrollView  
-            ref={(ref) => { this.scrollViewRef = ref; }}
-            >
-                <FlatList
-                style={{padding:10}}
-                data={this.state.verses}
-                extraData={this.state}
-                renderItem={this._renderItem}
-                keyExtractor={this._keyExtractor}
-                />
-          </ScrollView>
+            </View> :(this.state.message == '' && this.state.verses !=null ? 
+                 <View>
+                 <ScrollView  
+                 ref={(ref) => { this.scrollViewRef = ref; }}
+                 >
+                     <FlatList
+                     style={{padding:10}}
+                     data={this.state.verses}
+                     extraData={this.state}
+                     renderItem={this._renderItem}
+                     keyExtractor={this._keyExtractor}
+                     />
+               </ScrollView>
+                
+                  {this.state.currentVisibleChapter == 1
+                    ? null :
+                    <View style={this.styles.bottomBarPrevView}>
+                        <Icon name={'chevron-left'} color="#3F51B5" size={32} 
+                            style={this.styles.bottomBarChevrontIcon} 
+                            onPress={()=> this.updateCurrentChapter(-1)}
+                            />
+                    </View>
+                    }
+                    {this.state.currentVisibleChapter == this.state.modelData.length 
+                    ? null :
+                    <View style={this.styles.bottomBarNextView}>
+                        <Icon name={'chevron-right'} color="#3F51B5" size={32} 
+                            style={this.styles.bottomBarChevrontIcon} 
+                            onPress={()=> this.updateCurrentChapter(1)}
+                            />
+                    </View>
+                    }
+                </View>
+
+                : <Text style={{textAlign:'center'}}>{this.state.message}</Text>
+            )
+           
           }
+
           {/* </MenuContext> */}
+          {/* <View style={{height:this.state.verses == null ? 30 : height/2}}> */}
           {
               this.state.close == true ? 
-              <TouchableOpacity style={{bottom:0,position:'absolute',width:width,backgroundColor:"#3F51B5",flexDirection:'row',justifyContent:'flex-end'}} onPress={()=>this.setState({close:!this.state.close})}>
+              <TouchableOpacity style={{ width:width,backgroundColor:"#3F51B5",flexDirection:'row',justifyContent:'flex-end'}} onPress={()=>this.setState({close:!this.state.close})}>
                 <Text style={{color:'#fff',textAlign:'center',fontSize:16}}>See More </Text>
                 <Icon name="expand-less" size={24} color="#fff" style={{paddingHorizontal:16}}/>
               </TouchableOpacity>  :
                 <BottomTab
+                style={{flex:1,height:height}}
                   colorFile={this.props.screenProps.colorFile}
                   sizeFile={this.props.screenProps.sizeFile}
                   currentVisibleChapter={this.state.currentVisibleChapter}
@@ -597,6 +586,7 @@ export default class Bible extends Component {
                   changeBookFromSplit={this.changeBookFromSplit}
               />
               }
+          {/* </View> */}
         </View>
       )
   }

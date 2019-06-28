@@ -57,25 +57,25 @@ export const styles =(colorFile, sizeFile) =>{
     VerseText:{
     },
     bottomBarPrevView:{
-        borderRadius: 40, 
+        borderRadius: 32, 
         margin:8, 
         position:'absolute', 
         bottom:20, 
         left:0,
-        width: 64, 
-        height: 64, 
+        width: 56, 
+        height: 56, 
         // backgroundColor: colorFile.backgroundColor,
         backgroundColor:colorFile.semiTransparentBackground,
         justifyContent:'center'
     },
     bottomBarNextView:{
-        borderRadius: 40, 
+        borderRadius: 32, 
         margin:8, 
         position:'absolute', 
         bottom:20, 
         right:0,
-        width: 64, 
-        height: 64, 
+        width: 56, 
+        height: 56, 
         backgroundColor:colorFile.semiTransparentBackground,
         justifyContent:'center'
     },

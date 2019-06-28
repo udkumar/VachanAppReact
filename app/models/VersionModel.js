@@ -8,11 +8,11 @@ VersionModel.schema = {
     properties: {
     	versionName: 'string',
 		versionCode: 'string',
-		versionId:'int'
-    	// bookModels: 'BookModel[]',
+		sourceId:'int',
     	// source: 'string',
-    	// license: 'string',
-    	// year: 'int',
-        // versionOwner: {type: 'linkingObjects', objectType: 'LanguageModel', property: 'versionModels' }
+    	license: 'string',
+    	year: 'int',
+        versionOwner: {type: 'linkingObjects', objectType: 'LanguageModel', property: 'versionModels' }
     }
 };
+

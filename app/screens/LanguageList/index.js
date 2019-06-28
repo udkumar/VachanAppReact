@@ -52,7 +52,7 @@ class ExpandableItemComponent extends Component {
           onPress={this.props.onClickFunction}
           style={styles.header}
         >
-          <Text style={styles.headerText}>{this.props.item.languageName}</Text>
+          <Text style={styles.headerText}>{this.props.item.languageName[0].toUpperCase()+this.props.item.languageName.slice(1)}</Text>
           <Icon name={this.props.item.isExpanded ? "keyboard-arrow-down" : "keyboard-arrow-up" } style={styles.iconStyle} size={24}/>
         </TouchableOpacity>
         <View
@@ -62,19 +62,23 @@ class ExpandableItemComponent extends Component {
           }}>
           {/*Content under the header of the Expandable List Item*/}
           {this.props.item.versionModels.map((item, key) => (
+            <View style={styles.content}>
             <TouchableOpacity
-            // onPress={this.props.setModalVisible}
-              style={styles.content}>
-              <Text style={styles.text}>
-                 {item.versionName}
-              </Text>
+              onPress={this.props.goToBible}
+              >
+              <View style={{flex:1,flexDirection:'column',}}>
+              <Text  style={{fontWeight:'bold',fontSize:18}}>{item.versionCode} </Text>
+              <Text style={{fontSize:18}}> {item.versionName}</Text>
+              </View>
               {/* <TouchableOpacity > */}
-              <Icon name="file-download" size={24} 
-               onPress={()=>{this.props.DownloadBible(item,this.props.item.languageName)}}
-               />
+              </TouchableOpacity>
+              <TouchableOpacity style={{alignSelf:'center'}} onPress={()=>{this.props.DownloadBible(item.sourceId)}}>
+                <Icon name="file-download" size={24} 
+                />
+               </TouchableOpacity>
               {/* </TouchableOpacity> */}
               {/* <View style={styles.separator} /> */}
-            </TouchableOpacity>
+            </View>
           ))}
         </View>
       </Card>
@@ -125,55 +129,57 @@ export default class LanguageList extends Component {
       var ud = new Date(timestamp.languageUpdate)
       var diffDays = Math.round(Math.abs((d.getTime() - ud.getTime())/(oneDay)))
       
-        if(diffDays <= 20 ){
-          console.log("diff ")
-          var languageList =  await dbQueries.getLangaugeList()
-          console.log("lanaguage list "+JSON.stringify(languageList))
-            for(var i =0 ; i<languageList.length-1;i++){
-            lanVer.push(languageList[i])
-            }
-            if(languageList.length == 0 ){
-
-            var  versionRes = await APIFetch.getVersions()
-            console.log("lanaguage list "+versionRes.versionContentCode)
-            
-
-
-                  if(versionRes){
-                    for(var i=0;i<=versionRes.length-1; i++){
-                      var versions = []
-                      if(versionRes[i].sourceId==15){
-                        console.log(" langauge name "+versionRes[i].languageName+" version code "+versionRes[i].versionContentCode+" version name ")
-                        var version = {"versionName":versionRes[i].versionContentDescription,"versionCode":versionRes[i].versionContentCode}
-                        versions.push(version)
-                        var langObj = {"languageName":versionRes[i].languageName,versionModels:versions}
-                        lanVer.push(langObj)
-                      }
-                      
-                      // await dbQueries.addLangaugeList(langObj,versions)
+        // if(diffDays <= 20 ){
+        //   console.log("diff ")
+        //   var languageList =  await dbQueries.getLangaugeList()
+        //   console.log("lanaguage list "+JSON.stringify(languageList))
+        //     for(var i =0 ; i<languageList.length-1;i++){
+        //     lanVer.push(languageList[i])
+        //     }
+            // if(languageList.length == 0 ){
+              var versionRes = await APIFetch.getVersions()
+              console.log("versionRes "+JSON.stringify(versionRes))
+              if(versionRes){
+                for(var i=0;i<=versionRes.length-1; i++){
+                  var versions = []
+                  if(versionRes[i].contentType=="bible"){
+                    var version = {
+                      "versionName":versionRes[i].versionContentDescription,
+                      "versionCode": versionRes[i].versionContentCode,
+                      "sourceId":versionRes[i].sourceId,
+                      "license": versionRes[i].license,
+                      "year": versionRes[i].year
                     }
-                   
+                    versions.push(version)
+                    var langObj = {"languageName":versionRes[i].languageName,versionModels:versions}
+                    lanVer.push(langObj)
                   }
-            }
-        }
-        else{
-          var versionRes = await APIFetch.getVersions()
-                console.log("versionRes "+JSON.stringify(versionRes))
-                // if(versionRes){
-                  // for(var language in versionRes){
-                  //   var versions = []
-                  //   console.log(" langauge code "+language+" version res "+JSON.stringify(versionRes.bible[language]))
-                  //   // for(var versionCode in versionRes.bible[language]){
-                  //   //   var version = {"versionName":'Indian Revised Version',"versionCode":versionCode,versionId:versionRes.bible[language][versionCode].version_id}
-                  //   //   versions.push(version)
-                  //   //   var langObj = {"languageName":language,versionModels:versions}
-                  //   // }
-                  //   // lanVer.push(langObj)
-                  //   await dbQueries.addLangaugeList(langObj,versions)
-                  // }
-                 
-                // }
-        }
+                  // await dbQueries.addLangaugeList(langObj,versions)
+                }
+              }
+        // }
+        // else{
+          // var versionRes = await APIFetch.getVersions()
+          //       console.log("versionRes "+JSON.stringify(versionRes))
+          //       if(versionRes){
+          //         for(var i=0;i<=versionRes.length-1; i++){
+          //           var versions = []
+          //           if(versionRes[i].contentType=="bible"){
+          //             var version = {
+          //               "versionName":versionRes[i].versionContentDescription,
+          //               "versionCode": versionRes[i].versionContentCode,
+          //               "sourceId":versionRes[i].sourceId,
+          //               "license": versionRes[i].license,
+          //               "year": versionRes[i].year
+          //             }
+          //             versions.push(version)
+          //             var langObj = {"languageName":versionRes[i].languageName,versionModels:versions}
+          //             lanVer.push(langObj)
+          //           }
+          //           // await dbQueries.addLangaugeList(langObj,versions)
+          //         }
+          //       }
+        // }
         this.setState({
           languages: lanVer,
           searchList: lanVer
@@ -196,49 +202,50 @@ export default class LanguageList extends Component {
         })
     }
 
-    DownloadBible = async(item,langName)=>{
-      console.log("item "+JSON.stringify(item)+ "language name "+langName)
-      console.log("DOWNLOAD FUNCTION PRESS")
+    DownloadBible = async(sourceId)=>{
+      console.log("language name "+sourceId)
+      // console.log("DOWNLOAD FUNCTION PRESS")
       var bookModel = []
       var chapterModel = []
-      var verseModel = []
-      var content = await APIFetch.getContent(item.versionId)
-      console.log("constent key "+content["gen"])
-      var jsonOutput =   grammar.parse(content["gen"],grammar.SCRIPTURE)
-      console.log(JSON.stringify(jsonOutput)+ " JSON OBJECT ")
-      if(jsonOutput !=null){
-      for(var i=0;i<jsonOutput.chapters.length-1;i++){
-        for(var j=0; j< jsonOutput.chapters[i].verses.length; j++){
-          let verseModels = {
-            verseText:jsonOutput.chapters[i].verses[j].verseText,
-            VerseNumber:jsonOutput.chapters[i].verses[j].VerseNumber
+      var content = await APIFetch.getContent(18,"json",62)
+      var bookId = ''
+
+      for(var id in content){
+        console.log("DOWNLOAD FUNCTION PRESS " +JSON.stringify(content[id].chapters[0].verses.length))
+      if(content !=null){
+        for(var i=0; i< content[id].chapters.length; i++){
+          for(var j=0; j< content[id].chapters[i].verses.length; j++){
+            var verseModel = []
+            var verseMetadata = []
+              verseMetadata.push(content[id].chapters[i].verses[j].metadata ? content[id].chapters[i].verses[j].metadata[0].styling : null)
+              let verseModels = {
+                text:content[id].chapters[i].verses[j].text,
+                number:content[id].chapters[i].verses[j].number,
+                metadata:verseMetadata
+              }
+              verseModel.push(verseModels)
           }
-            verseModel.push(verseModels)
+          let chapterModels = { 
+                chapterNumber:  content[id].chapters[i].header.title,
+                numberOfVerses: content[id].chapters[i].verses.length,
+                verseModel:verseModel,
+              }
+              chapterModel.push(chapterModels)
+          bookId = id
         }
-        var numberOfVerses = jsonOutput.chapters[i].verses.length
-        var chapterNum = jsonOutput.chapters[i].chapterTitle 
-        let chapterModels = { 
-          chapterNumber: chapterNum,
-          numberOfVerses: numberOfVerses,
-          verseModel:verseModel,
-        }
-          chapterModel.push(chapterModels)
       }
-    }
-      const bookKey  = 'GEN'
+      }
       let bookModels = {
-        languageName:langName,
-        versionCode:item.versionCode,
-        bookId: bookKey,
-        bookName:getBookNameFromMapping(bookKey),
+        sourceId:sourceId,
+        bookId: bookId,
+        bookName:getBookNameFromMapping(bookId),
         chapterModel: chapterModel,
-        section: getBookSectionFromMapping(bookKey),
-        bookNumber: getBookNumberFromMapping(bookKey)
+        section: getBookSectionFromMapping(bookId),
+        bookNumber: getBookNumberFromMapping(bookId)
       }
       bookModel.push(bookModels)
-      dbQueries.addNewVersion(langName,item.versionCode,bookModel)
-      console.log("book model "+JSON.stringify(bookModel))
-      // this.setState({modalVisible:this.state.modalVisible})
+      // dbQueries.addNewVersion(langName,item.versionCode,bookModel)
+      this.setState({modalVisible:this.state.modalVisible})
     }
     setModalVisible=()=>{
       this.setState({modalVisible:!this.state.modalVisible})
@@ -270,11 +277,13 @@ export default class LanguageList extends Component {
                     onClickFunction={this.updateLayout.bind(this, index)}
                     item={item}
                     DownloadBible = {this.DownloadBible}
+                    goToBible = {()=>{this.props.navigation.navigate("Bible")}}
                     // setModalVisible={this.setModalVisible}
                     // modalVisible={this.state.modalVisible}
                   />
                 ))}
               </ScrollView>
+              
             </View>
             }
             
@@ -368,7 +377,7 @@ export default class LanguageList extends Component {
 const styles = StyleSheet.create({
  
     MainContainer :{
-    //  flex:1,
+     flex:1,
      margin:8
      },
     

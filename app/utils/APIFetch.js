@@ -37,7 +37,8 @@ var APIFetch = {
     },
     async getContent(sourceId,type,bookNum,chapterNum) {
         try {
-            return await fetch(API_BASE_URL + "sources" +'/'+ sourceId +'/'+type+'/'+bookNum+'/'+chapterNum, {  
+            var chapter = chapterNum  === undefined ? '' : '/' + chapterNum
+            return await fetch(API_BASE_URL + "sources" +'/'+ sourceId +'/'+type+'/'+bookNum + chapter, {  
               method: 'GET',
               headers: {
                 'Accept': 'application/json',

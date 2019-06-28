@@ -238,163 +238,163 @@
       "book_name": "Matthew's Gospel",
       "section": "NT",
       "total_chapters":28,
-      "number": 41
+      "number": 40
     },
     "MRK": {
       "book_name": "Mark's Gospel",
       "section": "NT",
       "total_chapters":16,
-      "number": 42
+      "number": 41
     },
     "LUK": {
       "book_name": "Luke's Gospel",
       "section": "NT",
       "total_chapters":24,
-      "number": 43
+      "number": 42
     },
     "JHN": {
       "book_name": "John's Gospel",
       "section": "NT",
       "total_chapters":21,
-      "number": 44
+      "number": 43
     },
     "ACT": {
       "book_name": "Acts",
       "section": "NT",
       "total_chapters":28,
-      "number": 45
+      "number": 44
     },
     "ROM": {
       "book_name": "Romans",
       "section": "NT",
       "total_chapters":16,
-      "number": 46
+      "number": 45
     },
     "1CO": {
       "book_name": "1 Corinthians",
       "section": "NT",
       "total_chapters":16,
-      "number": 47
+      "number": 46
     },
     "2CO": {
       "book_name": "2 Corinthians",
       "section": "NT",
       "total_chapters":13,
-      "number": 48
+      "number": 47
     },
     "GAL": {
       "book_name": "Galatians",
       "section": "NT",
       "total_chapters":6,
-      "number": 49
+      "number": 48
     },
     "EPH": {
       "book_name": "Ephesians",
       "section": "NT",
       "total_chapters":6,
-      "number": 50
+      "number": 49
     },
     "PHP": {
       "book_name": "Philippians",
       "section": "NT",
       "total_chapters":4,
-      "number": 51
+      "number": 50
     },
     "COL": {
       "book_name": "Colossians",
       "section": "NT",
       "total_chapters":4,
-      "number": 52
+      "number": 51
     },
     "1TH": {
       "book_name": "1 Thessalonians",
       "section": "NT",
       "total_chapters":5,
-      "number": 53
+      "number": 52
     },
     "2TH": {
       "book_name": "2 Thessalonians",
       "section": "NT",
       "total_chapters":3,
-      "number": 54
+      "number": 53
     },
     "1TI": {
       "book_name": "1 Timothy",
       "section": "NT",
       "total_chapters":6,
-      "number": 55
+      "number": 54
     },
     "2TI": {
       "book_name": "2 Timothy",
       "section": "NT",
       "total_chapters":4,
-      "number": 56
+      "number": 55
     },
     "TIT": {
       "book_name": "Titus",
       "section": "NT",
       "total_chapters":3,
-      "number": 57
+      "number": 56
     },
     "PHM": {
       "book_name": "Philemon",
       "section": "NT",
       "total_chapters":1,
-      "number": 58
+      "number": 57
     },
     "HEB": {
       "book_name": "Hebrews",
       "section": "NT",
       "total_chapters":13,
-      "number": 59
+      "number": 58
     },
     "JAS": {
       "book_name": "James",
       "section": "NT",
       "total_chapters":5,
-      "number": 60
+      "number": 59
     },
     "1PE": {
       "book_name": "1 Peter",
       "section": "NT",
       "total_chapters":5,
-      "number": 61
+      "number": 60
     },
     "2PE": {
       "book_name": "2 Peter",
       "section": "NT",
       "total_chapters":3,
-      "number": 62
+      "number": 61
     },
     "1JN": {
       "book_name": "1 John",
       "section": "NT",
       "total_chapters":5,
-      "number": 63
+      "number": 62
     },
     "2JN": {
       "book_name": "2 John",
       "section": "NT",
       "total_chapters":1,
-      "number": 64
+      "number": 63
     },
     "3JN": {
       "book_name": "3 John",
       "section": "NT",
       "total_chapters":1,
-      "number": 65
+      "number": 64
     },
     "JUD": {
       "book_name": "Jude",
       "section": "NT",
       "total_chapters":1,
-      "number": 66
+      "number": 65
     },
     "REV": {
       "book_name": "Revelation",
       "section": "NT",
       "total_chapters":22,
-      "number": 67
+      "number": 66
     }
   }
 }
