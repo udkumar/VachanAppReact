@@ -6,8 +6,7 @@ export default class VerseMetadataModel extends Realm.Object {}
 VerseMetadataModel.schema = {
     name: 'VerseMetadataModel',
     properties: {
-        // style:'',
-        // header:'',
-        // verseOwner: {type: 'linkingObjects', objectType: 'ChapterModel', property: 'verseModels' }
+        styling:{type: 'string?[]'},
+        VerseMetadataOwner: {type: 'linkingObjects', objectType: 'VerseModel', property: 'metadata' }
     }
 };

@@ -7,6 +7,7 @@ import APIFetch from '../../utils/APIFetch'
 import timestamp from '../../assets/timestamp.json'
 import  grammar from 'usfm-grammar'
 import { getBookNameFromMapping, getBookSectionFromMapping, getBookNumberFromMapping } from '../../utils/UtilFunctions';
+import VerseModel from '../../models/VerseModel';
 const width = Dimensions.get('window').width;
 var height =  Dimensions.get('window').width;
 
@@ -204,47 +205,38 @@ export default class LanguageList extends Component {
 
     DownloadBible = async(sourceId)=>{
       console.log("language name "+sourceId)
-      // console.log("DOWNLOAD FUNCTION PRESS")
-      var bookModel = []
-      var chapterModel = []
+      var chapterModels = []
+      var verseModels = []
       var content = await APIFetch.getContent(18,"json",62)
       var bookId = ''
 
       for(var id in content){
-        console.log("DOWNLOAD FUNCTION PRESS " +JSON.stringify(content[id].chapters[0].verses.length))
       if(content !=null){
         for(var i=0; i< content[id].chapters.length; i++){
+          verseModels = []
           for(var j=0; j< content[id].chapters[i].verses.length; j++){
-            var verseModel = []
-            var verseMetadata = []
-              verseMetadata.push(content[id].chapters[i].verses[j].metadata ? content[id].chapters[i].verses[j].metadata[0].styling : null)
-              let verseModels = {
-                text:content[id].chapters[i].verses[j].text,
-                number:content[id].chapters[i].verses[j].number,
-                metadata:verseMetadata
-              }
-              verseModel.push(verseModels)
+              verseModels.push(content[id].chapters[i].verses[j])
           }
-          let chapterModels = { 
-                chapterNumber:  content[id].chapters[i].header.title,
-                numberOfVerses: content[id].chapters[i].verses.length,
-                verseModel:verseModel,
+          var chapterModel = { 
+                chapterNumber:  parseInt(content[id].chapters[i].header.title),
+                numberOfVerses: parseInt(content[id].chapters[i].verses.length),
+                verses:verseModels,
               }
-              chapterModel.push(chapterModels)
+          chapterModels.push(chapterModel)
           bookId = id
         }
       }
       }
-      let bookModels = {
+      console.log("chapter models "+JSON.stringify(chapterModels))
+      var bookModels = {
         sourceId:sourceId,
         bookId: bookId,
         bookName:getBookNameFromMapping(bookId),
-        chapterModel: chapterModel,
+        chapters: chapterModels,
         section: getBookSectionFromMapping(bookId),
         bookNumber: getBookNumberFromMapping(bookId)
       }
-      bookModel.push(bookModels)
-      // dbQueries.addNewVersion(langName,item.versionCode,bookModel)
+      await dbQueries.addNewVersion(sourceId,bookModels)
       this.setState({modalVisible:this.state.modalVisible})
     }
     setModalVisible=()=>{

@@ -8,8 +8,8 @@ ChapterModel.schema = {
     properties: {
       chapterNumber: 'int',
       numberOfVerses:'int',
-      verseModels: 'VerseModel[]',
-      chapterOwner: {type: 'linkingObjects', objectType: 'BookModel', property:'chapterModels' }
+      verses: 'VerseModel[]',
+      chapterOwner: {type: 'linkingObjects', objectType: 'BookModel', property:'chapters' }
     }
 };
 

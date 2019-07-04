@@ -9,7 +9,7 @@ BookModel.schema = {
       sourceId:'int',
       bookId: 'string',
       bookName: 'string',
-      chapterModels: 'ChapterModel[]',
+      chapters: 'ChapterModel[]',
       // bookmarksList: 'int?[]',
       section: {type: 'string', default: 'NT'},
       bookNumber: 'int',

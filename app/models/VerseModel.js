@@ -8,8 +8,8 @@ VerseModel.schema = {
     properties: {
     	text: {type: 'string', indexed: true},
         number: {type: 'string', indexed: true},
-        metadata: {type: 'list'},
-        verseOwner: {type: 'linkingObjects', objectType: 'ChapterModel', property: 'verseModels' }
+        metadata:'VerseMetadataModel[]',
+        verseOwner: {type: 'linkingObjects', objectType: 'ChapterModel', property: 'verses' }
     }
 };
 

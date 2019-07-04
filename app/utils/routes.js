@@ -64,9 +64,9 @@ const MenuIcon = (navigation) => {
 const StackNavigate = StackNavigator(
   {  
 
-    LanguageList:{
-      screen:LanguageList
-    },
+    // LanguageList:{
+    //   screen:LanguageList
+    // },
       Bible:{
         screen:Bible,
         navigationOptions: ({ navigation }) => ({
@@ -421,7 +421,7 @@ export default class App extends Component {
       bookId: res[7][1] == null ? AsyncStorageConstants.Values.DefBookId:res[7][1],
       bookName: res[8][1] == null ? AsyncStorageConstants.Values.DefBookName:res[8][1],
       chapterNumber: res[9][1] == null ? AsyncStorageConstants.Values.DefBookChapter:parseInt(res[9][1]),
-      chapterNumber: res[10][1] == null ? AsyncStorageConstants.Values.DefBookChapter:parseInt(res[10][1]),
+      bookNumber: res[10][1] == null ? AsyncStorageConstants.Values.DefBookNumber:parseInt(res[10][1]),
       versionId:res[11][1] == null ? AsyncStorageConstants.Values.DefVersionId:parseInt(res[11][1])
     }, async ()=> {
       // let models = await DbQueries.queryBookIdModels(this.state.versionCode, this.state.languageCode);

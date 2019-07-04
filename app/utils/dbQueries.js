@@ -45,11 +45,12 @@ class DbQueries {
     // addNewBook(bookModel, versionModel, languageModel) {
     //     DbHelper.insertNewBook(bookModel, versionModel, languageModel);
     // }
-    addNewVersion(langName,verCode,bookModel){
-        dbHelper.addNewVersion(langName,verCode,bookModel)
+    addNewVersion(sourceId,bookModel){
+        dbHelper.addNewVersion(sourceId,bookModel)
     }
-    queryVersion(langName,verCode){
-        return dbHelper.queryVersion(langName,verCode)
+
+    queryVersion(sourceId){
+        return dbHelper.queryVersion(sourceId)
     }
 
     updateHighlightsInVerse(LangName, verCode, bookId, chapterNumber, verseNumber, isHighlight) {

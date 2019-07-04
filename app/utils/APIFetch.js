@@ -35,10 +35,10 @@ var APIFetch = {
             return error;
         }
     },
-    async getContent(sourceId,type,bookNum,chapterNum) {
+    async getContent(sourceId,type,bookNum) {
         try {
-            var chapter = chapterNum  === undefined ? '' : '/' + chapterNum
-            return await fetch(API_BASE_URL + "sources" +'/'+ sourceId +'/'+type+'/'+bookNum + chapter, {  
+            // var chapter = chapterNum  === undefined ? '' : '/' + chapterNum
+            return await fetch(API_BASE_URL + "sources" +'/'+ sourceId +'/'+type+'/'+62, {  
               method: 'GET',
               headers: {
                 'Accept': 'application/json',
