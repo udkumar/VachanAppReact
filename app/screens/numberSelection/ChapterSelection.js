@@ -10,8 +10,9 @@ import DbQueries from '../../utils/dbQueries'
 import { numberSelectionPageStyle } from './styles.js';
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
-import AsyncStorageConstants from '../../utils/AsyncStorageConstants'
+import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil'
+import {NavigationActions} from 'react-navigation'
 
 import {nightColors, dayColors} from '../../utils/colors.js'
 import {extraSmallFont,smallFont,mediumFont,largeFont,extraLargeFont} from '../../utils/dimens.js'
@@ -36,20 +37,19 @@ export default class ChapterSelection extends Component {
   }
 
   onNumPress(item) {
-    this.props.navigation.replace('Bible', {bookId: this.state.bookId, bookNumber:this.state.bookNumber,
-    bookName: this.state.bookName, chapterNumber: item })
     var time =  new Date()
-    // AsyncStorageUtil.setAllItems([
-    //   [AsyncStorageConstants.Keys.BookId, this.state.bookId],
-    //   [AsyncStorageConstants.Key.BookName, this.state.bookName],
-    //   [AsyncStorageConstants.Key.ChapterNumber, item],
-    //   [AsyncStorageConstants.Key.BookNumber, this.state.bookNumber]
-    // ])
-    // AsyncStorageUtil.setItem([AsyncStorageConstants.Keys.BookId, this.state.bookId]);
-    // DbQueries.addHistory(this.props.screenProps.languageCode, this.props.screenProps.versionCode, 
-    // this.state.bookId, item, time)
+    DbQueries.addHistory(this.props.screenProps.languageName, this.props.screenProps.versionCode, 
+    this.state.bookId, item, time)
     this.props.screenProps.updateBookData(this.state.bookId, this.state.bookName,item,this.state.bookNumber)
+    const resetAction = NavigationActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({ routeName: 'Bible' }) ]
+    })
+    this.props.navigation.dispatch(resetAction)
+    this.props.navigation.replace('Bible', {bookId: this.state.bookId, bookNumber:this.state.bookNumber,
+      bookName: this.state.bookName, chapterNumber: item })
   }
+
   
   render() {
     console.log("book data "+JSON.stringify(this.state.bookData))

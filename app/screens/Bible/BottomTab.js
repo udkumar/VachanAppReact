@@ -20,7 +20,7 @@ export default class BottomTab extends Component {
                     colorFile:this.props.colorFile,
                     sizeFile:this.props.sizeFile,
                     currentVisibleChapter:this.props.currentVisibleChapter,
-                    languageCode:this.props.languageCode,
+                    // languageName:this.props.languageName,
                     versionCode:this.props.versionCode,
                     currentVisibleChapter:this.props.currentVisibleChapter,
                     bookId:this.props.bookId,

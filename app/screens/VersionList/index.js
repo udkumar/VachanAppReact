@@ -34,7 +34,7 @@
 //         this.props.navigation.navigate('Bible',{versionId:versionInfo.versionId})
 //         this.props.screenProps.updateVersionId(versionInfo.versionId)
 //         AsyncStorageUtil.setAllItems([
-//           [AsyncStorageConstants.Keys.LanguageCode, ''],
+//           [AsyncStorageConstants.Keys.languageName, ''],
 //           [AsyncStorageConstants.Keys.LanguageName,this.state.languageName],
 //           [AsyncStorageConstants.Keys.VersionCode,versionInfo.versionCode],
 //           [AsyncStorageConstants.Keys.VersionName,"Indian Revised Version"]

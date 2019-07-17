@@ -64,9 +64,9 @@ const MenuIcon = (navigation) => {
 const StackNavigate = StackNavigator(
   {  
 
-    // LanguageList:{
-    //   screen:LanguageList
-    // },
+    LanguageList:{
+      screen:LanguageList
+    },
       Bible:{
         screen:Bible,
         navigationOptions: ({ navigation }) => ({
@@ -309,7 +309,7 @@ export default class App extends Component {
     }
   }
 
-  updateLanguage = async(languageCode,languageName,versionCode,versionName) =>{
+  updateLanguage = async(languageCode,languageName,versionCode,versionName) => {
     console.log("in ROTES update language"+languageCode+" "+languageName+" "+versionCode+" "+versionName)
     this.setState({languageCode, languageName,versionCode,versionName})
 
@@ -411,8 +411,7 @@ export default class App extends Component {
 
     this.setState({
       colorMode: res[0][1]== null ? AsyncStorageConstants.Values.DayMode : parseInt(res[0][1]),
-      colorFile: res[0][1] == null ? dayColors : 
-        (parseInt(res[0][1]) == AsyncStorageConstants.Values.DayMode ? dayColors : nightColors),
+      colorFile: res[0][1] == null ? dayColors : (parseInt(res[0][1]) == AsyncStorageConstants.Values.DayMode ? dayColors : nightColors),
       verseInLine:  res[2][1] == null ? AsyncStorageConstants.Values.VerseInLine : res[2][1],
       languageCode: res[3][1] == null ? AsyncStorageConstants.Values.DefLanguageCode : res[3][1],
       versionCode:  res[4][1] == null ? AsyncStorageConstants.Values.DefVersionCode : res[4][1],
@@ -433,6 +432,7 @@ export default class App extends Component {
     await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.LastReadReference, AsyncStorageConstants.Values.LastReadReference
       ).then((lastRead) => {
           this.setState({lastRead})
+          console.log("last read routes page "+JSON.stringify(lastRead))
     })
 
   }

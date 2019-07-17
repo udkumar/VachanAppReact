@@ -58,7 +58,7 @@ export default class ReferenceSelection extends Component {
     console.log("REFERNCE SELECTION SCREEN : " + JSON.stringify(props.screenProps))    
 
     this.state = {
-      languageCode: this.props.screenProps.languageCode, 
+      languageName: this.props.screenProps.languageName, 
       versionCode: this.props.screenProps.versionCode,
       booksList: this.props.screenProps.booksList,
       selectedBookIndex: 0,
@@ -103,7 +103,7 @@ export default class ReferenceSelection extends Component {
   render() {
     return (
         <TabNav screenProps={{
-          languageCode: this.state.languageCode,
+          languageName: this.state.languageName,
           versionCode: this.state.versionCode,
 
           booksList: this.state.booksList,

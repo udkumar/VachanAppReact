@@ -57,7 +57,7 @@ export default class Search extends Component {
       isLoading:false,
       text:'',
       tabsData:[],
-      languageCode:this.props.screenProps.languageCode,
+      languageName:this.props.screenProps.languageName,
       versionCode:this.props.screenProps.versionCode,
     }
 
@@ -70,7 +70,7 @@ export default class Search extends Component {
   
   onSearchText(){
     this.setState({isLoading: true, searchedResult:[], tabsData:[]}, async () => {
-      let searchResultByBookName = await DbQueries.querySearchBookWithName(this.state.versionCode, this.state.languageCode,this.state.text);
+      let searchResultByBookName = await DbQueries.querySearchBookWithName(this.state.versionCode, this.state.languageName,this.state.text);
       if(searchResultByBookName && searchResultByBookName.length >0 ){
         var refList = [];
         for(var i = 0; i < searchResultByBookName.length ;i++ ){
@@ -78,7 +78,7 @@ export default class Search extends Component {
             chapterNumber:1,
             verseNumber:"1",
             versionCode:this.state.versionCode,
-            languageCode:this.state.languageCode,
+            languageName:this.state.languageName,
             type: 'v',
             text: '',
             highlighted: 'false' 
@@ -88,7 +88,7 @@ export default class Search extends Component {
         this.setState({searchedResult: refList})
         this.addRefListToTab(refList)
       }
-      let searchResultByVerseText = await DbQueries.querySearchVerse(this.state.versionCode, this.state.languageCode,this.state.text)
+      let searchResultByVerseText = await DbQueries.querySearchVerse(this.state.versionCode, this.state.languageName,this.state.text)
       if (searchResultByVerseText &&  searchResultByVerseText.length >0) {
         this.setState({searchedResult:[...this.state.searchedResult, ...searchResultByVerseText]})
         this.addRefListToTab(searchResultByVerseText)

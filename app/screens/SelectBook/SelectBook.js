@@ -84,9 +84,8 @@ export default class SelectBook extends Component {
   getItemLayout = (data, index) => (
     { length: 48, offset: 48 * index, index }
   )
-
   async componentDidMount(){
-      var booksid = await APIFetch.availableBooks(15)
+      var booksid = await APIFetch.availableBooks(18)
       console.log("booklist "+JSON.stringify(booksid))
     // var booksid = this.props.navigation.state.params.booksKey
     // // console.log("books key "+booksid.length)
@@ -96,7 +95,7 @@ export default class SelectBook extends Component {
       var bookId =  booksid[i].toUpperCase()
       var bookList = {bookId:bookId,bookName: getBookNameFromMapping(bookId),
           section:getBookSectionFromMapping(bookId),bookNumber:getBookNumberFromMapping(bookId),
-          languageCode: this.props.screenProps.languageCode, versionCode:this.props.screenProps.versionCode, numOfChapters:getBookChaptersFromMapping(bookId)}
+          languageName: this.props.screenProps.languageName, versionCode:this.props.screenProps.versionCode, numOfChapters:getBookChaptersFromMapping(bookId)}
           bookListData.push(bookList)
        console.log( "bookid in select page "+getBookNameFromMapping(bookId))
     }

@@ -11,6 +11,6 @@ ReferenceModel.schema = {
         chapterNumber:'int',
         verseNumber:'string',
         versionCode:'string',
-        languageCode:'string'
+        languageName:'string'
     }
 };

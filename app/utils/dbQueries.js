@@ -1,7 +1,5 @@
 import DbHelper from './dbHelper';
 
-import dbHelper from './dbHelper';
-
 class DbQueries {
 
     queryLanguages() {
@@ -12,24 +10,24 @@ class DbQueries {
         return DbHelper.query('LanguageModel', 'languageCode ==[c] "' + code + '"');
     }
 
-    queryVersionWithCode(verCode: string, langCode: string) {
-        return DbHelper.queryVersionWithCode(verCode, langCode);
+    queryVersionWithCode(verCode: string, langName: string) {
+        return DbHelper.queryVersionWithCode(verCode, langName);
     }
 
-    queryBooks(verCode: string, langCode: string) {
-        return DbHelper.queryBooksWithCode(verCode, langCode);
+    queryBooks(verCode: string, langName: string) {
+        return DbHelper.queryBooksWithCode(verCode, langName);
     }
 
-    queryBookWithId(verCode: string, langCode: string,bookId: string) {
-        return DbHelper.queryBooksWithCode(verCode, langCode, bookId);
+    queryBookWithId(verCode: string, langName: string,bookId: string) {
+        return DbHelper.queryBooksWithCode(verCode, langName, bookId);
     }
 
-    querySearchBookWithName(verCode: string, langCode: string, text: string) {
-        return DbHelper.queryBooksWithCode(verCode, langCode, null, text);        
+    querySearchBookWithName(verCode: string, langName: string, text: string) {
+        return DbHelper.queryBooksWithCode(verCode, langName, null, text);        
     }
 
-    querySearchVerse(verCode: string, langCode: string, text: string) {
-        return DbHelper.queryInVerseText(verCode, langCode, text);
+    querySearchVerse(verCode: string, langName: string, text: string) {
+        return DbHelper.queryInVerseText(verCode, langName, text);
     }
     //for api data 
     queryHighlights(langName, verCode, bookId, chapterNumber) {
@@ -45,29 +43,29 @@ class DbQueries {
     // addNewBook(bookModel, versionModel, languageModel) {
     //     DbHelper.insertNewBook(bookModel, versionModel, languageModel);
     // }
-    addNewVersion(sourceId,bookModel){
-        dbHelper.addNewVersion(sourceId,bookModel)
+    addNewVersion(langName,versCode,bookModels){
+        DbHelper.addNewVersion(langName,versCode,bookModels)
     }
 
-    queryVersion(sourceId){
-        return dbHelper.queryVersion(sourceId)
-    }
+    // queryVersion(langName,versCode){
+    //     return DbHelper.queryVersion(langName,versCode)
+    // }
 
     updateHighlightsInVerse(LangName, verCode, bookId, chapterNumber, verseNumber, isHighlight) {
         DbHelper.updateHighlightsInVerse(LangName, verCode, bookId, chapterNumber, verseNumber, isHighlight);
     }
 
    
-    updateBookmarkInBook(langCode,verCode,bId,chapterNumber, isBookmark) {
-        DbHelper.updateBookmarkInBook(langCode,verCode,bId,chapterNumber, isBookmark);
+    updateBookmarkInBook(langName,verCode,bId,chapterNumber, isBookmark) {
+        DbHelper.updateBookmarkInBook(langName,verCode,bId,chapterNumber, isBookmark);
     }
-    queryBookmark(langCode,verCode,bId){
-        return DbHelper.queryBookmark(langCode,verCode,bId);
+    queryBookmark(langName,verCode,bId){
+        return DbHelper.queryBookmark(langName,verCode,bId);
     }
   
 
-    queryBookIdModels(verCode: string, langCode: string) {
-        return DbHelper.queryBookIdModels(verCode, langCode);
+    queryBookIdModels(verCode: string, langName: string) {
+        return DbHelper.queryBookIdModels(verCode, langName);
     }
 
     queryNotes() {
@@ -85,8 +83,8 @@ class DbQueries {
         DbHelper.deleteNote(time);
     }
 
-    addHistory(langCode, verCode, bookId, chapterNumber, time) {
-        DbHelper.addHistory(langCode, verCode, bookId, chapterNumber, time)
+    addHistory(langName, verCode, bookId, chapterNumber, time) {
+        DbHelper.addHistory(langName, verCode, bookId, chapterNumber, time)
     }
 
     queryHistory(){
@@ -107,11 +105,14 @@ class DbQueries {
 
     // add list of languages to db
     addLangaugeList(lang,ver){
-        dbHelper.addLangaugeList(lang,ver)
+        DbHelper.addLangaugeList(lang,ver)
     }
     getLangaugeList(){
-       return dbHelper.getLangaugeList()
+       return DbHelper.getLangaugeList()
     }
+    // updateLangaugeList(langName,versCode,downloaded){
+    //     DbHelper.updateLangaugeList(langName,versCode,downloaded)
+    // }
 }
 
 export default new DbQueries();

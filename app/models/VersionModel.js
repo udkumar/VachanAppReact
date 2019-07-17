@@ -8,10 +8,9 @@ VersionModel.schema = {
     properties: {
     	versionName: 'string',
 		versionCode: 'string',
-		sourceId:'int',
-    	// source: 'string',
     	license: 'string',
-    	year: 'int',
+		year: 'int',
+		downloaded:'bool',
         versionOwner: {type: 'linkingObjects', objectType: 'LanguageModel', property: 'versionModels' }
     }
 };

@@ -192,7 +192,7 @@ export default class EditNote extends Component {
       return;
     }
     let refModel = {bookId: id, bookName: name, chapterNumber: cNum, verseNumber: vNum, 
-      versionCode: this.props.screenProps.versionCode, languageCode: this.props.screenProps.languageCode};
+      versionCode: this.props.screenProps.versionCode, languageName: this.props.screenProps.languageName};
     let referenceList = [...this.state.referenceList]
     referenceList.push(refModel)
     this.setState({referenceList})

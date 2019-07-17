@@ -2,12 +2,15 @@ import React, { Component } from 'react';
 import { Text, StyleSheet,ScrollView,Dimensions, Modal,View,ActivityIndicator,TextInput,FlatList,LayoutAnimation,UIManager,Platform,TouchableOpacity} from 'react-native';
 import {Card} from 'native-base'
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import dbQueries from '../../utils/dbQueries'
+import DbQueries from '../../utils/dbQueries'
 import APIFetch from '../../utils/APIFetch'
 import timestamp from '../../assets/timestamp.json'
+import {NavigationActions} from 'react-navigation'
 import  grammar from 'usfm-grammar'
 import { getBookNameFromMapping, getBookSectionFromMapping, getBookNumberFromMapping } from '../../utils/UtilFunctions';
 import VerseModel from '../../models/VerseModel';
+import dbQueries from '../../utils/dbQueries';
+import LanguageModel from '../../models/LanguageModel';
 const width = Dimensions.get('window').width;
 var height =  Dimensions.get('window').width;
 
@@ -16,7 +19,7 @@ class ExpandableItemComponent extends Component {
     super();
     this.state = {
       layoutHeight: 0,
-      modalVisible:true
+      modalVisible:true,
     };
   }
   componentWillReceiveProps(nextProps){
@@ -45,6 +48,7 @@ class ExpandableItemComponent extends Component {
 
  
   render() {
+    console.log("source id "+JSON.stringify(this.state.lanVer))
     return (
       <View>
       <Card>
@@ -53,7 +57,7 @@ class ExpandableItemComponent extends Component {
           onPress={this.props.onClickFunction}
           style={styles.header}
         >
-          <Text style={styles.headerText}>{this.props.item.languageName[0].toUpperCase()+this.props.item.languageName.slice(1)}</Text>
+          <Text style={styles.headerText}>{this.props.item.languageName}</Text>
           <Icon name={this.props.item.isExpanded ? "keyboard-arrow-down" : "keyboard-arrow-up" } style={styles.iconStyle} size={24}/>
         </TouchableOpacity>
         <View
@@ -65,7 +69,7 @@ class ExpandableItemComponent extends Component {
           {this.props.item.versionModels.map((item, key) => (
             <View style={styles.content}>
             <TouchableOpacity
-              onPress={this.props.goToBible}
+              // onPress={this.props.goToBible}
               >
               <View style={{flex:1,flexDirection:'column',}}>
               <Text  style={{fontWeight:'bold',fontSize:18}}>{item.versionCode} </Text>
@@ -73,10 +77,15 @@ class ExpandableItemComponent extends Component {
               </View>
               {/* <TouchableOpacity > */}
               </TouchableOpacity>
-              <TouchableOpacity style={{alignSelf:'center'}} onPress={()=>{this.props.DownloadBible(item.sourceId)}}>
-                <Icon name="file-download" size={24} 
+              {this.props.item.downloaded==true ? <TouchableOpacity style={{alignSelf:'center'}} onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,this.props.item.downloaded)}}>
+                <Icon name="check" size={24} 
                 />
                </TouchableOpacity>
+               :
+              <TouchableOpacity style={{alignSelf:'center'}} onPress={()=>{this.props.DownloadBible(this.props.item.languageName,item.versionCode)}}>
+                <Icon name="file-download" size={24} 
+                />
+               </TouchableOpacity>}
               {/* </TouchableOpacity> */}
               {/* <View style={styles.separator} /> */}
             </View>
@@ -104,7 +113,8 @@ export default class LanguageList extends Component {
           text: '',
           languages:[],
           searchList:[],
-          isConnected:this.props.screenProps.isConnected
+          isConnected:this.props.screenProps.isConnected,
+          downloaded:false
       }
     }
    
@@ -122,7 +132,7 @@ export default class LanguageList extends Component {
     componentDidMount(){
       this.fetchLanguages()
     }
-  
+   
     async fetchLanguages(){
       var lanVer = []
       var oneDay = 24*60*60*1000; 
@@ -130,61 +140,79 @@ export default class LanguageList extends Component {
       var ud = new Date(timestamp.languageUpdate)
       var diffDays = Math.round(Math.abs((d.getTime() - ud.getTime())/(oneDay)))
       
-        // if(diffDays <= 20 ){
-        //   console.log("diff ")
-        //   var languageList =  await dbQueries.getLangaugeList()
-        //   console.log("lanaguage list "+JSON.stringify(languageList))
-        //     for(var i =0 ; i<languageList.length-1;i++){
-        //     lanVer.push(languageList[i])
-        //     }
-            // if(languageList.length == 0 ){
+        if(diffDays <= 20 ){
+          
+          console.log("diff "+diffDays)
+          var languageList =  await dbQueries.getLangaugeList()
+          console.log("lanaguage list "+JSON.stringify(languageList))
+            for(var i =0 ; i<languageList.length;i++){
+            lanVer.push(languageList[i])
+            }
+            if(languageList.length == 0){
               var versionRes = await APIFetch.getVersions()
-              console.log("versionRes "+JSON.stringify(versionRes))
+              console.log("VERSION RESPONSE "+JSON.stringify(versionRes))
               if(versionRes){
-                for(var i=0;i<=versionRes.length-1; i++){
-                  var versions = []
-                  if(versionRes[i].contentType=="bible"){
-                    var version = {
-                      "versionName":versionRes[i].versionContentDescription,
-                      "versionCode": versionRes[i].versionContentCode,
-                      "sourceId":versionRes[i].sourceId,
-                      "license": versionRes[i].license,
-                      "year": versionRes[i].year
+                var versions = []
+                var languageName = ''
+                if(versionRes){
+                  for(var i=0;i<=versionRes.length-1; i++){
+                    //work on adding unique or language only once today 12/7 (todo work)
+                    if(versionRes[i].contentType=="bible"){
+                      var version = {
+                        versionName:versionRes[i].versionContentDescription,
+                        versionCode: versionRes[i].versionContentCode,
+                        sourceId:versionRes[i].sourceId,
+                        license: versionRes[i].license,
+                        year: versionRes[i].year,
+                        downloaded:false
+                      }
+                      versions.push(version)
+                      languageName = versionRes[i].languageName
                     }
-                    versions.push(version)
-                    var langObj = {"languageName":versionRes[i].languageName,versionModels:versions}
-                    lanVer.push(langObj)
                   }
-                  // await dbQueries.addLangaugeList(langObj,versions)
+                  var langObj = {"languageName":languageName,versionModels:versions}
+                  lanVer.push(langObj)
+               
+                  await dbQueries.addLangaugeList(langObj,versions)
                 }
               }
-        // }
+            }
+    
+        }
         // else{
           // var versionRes = await APIFetch.getVersions()
           //       console.log("versionRes "+JSON.stringify(versionRes))
+          //       var versions = []
+          //       var languageName = ''
           //       if(versionRes){
           //         for(var i=0;i<=versionRes.length-1; i++){
-          //           var versions = []
+          //           //work on adding unique or language only once today 12/7 (todo work)
           //           if(versionRes[i].contentType=="bible"){
           //             var version = {
           //               "versionName":versionRes[i].versionContentDescription,
           //               "versionCode": versionRes[i].versionContentCode,
           //               "sourceId":versionRes[i].sourceId,
           //               "license": versionRes[i].license,
-          //               "year": versionRes[i].year
+          //               "year": versionRes[i].year,
+          //               downloaded:false
           //             }
           //             versions.push(version)
-          //             var langObj = {"languageName":versionRes[i].languageName,versionModels:versions}
-          //             lanVer.push(langObj)
+          //             languageName = versionRes[i].languageName
           //           }
-          //           // await dbQueries.addLangaugeList(langObj,versions)
+                    
           //         }
+          //         var langObj = {"languageName":languageName,versionModels:versions}
+          //         lanVer.push(langObj)
+          //         await dbQueries.addLangaugeList(langObj,versions)
           //       }
         // }
+        // console.log("lanvar "+JSON.stringify(lanVer))
         this.setState({
           languages: lanVer,
-          searchList: lanVer
+          searchList:lanVer
         })
+        
+  
     }
     goToVersionScreen(value){
       console.log('value passesed '+value)
@@ -203,8 +231,8 @@ export default class LanguageList extends Component {
         })
     }
 
-    DownloadBible = async(sourceId)=>{
-      console.log("language name "+sourceId)
+    DownloadBible = async(langName,versCode)=>{
+      // console.log("language name "+sourceId)
       var chapterModels = []
       var verseModels = []
       var content = await APIFetch.getContent(18,"json",62)
@@ -229,22 +257,26 @@ export default class LanguageList extends Component {
       }
       console.log("chapter models "+JSON.stringify(chapterModels))
       var bookModels = {
-        sourceId:sourceId,
+        languageName: langName,
+        versionCode: versCode,
         bookId: bookId,
         bookName:getBookNameFromMapping(bookId),
         chapters: chapterModels,
         section: getBookSectionFromMapping(bookId),
         bookNumber: getBookNumberFromMapping(bookId)
       }
-      await dbQueries.addNewVersion(sourceId,bookModels)
+      await DbQueries.addNewVersion(langName,versCode,bookModels)
       this.setState({modalVisible:this.state.modalVisible})
     }
     setModalVisible=()=>{
       this.setState({modalVisible:!this.state.modalVisible})
     }
+    goToBible = (langName,verCode,downloaded)=>{
+      this.props.navigation.state.params.updateLanguage(langName,verCode,downloaded)
+      this.props.navigation.dispatch(NavigationActions.back())    
+    }
     render(){
-      console.log("render visible "+this.state.modalVisible)
-      //  console.log("langauge length "+JSON.stringify(this.state.languages))
+      console.log("DATA LANGUAGE LIST "+JSON.stringify(this.state.languages))
       return (
             <View style={styles.MainContainer}>
             {this.state.languages.length == 0 ? 
@@ -269,7 +301,8 @@ export default class LanguageList extends Component {
                     onClickFunction={this.updateLayout.bind(this, index)}
                     item={item}
                     DownloadBible = {this.DownloadBible}
-                    goToBible = {()=>{this.props.navigation.navigate("Bible")}}
+                    goToBible = {this.goToBible}
+                    // downloaded={this.state.downloaded}
                     // setModalVisible={this.setModalVisible}
                     // modalVisible={this.state.modalVisible}
                   />

@@ -6,7 +6,8 @@ export default class BookModel extends Realm.Object {}
 BookModel.schema = {
     name: 'BookModel',
     properties: {
-      sourceId:'int',
+      languageName: 'string',
+      versionCode: 'string',
       bookId: 'string',
       bookName: 'string',
       chapters: 'ChapterModel[]',

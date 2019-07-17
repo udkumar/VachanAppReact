@@ -94,7 +94,7 @@ export default class Notes extends Component {
       referenceList:  this.props.navigation.state.params.referenceList,
       bookId: this.state.bookId,
       versionCode: this.state.versionCode,
-      languageCode: this.state.languageCode,
+      languageName: this.state.languageName,
     })
   }
   

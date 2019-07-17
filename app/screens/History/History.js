@@ -158,9 +158,7 @@ export default class History extends Component{
         this.state.historyList.length == 0 ? 
         <View style={this.styles.emptyMessageContainer}>
         <Icon name="import-contacts" style={this.styles.emptyMessageIcon}/>
-          <Text
-            style={this.styles.messageEmpty}
-          >
+          <Text style={this.styles.messageEmpty}>
             Start reading
           </Text>
           

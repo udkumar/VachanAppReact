@@ -36,7 +36,7 @@ export default class Splash extends Component {
       actions: [
         NavigationActions.navigate({
           routeName,
-          params:{languageCode:this.props.screenProps.languageCode,versionCode:this.props.screenProps.versionCode}
+          params:{languageName:this.props.screenProps.languageName,versionCode:this.props.screenProps.versionCode}
         })
       ]
     })

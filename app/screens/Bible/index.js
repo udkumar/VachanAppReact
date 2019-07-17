@@ -90,9 +90,9 @@ export default class Bible extends Component {
 
     this.updateCurrentChapter = this.updateCurrentChapter.bind(this)
     this.state = {
-      languageCode: this.props.screenProps.languageCode,
+      // languageCode: this.props.screenProps.languageCode,
+      languageName:this.props.screenProps.languageName,
       versionCode: this.props.screenProps.versionCode,
-      modelData: [],
       // isLoading: false,
       showBottomBar: false,
       bookId: this.props.screenProps.bookId,
@@ -117,7 +117,8 @@ export default class Bible extends Component {
       scrollDirection:'up',
       close:true,
       chapters:[],
-      message:''
+      message:'',
+      downloaded:false
     }
 
     this.pinchDiff = 0
@@ -211,24 +212,27 @@ export default class Bible extends Component {
       this.queryBookFromAPI()
        
   }
-  
+
   // render data onAPI Call 
-    async queryBookFromAPI(){
-      var  data  = await DbQueries.queryVersion(18)
+    async queryBookFromAPI(downloaded){
       // console.log("dataa "+data)
-      if(data !=null){
-          console.log("data verses  "+data[0].chapters)
-        this.setState({chapters:data[0].chapters,
-          bookId:data[0].bookId,
-          bookName:data[0].bookName,
-          dataLength:getBookChaptersFromMapping(data[0].bookId)
-        },()=>this.props.navigation.setParams({
-          bookName: this.state.bookName,
-        }))
-      }
-      else{
+      // if(downloaded==true && downloaded !=null ){
+      // console.log("download "+downloaded)
+      //   var  data  = await DbQueries.queryVersion(langName,versCode)
+      //   if(data !=null){
+      //     console.log("data verses  "+data[0].chapters)
+      //   this.setState({chapters:data[0].chapters,
+      //     bookId:data[0].bookId,
+      //     bookName:data[0].bookName,
+      //     dataLength:getBookChaptersFromMapping(data[0].bookId)
+      //   },()=>this.props.navigation.setParams({
+      //     bookName: this.state.bookName,
+      //   }))
+      // }
+      // }
+      // else{
         APIFetch.getContent(18,"json",this.state.bookNumber).then(bibleContent =>{
-          console.log("response "+JSON.stringify(bibleContent.chapters))
+          console.log("response "+JSON.stringify(bibleContent)+"booknumber "+this.state.bookNumber)
          
           if(bibleContent.success == false){
             this.setState({message:"book Not Available "})
@@ -251,7 +255,7 @@ export default class Bible extends Component {
         
         })
         // .catch(erorr=>alert("error",erorr))
-      }
+      // }
       console.log("booknumber "+this.state.bookNumber +" chapternumber "+ this.state.currentVisibleChapter)
        
 
@@ -276,7 +280,7 @@ export default class Bible extends Component {
   }
   }
   async getBookMarks(book){
-    let model = await  DbQueries.queryBookmark(this.state.languageCode,this.state.versionCode,this.state.bookId)
+    let model = await  DbQueries.queryBookmark(this.state.languageName,this.state.versionCode,this.state.bookId)
     if (model == null) {
     }else{
       if(model.length > 0){
@@ -297,12 +301,12 @@ export default class Bible extends Component {
   // render data from local db
   async queryBook() {
     let model = await DbQueries.queryBookWithId(this.props.screenProps.versionCode, 
-        this.props.screenProps.languageCode, this.state.bookId);
+        this.props.screenProps.languageName, this.state.bookId);
     if (model == null) {
       // console.log("mode lnull")
     } else {
       if (model.length > 0) {
-        this.setState({modelData: model[0].chapters, bookmarksList: model[0].bookmarksList}, () => {
+        this.setState({chapters: model[0].chapters, bookmarksList: model[0].bookmarksList}, () => {
               this.setState({isBookmark: this.state.bookmarksList.indexOf(this.state.currentVisibleChapter) > -1}, () => {
                 this.props.navigation.setParams({
                     isBookmark: this.state.isBookmark,
@@ -314,11 +318,11 @@ export default class Bible extends Component {
     }
   }
 
-  async onBookmarkPress() {
+  async onBookmarkPress(){
     index = this.state.bookmarksList.findIndex(chapInd => chapInd.chapterNumber ===this.state.currentVisibleChapter);
     console.log("index "+index)
 
-    await DbQueries.updateBookmarkInBook(this.state.languageCode,this.state.versionCode,this.state.bookId,this.state.currentVisibleChapter, index > -1 ? false : true);
+    await DbQueries.updateBookmarkInBook(this.state.languageName,this.state.versionCode,this.state.bookId,this.state.currentVisibleChapter, index > -1 ? false : true);
     this.setState({isBookmark: index > -1 ? false : true}, () => {
       this.props.navigation.setParams({isBookmark: this.state.isBookmark}) 
         if(index > -1){
@@ -339,16 +343,16 @@ export default class Bible extends Component {
       console.log("book list  "+this.state.bookmarksList[i].chapterNumber)
       if(this.state.bookmarksList[i].chapterNumber == chapterNum && this.state.bookmarksList[i].bookId == id ){
       this.props.navigation.setParams({isBookmark:false }) 
-        await DbQueries.updateBookmarkInBook(this.state.languageCode,this.state.versionCode,id,chapterNum,false);
+        await DbQueries.updateBookmarkInBook(this.state.languageName,this.state.versionCode,id,chapterNum,false);
         console.log("chapter "+chapterNum+"book mark list "+this.state.bookmarksList[i])
         this.state.bookmarksList.splice(index, 1)
         this.setState({bookmarksList:this.state.bookmarksList,isBookmark:false})
       } 
     }
-  
   }
 
   getSelectedReferences(vIndex, chapterNum, vNum) {
+    console.log(" selected index "+vIndex+"  chapter number "+chapterNum+" verse number "+vNum)
     let obj = chapterNum + '_' + vIndex + '_' + vNum
     console.log("obj "+ chapterNum + '_' + vIndex + '_' + vNum)
     
@@ -372,7 +376,8 @@ export default class Bible extends Component {
       for (let item of this.state.selectedReferenceSet) {
           let tempVal = item.split('_')
           for(var i=0; i<=this.state.HightlightedVerseArray.length-1; i++ ){
-            if (this.state.modelData[tempVal[0] - 1].verses[tempVal[1]].verseNumber == this.state.HightlightedVerseArray[i].verseNumber && this.state.currentVisibleChapter == this.state.HightlightedVerseArray[i].chapterNumber) {
+            if (this.state.chapters[tempVal[0] - 1].verses[tempVal[1]].number == this.state.HightlightedVerseArray[i].verseNumber && this.state.currentVisibleChapter == this.state.HightlightedVerseArray[i].chapterNumber) {
+              console.log("chapters  "+this.state.chapters[tempVal[0] - 1].verses[tempVal[1]].number)
               highlightCount++
             }
             console.log("highlightCount "+highlightCount)
@@ -391,7 +396,7 @@ export default class Bible extends Component {
     for (let item of this.state.selectedReferenceSet) {
       let tempVal = item.split('_')
       let refModel = {bookId: id, bookName: name, chapterNumber: parseInt(tempVal[0]), verseNumber: tempVal[2], 
-        versionCode: this.props.screenProps.versionCode, languageCode: this.props.screenProps.languageCode};
+        versionCode: this.props.screenProps.versionCode, languageName: this.props.screenProps.languageName};
       refList.push(refModel)
     }
     this.props.navigation.navigate('Notes', {referenceList: refList})
@@ -434,7 +439,7 @@ export default class Bible extends Component {
     }
   }
   getVerseText(cNum, vIndex) {
-    return getResultText(this.state.modelData[cNum - 1].verseModels[vIndex].text)
+    return getResultText(this.state.chapters[cNum - 1].verseModels[vIndex].text)
   }
 
   addToShare = () => {
@@ -455,7 +460,7 @@ export default class Bible extends Component {
 
   componentWillUnmount(){
     let lastRead = {
-        languageCode:this.state.languageCode,
+        languageName:this.state.languageName,
         versionCode:this.state.versionCode,
         bookId:this.state.bookId,
         chapterNumber:this.state.currentVisibleChapter,
@@ -493,10 +498,16 @@ export default class Bible extends Component {
   openLanguages = ()=>{
     this.props.navigation.navigate("LanguageList", {updateLanguage:this.updateLanguage})
   } 
-  updateLanguage = (language,version) =>{
+  updateLanguage = (language,version,downloaded) =>{
+    // if(downloaded == true){
+    //   this.queryBookFromAPI(downloaded)
+
+    // }
+    // this.setState({downloaded})
+    
     this.props.navigation.setParams({
       bibleLanguage: language,
-      bibleVersion: version
+      bibleVersion: version,
     })
   }
     closeSplitScreen = ()=>{
@@ -516,8 +527,10 @@ export default class Bible extends Component {
   //     this.queryBookFromAPI()
   //   }
   // }
+
   _renderItem = ({item}) => (
     <View>
+      {/* <TouchableWithoutFeedback onPress={this.openMenu}> */}
     <Text 
     style={{fontSize: 16,textAlign: 'justify',lineHeight: 24}}>
      {item.number} {item.text}
@@ -530,19 +543,22 @@ export default class Bible extends Component {
           })   
         }
          </Text>
+      {/* </TouchableWithoutFeedback> */}
       </View>
     
   )
   _keyExtractor = (item, index) => item.number;
 
   render() {
-     console.log("chapters"+this.state.chapters.length)
+    
+    console.log("version code ",this.props.screenProps.versionCode)
      console.log("current chapter "+this.state.currentVisibleChapter)
 
     const thumbSize = this.state.thumbSize;
       return (
         <View style={this.styles.container}>
-          {/* <MenuContext style={this.styles.verseWrapperText}> */}
+        
+          <MenuContext style={this.styles.verseWrapperText}>
             {this.state.chapters.length == 0   ?
             <View style={{alignItems: 'center',justifyContent:'center',flex:1}}>   
             <ActivityIndicator 
@@ -557,7 +573,31 @@ export default class Bible extends Component {
                      style={{padding:10}}
                      data={this.state.chapters[this.state.currentVisibleChapter-1].verses}
                      extraData={this.state}
-                     renderItem={this._renderItem}
+                     renderItem={({item, index}) => 
+                        // <Text letterSpacing={24} 
+                          // style={this.styles.verseWrapperText}> 
+                              <VerseView
+                                  ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
+                                  verseData = {item}
+                                  index = {index}
+                                  styles = {this.styles}
+                                  selectedReferences = {this.state.selectedReferenceSet}
+                                  getSelection = {(verseIndex, chapterNumber, verseNumber) => {
+                                  this.getSelectedReferences(verseIndex, chapterNumber, verseNumber)
+                                  }}
+                                  makeHighlight={this.doHighlight}
+                                  makeNotes={this.addToNotes}
+                                  share={this.addToShare}
+                                  HighlightedText={this.state.HighlightedText}
+                                  showFootNote = {this.state.showFootNote}
+                                  HightlightedVerse = {this.state.HightlightedVerseArray}
+                                  chapterNumber ={this.state.currentVisibleChapter}
+                                  showBottomBar={this.state.showBottomBar}
+                              />
+                          
+                        // </Text> 
+                        }
+                      //  renderItem={this._renderItem}
                      keyExtractor={this._keyExtractor}
                      />
                  {/* }) */}
@@ -589,7 +629,7 @@ export default class Bible extends Component {
            
           }
 
-          {/* </MenuContext> */}
+          </MenuContext>
           {
               this.state.close == true ? 
               <TouchableOpacity style={{ width:width,backgroundColor:"#3F51B5",flexDirection:'row',justifyContent:'flex-end'}} onPress={()=>this.setState({close:!this.state.close})}>
@@ -603,7 +643,7 @@ export default class Bible extends Component {
                   currentVisibleChapter={this.state.currentVisibleChapter}
                   bookId = {this.state.bookId}
                   versionCode = {this.state.versionCode}
-                  languageCode = {this.state.languageCode}
+                  languageName = {this.state.languageName}
                   close={this.state.close}
                   closeSplitScreen ={this.closeSplitScreen}
                   HightlightedVerseArray= {this.state.HightlightedVerseArray}
@@ -619,4 +659,3 @@ export default class Bible extends Component {
 }
 
 
- 

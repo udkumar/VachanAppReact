@@ -40,7 +40,7 @@ export default class SelectVerse extends Component {
 
   async queryBook() {
     let model = await DbQueries.queryBookWithId(this.props.screenProps.versionCode, 
-      this.props.screenProps.languageCode, this.state.selectedBookId);
+      this.props.screenProps.languageName, this.state.selectedBookId);
     this.setState({isLoading:false})
     if (model == null) {
       console.log("mode lnull")
