@@ -10,7 +10,6 @@ import  grammar from 'usfm-grammar'
 import { getBookNameFromMapping, getBookSectionFromMapping, getBookNumberFromMapping } from '../../utils/UtilFunctions';
 import VerseModel from '../../models/VerseModel';
 import dbQueries from '../../utils/dbQueries';
-import LanguageModel from '../../models/LanguageModel';
 const width = Dimensions.get('window').width;
 var height =  Dimensions.get('window').width;
 
@@ -48,7 +47,6 @@ class ExpandableItemComponent extends Component {
 
  
   render() {
-    console.log("source id "+JSON.stringify(this.state.lanVer))
     return (
       <View>
       <Card>
@@ -66,7 +64,7 @@ class ExpandableItemComponent extends Component {
             overflow: 'hidden',
           }}>
           {/*Content under the header of the Expandable List Item*/}
-          {this.props.item.versionModels.map((item, key) => (
+          {this.props.item.versionModels.map((item, index,key) => (
             <View style={styles.content}>
             <TouchableOpacity
               // onPress={this.props.goToBible}
@@ -77,12 +75,12 @@ class ExpandableItemComponent extends Component {
               </View>
               {/* <TouchableOpacity > */}
               </TouchableOpacity>
-              {this.props.item.downloaded==true ? <TouchableOpacity style={{alignSelf:'center'}} onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,this.props.item.downloaded)}}>
+              {item.downloaded==true ? <TouchableOpacity style={{alignSelf:'center'}} onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode)}}>
                 <Icon name="check" size={24} 
                 />
                </TouchableOpacity>
                :
-              <TouchableOpacity style={{alignSelf:'center'}} onPress={()=>{this.props.DownloadBible(this.props.item.languageName,item.versionCode)}}>
+              <TouchableOpacity style={{alignSelf:'center'}} onPress={()=>{this.props.DownloadBible(this.props.item.languageName,item.versionCode,index)}}>
                 <Icon name="file-download" size={24} 
                 />
                </TouchableOpacity>}
@@ -114,7 +112,6 @@ export default class LanguageList extends Component {
           languages:[],
           searchList:[],
           isConnected:this.props.screenProps.isConnected,
-          downloaded:false
       }
     }
    
@@ -141,13 +138,17 @@ export default class LanguageList extends Component {
       var diffDays = Math.round(Math.abs((d.getTime() - ud.getTime())/(oneDay)))
       
         if(diffDays <= 20 ){
-          
+      
           console.log("diff "+diffDays)
           var languageList =  await dbQueries.getLangaugeList()
-          console.log("lanaguage list "+JSON.stringify(languageList))
-            for(var i =0 ; i<languageList.length;i++){
-            lanVer.push(languageList[i])
-            }
+          this.setState({
+            languages: languageList,
+            searchList:languageList
+          })
+          // for(var i =0 ; i<languageList.length;i++){
+          //   // lanVer.push(languageList[i])
+          //   }
+            console.log("langver ",lanVer)
             if(languageList.length == 0){
               var versionRes = await APIFetch.getVersions()
               console.log("VERSION RESPONSE "+JSON.stringify(versionRes))
@@ -157,13 +158,13 @@ export default class LanguageList extends Component {
                 if(versionRes){
                   for(var i=0;i<=versionRes.length-1; i++){
                     //work on adding unique or language only once today 12/7 (todo work)
+               
                     if(versionRes[i].contentType=="bible"){
                       var version = {
-                        versionName:versionRes[i].versionContentDescription,
-                        versionCode: versionRes[i].versionContentCode,
-                        sourceId:versionRes[i].sourceId,
-                        license: versionRes[i].license,
-                        year: versionRes[i].year,
+                        "versionName":versionRes[i].versionContentDescription,
+                        "versionCode": versionRes[i].versionContentCode,
+                        "license": versionRes[i].license,
+                        "year": versionRes[i].year,
                         downloaded:false
                       }
                       versions.push(version)
@@ -172,13 +173,18 @@ export default class LanguageList extends Component {
                   }
                   var langObj = {"languageName":languageName,versionModels:versions}
                   lanVer.push(langObj)
-               
+                  this.setState({
+                    languages: lanVer,
+                    searchList:lanVer
+                  })
                   await dbQueries.addLangaugeList(langObj,versions)
                 }
               }
             }
-    
+           
+            // lanVer.push(languageList[0])
         }
+       
         // else{
           // var versionRes = await APIFetch.getVersions()
           //       console.log("versionRes "+JSON.stringify(versionRes))
@@ -207,15 +213,11 @@ export default class LanguageList extends Component {
           //       }
         // }
         // console.log("lanvar "+JSON.stringify(lanVer))
-        this.setState({
-          languages: lanVer,
-          searchList:lanVer
-        })
+
         
   
     }
     goToVersionScreen(value){
-      console.log('value passesed '+value)
      this.props.navigation.navigate('VersionList',  {versions: value });
     }
 
@@ -231,8 +233,8 @@ export default class LanguageList extends Component {
         })
     }
 
-    DownloadBible = async(langName,versCode)=>{
-      // console.log("language name "+sourceId)
+    DownloadBible = async(langName,versCode,index)=>{
+      // console.log("language NAME ",langName,"version cosde ",versCode)
       var chapterModels = []
       var verseModels = []
       var content = await APIFetch.getContent(18,"json",62)
@@ -255,7 +257,6 @@ export default class LanguageList extends Component {
         }
       }
       }
-      console.log("chapter models "+JSON.stringify(chapterModels))
       var bookModels = {
         languageName: langName,
         versionCode: versCode,
@@ -265,137 +266,60 @@ export default class LanguageList extends Component {
         section: getBookSectionFromMapping(bookId),
         bookNumber: getBookNumberFromMapping(bookId)
       }
+     
+      
       await DbQueries.addNewVersion(langName,versCode,bookModels)
-      this.setState({modalVisible:this.state.modalVisible})
+       const array = [...this.state.languages]
+      // array[0].versionModels[index]['downloaded'] = true
+      console.log("array download key ",array[0].versionModels[index]['downloaded'])
+      // console.log("ARRAY OF LANGUAGGE ",array)
+
+      // this.setState({languages:array})
+
+      
     }
     setModalVisible=()=>{
       this.setState({modalVisible:!this.state.modalVisible})
     }
-    goToBible = (langName,verCode,downloaded)=>{
-      this.props.navigation.state.params.updateLanguage(langName,verCode,downloaded)
+    goToBible = (langName,verCode)=>{
+      this.props.navigation.state.params.updateLanguage(langName,verCode)
       this.props.navigation.dispatch(NavigationActions.back())    
     }
+  
     render(){
-      console.log("DATA LANGUAGE LIST "+JSON.stringify(this.state.languages))
+      console.log("languaguage list ",this.state.languages)
       return (
             <View style={styles.MainContainer}>
-            {this.state.languages.length == 0 ? 
-            <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>   
-            <ActivityIndicator 
-              size="large" 
-              color="#0000ff"/>
-              </View>
-              :
-            <View>
-              <TextInput 
-                style={styles.TextInputStyleClass}
-                onChangeText={(text) => this.SearchFilterFunction(text)}
-                value={this.state.text}
-                underlineColorAndroid='transparent'
-                placeholder="Search Here"
-              />  
-              <ScrollView>
-                {this.state.languages.map((item, index) => (
-                  <ExpandableItemComponent
-                    // key={item}
-                    onClickFunction={this.updateLayout.bind(this, index)}
-                    item={item}
-                    DownloadBible = {this.DownloadBible}
-                    goToBible = {this.goToBible}
-                    // downloaded={this.state.downloaded}
-                    // setModalVisible={this.setModalVisible}
-                    // modalVisible={this.state.modalVisible}
-                  />
-                ))}
-              </ScrollView>
-              
-            </View>
+            {this.state.languages.length == 0 ?
+              <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>   
+              <ActivityIndicator 
+                size="large" 
+                color="#0000ff"/>
+                </View>:
+                <View>
+        <TextInput 
+          style={styles.TextInputStyleClass}
+          onChangeText={(text) => this.SearchFilterFunction(text)}
+          value={this.state.text}
+          underlineColorAndroid='transparent'
+          placeholder="Search Here"
+        />  
+        <ScrollView>
+          {this.state.languages.map((item, index) => (
+            <ExpandableItemComponent
+              // key={item}
+              onClickFunction={this.updateLayout.bind(this, index)}
+              item={item}
+              DownloadBible = {this.DownloadBible}
+              goToBible = {this.goToBible}
+              // setModalVisible={this.setModalVisible}
+            />
+          ))}
+        </ScrollView>
+        
+      </View>
             }
-            
-             {/* {this.state.modalVisible == true ?
-              <Modal
-              animationType="fade"
-              // presentationStyle="presentationStyle"
-              transparent={true}
-              visible={this.state.modalVisible}
-              onRequestClose={() => {
-              alert('Modal has been closed.');
-              }}>
-              <View style={{flex:1,marginVertical:height/3}}>
-                <View 
-                  style={{
-                    flex:1,
-                    width:width,
-                    height:height,
-                    justifyContent:'center',
-                    alignItems:'center',
-                    backgroundColor:"red"
-                  }}>
-                    <FlatList
-                      numColumns={4}
-                      data={["1","2","3","4","5","6","8","9","10","11","12","13","14","15"]}
-                      renderItem={({item, index}) => 
-                      <TouchableOpacity 
-                      style={{
-                        backgroundColor:'transparent',
-                        borderRightWidth:1, 
-                        borderBottomWidth:1,
-                        height:height/4,
-                        width:width/4, 
-                        justifyContent:"center",
-                        alignItems:'center'
-                      }}
-                        onPress={this.setModalVisible}
-                        >
-                              <Text>{item}</Text>
-                          </TouchableOpacity>
-                      }
-                    />
-                </View>
-              </View>
-            </Modal>
-             : null 
-            } */}
-      
-        {/* <TouchableOpacity
-          onPress={() => {
-            this.setModalVisible(true);
-          }}>
-          <Text>Show Modal</Text>
-        </TouchableOpacity> */}
-      
-          {/* <Modal
-            visible={this.state.modalVisible}
-            animationType='slide'
-            onRequestClose={() => {console.log('Modal has been closed.');}}
-            transparent={true}
-         >
-         <View
-         style={{
-           width:width,
-           height:height,
-           justifyContent:'center',
-           alignItems:'center'
-         }}
-          > 
-          <View style={{
-             alignItems: 'center',
-             backgroundColor: 'red',
-             justifyContent: 'center',
-             height: height,
-             width:width
-          }}>
-           <TouchableOpacity
-            onPress={() => {
-                  this.setModalVisible(!this.state.modalVisible);
-                }}
-            >
-            <Text>Close</Text>
-            </TouchableOpacity>
             </View>
-          </View>
-          </Modal> */}
-        </View>
       )
     }
 }

@@ -64,9 +64,9 @@ const MenuIcon = (navigation) => {
 const StackNavigate = StackNavigator(
   {  
 
-    LanguageList:{
-      screen:LanguageList
-    },
+    // LanguageList:{
+    //   screen:LanguageList
+    // },
       Bible:{
         screen:Bible,
         navigationOptions: ({ navigation }) => ({

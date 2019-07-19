@@ -441,7 +441,7 @@ class DbHelper {
 		let realm = await this.getRealm();
 		if(realm){
 					let result = realm.objects('LanguageModel');
-					console.log(" GET LANGAUGE ")
+					// console.log(" GET LANGAUGE ")
 					return result
 		}
 		return null
@@ -451,42 +451,36 @@ class DbHelper {
 		console.log("language code "+langName+" vercODE "+versCode)
 		let realm = await this.getRealm();
 		if(realm){
-			var result = realm.objects('BookModel').filtered('languageName ==[c] "' + langName +'"versionCode==[c] "' + versCode +'"');
-			// var results = realm.objects('LanguageModel').filtered('languageName ==[c] "' + langName +'"');
-			// var results = realm.objects('VersionModel').filtered('languageName ==[c] "' + langName +'"versionCode==[c] "' + versCode +'"');
-			if(results !=null){
-					console.log("add new version ::::::::::::")
+			let result = realm.objectForPrimaryKey("LanguageModel",langName)
+			let resultsA = result.versionModels
+			resultsA = resultsA.filtered('versionCode ==[c] "' + versCode + '"')
+			var resultBoook = realm.objects('BookModel').filtered('languageName ==[c] "' + langName +'" ')
+			// var verInBook = realm.objects('BookModel').filtered('versionCode==[c] "' + versCode +'"')
+			
+		
+
+
+			var langInBook = resultBoook.length == 0  ? null : resultBoook[0].languageName  
+			var verInBook =  resultBoook.length  == 0 ? null : resultBoook[0].versionCode
+			console.log("results ... ",result.languageName)
+			console.log("results A... ",resultsA[0].versionCode)
+			console.log("results ... ",result.languageName)
+			console.log("results A... ",resultsA[0].versionCode)
+			
+			if(result.languageName == langInBook  && resultsA[0].versionCode == verInBook){
+				console.log("book is already added ")
+				return 
 			}
-			console.log("results "+results)
-			// realm.write(() => {
-			// realm.delete(realm.objects('BookModel')); 
-			// })
-			try {
-				if(result == 0){
-					realm.write(() => {
-						// console.log("uniquee add "+bookmodel)
-						// realm.create('BookModel', bookmodel)
-
-						// result[0].downloaded = true;
-
-					})
-					// realm.write(() => {
-					// 	// console.log("uniquee add "+bookmodel)
-					// 	realm.create('LanguageModel', bookmodel)
-
-					// 	result[0].downloaded = true;
-
-					// })
-					
-				}
-				else{
-					console.log("result in add new version "+JSON.stringify(result[0].bookId ))
-				}
-		  } catch (e) {
-			console.log("Error on QUERY new  "+e)
-		  }
-			
-			
+			else{
+				console.log("add book PLEASE")
+					//check downloaded is true or false and update 
+				realm.write(() => {
+					console.log("uniquee add "+bookmodel)
+					realm.create('BookModel', bookmodel)
+					resultsA[0].downloaded = true;
+				})
+			}
+		
 		}
 	}
 
