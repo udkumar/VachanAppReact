@@ -10,8 +10,25 @@ import  grammar from 'usfm-grammar'
 import { getBookNameFromMapping, getBookSectionFromMapping, getBookNumberFromMapping } from '../../utils/UtilFunctions';
 import VerseModel from '../../models/VerseModel';
 import dbQueries from '../../utils/dbQueries';
+import { catchClause } from '@babel/types';
 const width = Dimensions.get('window').width;
 var height =  Dimensions.get('window').width;
+
+const languageList = async () => { 
+return await dbQueries.getLangaugeList()
+}
+
+//  {
+  // try{
+    // return await dbQueries.getLangaugeList()
+  // }
+  // catch(error){
+    // console.log("erooro "+error )
+  // }
+  
+// }
+
+
 
 class ExpandableItemComponent extends Component {
   constructor() {
@@ -75,7 +92,13 @@ class ExpandableItemComponent extends Component {
               </View>
               {/* <TouchableOpacity > */}
               </TouchableOpacity>
-              {item.downloaded==true ? <TouchableOpacity style={{alignSelf:'center'}} onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode)}}>
+              {
+                item.downloaded==true ? 
+              //   <TouchableOpacity style={{alignSelf:'center'}} onPress={()=>{this.props.DownloadBible(this.props.item.languageName,item.versionCode,index)}}>
+              //   <Icon name="file-download" size={24} 
+              //   />
+              //  </TouchableOpacity>
+              <TouchableOpacity style={{alignSelf:'center'}} onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode)}}>
                 <Icon name="check" size={24} 
                 />
                </TouchableOpacity>
@@ -130,7 +153,7 @@ export default class LanguageList extends Component {
       this.fetchLanguages()
     }
    
-    async fetchLanguages(){
+     async fetchLanguages(){
       var lanVer = []
       var oneDay = 24*60*60*1000; 
       var d = new Date('1-feb-2000')
@@ -138,81 +161,98 @@ export default class LanguageList extends Component {
       var diffDays = Math.round(Math.abs((d.getTime() - ud.getTime())/(oneDay)))
       
         if(diffDays <= 20 ){
-      
           console.log("diff "+diffDays)
-          var languageList =  await dbQueries.getLangaugeList()
-          this.setState({
-            languages: languageList,
-            searchList:languageList
-          })
-          // for(var i =0 ; i<languageList.length;i++){
-          //   // lanVer.push(languageList[i])
-          //   }
-            console.log("langver ",lanVer)
-            if(languageList.length == 0){
-              var versionRes = await APIFetch.getVersions()
-              console.log("VERSION RESPONSE "+JSON.stringify(versionRes))
-              if(versionRes){
-                var versions = []
-                var languageName = ''
+            languageList().then(async(language) => {
+            console.log("language list ",language)
+            console.log("language list ",language.length)
+
+              this.setState({
+                languages: language,
+                searchList:language
+              })
+              if(language.length == 0){
+                var versionRes = await APIFetch.getVersions()
+                console.log("VERSION RESPONSE "+JSON.stringify(versionRes))
+                
                 if(versionRes){
-                  for(var i=0;i<=versionRes.length-1; i++){
-                    //work on adding unique or language only once today 12/7 (todo work)
-               
-                    if(versionRes[i].contentType=="bible"){
-                      var version = {
-                        "versionName":versionRes[i].versionContentDescription,
-                        "versionCode": versionRes[i].versionContentCode,
-                        "license": versionRes[i].license,
-                        "year": versionRes[i].year,
-                        downloaded:false
+                  var versions = []
+                  var languageName = ''
+                  if(versionRes.status == 200 ){
+                    for(var i=0;i<=versionRes.length-1; i++){
+                 
+                      if(versionRes[i].contentType=="bible"){
+                        var version = {
+                          "versionName":versionRes[i].versionContentDescription,
+                          "versionCode": versionRes[i].versionContentCode,
+                          "license": versionRes[i].license,
+                          "year": versionRes[i].year,
+                          downloaded:false
+                        }
+                        versions.push(version)
+                        languageName = versionRes[i].languageName
                       }
-                      versions.push(version)
-                      languageName = versionRes[i].languageName
                     }
+                    var langObj = {"languageName":languageName,versionModels:versions}
+                    lanVer.push(langObj)
+                    this.setState({
+                      languages: lanVer,
+                      searchList:lanVer
+                    })
+                    await dbQueries.addLangaugeList(langObj,versions)
                   }
-                  var langObj = {"languageName":languageName,versionModels:versions}
-                  lanVer.push(langObj)
-                  this.setState({
-                    languages: lanVer,
-                    searchList:lanVer
-                  })
-                  await dbQueries.addLangaugeList(langObj,versions)
                 }
-              }
+             
             }
-           
-            // lanVer.push(languageList[0])
+            })
+          .catch(err => console.error(err))
         }
        
-        // else{
-          // var versionRes = await APIFetch.getVersions()
-          //       console.log("versionRes "+JSON.stringify(versionRes))
-          //       var versions = []
-          //       var languageName = ''
-          //       if(versionRes){
-          //         for(var i=0;i<=versionRes.length-1; i++){
-          //           //work on adding unique or language only once today 12/7 (todo work)
-          //           if(versionRes[i].contentType=="bible"){
-          //             var version = {
-          //               "versionName":versionRes[i].versionContentDescription,
-          //               "versionCode": versionRes[i].versionContentCode,
-          //               "sourceId":versionRes[i].sourceId,
-          //               "license": versionRes[i].license,
-          //               "year": versionRes[i].year,
-          //               downloaded:false
-          //             }
-          //             versions.push(version)
-          //             languageName = versionRes[i].languageName
-          //           }
-                    
-          //         }
-          //         var langObj = {"languageName":languageName,versionModels:versions}
-          //         lanVer.push(langObj)
-          //         await dbQueries.addLangaugeList(langObj,versions)
-          //       }
-        // }
-        // console.log("lanvar "+JSON.stringify(lanVer))
+        else{
+          languageList().then(async(language) => {
+            console.log("language list ",language)
+            console.log("language list ",language.length)
+
+              this.setState({
+                languages: language,
+                searchList:language
+              })
+              if(language.length == 0){
+                var versionRes = await APIFetch.getVersions()
+                console.log("VERSION RESPONSE "+JSON.stringify(versionRes))
+                
+                if(versionRes){
+                  var versions = []
+                  var languageName = ''
+                  if(versionRes.status == 200 ){
+                    for(var i=0;i<=versionRes.length-1; i++){
+                 
+                      if(versionRes[i].contentType=="bible"){
+                        var version = {
+                          "versionName":versionRes[i].versionContentDescription,
+                          "versionCode": versionRes[i].versionContentCode,
+                          "license": versionRes[i].license,
+                          "year": versionRes[i].year,
+                          downloaded:false
+                        }
+                        versions.push(version)
+                        languageName = versionRes[i].languageName
+                      }
+                    }
+                    var langObj = {"languageName":languageName,versionModels:versions}
+                    lanVer.push(langObj)
+                    this.setState({
+                      languages: lanVer,
+                      searchList:lanVer
+                    })
+                    await dbQueries.addLangaugeList(langObj,versions)
+                  }
+                }
+             
+            }
+            })
+          .catch(err => console.error(err))
+      }
+        console.log("lanvar "+JSON.stringify(lanVer))
 
         
   
@@ -269,14 +309,11 @@ export default class LanguageList extends Component {
      
       
       await DbQueries.addNewVersion(langName,versCode,bookModels)
-       const array = [...this.state.languages]
-      // array[0].versionModels[index]['downloaded'] = true
-      console.log("array download key ",array[0].versionModels[index]['downloaded'])
-      // console.log("ARRAY OF LANGUAGGE ",array)
-
-      // this.setState({languages:array})
-
-      
+      languageList().then(async(language) => {
+        this.setState({languages:language})
+      })
+      .catch((error)=>{console.log("error")})
+     
     }
     setModalVisible=()=>{
       this.setState({modalVisible:!this.state.modalVisible})
@@ -287,7 +324,8 @@ export default class LanguageList extends Component {
     }
   
     render(){
-      console.log("languaguage list ",this.state.languages)
+      // languageList =  await languageList
+      // console.log("languaguage list ",languageList)
       return (
             <View style={styles.MainContainer}>
             {this.state.languages.length == 0 ?

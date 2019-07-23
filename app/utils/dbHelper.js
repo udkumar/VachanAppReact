@@ -455,33 +455,33 @@ class DbHelper {
 			let resultsA = result.versionModels
 			resultsA = resultsA.filtered('versionCode ==[c] "' + versCode + '"')
 			var resultBoook = realm.objects('BookModel').filtered('languageName ==[c] "' + langName +'" ')
-			// var verInBook = realm.objects('BookModel').filtered('versionCode==[c] "' + versCode +'"')
 			
-		
-
-
-			var langInBook = resultBoook.length == 0  ? null : resultBoook[0].languageName  
-			var verInBook =  resultBoook.length  == 0 ? null : resultBoook[0].versionCode
-			console.log("results ... ",result.languageName)
-			console.log("results A... ",resultsA[0].versionCode)
-			console.log("results ... ",result.languageName)
-			console.log("results A... ",resultsA[0].versionCode)
-			
-			if(result.languageName == langInBook  && resultsA[0].versionCode == verInBook){
-				console.log("book is already added ")
-				return 
-			}
-			else{
-				console.log("add book PLEASE")
-					//check downloaded is true or false and update 
+			if(resultBoook.length == 0){
+				console.log("results ... ",result.languageName)
+				console.log("results A... ",resultsA[0].versionCode)
 				realm.write(() => {
-					console.log("uniquee add "+bookmodel)
 					realm.create('BookModel', bookmodel)
 					resultsA[0].downloaded = true;
 				})
 			}
-		
+			else{
+			var found = false;
+			for(var i=0;i<resultBoook.length;i++){
+				console.log("book is version Code  " ,resultBoook[i].versionCode)
+				console.log("book is version Code  " ,resultBoook[i].languageName)
+				if(resultBoook[i].versionCode == versCode){
+					console.log("book is ALREADY ADDED PRESSED  " ,resultBoook[i].versionCode)
+					found = true
+				}
+			}
+			if(found==false){
+				realm.write(() => {
+					realm.create('BookModel', bookmodel)
+					resultsA[0].downloaded = true;
+				})
+			}
 		}
+	}
 	}
 
 	// async queryVersion(langName,versCode){
