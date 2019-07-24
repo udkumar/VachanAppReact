@@ -634,48 +634,7 @@ export default class Bible extends Component {
             )
            
           }
-          {this.state.showBottomBar 
-            ? 
-            <View style={this.styles.bottomBar}>
-    
-              <View style={this.styles.bottomOption}>
-              <TouchableOpacity onPress={this.doHighlight}  
-              >
-                <Text style={this.styles.bottomOptionText}>
-                  {this.state.menuHighlightedText == true ? 'HIGHLIGHT' : 'REMOVE HIGHLIGHT' }
-                </Text>
-                <Icon name={'border-color'} color="white" size={24} style={this.styles.bottomOptionIcon} />
-                </TouchableOpacity>
-              </View>
-              
-              <View style={this.styles.bottomOptionSeparator} />
-              
-              <View style={this.styles.bottomOption}>  
-                <TouchableOpacity onPress={this.addToNotes} 
-                >        
-                  <Text style={this.styles.bottomOptionText}>
-                    NOTES
-                  </Text>
-                  <Icon name={'note'} color="white" size={24} 
-                  style={this.styles.bottomOptionIcon} 
-                  />
-                </TouchableOpacity>
-              </View>
-              
-              <View style={this.styles.bottomOptionSeparator} />          
-    
-              <View style={this.styles.bottomOption}>   
-                <TouchableOpacity onPress={this.addToShare}  
-                >       
-                  <Text style={this.styles.bottomOptionText}>
-                    SHARE
-                  </Text>
-                  <Icon name={'share'} color="white" size={24} style={this.styles.bottomOptionIcon} />
-                </TouchableOpacity>
-              </View>
-    
-            </View>
-            : null }
+      
           </MenuContext>
           {
               this.state.close == true ? 
