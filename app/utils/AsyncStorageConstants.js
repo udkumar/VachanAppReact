@@ -43,7 +43,7 @@ module.exports = {
         DefVersionCode:'IRV',
         DefVersionName:'Indian Revised Version',
         DefBookId:"jas",
-        DefBookName:getBookNameFromMapping("jas"),
+        DefBookName:getBookNameFromMapping("jas","Hindi"),
         DefBookChapter:1,
         DefBookNumber:getBookNumberFromMapping("jas"),
         DefVersionId:2,

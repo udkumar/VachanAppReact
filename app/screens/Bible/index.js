@@ -97,7 +97,7 @@ export default class Bible extends Component {
       showBottomBar: false,
       bookId: this.props.screenProps.bookId,
       bookName:this.props.screenProps.bookName,
-      HighlightedText: false,
+      menuHighlightedText: false,
       bookmarksList: [],
       isBookmark: false,
       currentVisibleChapter:this.props.screenProps.chapterNumber,
@@ -214,7 +214,7 @@ export default class Bible extends Component {
   }
 
   // render data onAPI Call 
-    async queryBookFromAPI(downloaded){
+    async queryBookFromAPI(){
       // console.log("dataa "+data)
       // if(downloaded==true && downloaded !=null ){
       // console.log("download "+downloaded)
@@ -246,9 +246,11 @@ export default class Bible extends Component {
               
               dataLength:getBookChaptersFromMapping(i)
             },()=>this.props.navigation.setParams({
-              bookName:getBookNameFromMapping(i),
+              bookName:getBookNameFromMapping(i,this.state.languageName),
             })
           )
+          this.getHighlights()
+          this.getBookMarks()
             }
             
           }
@@ -272,9 +274,12 @@ export default class Bible extends Component {
     if(model2  == null ){
     }
     else{
+      // conosole.log("model highlight "+)
       if(model2.length > 0){
         for(var i = 0; i<=model2.length-1;i++){
-          this.setState({HightlightedVerseArray:[...this.state.HightlightedVerseArray,{"bookId":model2[i].bookId,"chapterNumber":model2[i].chapterNumber,"verseNumber":model2[i].verseNumber}]})
+          this.setState({
+            HightlightedVerseArray:[...this.state.HightlightedVerseArray,{"chapterNumber":model2[i].chapterNumber,"verseNumber":model2[i].verseNumber}]
+          })
         }
       }
   }
@@ -384,7 +389,7 @@ export default class Bible extends Component {
           }
       }
       console.log("highlightCount "+highlightCount+" selected count "+this.state.selectedReferenceSet.length)
-      this.setState({showBottomBar: this.state.selectedReferenceSet.length > 0 ? true : false, HighlightedText: selectedCount == highlightCount ? false : true})
+      this.setState({showBottomBar: this.state.selectedReferenceSet.length > 0 ? true : false, menuHighlightedText: selectedCount == highlightCount ? false : true})
     })
   }
   
@@ -392,7 +397,7 @@ export default class Bible extends Component {
   addToNotes = () => {
     let refList = []
     let id = this.state.bookId
-    let name = getBookNameFromMapping(this.state.bookId)
+    let name = getBookNameFromMapping(this.state.bookId,this.state.languageName)
     for (let item of this.state.selectedReferenceSet) {
       let tempVal = item.split('_')
       let refModel = {bookId: id, bookName: name, chapterNumber: parseInt(tempVal[0]), verseNumber: tempVal[2], 
@@ -405,14 +410,14 @@ export default class Bible extends Component {
 
   doHighlight = async () => {
     console.log("highlight text "+JSON.stringify(this.state.HightlightedVerseArray))
-    console.log("ishighlight in do highlight "+this.state.HighlightedText)
-    if (this.state.HighlightedText == true) {
+    console.log("ishighlight in do highlight "+this.state.menuHighlightedText)
+    if (this.state.menuHighlightedText == true) {
       for (let item of this.state.selectedReferenceSet) {
 
         let tempVal = item.split('_')
         console.log("json parser temp 1"+item)
         await DbQueries.updateHighlightsInVerse( this.props.screenProps.languageName, this.state.versionCode,this.state.bookId,JSON.parse(tempVal[0]), tempVal[2], true)
-        this.setState({HightlightedVerseArray:[...this.state.HightlightedVerseArray,{"bookId":this.state.bookId,"chapterNumber":JSON.parse(tempVal[0]),"verseNumber":tempVal[2]}]})
+        this.setState({HightlightedVerseArray:[...this.state.HightlightedVerseArray,{"chapterNumber":JSON.parse(tempVal[0]),"verseNumber":tempVal[2]}]})
       }
     } else {
       for (let item of this.state.selectedReferenceSet) {
@@ -429,11 +434,12 @@ export default class Bible extends Component {
     this.setState({ selectedReferenceSet: [], showBottomBar: false})
   }
 
-  removeHighlight = async( chapterNum,verseNum)=>{
-    await DbQueries.updateHighlightsInVerse(this.props.screenProps.languageName, this.state.versionCode,this.state.bookId,chapterNum, verseNum, false)
+  removeHighlightFromBottom = async( chapterNum,verseNum)=>{
+    console.log(" HIGHLIGHTED IN REMOVE ",this.state.menuHighlightedText)
     for(var i=0; i<=this.state.HightlightedVerseArray.length-1; i++){
       if(this.state.HightlightedVerseArray[i].chapterNumber == chapterNum && this.state.HightlightedVerseArray[i].verseNumber == verseNum){
         this.state.HightlightedVerseArray.splice(i, 1)
+        await DbQueries.updateHighlightsInVerse(this.props.screenProps.languageName, this.state.versionCode,this.state.bookId,chapterNum, verseNum,this.state.menuHighlightedText)
         this.setState({HightlightedVerseArray:this.state.HightlightedVerseArray})
       }
     }
@@ -443,7 +449,7 @@ export default class Bible extends Component {
   }
 
   addToShare = () => {
-    let bookName = getBookNameFromMapping(this.state.bookId)
+    let bookName = getBookNameFromMapping(this.state.bookId,this.state.languageName)
     let shareText = ''
     for (let item of this.state.selectedReferenceSet) {
       let tempVal = item.split('_')
@@ -467,8 +473,6 @@ export default class Bible extends Component {
     }
     AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.LastReadReference, lastRead);
     this.props.screenProps.updateLastRead(lastRead);
-    console.log("this.props.navigation back book page "+JSON.stringify(this.props))
-    // sceneProps.scene.route.routeName 
 
     if(this.props.navigation.state.params.prevScreen =='bookmark'){
       this.props.navigation.state.params.updateBookmark()
@@ -515,10 +519,10 @@ export default class Bible extends Component {
   }
 
   changeBookFromSplit = ( id,chapterNum) => {
-    this.setState({bookId:id,currentVisibleChapter:chapterNum,bookName:getBookNameFromMapping(id)})
+    this.setState({bookId:id,currentVisibleChapter:chapterNum,bookName:getBookNameFromMapping(id,this.state.languageName)})
     this.props.navigation.setParams({
       currentChapter:chapterNum,
-      bookName:getBookNameFromMapping(id),
+      bookName:getBookNameFromMapping(id,this.state.languageName),
       isBookmark:true
     })
   }
@@ -551,8 +555,8 @@ export default class Bible extends Component {
 
   render() {
     
-    console.log("version code ",this.props.screenProps.versionCode)
-     console.log("current chapter "+this.state.currentVisibleChapter)
+    console.log("highlights BAR ",this.state.HightlightedVerseArray)
+    //  console.log("current chapter "+this.state.currentVisibleChapter)
 
     const thumbSize = this.state.thumbSize;
       return (
@@ -588,7 +592,7 @@ export default class Bible extends Component {
                                   makeHighlight={this.doHighlight}
                                   makeNotes={this.addToNotes}
                                   share={this.addToShare}
-                                  HighlightedText={this.state.HighlightedText}
+                                  menuHighlightedText={this.state.menuHighlightedText}
                                   showFootNote = {this.state.showFootNote}
                                   HightlightedVerse = {this.state.HightlightedVerseArray}
                                   chapterNumber ={this.state.currentVisibleChapter}
@@ -604,7 +608,8 @@ export default class Bible extends Component {
                   
                </ScrollView>
                 
-                  {this.state.currentVisibleChapter == 1 
+                  {
+                    this.state.currentVisibleChapter == 1 
                     ? null :
                     <View style={this.styles.bottomBarPrevView}>
                         <Icon name={'chevron-left'} color="#3F51B5" size={32} 
@@ -613,7 +618,8 @@ export default class Bible extends Component {
                             />
                     </View>
                     }
-                    {this.state.currentVisibleChapter == this.state.dataLength 
+                    {
+                      this.state.currentVisibleChapter == this.state.dataLength 
                     ? null :
                     <View style={this.styles.bottomBarNextView}>
                         <Icon name={'chevron-right'} color="#3F51B5" size={32} 
@@ -628,7 +634,48 @@ export default class Bible extends Component {
             )
            
           }
-
+          {this.state.showBottomBar 
+            ? 
+            <View style={this.styles.bottomBar}>
+    
+              <View style={this.styles.bottomOption}>
+              <TouchableOpacity onPress={this.doHighlight}  
+              >
+                <Text style={this.styles.bottomOptionText}>
+                  {this.state.menuHighlightedText == true ? 'HIGHLIGHT' : 'REMOVE HIGHLIGHT' }
+                </Text>
+                <Icon name={'border-color'} color="white" size={24} style={this.styles.bottomOptionIcon} />
+                </TouchableOpacity>
+              </View>
+              
+              <View style={this.styles.bottomOptionSeparator} />
+              
+              <View style={this.styles.bottomOption}>  
+                <TouchableOpacity onPress={this.addToNotes} 
+                >        
+                  <Text style={this.styles.bottomOptionText}>
+                    NOTES
+                  </Text>
+                  <Icon name={'note'} color="white" size={24} 
+                  style={this.styles.bottomOptionIcon} 
+                  />
+                </TouchableOpacity>
+              </View>
+              
+              <View style={this.styles.bottomOptionSeparator} />          
+    
+              <View style={this.styles.bottomOption}>   
+                <TouchableOpacity onPress={this.addToShare}  
+                >       
+                  <Text style={this.styles.bottomOptionText}>
+                    SHARE
+                  </Text>
+                  <Icon name={'share'} color="white" size={24} style={this.styles.bottomOptionIcon} />
+                </TouchableOpacity>
+              </View>
+    
+            </View>
+            : null }
           </MenuContext>
           {
               this.state.close == true ? 
@@ -647,10 +694,11 @@ export default class Bible extends Component {
                   close={this.state.close}
                   closeSplitScreen ={this.closeSplitScreen}
                   HightlightedVerseArray= {this.state.HightlightedVerseArray}
-                  removeHighlight = {this.removeHighlight}
+                  removeHighlight = {this.removeHighlightFromBottom}
                   bookmarksList={this.state.bookmarksList}
                   onBookmarkRemove = {this.onBookmarkRemove}
                   changeBookFromSplit={this.changeBookFromSplit}
+
               />
               }
         </View>

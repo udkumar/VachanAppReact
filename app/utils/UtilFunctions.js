@@ -2,14 +2,24 @@ import id_name_map from '../assets/mappings.json'
 const Constants = require('./constants')
 
 
-export function getBookNameFromMapping(id) {
+
+export function getBookNameFromMapping(id,language) {
+    console.log("languagueg name from get book name "+language)
         var obj = id_name_map.id_name_map;
         for (var key in obj) {
             if (obj.hasOwnProperty(key)) {
                 var bookId =  id.toUpperCase()
                 if (key == bookId) {
                     var val = obj[key];
-                    return val.book_name;
+                    for(var key2 in val.book_name){
+                        var lang =  language.toLowerCase()
+                        if(lang == key2){
+                            console.log("language of selected book"+ val.book_name[key2])
+
+                            return val.book_name[key2]
+                        }
+                    }
+                    
                 }
             }
         }

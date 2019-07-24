@@ -219,10 +219,10 @@ export default class Search extends Component {
     return (
       <TouchableOpacity style={this.styles.searchedDataContainer} 
         onPress={()=>this.props.navigation.navigate('Book', {bookId: item.bookId, 
-          bookName: getBookNameFromMapping(item.bookId), 
+          bookName: getBookNameFromMapping(item.bookId,this.props.screenProps.languageName), 
           chapterNumber: item.chapterNumber, verseNumber: item.verseNumber})}>
         <Text style={this.styles.searchedData}> 
-          {getBookNameFromMapping(item.bookId)} {item.chapterNumber} : {item.verseNumber} 
+          {getBookNameFromMapping(item.bookId,this.props.screenProps.languageName)} {item.chapterNumber} : {item.verseNumber} 
         </Text>
         <Text style={this.styles.textStyle}>{getResultText(item.text)}</Text>
       </TouchableOpacity>

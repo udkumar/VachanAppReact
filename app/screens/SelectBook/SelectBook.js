@@ -111,7 +111,7 @@ renderItem = ({item, index})=> {
           onPress={
             ()=>this.props.navigation.navigate('ChapterSelection', {bookId: item.bookId, 
                 bookNumber:getBookNumberFromMapping(item.bookId),
-                bookName: item.bookName, bookIndex: index, numOfChapters: item.numOfChapters})
+                bookName: getBookNameFromMapping(item.bookId,this.props.screenProps.languageName), bookIndex: index, numOfChapters: item.numOfChapters})
           }>
           <View 
             style={this.styles.bookList}>

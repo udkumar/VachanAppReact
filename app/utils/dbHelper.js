@@ -106,12 +106,13 @@ class DbHelper {
 		let realm = await this.getRealm();
 					if (realm){
 						let result1 = realm.objects("HighlightsModel");
-						let highlight = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '"')
+						let highlight = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId ==[c]   "' + bookId + '"' )
 						return highlight
 					}
 				
 	}
 	async updateHighlightsInVerse(langName, verCode, bId, cNum, vNum, isHighlight){
+		console.log("is highlightes "+isHighlight)
 		let realm = await this.getRealm()
 		let  result1= realm.objects('HighlightsModel');
 		let highlight = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" &&  bookId == "' + bId + '" && chapterNumber == "'+cNum+'" && verseNumber == "'+vNum+'"')

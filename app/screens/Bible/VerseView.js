@@ -39,10 +39,21 @@ export default class VerseView extends Component {
   onBackdropPress(){
     this.setState({ opened: false });
   }
-
+  openMenu = () => {
+    this.props.getSelection(
+      this.props.index, 
+      this.props.chapterNumber,
+      this.props.verseData.number
+  )
+  let obj = this.props.chapterNumber + '_' + this.props.index + '_' + this.props.verseData.number;
+  let isSelect = this.has(this.props.selectedReferences, obj)
+  if(isSelect){
+    this.menu.open()
+  }
+  };
   highlighted = (verse) =>{ 
     var found = false;
-      for(var i=0; i<= this.props.HightlightedVerse.length-1; i++ ){
+      for(var i=0; i < this.props.HightlightedVerse.length; i++ ){
         if(this.props.HightlightedVerse[i].verseNumber == verse && this.props.HightlightedVerse[i].chapterNumber == this.props.chapterNumber) {
           // console.log("verse "+verse+" highlighted verse "+this.props.HightlightedVerse[i].verseNumber)
           found = true
@@ -57,48 +68,53 @@ export default class VerseView extends Component {
       }
     }
   render() {
-    const TriggerMenuOnText = () => (
-      <Text>
-          <Text style={this.props.styles.verseNumber} >
-             {this.props.verseData.number}{" "}
-           </Text>
-             <Text style={isSelect && isHighlight 
-                   ? this.props.styles.verseTextSelectedHighlighted 
-                     : !isSelect && !isHighlight 
-                     ? this.props.styles.verseTextNotSelectedNotHighlighted
-                     : !isSelect && isHighlight
-                     ? this.props.styles.verseTextNotSelectedHighlighted
-                     : this.props.styles.verseTextSelectedNotHighlighted}
-                     >
-               {getResultText(this.props.verseData.text)}
-            </Text> 
-          </Text>
-    )
-    
     let obj = this.props.chapterNumber + '_' + this.props.index + '_' + this.props.verseData.number;
     let isSelect = this.has(this.props.selectedReferences, obj)
     let isHighlight = this.highlighted(this.props.verseData.number)
-
         return (
-          <Menu onSelect={value => alert(`Selected number: ${value}`)}>
-            <MenuTrigger text={<TriggerMenuOnText/>}/>
+          <View >
+          <TouchableWithoutFeedback onLongPress={this.openMenu}>
+          <View>
+          <Menu 
+          ref={c => (this.menu = c)}
+          onBackdropPress={() => this.onBackdropPress()}
+          >
+          <MenuTrigger text=""/>
             <MenuOptions style={{flexDirection:'row',justifyContent:"center"}}>
-                       <MenuOption 
-                        optionsContainerStyle={{width:200}} 
-                         onSelect={this.props.makeHighlight}  
-                         style={{alignItems:'center' }}
-                       >
-                         <Text >{this.props.HighlightedText == true ? "Highlight" : "Remove Highlight"}</Text>
-                       </MenuOption>
-                       <MenuOption  onSelect={this.props.makeNotes} style={{alignItems:'center'}}>
-                         <Text>Note</Text>
-                       </MenuOption>
-                       <MenuOption onSelect={this.props.share} style={{alignItems:'center'}}>
-                         <Text>Share</Text>
-                       </MenuOption>
-             </MenuOptions>
-          </Menu>
-        )
-        
+                      <MenuOption 
+                        // optionsContainerStyle={{}} 
+                        onSelect={this.props.makeHighlight}  
+                        style={{alignItems:'center' }}
+                      >
+                        <Text >{this.props.menuHighlightedText == true ? "Highlight" : "Remove Highlight"}</Text>
+                      </MenuOption>
+                      <MenuOption  onSelect={this.props.makeNotes} style={{alignItems:'center'}}>
+                        <Text>Note</Text>
+                      </MenuOption>
+                      <MenuOption onSelect={this.props.share} style={{alignItems:'center'}}>
+                        <Text>Share</Text>
+                      </MenuOption>
+            </MenuOptions>
+          </Menu>    
+             <Text>
+            <Text style={this.props.styles.verseNumber} >
+              {this.props.verseData.number}{" "}
+            </Text>
+              <Text style={isSelect && isHighlight 
+                      ? this.props.styles.verseTextSelectedHighlighted 
+                      : !isSelect && !isHighlight 
+                      ? this.props.styles.verseTextNotSelectedNotHighlighted
+                      : !isSelect && isHighlight
+                      ? this.props.styles.verseTextNotSelectedHighlighted
+                      : this.props.styles.verseTextSelectedNotHighlighted}
+                      >
+                {getResultText(this.props.verseData.text)}
+              </Text> 
+            </Text>
+            </View>
+        </TouchableWithoutFeedback>   
+        </View>
+        );
+      
   }
 }

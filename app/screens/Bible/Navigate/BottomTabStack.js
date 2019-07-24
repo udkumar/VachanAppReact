@@ -1,17 +1,16 @@
 import { StackNavigator ,TabNavigator} from "react-navigation";
-import StudyHelp from '../../StudyHelp'
-import NotePad from '../../NotePad'
-import Audio from '../../Audio'
-import Video from '../../Video'
-import Foonotes from'../../Footnotes'
-import Summary from'../../Summary'
-import Commentary from'../../Commentary'
-import Dictionary from'../../Dictionary'
-import HighLights from '../../Highlights/Highlights'
-import Notes from '../../Note/Notes'
-import Bookmarks from '../../Bookmarks/Bookmarks'
-import History from '../../History/History'
-import Icon from 'react-native-vector-icons/MaterialIcons'
+import StudyHelp from '../Navigate/StudyHelp'
+import NotePad from '../Navigate/NotePad'
+import Audio from '../Navigate/Audio'
+import Video from '../Navigate/Video'
+import Foonotes from '../Navigate/Footnotes'
+import Summary from '../Navigate/Summary'
+import Commentary from '../Navigate/Commentary'
+import Dictionary from '../Navigate/Dictionary'
+import HighLights from '../Navigate/Highlights'
+import Note from '../Navigate/Note'
+import Bookmarks from '../Navigate/Bookmarks'
+import History from '../Navigate/History'
 
 
 
@@ -90,8 +89,8 @@ const BottomTabNav = StackNavigator({
 	Bookmarks:{
 		screen:Bookmarks
     },
-    Notes:{
-        screen:Notes
+    Note:{
+        screen:Note
 	},
 	History:{
 		screen:History

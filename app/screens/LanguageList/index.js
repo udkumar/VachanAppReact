@@ -134,7 +134,6 @@ export default class LanguageList extends Component {
           text: '',
           languages:[],
           searchList:[],
-          isConnected:this.props.screenProps.isConnected,
       }
     }
    
@@ -301,7 +300,7 @@ export default class LanguageList extends Component {
         languageName: langName,
         versionCode: versCode,
         bookId: bookId,
-        bookName:getBookNameFromMapping(bookId),
+        bookName:getBookNameFromMapping(bookId,this.props.screenProps.languageName),
         chapters: chapterModels,
         section: getBookSectionFromMapping(bookId),
         bookNumber: getBookNumberFromMapping(bookId)

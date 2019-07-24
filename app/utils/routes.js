@@ -4,11 +4,11 @@ import {StackNavigator, DrawerNavigator,DrawerItems,DrawerActions,NavigationActi
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import SelectBook from '../screens/SelectBook/SelectBook'
 import About from '../screens/About/About'
-import Bookmarks from '../screens/Bookmarks/Bookmarks'
-import Highlights from '../screens/Highlights/Highlights'
-import History from '../screens/History/History'
-import Notes from '../screens/Note/Notes'
-import EditNote from '../screens/Note/EditNote'
+// import Bookmarks from '../screens/Bookmarks/Bookmarks'
+// import Highlights from '../screens/Highlights/Highlights'
+// import History from '../screens/History/History'
+// import Notes from '../screens/Note/Notes'
+// import EditNote from '../screens/Note/EditNote'
 import Search from '../screens/Search/Search'
 import Settings from '../screens/settings/Settings'
 import Account from '../screens/Account'
@@ -26,14 +26,12 @@ import { styleFile } from './styles.js'
 import DbQueries from '../utils/dbQueries'
 import Realm from 'realm'
 
-import Signin from '../screens/SignIn'
-import Video from '../screens/Video'
-import Audio from '../screens/Audio'
+// import Video from '../screens/Video'
+// import Audio from '../screens/Audio'
 import BottomTab from '../screens/Bible/BottomTab'
 import GoogleMaps from  '../screens/GoogleMaps'
 import Images from '../screens/Images'
 import LanguageList from '../screens/LanguageList' 
-import  VersionList from "../screens/VersionList";
 
 const DrawerNavigate = (styles) => DrawerNavigator({
  
@@ -88,21 +86,21 @@ const StackNavigate = StackNavigator(
       About: {
         screen: About,
       },
-      Bookmarks: {
-        screen: Bookmarks,
-      },
-      EditNote: {
-        screen: EditNote,
-      },
-      Highlights: {
-        screen: Highlights,
-      },
-      History: {
-        screen: History,
-      },
-      Notes: {
-        screen: Notes,
-      },  
+      // Bookmarks: {
+      //   screen: Bookmarks,
+      // },
+      // EditNote: {
+      //   screen: EditNote,
+      // },
+      // Highlights: {
+      //   screen: Highlights,
+      // },
+      // History: {
+      //   screen: History,
+      // },
+      // Notes: {
+      //   screen: Notes,
+      // },  
       Settings: {
         screen: Settings,
       },
@@ -124,12 +122,12 @@ const StackNavigate = StackNavigator(
       BackupRestore: {
         screen: BackupRestore
       },
-      Audio:{
-        screen:Audio
-      },
-      Video:{
-        screen:Video
-      },
+      // Audio:{
+      //   screen:Audio
+      // },
+      // Video:{
+      //   screen:Video
+      // },
       BottomTab:{
         screen:BottomTab
       },
@@ -143,9 +141,7 @@ const StackNavigate = StackNavigator(
         screen:LanguageList
       },
       
-      VersionList:{
-        screen:VersionList
-      },
+      
       Account:{
         screen:Account
       }
