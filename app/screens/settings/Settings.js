@@ -193,7 +193,7 @@ export default class Setting extends Component {
                     step={1}
                     minimumValue={0}
                     maximumValue={4}
-                    thumbTintColor={this.state.colorMode == AsyncStorageConstants.Values.DayMode ? dayModeIconColor: nightModeIconColor}
+                    thumbColor={this.state.colorMode == AsyncStorageConstants.Values.DayMode ? dayModeIconColor: nightModeIconColor}
                     minimumTrackTintColor={this.state.colorMode == AsyncStorageConstants.Values.DayMode ? dayModeIconColor: nightModeIconColor}
                     onValueChange={this.onChangeSlider.bind(this)}
                     value={JSON.parse(this.state.sizeMode)}
@@ -207,7 +207,7 @@ export default class Setting extends Component {
                 <Text style={this.styles.textStyle}>One Verse Per Line</Text>
                 <Switch 
                   size={24} 
-                  thumbTintColor={this.state.colorMode == AsyncStorageConstants.Values.DayMode ? dayModeIconColor: nightModeIconColor}
+                  thumbColor={this.state.colorMode == AsyncStorageConstants.Values.DayMode ? dayModeIconColor: nightModeIconColor}
                   onValueChange={this.onVerseInLineModeChange.bind(this)}
                   value={this.state.verseInLine}
                 />

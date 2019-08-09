@@ -8,6 +8,7 @@ export const styles =(colorFile, sizeFile) =>{
     container:{
         flex:1,
         backgroundColor:colorFile.backgroundColor
+        
     },
     verseWrapperText:{
         fontSize:sizeFile.contentText,

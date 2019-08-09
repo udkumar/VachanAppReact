@@ -14,7 +14,7 @@ export const settingsPageStyle =(colorFile, sizeFile) =>{
     },
     textStyle: {
             color: colorFile.textColor,   
-            fontSize:sizeFile.titleText,
+            fontSize:16,
             marginLeft:4,
             alignSelf:'center'
     },
@@ -39,7 +39,7 @@ export const settingsPageStyle =(colorFile, sizeFile) =>{
     },
     modeTextCustom:{
         color:colorFile.textColor,
-        fontSize:sizeFile.contentText,
+        fontSize:16,
         position: 'absolute', 
         right: 50,
     },
@@ -56,11 +56,11 @@ export const settingsPageStyle =(colorFile, sizeFile) =>{
         marginHorizontal:4,
         marginVertical:8,
         color:colorFile.settingsIconColor,
-        fontSize:sizeFile.settingsIcon   
+        fontSize:32   
     },
     
     modeIconCustom:{
-        fontSize:sizeFile.settingsIcon,
+        fontSize:32,
         textAlign:'center'  
     },
     switchIcon:{

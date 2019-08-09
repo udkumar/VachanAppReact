@@ -1,14 +1,10 @@
 // all of our routes
 import React, { Component } from 'react'
-import {StackNavigator, DrawerNavigator,DrawerItems,DrawerActions,NavigationActions,} from 'react-navigation'
+import {StackNavigator, DrawerNavigator,} from 'react-navigation'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+
 import SelectBook from '../screens/SelectBook/SelectBook'
 import About from '../screens/About/About'
-// import Bookmarks from '../screens/Bookmarks/Bookmarks'
-// import Highlights from '../screens/Highlights/Highlights'
-// import History from '../screens/History/History'
-// import Notes from '../screens/Note/Notes'
-// import EditNote from '../screens/Note/EditNote'
 import Search from '../screens/Search/Search'
 import Settings from '../screens/settings/Settings'
 import Account from '../screens/Account'
@@ -18,20 +14,18 @@ import Hints from '../screens/Hints/Hints'
 import BackupRestore from '../screens/backup/BackupRestore'
 import DrawerScreen from '../screens/DrawerScreen/DrawerScreen'
 import  Bible from '../screens/Bible'
-const AsyncStorageConstants = require('./AsyncStorageConstants')
-import AsyncStorageUtil from './AsyncStorageUtil';
-import {nightColors, dayColors, constColors} from './colors.js'
-import {extraSmallFont,smallFont,mediumFont,largeFont,extraLargeFont} from './dimens.js'
-import { styleFile } from './styles.js'
-import DbQueries from '../utils/dbQueries'
-import Realm from 'realm'
-
-// import Video from '../screens/Video'
-// import Audio from '../screens/Audio'
 import BottomTab from '../screens/Bible/BottomTab'
 import GoogleMaps from  '../screens/GoogleMaps'
 import Images from '../screens/Images'
 import LanguageList from '../screens/LanguageList' 
+import ModalForChapter from '../screens/Bible/component/ModalForChapter'
+
+import AsyncStorageUtil from './AsyncStorageUtil';
+import {nightColors, dayColors} from './colors.js'
+import {extraSmallFont,smallFont,mediumFont,largeFont,extraLargeFont} from './dimens.js'
+import { styleFile } from './styles.js'
+const AsyncStorageConstants = require('./AsyncStorageConstants')
+
 
 const DrawerNavigate = (styles) => DrawerNavigator({
  
@@ -51,17 +45,19 @@ const MenuIcon = (navigation) => {
           <Icon 
             name="dehaze"  
             color="#fff"
-            onPress={() => {navigation.navigate('DrawerToggle'),console.log("menu on press")}}
+            onPress={() => {navigation.navigate('DrawerToggle')}}
             style={{marginHorizontal:8,fontSize:20}}
           />
       );
-    // return <Icon name="keyboard-arrow-lefte"  Size={38}/>
    
 }
 
 const StackNavigate = StackNavigator(
-  {  
 
+  {  
+    // ModalForChapter:{
+    //   screen:ModalForChapter,
+    // },
     // LanguageList:{
     //   screen:LanguageList
     // },
@@ -86,21 +82,7 @@ const StackNavigate = StackNavigator(
       About: {
         screen: About,
       },
-      // Bookmarks: {
-      //   screen: Bookmarks,
-      // },
-      // EditNote: {
-      //   screen: EditNote,
-      // },
-      // Highlights: {
-      //   screen: Highlights,
-      // },
-      // History: {
-      //   screen: History,
-      // },
-      // Notes: {
-      //   screen: Notes,
-      // },  
+    
       Settings: {
         screen: Settings,
       },
@@ -122,12 +104,6 @@ const StackNavigate = StackNavigator(
       BackupRestore: {
         screen: BackupRestore
       },
-      // Audio:{
-      //   screen:Audio
-      // },
-      // Video:{
-      //   screen:Video
-      // },
       BottomTab:{
         screen:BottomTab
       },
@@ -140,8 +116,6 @@ const StackNavigate = StackNavigator(
       LanguageList:{
         screen:LanguageList
       },
-      
-      
       Account:{
         screen:Account
       }
@@ -172,11 +146,8 @@ export default class App extends Component {
       
     this.state = {
         chapterModels:[],
-        //having bookname, bookid ,section,booknumber,bookSection,versioncode,languagecode,number of chapters
         booksList: [],
-        //initial render when app open show loader from routes page on bible page 
         isDbLoading: true,
-        //language selected async storage 
         languageCode: AsyncStorageConstants.Values.DefLanguageCode,
         versionCode: AsyncStorageConstants.Values.DefVersionCode,
 
@@ -195,21 +166,13 @@ export default class App extends Component {
         versionId:AsyncStorageConstants.Values.DefVersionId,
         isConnected:true
     }
-    //update booklist for showing book on selectBook screen
     this.updateBookList = this.updateBookList.bind(this)
-    //update size of text on changing seekbar in settings page 
     this.updateSize = this.updateSize.bind(this)
-    //update color for night and day mode 
     this.updateColor = this.updateColor.bind(this)
-    //update verse in line for showing verse in line or paragraph settings page 
     this.updateVerseInLine = this.updateVerseInLine.bind(this)
-    //update size of text on gesture change on pinch screen in bible page 
     this.changeSizeByOne = this.changeSizeByOne.bind(this)
-    //update last read for last read page which is bible page 
     this.updateLastRead = this.updateLastRead.bind(this)
-    //update language on language change from language change ot read another language page
     this.updateLanguage  = this.updateLanguage.bind(this)
-    //update book data for current reading chapter book id and book name from selected langauge and version from download version or language page 
     this.updateBookData  = this.updateBookData.bind(this)
 
     this.updateChapterData = this.updateChapterData.bind(this)
@@ -217,7 +180,6 @@ export default class App extends Component {
 
     this.styles = styleFile(this.state.colorFile,this.state.sizeFile)
     this.DrawerNavigate = DrawerNavigate(this.styles)
-    console.log("ALL HEADER COLOR /////// "+JSON.stringify(this.styles))
   }
 
   updateBookList = (booksList) => {
@@ -308,13 +270,6 @@ export default class App extends Component {
   updateLanguage = async(languageCode,languageName,versionCode,versionName) => {
     console.log("in ROTES update language"+languageCode+" "+languageName+" "+versionCode+" "+versionName)
     this.setState({languageCode, languageName,versionCode,versionName})
-
-    // let models = await DbQueries.queryBookIdModels(versionCode, languageCode)
-    //   console.log("ROUTES LENGTH =" + JSON.stringify(models))
-    //   if (models && models.length > 0) {
-    //     this.setState({booksList: models})
-    //   }
-
   }
 
   handleFirstConnectivityChange = (isConnected)=> {
@@ -331,12 +286,6 @@ export default class App extends Component {
     }
   }
    
-  componentWillUnmount(){
-    // NetInfo.removeEventListener(
-    //   'connectionChange',
-    //   this.handleFirstConnectivityChange
-    // )
-  }
 
   async componentDidMount(){
 
@@ -344,7 +293,7 @@ export default class App extends Component {
       AsyncStorageConstants.Keys.ColorMode, 
       AsyncStorageConstants.Keys.SizeMode,
       AsyncStorageConstants.Keys.VerseViewMode,
-      // AsyncStorageConstants.Keys.LastReadReference,
+      AsyncStorageConstants.Keys.LastReadReference,
       AsyncStorageConstants.Keys.LanguageCode,
       AsyncStorageConstants.Keys.VersionCode,
       AsyncStorageConstants.Keys.LanguageName,
@@ -356,29 +305,12 @@ export default class App extends Component {
       AsyncStorageConstants.Keys.versionId,
 
     ])
-    console.log("res of asynstorage value "+JSON.stringify(res))
+    console.log("res of asynstorage value ",res)
     if (res == null) {
       return
 
     }
-    // NetInfo.isConnected.fetch().done((isConnected) => {
-    //   console.log("IS CONNECTION  "+isConnected)
-    //   if(isConnected == true)
-    //   {
-    //     this.setState({isConnected : true})
-    //   }
-    //   else
-    //   {
-    //     this.setState({isConnected : false})
-    //   }
 
-    // });
-    // NetInfo.isConnected.addEventListener(
-    //   'connectionChange',
-    //   this.handleFirstConnectivityChange
-    // )
-
-    console.log("ROUTES.... color mode "+res[0][1])
     this.setState({sizeMode: res[1][1] == null ? AsyncStorageConstants.Values.SizeModeNormal : parseInt(res[1][1])}, ()=> {
       switch (this.state.sizeMode) {
         case  AsyncStorageConstants.Values.SizeModeXSmall : {
@@ -417,19 +349,24 @@ export default class App extends Component {
       bookName: res[8][1] == null ? AsyncStorageConstants.Values.DefBookName:res[8][1],
       chapterNumber: res[9][1] == null ? AsyncStorageConstants.Values.DefBookChapter:parseInt(res[9][1]),
       bookNumber: res[10][1] == null ? AsyncStorageConstants.Values.DefBookNumber:parseInt(res[10][1]),
-      versionId:res[11][1] == null ? AsyncStorageConstants.Values.DefVersionId:parseInt(res[11][1])
     }, async ()=> {
-      // let models = await DbQueries.queryBookIdModels(this.state.versionCode, this.state.languageCode);
-      // this.setState({isDbLoading: false})
-      // if (models && models.length > 0) {
-      //   this.setState({booksList: models,bookId:models[0].bookId,bookName:models[0].bookName})
-      // }
     })
     await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.LastReadReference, AsyncStorageConstants.Values.LastReadReference
       ).then((lastRead) => {
           this.setState({lastRead})
-          console.log("last read routes page "+JSON.stringify(lastRead))
     })
+    console.log("size mode ",this.state.sizeMode)
+    console.log("color mode mode ",this.state.colorMode)
+    console.log("LANGUAGE NAME ",this.state.languageName)
+    console.log("VERSION NAME",this.state.versionName)
+    console.log("VERSION CODE",this.state.versionCode)
+    console.log("BOOK ID  ",this.state.bookId)
+    console.log("BOOK NAME ",this.state.bookName)
+    console.log("BOOK NUMBER ",this.state.bookNumber)
+    console.log("CHAPTER NUMBER",this.state.chapterNumber)
+    console.log("VERSE IN LINE ",this.state.verseInLine)
+
+
 
   }
   

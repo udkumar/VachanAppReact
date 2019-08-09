@@ -11,6 +11,8 @@ import { getBookNameFromMapping, getBookSectionFromMapping, getBookNumberFromMap
 import VerseModel from '../../models/VerseModel';
 import dbQueries from '../../utils/dbQueries';
 import { catchClause } from '@babel/types';
+import { version } from 'moment';
+import { constColors } from '../../utils/colors';
 const width = Dimensions.get('window').width;
 var height =  Dimensions.get('window').width;
 
@@ -73,7 +75,7 @@ class ExpandableItemComponent extends Component {
           style={styles.header}
         >
           <Text style={styles.headerText}>{this.props.item.languageName}</Text>
-          <Icon name={this.props.item.isExpanded ? "keyboard-arrow-down" : "keyboard-arrow-up" } style={styles.iconStyle} size={24}/>
+          <Icon name={this.props.item.isExpanded ? "keyboard-responseow-down" : "keyboard-responseow-up" } style={styles.iconStyle} size={24}/>
         </TouchableOpacity>
         <View
           style={{
@@ -139,11 +141,11 @@ export default class LanguageList extends Component {
    
     updateLayout(index){
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-      const array = [...this.state.languages];
-      array[index]['isExpanded'] = !array[index]['isExpanded'];
+      const responseay = [...this.state.languages];
+      responseay[index]['isExpanded'] = !responseay[index]['isExpanded'];
       this.setState(() => {
         return {
-          languages: array,
+          languages: responseay,
         }
       })
     }
@@ -151,7 +153,7 @@ export default class LanguageList extends Component {
     componentDidMount(){
       this.fetchLanguages()
     }
-   
+  
      async fetchLanguages(){
       var lanVer = []
       var oneDay = 24*60*60*1000; 
@@ -165,97 +167,72 @@ export default class LanguageList extends Component {
             console.log("language list ",language)
             console.log("language list ",language.length)
 
-              this.setState({
-                languages: language,
-                searchList:language
-              })
               if(language.length == 0){
                 var versionRes = await APIFetch.getVersions()
-                console.log("VERSION RESPONSE "+JSON.stringify(versionRes))
-                
-                if(versionRes){
-                  var versions = []
-                  var languageName = ''
-                  if(versionRes.status == 200 ){
-                    for(var i=0;i<=versionRes.length-1; i++){
-                 
-                      if(versionRes[i].contentType=="bible"){
-                        var version = {
-                          "versionName":versionRes[i].versionContentDescription,
-                          "versionCode": versionRes[i].versionContentCode,
-                          "license": versionRes[i].license,
-                          "year": versionRes[i].year,
-                          downloaded:false
-                        }
-                        versions.push(version)
-                        languageName = versionRes[i].languageName
-                      }
-                    }
-                    var langObj = {"languageName":languageName,versionModels:versions}
-                    lanVer.push(langObj)
-                    this.setState({
-                      languages: lanVer,
-                      searchList:lanVer
-                    })
-                    await dbQueries.addLangaugeList(langObj,versions)
-                  }
-                }
-             
+                this.addLangauge(versionRes)
+                // console.log("response ",response)
+               
             }
+            this.setState({
+              languages: language,
+              searchList:language
+            })
             })
           .catch(err => console.error(err))
         }
-       
-        else{
-          languageList().then(async(language) => {
-            console.log("language list ",language)
-            console.log("language list ",language.length)
-
-              this.setState({
-                languages: language,
-                searchList:language
-              })
-              if(language.length == 0){
-                var versionRes = await APIFetch.getVersions()
-                console.log("VERSION RESPONSE "+JSON.stringify(versionRes))
-                
-                if(versionRes){
-                  var versions = []
-                  var languageName = ''
-                  if(versionRes.status == 200 ){
-                    for(var i=0;i<=versionRes.length-1; i++){
-                 
-                      if(versionRes[i].contentType=="bible"){
-                        var version = {
-                          "versionName":versionRes[i].versionContentDescription,
-                          "versionCode": versionRes[i].versionContentCode,
-                          "license": versionRes[i].license,
-                          "year": versionRes[i].year,
-                          downloaded:false
-                        }
-                        versions.push(version)
-                        languageName = versionRes[i].languageName
-                      }
-                    }
-                    var langObj = {"languageName":languageName,versionModels:versions}
-                    lanVer.push(langObj)
-                    this.setState({
-                      languages: lanVer,
-                      searchList:lanVer
-                    })
-                    await dbQueries.addLangaugeList(langObj,versions)
-                  }
-                }
-             
-            }
-            })
-          .catch(err => console.error(err))
-      }
-        console.log("lanvar "+JSON.stringify(lanVer))
-
-        
-  
     }
+
+    addLangauge(response1){
+      var response =[
+        { 
+          "sourceId": 21, 
+          "language": {"code": "hin", "name": "hindi", "localScriptName": null, "scriptDirection": null, "script": null, "id": 2302}, 
+          "version": {"name": " HINDI Indian Revised Version", "longName": "irv_1", "code": "IRV"}, "updatedDate": "2019-07-23 11:57:20.650000+00:00", "audioBible": []
+        },
+        {
+          "sourceId": 22, 
+          "language": {"code": "tamil", "name": "tamil", "localScriptName": null, "scriptDirection": null, "script": null, "id": 2302}, 
+          "version": {"name": " TAMIL 1 Indian Revised Version", "longName": "irv_2", "code": "IRV"}, "updatedDate": "2019-07-24 10:50:52.710000+00:00", "audioBible": []
+        },
+        { 
+          "sourceId": 23, 
+          "language": {"code": "tamil", "name": "tamil", "localScriptName": null, "scriptDirection": null, "script": null, "id": 2302}, 
+          "version": {"name": " TAMIL 2  Indian Revised Version", "longName": "irv_1", "code": "IRV"}, "updatedDate": "2019-07-23 11:57:20.650000+00:00", "audioBible": []
+        },
+        {
+          "sourceId": 24, 
+          "language": {"code": "eng", "name": "eng", "localScriptName": null, "scriptDirection": null, "script": null, "id": 2302}, 
+          "version": {"name":"ENG 1 Indian Revised Version", "longName": "irv_2", "code": "IRV"}, "updatedDate": "2019-07-24 10:50:52.710000+00:00", "audioBible": []
+        },
+        {
+          "sourceId": 25, 
+          "language": {"code": "eng", "name": "eng", "localScriptName": null, "scriptDirection": null, "script": null, "id": 2302}, 
+          "version": {"name": " ENG 2 Indian Revised Version", "longName": "irv_2", "code": "IRV"}, "updatedDate": "2019-07-24 10:50:52.710000+00:00", "audioBible": []
+        },
+        {
+          "sourceId": 26, 
+          "language": {"code": "eng", "name": "eng", "localScriptName": null, "scriptDirection": null, "script": null, "id": 2302}, 
+          "version": {"name": " ENG 3 Indian Revised Version", "longName": "irv_2", "code": "IRV"}, "updatedDate": "2019-07-24 10:50:52.710000+00:00", "audioBible": []
+        }
+      ]
+      var array = [
+        {"name":"Steven Smith","Country":"England","Age":35},
+        {"name":"Hannah Reed","Country":"Scottland","Age":23},
+        {"name":"Steven Smith","Country":"England","Age":35},
+        {"name":"Robert Landley","Country":"England","Age":84},
+        {"name":"Steven Smith","Country":"England","Age":35},
+        {"name":"Robert Landley","Country":"England","Age":84}
+      ]
+
+      var result = array.reduce((c, v) => {
+          console.log("c",c)
+          console.log("v ",v)
+      },[])
+      
+      console.log("reduce",result);
+       
+  }
+   
     goToVersionScreen(value){
      this.props.navigation.navigate('VersionList',  {versions: value });
     }

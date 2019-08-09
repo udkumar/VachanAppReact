@@ -96,7 +96,7 @@ export default class VerseView extends Component {
                       </MenuOption>
             </MenuOptions>
           </Menu>    
-             <Text>
+             <Text style={this.props.styles.verseWrapperText}>
             <Text style={this.props.styles.verseNumber} >
               {this.props.verseData.number}{" "}
             </Text>

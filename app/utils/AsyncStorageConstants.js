@@ -34,7 +34,7 @@ module.exports = {
         LastReadReference: {
             languageCode:'Hindi',
             versionCode:'IRV',
-            bookId:'JAS',
+            bookId:'1JN',
             chapterNumber:1,
         },
 
@@ -42,10 +42,10 @@ module.exports = {
         DefLanguageName:'Hindi',
         DefVersionCode:'IRV',
         DefVersionName:'Indian Revised Version',
-        DefBookId:"jas",
-        DefBookName:getBookNameFromMapping("jas","Hindi"),
+        DefBookId:"1jn",
+        DefBookName:getBookNameFromMapping("1jn","Hindi"),
         DefBookChapter:1,
-        DefBookNumber:getBookNumberFromMapping("jas"),
+        DefBookNumber:getBookNumberFromMapping("1jn"),
         DefVersionId:2,
        
     }

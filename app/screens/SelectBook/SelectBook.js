@@ -38,7 +38,6 @@ export default class SelectBook extends Component {
 
   constructor(props){
     super(props)
-    console.log("props "+JSON.stringify(props))
     this.state = {
       colorFile:this.props.screenProps.colorFile,
       sizeFile:this.props.screenProps.sizeFile,
@@ -48,7 +47,6 @@ export default class SelectBook extends Component {
       OTSize:this.getOTSize(this.props.screenProps.booksList),
       NTSize:this.getNTSize(this.props.screenProps.booksList),
     }
-    console.log("IN SelectBook, bok len"  + JSON.stringify(this.props.screenProps.booksList))
     this.styles = SelectBookPageStyle(this.state.colorFile, this.state.sizeFile);
     
     this.viewabilityConfig = {
@@ -60,7 +58,6 @@ export default class SelectBook extends Component {
   toggleButton(value){
     this.setState({activeTab:value})
     if(value == false){
-      console.log("pressed")
       this.flatlistRef.scrollToIndex({index:this.state.OTSize,viewPosition:0,animated: false,viewOffset:0})
     }
     else{
@@ -85,34 +82,49 @@ export default class SelectBook extends Component {
     { length: 48, offset: 48 * index, index }
   )
   async componentDidMount(){
-      var booksid = await APIFetch.availableBooks(18)
-      console.log("booklist "+JSON.stringify(booksid))
-    // var booksid = this.props.navigation.state.params.booksKey
-    // // console.log("books key "+booksid.length)
+      var booksid = await APIFetch.availableBooks(22)
     var bookListData=[]
-
-    for(var i=0; i<=booksid.length-1; i++){
-      var bookId =  booksid[i].toUpperCase()
-      var bookList = {bookId:bookId,bookName: getBookNameFromMapping(bookId),
-          section:getBookSectionFromMapping(bookId),bookNumber:getBookNumberFromMapping(bookId),
-          languageName: this.props.screenProps.languageName, versionCode:this.props.screenProps.versionCode, numOfChapters:getBookChaptersFromMapping(bookId)}
-          bookListData.push(bookList)
-       console.log( "bookid in select page "+getBookNameFromMapping(bookId))
-    }
+    console.log("response ",JSON.stringify(booksid))
+      for(var key in booksid[0].books){
+        console.log(" key and books id "+key+" book vakue "+JSON.stringify(booksid[0].books[key]),)
+        var bookId = booksid[0].books[key].abbreviation
+        var bookList = {bookId:bookId,
+              bookName: getBookNameFromMapping(bookId,this.props.screenProps.languageName),
+              section:getBookSectionFromMapping(bookId),bookNumber:getBookNumberFromMapping(bookId),
+              languageName: this.props.screenProps.languageName, versionCode:this.props.screenProps.versionCode, numOfChapters:getBookChaptersFromMapping(bookId)}
+              bookListData.push(bookList)
+      }
+  
     var result = bookListData.sort(function(a, b){
       return parseFloat(a.bookNumber) - parseFloat(b.bookNumber);  
     })
     this.setState({booksList:result})
     this.props.screenProps.updateBookList(result)
   }
+  navigateToBible = async(item)=>{
+    console.log("item "+JSON.stringify(item))
+
+    // const resetAction = NavigationActions.reset({
+    //   index: 0,
+    //   actions: [NavigationActions.navigate({ routeName: 'Bible' })]
+    // })
+    // this.props.navigation.dispatch(resetAction)
+    var response = await APIFetch.getNumberOfChapter(22,item.bookId)
+  console.log("chapters"+JSON.stringify(response))
+    var totalChapter = []
+      for(var i=0; i<response.length;i++){
+        var number = response[i].chapter.number
+        console.log("number chapter "+JSON.stringify(response[i].chapter.number))
+        totalChapter.push(number)
+      }
+      console.log("chapters "+totalChapter)
+    this.props.navigation.state.params.updateModalValue("backdropPress",totalChapter,item.bookId)
+    this.props.navigation.navigate('Bible',  {})
+  }
 renderItem = ({item, index})=> {
     return (
       <TouchableOpacity 
-          onPress={
-            ()=>this.props.navigation.navigate('ChapterSelection', {bookId: item.bookId, 
-                bookNumber:getBookNumberFromMapping(item.bookId),
-                bookName: getBookNameFromMapping(item.bookId,this.props.screenProps.languageName), bookIndex: index, numOfChapters: item.numOfChapters})
-          }>
+          onPress={()=>this.navigateToBible(item,index)}>
           <View 
             style={this.styles.bookList}>
             <Text
@@ -159,7 +171,6 @@ renderItem = ({item, index})=> {
   }
 
   onViewableItemsChanged = ({ viewableItems, changed }) => {
-      console.log("Visible items are", viewableItems);
       if (viewableItems.length > 0) {
         if (viewableItems[0].index < this.state.OTSize) {
           // toggel to OT

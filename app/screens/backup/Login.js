@@ -29,37 +29,37 @@ export default class Login extends Component {
         }
     }
 
-    doSignIn = () => {
-        if (this.state.email == "") {
-            Alert.alert("Email", "Email field is empty, please enter email in input box.")
-            return
-        }
-        this.setState({isLoading: true}, () => {
-            var actionCodeSettings = {
-                url: 'http://www.autographa.com/products/',
-                handleCodeInApp: true,
-                iOS: {bundleId: 'com.autographago_reactnative.ios'},
-                android: {packageName: 'com.autographago_reactnative', installApp: true}
-            };
+    // doSignIn = () => {
+    //     if (this.state.email == "") {
+    //         Alert.alert("Email", "Email field is empty, please enter email in input box.")
+    //         return
+    //     }
+    //     this.setState({isLoading: true}, () => {
+    //         var actionCodeSettings = {
+    //             url: 'http://www.autographa.com/products/',
+    //             handleCodeInApp: true,
+    //             iOS: {bundleId: 'com.autographago_reactnative.ios'},
+    //             android: {packageName: 'com.autographago_reactnative', installApp: true}
+    //         };
     
-            console.log("SENDING")
+    //         console.log("SENDING")
 
-            // firebase.auth().sendSignInLinkToEmail(this.state.email, actionCodeSettings)
-            //     .then(() => {
-            //         // The link was successfully sent. Inform the user.
-            //         // Save the email locally so you don't need to ask the user for it again
-            //         // if they open the link on the same device.
-            //         console.log("ON SUCCESS SEND SIGN IN LINK TO MAIL  : " + this.state.email)
-            //         AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.BackupRestoreEmail, this.state.email);
-            //     })
-            //     .catch(function(error) {
-            //         // Some error occurred, you can inspect the code: error.code
-            //         console.log("sendSignInLinkToEmail  error : " + error.code)
-            //         Alert.alert("Error", 
-            //             "There is some error in sending sign in link to your email. " + error.code)
-            //     });
-        })
-    }
+    //         firebase.auth().sendSignInLinkToEmail(this.state.email, actionCodeSettings)
+    //             .then(() => {
+    //                 // The link was successfully sent. Inform the user.
+    //                 // Save the email locally so you don't need to ask the user for it again
+    //                 // if they open the link on the same device.
+    //                 console.log("ON SUCCESS SEND SIGN IN LINK TO MAIL  : " + this.state.email)
+    //                 AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.BackupRestoreEmail, this.state.email);
+    //             })
+    //             .catch(function(error) {
+    //                 // Some error occurred, you can inspect the code: error.code
+    //                 console.log("sendSignInLinkToEmail  error : " + error.code)
+    //                 Alert.alert("Error", 
+    //                     "There is some error in sending sign in link to your email. " + error.code)
+    //             });
+    //     })
+    // }
 
     async componentDidMount() {
         var email = await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.BackupRestoreEmail, "")
