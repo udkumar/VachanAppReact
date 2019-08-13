@@ -1,3 +1,4 @@
+
 import React, { Component } from 'react';
 import {
   StyleSheet,
@@ -8,7 +9,6 @@ import {
   TouchableOpacity,
   FlatList,
   Linking,
-  ActivityIndicator,
   Platform,
   Alert
 } from 'react-native';
@@ -18,8 +18,8 @@ import { SelectBookPageStyle } from './styles.js';
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 const AsyncStorageConstants = require('../../utils/AsyncStorageConstants')
-import APIFetch from '../../utils/APIFetch'
 import {NavigationActions} from 'react-navigation'
+import APIFetch from '../../utils/APIFetch'
 import {getBookNameFromMapping,getBookSectionFromMapping,getBookNumberFromMapping,getBookChaptersFromMapping} from '../../utils/UtilFunctions';
 
 export default class SelectBook extends Component {
@@ -38,6 +38,7 @@ export default class SelectBook extends Component {
 
   constructor(props){
     super(props)
+    console.log("props "+JSON.stringify(props))
     this.state = {
       colorFile:this.props.screenProps.colorFile,
       sizeFile:this.props.screenProps.sizeFile,
@@ -47,8 +48,9 @@ export default class SelectBook extends Component {
       OTSize:this.getOTSize(this.props.screenProps.booksList),
       NTSize:this.getNTSize(this.props.screenProps.booksList),
     }
+    console.log("IN SelectBook, bok len"  + JSON.stringify(this.props.screenProps.booksList))
     this.styles = SelectBookPageStyle(this.state.colorFile, this.state.sizeFile);
-    
+    this.navigateToChapter = this.navigateToChapter.bind(this)
     this.viewabilityConfig = {
         itemVisiblePercentThreshold: 100,
         waitForInteraction: true
@@ -58,6 +60,7 @@ export default class SelectBook extends Component {
   toggleButton(value){
     this.setState({activeTab:value})
     if(value == false){
+      console.log("pressed")
       this.flatlistRef.scrollToIndex({index:this.state.OTSize,viewPosition:0,animated: false,viewOffset:0})
     }
     else{
@@ -81,8 +84,9 @@ export default class SelectBook extends Component {
   getItemLayout = (data, index) => (
     { length: 48, offset: 48 * index, index }
   )
+
   async componentDidMount(){
-      var booksid = await APIFetch.availableBooks(22)
+     var booksid = await APIFetch.availableBooks(22)
     var bookListData=[]
     console.log("response ",JSON.stringify(booksid))
       for(var key in booksid[0].books){
@@ -101,30 +105,14 @@ export default class SelectBook extends Component {
     this.setState({booksList:result})
     this.props.screenProps.updateBookList(result)
   }
-  navigateToBible = async(item)=>{
-    console.log("item "+JSON.stringify(item))
-
-    // const resetAction = NavigationActions.reset({
-    //   index: 0,
-    //   actions: [NavigationActions.navigate({ routeName: 'Bible' })]
-    // })
-    // this.props.navigation.dispatch(resetAction)
-    var response = await APIFetch.getNumberOfChapter(22,item.bookId)
-  console.log("chapters"+JSON.stringify(response))
-    var totalChapter = []
-      for(var i=0; i<response.length;i++){
-        var number = response[i].chapter.number
-        console.log("number chapter "+JSON.stringify(response[i].chapter.number))
-        totalChapter.push(number)
-      }
-      console.log("chapters "+totalChapter)
-    this.props.navigation.state.params.updateModalValue("backdropPress",totalChapter,item.bookId)
-    this.props.navigation.navigate('Bible',  {})
+  navigateToChapter(item,index){
+    this.props.screenProps.updateSelectedBook(item.bookId)
+    this.props.navigation.navigate('Chapters',{bookId:item.bookId})
   }
 renderItem = ({item, index})=> {
     return (
       <TouchableOpacity 
-          onPress={()=>this.navigateToBible(item,index)}>
+          onPress={()=>{this.navigateToChapter(item,index)}}>
           <View 
             style={this.styles.bookList}>
             <Text
@@ -171,6 +159,7 @@ renderItem = ({item, index})=> {
   }
 
   onViewableItemsChanged = ({ viewableItems, changed }) => {
+      console.log("Visible items are", viewableItems);
       if (viewableItems.length > 0) {
         if (viewableItems[0].index < this.state.OTSize) {
           // toggel to OT
@@ -192,13 +181,7 @@ renderItem = ({item, index})=> {
    
     return (
       <View style={this.styles.container}>
-       {this.state.booksList.length == 0 ?
-        <View style={{justifyContent:"center",alignItems:"center",flex:1}}>   
-        <ActivityIndicator 
-        size="large" 
-        color="#0000ff"/>
-        </View> 
-       :
+       
         <View style={this.styles.bookNameContainer}>
             <Segment>
               {
@@ -255,10 +238,8 @@ renderItem = ({item, index})=> {
               viewabilityConfig={this.viewabilityConfig}
             />
         </View> 
-       }
       </View>
     );
   }
 
 }
-

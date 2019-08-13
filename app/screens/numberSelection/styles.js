@@ -53,9 +53,9 @@ export const numberSelection = (colorFile, sizeFile) =>{
    },
    chapterSelectionTouchable:{
         flex:0.25,
-        borderColor:colorFile.gridBorderColor,
-        borderRightWidth:1, 
-        borderBottomWidth:1,
+        // borderColor:colorFile.gridBorderColor,
+        // borderRightWidth:1, 
+        // borderBottomWidth:1,
         height:width/4, 
         backgroundColor:colorFile.backgroundColor,
         justifyContent:"center"

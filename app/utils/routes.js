@@ -20,6 +20,8 @@ import Images from '../screens/Images'
 import LanguageList from '../screens/LanguageList' 
 import ModalForChapter from '../screens/Bible/component/ModalForChapter'
 
+import SelectionTab from '../screens/SelectionTab'
+
 import AsyncStorageUtil from './AsyncStorageUtil';
 import {nightColors, dayColors} from './colors.js'
 import {extraSmallFont,smallFont,mediumFont,largeFont,extraLargeFont} from './dimens.js'
@@ -118,6 +120,9 @@ const StackNavigate = StackNavigator(
       },
       Account:{
         screen:Account
+      },
+      SelectionTab:{
+        screen:SelectionTab
       }
      
   },
@@ -145,7 +150,6 @@ export default class App extends Component {
     // Realm.copyBundledRealmFiles();
       
     this.state = {
-        chapterModels:[],
         booksList: [],
         isDbLoading: true,
         languageCode: AsyncStorageConstants.Values.DefLanguageCode,
@@ -186,8 +190,8 @@ export default class App extends Component {
     this.setState({booksList})
   }
 
-  updateChapterData = (chapterModels) =>{
-    this.setState({chapterModels})
+  updateChapterData = (chapterNumber) =>{
+    this.setState({chapterNumber})
   }
 
   updateVerseInLine = (verseInLine) =>{
@@ -404,7 +408,9 @@ export default class App extends Component {
           updateLanguage: this.updateLanguage,
           updateBookData: this.updateBookData,
           updateUserInfo: this.updateUserInfo,
-          updateVersionId:this.updateVersionId
+          updateVersionId:this.updateVersionId,
+          updateChapterData:this.updateChapterData
+          
 
         }}
       />
