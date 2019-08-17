@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { StackNavigator ,TabNavigator} from "react-navigation";
 import SelectBook from '../SelectBook/SelectBook'
 import ChapterSelection from '../numberSelection/ChapterSelection'
-import {getBookNameFromMapping,getBookSectionFromMapping,getBookNumberFromMapping,getBookChaptersFromMapping} from '../../utils/UtilFunctions';
-
 
 const SelectionTab = TabNavigator(
 	{
@@ -52,13 +50,11 @@ export default class SelectionStack extends Component {
     updateSelectedBook = (bookId)=>{
         this.setState({bookId})
     }
-    updateSelectedChapter = (chapterNumber,bookId)=>{
+    updateSelectedChapter = (bookId,chapterNumber)=>{
         this.setState({chapterNumber})
-        const bookName = getBookNameFromMapping(bookId,this.props.screenProps.languageName)
-        const bookNumber = getBookNumberFromMapping(bookId) 
-        // this.props.screenProps.updateBookData(bookId,bookName,chapterNumber,bookNumber)
-        // console.log("chapter update ",this.props.navigation.state.params.chapterUpdate)
-        this.props.navigation.state.params.chapterUpdate(chapterNumber)
+        this.props.screenProps.updateChapterData(bookId,chapterNumber)
+        this.props.navigation.state.params.updateLanguage(null,null,bookId,chapterNumber)
+        // this.props.navigation.state.params.updateLanguage(chapterNumber)
         this.props.navigation.goBack()
 
     }

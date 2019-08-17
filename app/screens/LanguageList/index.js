@@ -75,7 +75,7 @@ class ExpandableItemComponent extends Component {
           style={styles.header}
         >
           <Text style={styles.headerText}>{this.props.item.languageName}</Text>
-          <Icon name={this.props.item.isExpanded ? "keyboard-responseow-down" : "keyboard-responseow-up" } style={styles.iconStyle} size={24}/>
+          <Icon name={this.props.item.isExpanded ? "keyboard-arrow-down" : "keyboard-arrow-up" } style={styles.iconStyle} size={24}/>
         </TouchableOpacity>
         <View
           style={{
@@ -92,20 +92,16 @@ class ExpandableItemComponent extends Component {
               <Text  style={{fontWeight:'bold',fontSize:18}}>{item.versionCode} </Text>
               <Text style={{fontSize:18}}> {item.versionName}</Text>
               </View>
-              {/* <TouchableOpacity > */}
               </TouchableOpacity>
               {
                 item.downloaded==true ? 
-              //   <TouchableOpacity style={{alignSelf:'center'}} onPress={()=>{this.props.DownloadBible(this.props.item.languageName,item.versionCode,index)}}>
-              //   <Icon name="file-download" size={24} 
-              //   />
-              //  </TouchableOpacity>
-              <TouchableOpacity style={{alignSelf:'center'}} onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode)}}>
+             
+              <TouchableOpacity style={{alignSelf:'center'}} onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId)}}>
                 <Icon name="check" size={24} 
                 />
                </TouchableOpacity>
                :
-              <TouchableOpacity style={{alignSelf:'center'}} onPress={()=>{this.props.DownloadBible(this.props.item.languageName,item.versionCode,index)}}>
+              <TouchableOpacity style={{alignSelf:'center'}} onPress={()=>{this.props.DownloadBible(this.props.item.languageName,item.versionCode,index,item.sourceId)}}>
                 <Icon name="file-download" size={24} 
                 />
                </TouchableOpacity>}
@@ -150,89 +146,63 @@ export default class LanguageList extends Component {
       })
     }
 
-    componentDidMount(){
+    async componentDidMount(){
       this.fetchLanguages()
+      // const response = await dbQueries.queryVersions("tamil","IRV")
+      // console.log("response ",response )
     }
   
-     async fetchLanguages(){
+    async fetchLanguages(){
       var lanVer = []
       var oneDay = 24*60*60*1000; 
       var d = new Date('1-feb-2000')
       var ud = new Date(timestamp.languageUpdate)
       var diffDays = Math.round(Math.abs((d.getTime() - ud.getTime())/(oneDay)))
-      
         if(diffDays <= 20 ){
-          console.log("diff "+diffDays)
-            languageList().then(async(language) => {
-            console.log("language list ",language)
-            console.log("language list ",language.length)
-
-              if(language.length == 0){
-                var versionRes = await APIFetch.getVersions()
-                this.addLangauge(versionRes)
-                // console.log("response ",response)
-               
+          var languageList =  await dbQueries.getLangaugeList()
+            for(var i =0 ; i<languageList.length-1;i++){
+              lanVer.push(languageList[i])
             }
-            this.setState({
-              languages: language,
-              searchList:language
-            })
-            })
-          .catch(err => console.error(err))
+            if(languageList.length == 0){
+             
+              const languageRes = await APIFetch.getVersions()
+              for(var i = 0; i<languageRes.length;i++){
+                var versions = []
+                const language = languageRes[i].language
+                for(var j= 0; j<languageRes[i].languageVersions.length;j++){
+                  const  {version} = languageRes[i].languageVersions[j]
+                  versions.push({sourceId:languageRes[i].languageVersions[j].sourceId,versionName:version.name,versionCode:version.code,license:"license",year:2019,downloaded:false})
+                }
+                lanVer.push({languageName:language,versionModels:versions})
+
+              }
+              console.log("language list",lanVer)
+              dbQueries.addLangaugeList(lanVer)
+            }
+         }
+         else{
+          const languageRes = await APIFetch.getVersions()
+          for(var i = 0; i<languageRes.length;i++){
+            var versions = []
+            const language = languageRes[i].language
+            for(var j= 0; j<languageRes[i].languageVersions.length;j++){
+              const  {version} = languageRes[i].languageVersions[j]
+              versions.push({sourceId:languageRes[i].languageVersions[j].sourceId,versionName:version.name,versionCode:version.code,license:"license",year:2019,downloaded:false})
+            }
+            lanVer.push({languageName:language,versionModels:versions})
+
+          }
+          console.log("language list",lanVer)
+          dbQueries.addLangaugeList(lanVer)
+         
         }
+    
+      this.setState({
+        languages: lanVer,
+        searchList: lanVer
+      })
     }
 
-    addLangauge(response1){
-      var response =[
-        { 
-          "sourceId": 21, 
-          "language": {"code": "hin", "name": "hindi", "localScriptName": null, "scriptDirection": null, "script": null, "id": 2302}, 
-          "version": {"name": " HINDI Indian Revised Version", "longName": "irv_1", "code": "IRV"}, "updatedDate": "2019-07-23 11:57:20.650000+00:00", "audioBible": []
-        },
-        {
-          "sourceId": 22, 
-          "language": {"code": "tamil", "name": "tamil", "localScriptName": null, "scriptDirection": null, "script": null, "id": 2302}, 
-          "version": {"name": " TAMIL 1 Indian Revised Version", "longName": "irv_2", "code": "IRV"}, "updatedDate": "2019-07-24 10:50:52.710000+00:00", "audioBible": []
-        },
-        { 
-          "sourceId": 23, 
-          "language": {"code": "tamil", "name": "tamil", "localScriptName": null, "scriptDirection": null, "script": null, "id": 2302}, 
-          "version": {"name": " TAMIL 2  Indian Revised Version", "longName": "irv_1", "code": "IRV"}, "updatedDate": "2019-07-23 11:57:20.650000+00:00", "audioBible": []
-        },
-        {
-          "sourceId": 24, 
-          "language": {"code": "eng", "name": "eng", "localScriptName": null, "scriptDirection": null, "script": null, "id": 2302}, 
-          "version": {"name":"ENG 1 Indian Revised Version", "longName": "irv_2", "code": "IRV"}, "updatedDate": "2019-07-24 10:50:52.710000+00:00", "audioBible": []
-        },
-        {
-          "sourceId": 25, 
-          "language": {"code": "eng", "name": "eng", "localScriptName": null, "scriptDirection": null, "script": null, "id": 2302}, 
-          "version": {"name": " ENG 2 Indian Revised Version", "longName": "irv_2", "code": "IRV"}, "updatedDate": "2019-07-24 10:50:52.710000+00:00", "audioBible": []
-        },
-        {
-          "sourceId": 26, 
-          "language": {"code": "eng", "name": "eng", "localScriptName": null, "scriptDirection": null, "script": null, "id": 2302}, 
-          "version": {"name": " ENG 3 Indian Revised Version", "longName": "irv_2", "code": "IRV"}, "updatedDate": "2019-07-24 10:50:52.710000+00:00", "audioBible": []
-        }
-      ]
-      var array = [
-        {"name":"Steven Smith","Country":"England","Age":35},
-        {"name":"Hannah Reed","Country":"Scottland","Age":23},
-        {"name":"Steven Smith","Country":"England","Age":35},
-        {"name":"Robert Landley","Country":"England","Age":84},
-        {"name":"Steven Smith","Country":"England","Age":35},
-        {"name":"Robert Landley","Country":"England","Age":84}
-      ]
-
-      var result = array.reduce((c, v) => {
-          console.log("c",c)
-          console.log("v ",v)
-      },[])
-      
-      console.log("reduce",result);
-       
-  }
-   
     goToVersionScreen(value){
      this.props.navigation.navigate('VersionList',  {versions: value });
     }
@@ -249,17 +219,19 @@ export default class LanguageList extends Component {
         })
     }
 
-    DownloadBible = async(langName,versCode,index)=>{
-      // console.log("language NAME ",langName,"version cosde ",versCode)
-      var chapterModels = []
-      var verseModels = []
-      var content = await APIFetch.getContent(18,"json",62)
-      var bookId = ''
-
+    DownloadBible = async(langName,versCode,index,sourceId)=>{
+      console.log("source id   ",sourceId)
+      var bookModels = []
+      var content = await APIFetch.getAllBooks(sourceId,"json")
+      var content = content.bibleContent
       for(var id in content){
-      if(content !=null){
+      var  chapterModels = []
+        // console.log("content ",content[id].chapters.length)
+      if(content != null){
+
         for(var i=0; i< content[id].chapters.length; i++){
-          verseModels = []
+          
+        var  verseModels = []
           for(var j=0; j< content[id].chapters[i].verses.length; j++){
               verseModels.push(content[id].chapters[i].verses[j])
           }
@@ -269,20 +241,20 @@ export default class LanguageList extends Component {
                 verses:verseModels,
               }
           chapterModels.push(chapterModel)
-          bookId = id
         }
       }
-      }
-      var bookModels = {
+      console.log("book id ",id)
+      bookModels.push({
         languageName: langName,
         versionCode: versCode,
-        bookId: bookId,
-        bookName:getBookNameFromMapping(bookId,this.props.screenProps.languageName),
+        bookId: id,
+        bookName:getBookNameFromMapping(id,this.props.screenProps.languageName),
         chapters: chapterModels,
-        section: getBookSectionFromMapping(bookId),
-        bookNumber: getBookNumberFromMapping(bookId)
+        section: getBookSectionFromMapping(id),
+        bookNumber: getBookNumberFromMapping(id)
+      })
+
       }
-     
       
       await DbQueries.addNewVersion(langName,versCode,bookModels)
       languageList().then(async(language) => {
@@ -294,14 +266,16 @@ export default class LanguageList extends Component {
     setModalVisible=()=>{
       this.setState({modalVisible:!this.state.modalVisible})
     }
-    goToBible = (langName,verCode)=>{
-      this.props.navigation.state.params.updateLanguage(langName,verCode)
+    goToBible = (langName,verCode,sourceId)=>{
+      this.props.screenProps.changeLanguage(langName,verCode,sourceId)
+      this.props.navigation.state.params.updateLanguage(langName,verCode,null,null)
       this.props.navigation.dispatch(NavigationActions.back())    
     }
   
     render(){
+      //  
       // languageList =  await languageList
-      // console.log("languaguage list ",languageList)
+      // console.log("RESPONSE  ",response)
       return (
             <View style={styles.MainContainer}>
             {this.state.languages.length == 0 ?

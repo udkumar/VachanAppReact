@@ -99,16 +99,15 @@ class DbQueries {
         DbHelper.deleteLanguage(lanCode, verCode)
     }
 
-    queryVersions() {
-        return DbHelper.query('VersionModel');
-    }
-
     // add list of languages to db
-    addLangaugeList(lang,ver){
-        DbHelper.addLangaugeList(lang,ver)
+    addLangaugeList(lang){
+        DbHelper.addLangaugeList(lang)
     }
     getLangaugeList(){
        return DbHelper.getLangaugeList()
+    }
+    queryVersions(lang,ver,bookId){
+       return DbHelper.queryVersions(lang,ver,bookId)
     }
     // updateLangaugeList(langName,versCode,downloaded){
     //     DbHelper.updateLangaugeList(langName,versCode,downloaded)

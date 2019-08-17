@@ -102,7 +102,24 @@ var APIFetch = {
         } catch(error) {
             return error;
         }
-    }
+    },
+    async getAllBooks(sourceId,type){
+        try {
+            return await fetch(API_BASE_URL +"bibles"+"/"+sourceId+"/"+type, {  
+              method: 'GET',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              }
+            })
+            .then(ApiUtils.checkStatus)
+            .then((response) => response.json())
+            .catch(e => e)
+        } catch(error) {
+            return error;
+        }
+    },
+
 
     
 }

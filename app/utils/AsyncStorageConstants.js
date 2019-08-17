@@ -46,7 +46,7 @@ module.exports = {
         DefBookName:getBookNameFromMapping("1jn","Hindi"),
         DefBookChapter:1,
         DefBookNumber:getBookNumberFromMapping("1jn"),
-        DefVersionId:2,
+        DefSourceId:22
        
     }
 }

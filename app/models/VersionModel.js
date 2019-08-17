@@ -6,6 +6,7 @@ export default class VersionModel extends Realm.Object {}
 VersionModel.schema = {
     name: 'VersionModel',
     properties: {
+		sourceId:'int',
     	versionName: 'string',
 		versionCode: 'string',
     	license: 'string',

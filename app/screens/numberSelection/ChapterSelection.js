@@ -65,15 +65,14 @@ export default class ChapterSelection extends Component {
     var time =  new Date()
     DbQueries.addHistory(this.props.screenProps.languageName, this.props.screenProps.versionCode, 
     this.state.bookId, item, time)
-    this.props.screenProps.updateSelectedChapter(item,this.state.bookId)
     // const resetAction = NavigationActions.reset({
     //   index: 0,
     //   actions: [NavigationActions.navigate({ routeName: 'Bible' })]
     // })
     // this.props.navigation.dispatch(resetAction)
-    // this.props.navigation.goBack()
     // this.props.navigation.replace('Bible', {bookId: this.state.bookId, bookNumber:this.state.bookNumber,
-    // bookName: this.state.bookName, chapterNumber: item })
+      // bookName: this.state.bookName, chapterNumber: item })
+      this.props.screenProps.updateSelectedChapter(this.props.screenProps.bookId,item)
   }
 
   

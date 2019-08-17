@@ -151,6 +151,7 @@ export default class App extends Component {
       
     this.state = {
         booksList: [],
+        sourceId:AsyncStorageConstants.Values.DefSourceId,
         isDbLoading: true,
         languageCode: AsyncStorageConstants.Values.DefLanguageCode,
         versionCode: AsyncStorageConstants.Values.DefVersionCode,
@@ -181,17 +182,20 @@ export default class App extends Component {
 
     this.updateChapterData = this.updateChapterData.bind(this)
     this.updateVersionId = this.updateVersionId.bind(this) 
-
+    this.changeLanguage = this.changeLanguage.bind(this)
     this.styles = styleFile(this.state.colorFile,this.state.sizeFile)
     this.DrawerNavigate = DrawerNavigate(this.styles)
   }
 
+  changeLanguage =  (languageName,versionCode,sourceId)  =>{
+      this.setState({languageName,versionCode,sourceId})
+  }
   updateBookList = (booksList) => {
     this.setState({booksList})
   }
 
-  updateChapterData = (chapterNumber) =>{
-    this.setState({chapterNumber})
+  updateChapterData = (bookId,chapterNumber) =>{
+    this.setState({bookId,chapterNumber})
   }
 
   updateVerseInLine = (verseInLine) =>{
@@ -353,6 +357,7 @@ export default class App extends Component {
       bookName: res[8][1] == null ? AsyncStorageConstants.Values.DefBookName:res[8][1],
       chapterNumber: res[9][1] == null ? AsyncStorageConstants.Values.DefBookChapter:parseInt(res[9][1]),
       bookNumber: res[10][1] == null ? AsyncStorageConstants.Values.DefBookNumber:parseInt(res[10][1]),
+      sourceId:res[11][1] == null ? AsyncStorageConstants.Values.DefSourceId:parseInt(res[11][1])
     }, async ()=> {
     })
     await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.LastReadReference, AsyncStorageConstants.Values.LastReadReference
@@ -409,7 +414,8 @@ export default class App extends Component {
           updateBookData: this.updateBookData,
           updateUserInfo: this.updateUserInfo,
           updateVersionId:this.updateVersionId,
-          updateChapterData:this.updateChapterData
+          updateChapterData:this.updateChapterData,
+          changeLanguage:this.changeLanguage
           
 
         }}

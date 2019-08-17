@@ -26,14 +26,15 @@ class DbHelper {
     async getRealm() {
     	try {
     		return await Realm.open({
-				schemaVersion: 18,
+				schemaVersion: 19,
 				// deleteRealmIfMigrationNeeded: true, 
 				path:
 					Platform.OS === 'ios'
 					? RNFS.MainBundlePath + '/vachanApp.realm'
 					: RNFS.DocumentDirectoryPath + '/vachanApp.realm',
 				schema: [LanguageModel, VersionModel, BookModel, ChapterModel, VerseModel, NoteModel, StylingModel, ReferenceModel, HistoryModel,BookmarksListModel,HighlightsModel,VerseMetadataModel] });
-    	} catch (err) {
+				console.log('create db:', db.path)
+			} catch (err) {
 			console.log("error in getItem"+err)
     		return null;
     	}
@@ -371,73 +372,51 @@ class DbHelper {
 	// 		  }
 	// 	}
 	// }
-	async addLangaugeList(languageModel,versionModel){
+	async addLangaugeList(languages){
 		let realm = await this.getRealm()
 			
 		if(realm){
-			let result = realm.objectForPrimaryKey('LanguageModel', languageModel.languageName)
-			try {
-				if(result){
-					console.log("result key found primary key" +JSON.stringify(result.versionModels)+"langauge name"+languageModel.languageName)
-					for (var i=0; i<=result.versionModels.length-1; i++){
-						var vModel = result.versionModels[i]
-						for(var j=0; j<=versionModel.length-1; j++){
-							if (vModel.versionCode == versionModel[j].versionCode) {
-								return
-							}
-						}
-						realm.write(() => {
-							result.versionModels.push(versionModel)
-						})
-					}
-				}
-				else{
-					realm.write(() => {
-						console.log("langauge added")
-						realm.create('LanguageModel', languageModel)
-					})
-				}
+			for(var i=0; i<languages.length; i++){
+				realm.write(() => {
+					console.log("langauge added")
+					realm.create('LanguageModel', languages[i])
+				})
+			}
+			
+
+			// let result = realm.objectForPrimaryKey('LanguageModel', languageModel.languageName)
+			
+			
+			// try {
+			// 	if(result){
+			// 		console.log("result key found primary key" +JSON.stringify(result.versionModels)+"langauge name"+languageModel.languageName)
+			// 		for (var i=0; i<=result.versionModels.length-1; i++){
+			// 			var vModel = result.versionModels[i]
+			// 			for(var j=0; j<=versionModel.length-1; j++){
+			// 				if (vModel.versionCode == versionModel[j].versionCode) {
+			// 					return
+			// 				}
+			// 			}
+			// 			realm.write(() => {
+			// 				result.versionModels.push(versionModel)
+			// 			})
+			// 		}
+			// 	}
+			// 	else{
+			// 		realm.write(() => {
+			// 			console.log("langauge added")
+			// 			realm.create('LanguageModel', languageModel)
+			// 		})
+			// 	}
 				
 				
-			  } catch (e) {
-				console.log("Error on creation "+e)
-			  }
+			//   } catch (e) {
+			// 	console.log("Error on creation "+e)
+			//   }
 			
 		}
 	}
-	// async addLangaugeList(languageModel,versionModel){
-	// 	console.log("languagge name add "+languageModel.languageName)
-	// 	let realm = await this.getRealm()
-			
-	// 	if(realm){
-	// 		// let result = realm.objects('LanguageModel').filtered('LanguageModel ==[c] "' + languageModel.languageName +'"');
-	// 		let result = realm.objectForPrimaryKey('LanguageModel', languageModel.languageName)
-	// 		try {
-	// 			// if(result.length>0){
-	// 			// 	let language = realm.objects('LanguageModel');
-	// 			// 	realm.write(() => {
-	// 			// 		console.log("langauge added")
-	// 			// 		realm.delete(language)
-	// 			// 	})
-	// 			// }
-	// 			realm.write(() => {
-	// 				realm.create('HistoryModel', {
-	// 					languageName: langName,
-	// 					versionCode: verCode,
-	// 					bookId: bId,
-	// 					chapterNumber: cNum,
-	// 					time: timeStamp
-	// 				})
-	// 				realm.create('LanguageModel', languageModel)
-	// 				console.log("langauge added")
-
-	// 			})
-	// 		  } catch (e) {
-	// 			console.log("Error on creation "+e)
-	// 		  }
-			
-	// 	}
-	// }
+	
 	async getLangaugeList(){
 		let realm = await this.getRealm();
 		if(realm){
@@ -456,14 +435,18 @@ class DbHelper {
 			let resultsA = result.versionModels
 			resultsA = resultsA.filtered('versionCode ==[c] "' + versCode + '"')
 			var resultBoook = realm.objects('BookModel').filtered('languageName ==[c] "' + langName +'" ')
-			
+			console.log("RESULT BOOK ",resultBoook)
 			if(resultBoook.length == 0){
 				console.log("results ... ",result.languageName)
 				console.log("results A... ",resultsA[0].versionCode)
-				realm.write(() => {
-					realm.create('BookModel', bookmodel)
-					resultsA[0].downloaded = true;
-				})
+				for(var i=0;i<bookmodel.length;i++){
+					realm.write(() => {
+						realm.create('BookModel', bookmodel[i])
+						resultsA[0].downloaded = true;
+					})
+					console.log(" result book added",)
+				}
+				
 			}
 			else{
 			var found = false;
@@ -476,46 +459,27 @@ class DbHelper {
 				}
 			}
 			if(found==false){
-				realm.write(() => {
-					realm.create('BookModel', bookmodel)
-					resultsA[0].downloaded = true;
-				})
+				for(var i=0;i<bookmodel.length;i++){
+					realm.write(() => {
+						realm.create('BookModel', bookmodel[i])
+						resultsA[0].downloaded = true;
+					})
+				}
 			}
 		}
 	}
 	}
 
-	// async queryVersion(langName,versCode){
-	// 	let realm = await this.getRealm();
-	// 	if (realm){
-	// 		try {
-	// 			var result = realm.objects('BookModel').filtered('languageName ==[c] "' + langName +'"versionCode==[c] "' + versCode +'"');
-	// 			// return result
-	// 			if(result){
+	async queryVersions(langName,verCode,bookId){
+		console.log("language Name",langName,"version code ",verCode)
+		let realm = await this.getRealm()
 
-	// 				return {
-	// 					downloaded:true,
-						
-	// 				}
-	// 			}
-	// 			var result1 = realm.objects('LanguageModel').filtered('languageName ==[c] "' + langName+'"');
-	// 			return result1
-	// 			// let result1 = realm.objects("BookModel");
-	// 			// let result  = result1.filtered('chapters')
-	// 			// console.log("result data"+result1)
-	// 			// return result
-	// 			// realm.write(() => {
-	// 			// 	realm.delete(result); 
-	// 			// })
-			
-
-				
-				
-	// 	  } catch (e) {
-	// 		console.log("Error on QUERY VERSION "+e)
-	// 	  }
-	// 	}
-	// }
+		if(realm){
+		// var version = realm.objects('BookModel').filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId ==[c]   "' + bookId + '" chapterNumber "' + chapterNumber + '"' )
+		var version = realm.objects('BookModel').filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId ==[c]   "' + bookId + '" ' )
+			return version
+		}
+	}
 }
 
 export default new DbHelper();

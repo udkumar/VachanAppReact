@@ -31,6 +31,7 @@ const width = Dimensions.get('window').width;
 import { styles } from './styles.js';
 
 import BottomTab from './BottomTab'
+import dbQueries from '../../utils/dbQueries';
 
 
 
@@ -43,7 +44,7 @@ export default class Bible extends Component {
         headerTitle:(
           <View style={{flexDirection:'row',flex:1}}>
           
-            <TouchableOpacity style={{flexDirection:'row'}}  onPress={() =>{navigation.navigate("SelectionTab", {chapterUpdate:params.queryBookFromAPI})}}>
+            <TouchableOpacity style={{flexDirection:'row'}}  onPress={() =>{navigation.navigate("SelectionTab", {updateLanguage:params.updateLanguage})}}>
               <Text 
                 style={{fontSize:16,color:"#fff",alignSelf:'center',alignItems:'center',marginHorizontal:4}}
                 >{params.bookName}
@@ -124,7 +125,7 @@ export default class Bible extends Component {
 
       //modal value for showing chapter grid 
       totalChapter:null,
-      sourceId:22
+      sourceId:this.props.screenProps.sourceId
     }
 
     this.pinchDiff = 0
@@ -222,25 +223,16 @@ export default class Bible extends Component {
   }
 
   // render data onAPI Call 
-     queryBookFromAPI(chapter){
-       console.log("current chapter")
-      const chapterValue = chapter == null ? this.state.currentVisibleChapter : chapter
-        // APIFetch.getChapterContent(this.state.sourceId,this.state.bookId,chapterValue ).then(res =>{
-        //  console.log("BIBLE CONTENT ",res.chapterContent.verses)
-        //  this.setState({chapters:res.chapterContent.verses})
-         
-        //   this.getHighlights()
-        //   this.getBookMarks()
-        
-        // })
-        APIFetch.getChapterContent(22,this.props.screenProps.bookId,chapterValue ).then(res =>{
-          console.log("BIBLE CONTENT ",res.chapterContent.verses)
+    async  queryBookFromAPI(){
+        APIFetch.getChapterContent(22,this.props.screenProps.bookId,this.state.currentVisibleChapter ).then(res =>{
+          // console.log("BIBLE CONTENT ",res.chapterContent.verses)
           this.setState({chapters:res.chapterContent.verses})
           
            this.getHighlights()
            this.getBookMarks()
          
          })
+      this.props.screenProps.updateChapterData(this.state.bookId,this.state.currentVisibleChapter)
   }
   
   async getHighlights(){
@@ -461,22 +453,34 @@ export default class Bible extends Component {
           })
       })
 
+
         
   }
 
-  // openLanguages = ()=>{
-  //   this.props.navigation.navigate("LanguageList", {updateLanguage:this.updateLanguage})
-  // } 
-  // updateChapter = ()=>{
-  //   // this.props.navigation.navigate("SelectionTab", {chapterUpdate:this.state.currentVisibleChapter})
-  //   this.props.navigation.navigate("SelectionTab", {chapterUpdate:this.queryBookFromAPI()})
+  
+  updateLanguage = async (language,version,bookId,chapter) =>{
+    
+    if(bookId !=null && chapter !=null){
+      APIFetch.getChapterContent(22,bookId,chapter).then(res =>{
+        this.setState({chapters:res.chapterContent.verses})
+        //  this.getHighlights()
+        //  this.getBookMarks()
+       })
+       this.props.navigation.setParams({
+        currentChapter: chapter,
+        bookName: getBookNameFromMapping(bookId,this.state.languageName),
+      })
 
-  // }
-  updateLanguage = (language,version) =>{
+    }
+    if(language !=null && version !=null){
+    var response = await dbQueries.queryVersions(language,version,this.props.screenProps.bookId)
+    this.setState({chapters:response[0].chapters[0].verses})
     this.props.navigation.setParams({
       bibleLanguage: language,
       bibleVersion: version,
     })
+    }
+    
   }
 
     closeSplitScreen = ()=>{
