@@ -11,7 +11,8 @@ import {
 // import firebase from 'react-native-firebase';
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import colorConstants from '../../utils/colorConstants'
-const AsyncStorageConstants = require('../../utils/AsyncStorageConstants')
+import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
+
 
 export default class Login extends Component {
 

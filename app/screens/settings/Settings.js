@@ -18,7 +18,8 @@ import {extraSmallFont,smallFont,mediumFont,largeFont,extraLargeFont} from '../.
 import { settingsPageStyle } from './styles.js'
 import {nightColors, dayColors, constColors} from '../../utils/colors.js'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
-const AsyncStorageConstants = require('../../utils/AsyncStorageConstants')
+import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
+
 
 const setParamsAction = ({colorFile}) => NavigationActions.setParams({
   params: { colorFile },

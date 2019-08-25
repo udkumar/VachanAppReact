@@ -6,31 +6,15 @@ import DbQueries from '../../utils/dbQueries'
 import APIFetch from '../../utils/APIFetch'
 import timestamp from '../../assets/timestamp.json'
 import {NavigationActions} from 'react-navigation'
-import  grammar from 'usfm-grammar'
 import { getBookNameFromMapping, getBookSectionFromMapping, getBookNumberFromMapping } from '../../utils/UtilFunctions';
-import VerseModel from '../../models/VerseModel';
 import dbQueries from '../../utils/dbQueries';
-import { catchClause } from '@babel/types';
-import { version } from 'moment';
-import { constColors } from '../../utils/colors';
-const width = Dimensions.get('window').width;
-var height =  Dimensions.get('window').width;
+import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
+import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants';
 
 const languageList = async () => { 
-return await dbQueries.getLangaugeList()
+  return await dbQueries.getLangaugeList()
 }
-
-//  {
-  // try{
-    // return await dbQueries.getLangaugeList()
-  // }
-  // catch(error){
-    // console.log("erooro "+error )
-  // }
-  
-// }
-
-
+ 
 
 class ExpandableItemComponent extends Component {
   constructor() {
@@ -41,7 +25,6 @@ class ExpandableItemComponent extends Component {
     };
   }
   componentWillReceiveProps(nextProps){
-    // console.log("next props "+JSON.stringify(nextProps))
     if (nextProps.item.isExpanded) {
       this.setState(() => {
         return {
@@ -56,14 +39,6 @@ class ExpandableItemComponent extends Component {
       });
     }
   }
-  shouldComponentUpdate(nextProps, nextState) {
-    // console.log("should update next props "+JSON.stringify(nextProps)+ "next state "+nextState)
-    if (this.state.layoutHeight !== nextState.layoutHeight) {
-      return true;
-    }
-    return false;
-  }
-
  
   render() {
     return (
@@ -105,8 +80,6 @@ class ExpandableItemComponent extends Component {
                 <Icon name="file-download" size={24} 
                 />
                </TouchableOpacity>}
-              {/* </TouchableOpacity> */}
-              {/* <View style={styles.separator} /> */}
             </View>
           ))}
         </View>
@@ -148,8 +121,6 @@ export default class LanguageList extends Component {
 
     async componentDidMount(){
       this.fetchLanguages()
-      // const response = await dbQueries.queryVersions("tamil","IRV")
-      // console.log("response ",response )
     }
   
     async fetchLanguages(){
@@ -248,15 +219,14 @@ export default class LanguageList extends Component {
         languageName: langName,
         versionCode: versCode,
         bookId: id,
-        bookName:getBookNameFromMapping(id,this.props.screenProps.languageName),
+        bookName:getBookNameFromMapping(id,langName),
         chapters: chapterModels,
         section: getBookSectionFromMapping(id),
         bookNumber: getBookNumberFromMapping(id)
       })
-
       }
-      
-      await DbQueries.addNewVersion(langName,versCode,bookModels)
+      console.log("book model ",bookModels)
+      await DbQueries.addNewVersion(langName,versCode,bookModels,sourceId)
       languageList().then(async(language) => {
         this.setState({languages:language})
       })
@@ -267,15 +237,17 @@ export default class LanguageList extends Component {
       this.setState({modalVisible:!this.state.modalVisible})
     }
     goToBible = (langName,verCode,sourceId)=>{
-      this.props.screenProps.changeLanguage(langName,verCode,sourceId)
-      this.props.navigation.state.params.updateLanguage(langName,verCode,null,null)
+      console.log("sourceID",sourceId)
+      AsyncStorageUtil.setAllItems([
+        [AsyncStorageConstants.Keys.sourceId, JSON.stringify(sourceId)],
+        [AsyncStorageConstants.Keys.LanguageName, langName],
+        [AsyncStorageConstants.Keys.VersionCode, verCode]]); 
+      this.props.navigation.state.params.updateLanguage(sourceId,langName,verCode,null,null)
       this.props.navigation.dispatch(NavigationActions.back())    
     }
   
     render(){
-      //  
-      // languageList =  await languageList
-      // console.log("RESPONSE  ",response)
+      
       return (
             <View style={styles.MainContainer}>
             {this.state.languages.length == 0 ?

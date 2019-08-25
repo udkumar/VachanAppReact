@@ -17,24 +17,14 @@ import {Segment,Button,Tab,Tabs} from 'native-base'
 import { SelectBookPageStyle } from './styles.js';
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
-const AsyncStorageConstants = require('../../utils/AsyncStorageConstants')
+import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
+import AsyncStorageUtil from '../../utils/AsyncStorageUtil'
+
 import {NavigationActions} from 'react-navigation'
 import APIFetch from '../../utils/APIFetch'
 import {getBookNameFromMapping,getBookSectionFromMapping,getBookNumberFromMapping,getBookChaptersFromMapping} from '../../utils/UtilFunctions';
 
 export default class SelectBook extends Component {
-
-  static navigationOptions = ({navigation}) =>{
-    const { params = {} } = navigation.state;
-    return{
-      headerLeft: (
-        <View style={{flexDirection:"row"}}>
-          <Icon name="clear" style={{fontSize:20,color:"#fff",fontWeight:"bold",marginLeft:16}} onPress={() =>{navigation.dispatch(NavigationActions.back())}}/>
-        </View>
-      ),
- 
-    } 
-  }
 
   constructor(props){
     super(props)
@@ -103,9 +93,9 @@ export default class SelectBook extends Component {
       return parseFloat(a.bookNumber) - parseFloat(b.bookNumber);  
     })
     this.setState({booksList:result})
-    this.props.screenProps.updateBookList(result)
   }
-  navigateToChapter(item,index){
+  navigateToChapter(item){
+    AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.bookId, item.bookId); 
     this.props.screenProps.updateSelectedBook(item.bookId)
     this.props.navigation.navigate('Chapters',{bookId:item.bookId})
   }

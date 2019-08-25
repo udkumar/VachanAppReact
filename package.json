@@ -9,6 +9,7 @@
     "version": "./version-ios.sh"
   },
   "dependencies": {
+    "@react-native-community/async-storage": "github:react-native-community/async-storage",
     "buffer": "^5.2.1",
     "events": "^3.0.0",
     "moment": "^2.22.1",

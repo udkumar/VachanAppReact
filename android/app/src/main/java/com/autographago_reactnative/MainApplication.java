@@ -17,6 +17,7 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
+ import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 // import io.invertase.firebase.auth.RNFirebaseAuthPackage;
 // import io.invertase.firebase.storage.RNFirebaseStoragePackage;
 // import io.invertase.firebase.firestore.RNFirebaseFirestorePackage;
@@ -51,7 +52,8 @@ public class MainApplication extends Application implements ReactApplication {
             new RNZipArchivePackage(),
             new WebViewBridgePackage(),
             new VectorIconsPackage(),
-            new RNFSPackage()
+            new RNFSPackage(),
+            new AsyncStoragePackage()
             // new RNFirebasePackage(),
             // new RNFirebaseAuthPackage(),
             // new RNFirebaseStoragePackage(),

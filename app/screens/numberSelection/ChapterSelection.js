@@ -12,6 +12,10 @@ const width = Dimensions.get('window').width;
 import {NavigationActions} from 'react-navigation'
 import APIFetch from '../../utils/APIFetch'
 import { numberSelection } from './styles.js';
+import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
+import AsyncStorageUtil from '../../utils/AsyncStorageUtil'
+
+
 
 export default class ChapterSelection extends Component {
 
@@ -72,6 +76,7 @@ export default class ChapterSelection extends Component {
     // this.props.navigation.dispatch(resetAction)
     // this.props.navigation.replace('Bible', {bookId: this.state.bookId, bookNumber:this.state.bookNumber,
       // bookName: this.state.bookName, chapterNumber: item })
+      AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.ChapterNumber, item); 
       this.props.screenProps.updateSelectedChapter(this.props.screenProps.bookId,item)
   }
 

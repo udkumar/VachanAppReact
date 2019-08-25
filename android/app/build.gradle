@@ -150,6 +150,7 @@ dependencies {
     implementation project(':react-native-webview-bridge')
     // implementation project(':react-native-google-signin')
     // implementation project(':react-native-fbsdk')
+    implementation project(':@react-native-community_async-storage')
     implementation project(':react-native-zip-archive')
     
     implementation project(':realm')

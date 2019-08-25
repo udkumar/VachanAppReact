@@ -3,13 +3,13 @@ import React, { Component } from 'react'
 import {StackNavigator, DrawerNavigator,} from 'react-navigation'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-import SelectBook from '../screens/SelectBook/SelectBook'
+// import SelectBook from '../screens/SelectBook/SelectBook'
 import About from '../screens/About/About'
 import Search from '../screens/Search/Search'
 import Settings from '../screens/settings/Settings'
 import Account from '../screens/Account'
 import ReferenceSelection from '../screens/numberSelection/ReferenceSelection'
-import ChapterSelection from '../screens/numberSelection/ChapterSelection'
+// import ChapterSelection from '../screens/numberSelection/ChapterSelection'
 import Hints from '../screens/Hints/Hints'
 import BackupRestore from '../screens/backup/BackupRestore'
 import DrawerScreen from '../screens/DrawerScreen/DrawerScreen'
@@ -26,7 +26,7 @@ import AsyncStorageUtil from './AsyncStorageUtil';
 import {nightColors, dayColors} from './colors.js'
 import {extraSmallFont,smallFont,mediumFont,largeFont,extraLargeFont} from './dimens.js'
 import { styleFile } from './styles.js'
-const AsyncStorageConstants = require('./AsyncStorageConstants')
+import {AsyncStorageConstants} from './AsyncStorageConstants'
 
 
 const DrawerNavigate = (styles) => DrawerNavigator({
@@ -75,12 +75,12 @@ const StackNavigate = StackNavigator(
            
         })
       },
-      SelectBook: {
-        screen: SelectBook,
-        navigationOptions: {
-          headerTitle:"Select Book"
-      }
-      },
+      // SelectBook: {
+      //   screen: SelectBook,
+      //   navigationOptions: {
+      //     headerTitle:"Select Book"
+      // }
+      // },
       About: {
         screen: About,
       },
@@ -88,12 +88,12 @@ const StackNavigate = StackNavigator(
       Settings: {
         screen: Settings,
       },
-      ChapterSelection: {
-        screen: ChapterSelection,
-        navigationOptions: {
-            headerTitle:"Select Chapter"
-        }
-      },
+      // ChapterSelection: {
+      //   screen: ChapterSelection,
+      //   navigationOptions: {
+      //       headerTitle:"Select Chapter"
+      //   }
+      // },
       ReferenceSelection: {
         screen: ReferenceSelection,
       },
@@ -151,7 +151,7 @@ export default class App extends Component {
       
     this.state = {
         booksList: [],
-        sourceId:AsyncStorageConstants.Values.DefSourceId,
+        // sourceId:AsyncStorageConstants.Values.DefSourceId,
         isDbLoading: true,
         languageCode: AsyncStorageConstants.Values.DefLanguageCode,
         versionCode: AsyncStorageConstants.Values.DefVersionCode,
@@ -159,43 +159,25 @@ export default class App extends Component {
         languageName:AsyncStorageConstants.Values.DefLanguageName,
         versionName:AsyncStorageConstants.Values.DefVersionName,
         colorMode: AsyncStorageConstants.Values.DayMode,
-        bookId:AsyncStorageConstants.Values.DefBookId,
-        bookName:AsyncStorageConstants.Values.DefBookName,
-        chapterNumber:AsyncStorageConstants.Values.DefBookChapter,
-        bookNumber:AsyncStorageConstants.Values.DefBookNumber,
+        // bookId:AsyncStorageConstants.Values.DefBookId,
+        // bookName:AsyncStorageConstants.Values.DefBookName,
+        // chapterNumber:AsyncStorageConstants.Values.DefBookChapter,
+        // bookNumber:AsyncStorageConstants.Values.DefBookNumber,
         sizeMode: AsyncStorageConstants.Values.SizeModeNormal,
         colorFile:dayColors,
         sizeFile:mediumFont,
         verseInLine:false,
         lastRead:{},
-        versionId:AsyncStorageConstants.Values.DefVersionId,
         isConnected:true
     }
-    this.updateBookList = this.updateBookList.bind(this)
     this.updateSize = this.updateSize.bind(this)
     this.updateColor = this.updateColor.bind(this)
     this.updateVerseInLine = this.updateVerseInLine.bind(this)
     this.changeSizeByOne = this.changeSizeByOne.bind(this)
     this.updateLastRead = this.updateLastRead.bind(this)
-    this.updateLanguage  = this.updateLanguage.bind(this)
-    this.updateBookData  = this.updateBookData.bind(this)
 
-    this.updateChapterData = this.updateChapterData.bind(this)
-    this.updateVersionId = this.updateVersionId.bind(this) 
-    this.changeLanguage = this.changeLanguage.bind(this)
     this.styles = styleFile(this.state.colorFile,this.state.sizeFile)
     this.DrawerNavigate = DrawerNavigate(this.styles)
-  }
-
-  changeLanguage =  (languageName,versionCode,sourceId)  =>{
-      this.setState({languageName,versionCode,sourceId})
-  }
-  updateBookList = (booksList) => {
-    this.setState({booksList})
-  }
-
-  updateChapterData = (bookId,chapterNumber) =>{
-    this.setState({bookId,chapterNumber})
   }
 
   updateVerseInLine = (verseInLine) =>{
@@ -213,12 +195,7 @@ export default class App extends Component {
   updateSize = (sizeMode, sizeFile) => {
     this.setState({sizeMode, sizeFile})
   }
-  updateBookData = (bookId,bookName,chapterNumber,bookNumber) =>{
-    this.setState({bookId,bookName,chapterNumber,bookNumber})
-  }
-  updateVersionId = ( versionId)=>{
-    this.setState({versionId})
-  }
+ 
 
 
 
@@ -306,19 +283,34 @@ export default class App extends Component {
       AsyncStorageConstants.Keys.VersionCode,
       AsyncStorageConstants.Keys.LanguageName,
       AsyncStorageConstants.Keys.VersionName,
-      AsyncStorageConstants.Keys.BookId,
-      AsyncStorageConstants.Keys.BookName,
-      AsyncStorageConstants.Keys.ChapterNumber,
-      AsyncStorageConstants.Keys.BookNumber,
-      AsyncStorageConstants.Keys.versionId,
+      // AsyncStorageConstants.Keys.BookId,
+      // AsyncStorageConstants.Keys.BookName,
+      // AsyncStorageConstants.Keys.ChapterNumber,
+      // AsyncStorageConstants.Keys.BookNumber,
+      // AsyncStorageConstants.Keys.sourceId,
 
     ])
+    console.log("GET ALL ITEM ",res)
     console.log("res of asynstorage value ",res)
-    if (res == null) {
-      return
+    this.setState({
+      colorMode: res[0][1]== null ? AsyncStorageConstants.Values.DayMode : parseInt(res[0][1]),
+      colorFile: res[0][1] == null ? dayColors : (parseInt(res[0][1]) == AsyncStorageConstants.Values.DayMode ? dayColors : nightColors),
+      verseInLine:  res[3][1] == null ? AsyncStorageConstants.Values.VerseInLine : res[3][1],
+      languageCode: res[4][1] == null ? AsyncStorageConstants.Values.DefLanguageCode : res[4][1],
+      versionCode:  res[5][1] == null ? AsyncStorageConstants.Values.DefVersionCode : res[5][1],
+      languageName: res[6][1] == null ? AsyncStorageConstants.Values.DefLanguageName : res[6][1],
+      versionName:  res[7][1] == null ? AsyncStorageConstants.Values.DefVersionName : res[7][1],
+      // bookId: res[8][1] == null ? AsyncStorageConstants.Values.DefBookId:res[8][1],
+      // bookName: res[9][1] == null ? AsyncStorageConstants.Values.DefBookName:res[9][1],
+      // chapterNumber: res[10][1] == null ? AsyncStorageConstants.Values.DefBookChapter:parseInt(res[10][1]),
+      // bookNumber: res[11][1] == null ? AsyncStorageConstants.Values.DefBookNumber:parseInt(res[11][1]),
+      // sourceId:res[12][1] == null ? AsyncStorageConstants.Values.DefSourceId:parseInt(res[12][1])
+    })
 
-    }
-
+    await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.LastReadReference, AsyncStorageConstants.Values.LastReadReference
+    ).then((lastRead) => {
+        this.setState({lastRead})
+  })
     this.setState({sizeMode: res[1][1] == null ? AsyncStorageConstants.Values.SizeModeNormal : parseInt(res[1][1])}, ()=> {
       switch (this.state.sizeMode) {
         case  AsyncStorageConstants.Values.SizeModeXSmall : {
@@ -345,42 +337,24 @@ export default class App extends Component {
       }
     })
 
-    this.setState({
-      colorMode: res[0][1]== null ? AsyncStorageConstants.Values.DayMode : parseInt(res[0][1]),
-      colorFile: res[0][1] == null ? dayColors : (parseInt(res[0][1]) == AsyncStorageConstants.Values.DayMode ? dayColors : nightColors),
-      verseInLine:  res[2][1] == null ? AsyncStorageConstants.Values.VerseInLine : res[2][1],
-      languageCode: res[3][1] == null ? AsyncStorageConstants.Values.DefLanguageCode : res[3][1],
-      versionCode:  res[4][1] == null ? AsyncStorageConstants.Values.DefVersionCode : res[4][1],
-      languageName: res[5][1] == null ? AsyncStorageConstants.Values.DefLanguageName : res[5][1],
-      versionName:  res[6][1] == null ? AsyncStorageConstants.Values.DefVersionName : res[6][1],
-      bookId: res[7][1] == null ? AsyncStorageConstants.Values.DefBookId:res[7][1],
-      bookName: res[8][1] == null ? AsyncStorageConstants.Values.DefBookName:res[8][1],
-      chapterNumber: res[9][1] == null ? AsyncStorageConstants.Values.DefBookChapter:parseInt(res[9][1]),
-      bookNumber: res[10][1] == null ? AsyncStorageConstants.Values.DefBookNumber:parseInt(res[10][1]),
-      sourceId:res[11][1] == null ? AsyncStorageConstants.Values.DefSourceId:parseInt(res[11][1])
-    }, async ()=> {
-    })
-    await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.LastReadReference, AsyncStorageConstants.Values.LastReadReference
-      ).then((lastRead) => {
-          this.setState({lastRead})
-    })
-    console.log("size mode ",this.state.sizeMode)
-    console.log("color mode mode ",this.state.colorMode)
-    console.log("LANGUAGE NAME ",this.state.languageName)
-    console.log("VERSION NAME",this.state.versionName)
-    console.log("VERSION CODE",this.state.versionCode)
-    console.log("BOOK ID  ",this.state.bookId)
-    console.log("BOOK NAME ",this.state.bookName)
-    console.log("BOOK NUMBER ",this.state.bookNumber)
-    console.log("CHAPTER NUMBER",this.state.chapterNumber)
-    console.log("VERSE IN LINE ",this.state.verseInLine)
+ 
+    // console.log("size mode ",this.state.sizeMode)
+    // console.log("color mode mode ",this.state.colorMode)
+    // console.log("LANGUAGE NAME ",this.state.languageName)
+    // console.log("VERSION NAME",this.state.versionName)
+    // console.log("VERSION CODE",this.state.versionCode)
+    // console.log("BOOK ID  ",this.state.bookId)
+    // console.log("BOOK NAME ",this.state.bookName)
+    // console.log("BOOK NUMBER ",this.state.bookNumber)
+    // console.log("CHAPTER NUMBER",this.state.chapterNumber)
+    // console.log("VERSE IN LINE ",this.state.verseInLine)
 
 
 
   }
   
   render(){
-    let  DrawerNavigate = this.DrawerNavigate
+        let  DrawerNavigate = this.DrawerNavigate
     return(
       <DrawerNavigate 
         screenProps={{
@@ -395,27 +369,22 @@ export default class App extends Component {
           languageName:this.state.languageName, 
           versionCode: this.state.versionCode,
           versionName:this.state.versionName,
-          bookId:this.state.bookId,
-          bookName:this.state.bookName,
-          chapterNumber:this.state.chapterNumber,
-          bookNumber:this.state.bookNumber,
+          // bookId:this.state.bookId,
+          // bookName:this.state.bookName,
+          // chapterNumber:this.state.chapterNumber,
+          // bookNumber:this.state.bookNumber,
           lastRead:this.state.lastRead,
           userFoto:this.state.userFoto,
-          versionId:this.state.versionId,
           isConnected:this.state.isConnected,
+          // sourceId:this.state.sourceId,
 
           updateColor: this.updateColor,
           updateSize: this.updateSize,
           updateVerseInLine:this.updateVerseInLine,
-          updateBookList: this.updateBookList,
           changeSizeByOne: this.changeSizeByOne,
           updateLastRead: this.updateLastRead,
           updateLanguage: this.updateLanguage,
-          updateBookData: this.updateBookData,
           updateUserInfo: this.updateUserInfo,
-          updateVersionId:this.updateVersionId,
-          updateChapterData:this.updateChapterData,
-          changeLanguage:this.changeLanguage
           
 
         }}

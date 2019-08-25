@@ -427,46 +427,60 @@ class DbHelper {
 		return null
 	}
 
-	async addNewVersion(langName,versCode,bookmodel){
-		console.log("language code "+langName+" vercODE "+versCode)
+	async addNewVersion(langName,versCode,bookmodel,sourceId){
+		console.log("language code "+langName+" vercODE "+versCode,"BOOKMODEL ",bookmodel)
 		let realm = await this.getRealm();
 		if(realm){
 			let result = realm.objectForPrimaryKey("LanguageModel",langName)
 			let resultsA = result.versionModels
-			resultsA = resultsA.filtered('versionCode ==[c] "' + versCode + '"')
+			var resultsB = resultsA.filtered('sourceId  =="' + sourceId + '"')
+			console.log("version code result a ",resultsB[0].downloaded)
+			console.log("version code result a ",resultsB[0].versionName)
+			console.log("version code result a ",resultsB)
+
 			var resultBoook = realm.objects('BookModel').filtered('languageName ==[c] "' + langName +'" ')
 			console.log("RESULT BOOK ",resultBoook)
+			if(bookmodel.length == 0){
+				alert("no data to add")
+			}
+			else{
 			if(resultBoook.length == 0){
 				console.log("results ... ",result.languageName)
-				console.log("results A... ",resultsA[0].versionCode)
+				console.log("results A... ",resultsB[0].versionCode)
 				for(var i=0;i<bookmodel.length;i++){
 					realm.write(() => {
 						realm.create('BookModel', bookmodel[i])
-						resultsA[0].downloaded = true;
+						// resultsB[0].downloaded = true;
+						console.log("resultsA[0].downloaded     ",resultsB[0].downloaded ,)
 					})
 					console.log(" result book added",)
 				}
+				realm.write(() => {
+					resultsB[0].downloaded = true;
+				})
 				
 			}
 			else{
 			var found = false;
 			for(var i=0;i<resultBoook.length;i++){
-				console.log("book is version Code  " ,resultBoook[i].versionCode)
 				console.log("book is version Code  " ,resultBoook[i].languageName)
 				if(resultBoook[i].versionCode == versCode){
-					console.log("book is ALREADY ADDED PRESSED  " ,resultBoook[i].versionCode)
+					console.log("VERSION ALREADY ADDED")
 					found = true
 				}
 			}
 			if(found==false){
+				console.log("add version ")
 				for(var i=0;i<bookmodel.length;i++){
 					realm.write(() => {
 						realm.create('BookModel', bookmodel[i])
 						resultsA[0].downloaded = true;
+
 					})
 				}
 			}
 		}
+	}
 	}
 	}
 
@@ -477,7 +491,8 @@ class DbHelper {
 		if(realm){
 		// var version = realm.objects('BookModel').filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId ==[c]   "' + bookId + '" chapterNumber "' + chapterNumber + '"' )
 		var version = realm.objects('BookModel').filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId ==[c]   "' + bookId + '" ' )
-			return version
+		console.log("response for book chappter ",version)	
+		return version
 		}
 	}
 }

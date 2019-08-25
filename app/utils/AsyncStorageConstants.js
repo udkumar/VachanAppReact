@@ -1,7 +1,7 @@
 import {getBookNameFromMapping,getBookNumberFromMapping} from './UtilFunctions';
 
 
-module.exports = {
+export const AsyncStorageConstants = {
     Keys: {
         ColorMode : 'color_mode',
         SizeMode: 'size_mode',
@@ -16,7 +16,7 @@ module.exports = {
         BackupRestoreEmail:'backup_restore_email',
         ChapterNumber:"chapter_number",
         BookNumber:"book_number",
-        versionId:'version_id'
+        sourceId:"source_id"
 
     },
     Values: {

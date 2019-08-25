@@ -52,8 +52,8 @@ export default class SelectionStack extends Component {
     }
     updateSelectedChapter = (bookId,chapterNumber)=>{
         this.setState({chapterNumber})
-        this.props.screenProps.updateChapterData(bookId,chapterNumber)
-        this.props.navigation.state.params.updateLanguage(null,null,bookId,chapterNumber)
+        // this.props.screenProps.updateChapterData(bookId,chapterNumber)
+        this.props.navigation.state.params.updateLanguage(null,null,null,bookId,chapterNumber)
         // this.props.navigation.state.params.updateLanguage(chapterNumber)
         this.props.navigation.goBack()
 
@@ -73,7 +73,6 @@ export default class SelectionStack extends Component {
                     chapterNumber:this.state.chapterNumber,
                     updateSelectedBook:this.updateSelectedBook,
                     updateSelectedChapter:this.updateSelectedChapter,
-                    updateBookList: this.props.screenProps.updateBookList,
                     // booksKey:this.props.navigation.state.params.booksKey
                 }}
             

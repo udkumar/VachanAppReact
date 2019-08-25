@@ -15,7 +15,7 @@ import Login from './Login';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {backupPageStyle} from './styles.js'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
-const AsyncStorageConstants = require('../../utils/AsyncStorageConstants')
+import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
 var RNFS = require('react-native-fs');
 
 export default class BackupRestore extends Component {
