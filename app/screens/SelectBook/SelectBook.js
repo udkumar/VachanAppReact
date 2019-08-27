@@ -107,8 +107,9 @@ renderItem = ({item, index})=> {
             style={this.styles.bookList}>
             <Text
               style={
-                this.styles.textStyle
-              }>
+                [this.styles.textStyle,{fontWeight:item.bookName == this.props.screenProps.bookName ? "bold" : "normal"}]
+              }
+              >
               {item.bookName}
             </Text>
             <Icon 
@@ -163,6 +164,7 @@ renderItem = ({item, index})=> {
 
 
   render(){
+    console.log("book id ",this.props.screenProps.bookName)
     let activeBgColor = 
       this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#3F51B5' : '#fff'
     let inactiveBgColor = 
@@ -173,7 +175,7 @@ renderItem = ({item, index})=> {
       <View style={this.styles.container}>
        
         <View style={this.styles.bookNameContainer}>
-            <Segment>
+            {/* <Segment>
               {
                 this.state.OTSize > 0 
               ?
@@ -181,7 +183,7 @@ renderItem = ({item, index})=> {
                 active={this.state.activeTab} 
                 style={[{
                   backgroundColor: this.state.activeTab ? activeBgColor : inactiveBgColor,
-                  width: this.state.NTSize == 0 ? width : width/2,
+                  width: this.state.NTSize == 0 ? width : width,
                   },this.styles.segmentButton]} 
                 onPress={this.toggleButton.bind(this,true)
                 }
@@ -201,7 +203,7 @@ renderItem = ({item, index})=> {
                 active={!this.state.activeTab} 
                 style={[{
                   backgroundColor: !this.state.activeTab ? activeBgColor : inactiveBgColor,
-                  width: this.state.OTSize == 0 ? width : width/2,                  
+                  width: this.state.OTSize == 0 ? width : width,                  
                 },this.styles.segmentButton]} 
                 onPress={this.toggleButton.bind(this,false)}>
                 <Text 
@@ -215,7 +217,7 @@ renderItem = ({item, index})=> {
                 </Text>
               </Button>
               :null}
-            </Segment>
+            </Segment> */}
             <FlatList
               ref={ref => this.flatlistRef = ref}
               data={this.state.booksList}

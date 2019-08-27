@@ -18,12 +18,9 @@ import VerseView from './VerseView'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
 
-const Constants = require('../../utils/constants')
-
 import {getResultText} from '../../utils/UtilFunctions';
-import {getBookNameFromMapping,getBookSectionFromMapping,getBookNumberFromMapping,getBookChaptersFromMapping} from '../../utils/UtilFunctions';
+import {getBookNameFromMapping,getBookChaptersFromMapping} from '../../utils/UtilFunctions';
 import APIFetch from '../../utils/APIFetch'
-import ModalForChapter from './component/ModalForChapter'
 import {
   MenuContext
 } from 'react-native-popup-menu';
@@ -43,7 +40,7 @@ export default class Bible extends Component {
         headerTitle:(
           <View style={{flexDirection:'row',flex:1}}>
           
-            <TouchableOpacity style={{flexDirection:'row'}}  onPress={() =>{navigation.navigate("SelectionTab", {updateLanguage:params.updateLanguage})}}>
+            <TouchableOpacity style={{flexDirection:'row'}}  onPress={() =>{navigation.navigate("SelectionTab", {updateLanguage:params.updateLanguage,bookName:params.bookName,chapterNumber:params.currentChapter,languageName:params.bibleLanguage})}}>
               <Text 
                 style={{fontSize:16,color:"#fff",alignSelf:'center',alignItems:'center',marginHorizontal:4}}
                 >{params.bookName}
@@ -86,7 +83,6 @@ export default class Bible extends Component {
     console.log("PROPS VALUE BIBLE "+JSON.stringify(props))
 
     this.getSelectedReferences = this.getSelectedReferences.bind(this)
-    this.queryBook = this.queryBook.bind(this)
     this.onBookmarkPress = this.onBookmarkPress.bind(this)
     // this.onScroll = this.onScroll.bind(this)
 
@@ -139,9 +135,9 @@ export default class Bible extends Component {
     this.setState({
       colorFile:props.screenProps.colorFile,
       sizeFile:props.screenProps.sizeFile,
-      bookId:props.screenProps.bookId,
-      bookName:props.screenProps.bookName,
-      currentChapter:props.screenProps.currentChapter
+    //   bookId:props.screenProps.bookId,
+    //   bookName:props.screenProps.bookName,
+    //   currentChapter:props.screenProps.currentChapter
     })
     this.styles = styles(props.screenProps.colorFile, props.screenProps.sizeFile);   
   }
@@ -246,13 +242,11 @@ export default class Bible extends Component {
             this.getHighlights()
             this.getBookMarks()
          })
-
-        
-
+       AsyncStorageUtil.setAllItems([[AsyncStorageConstants.Keys.bookId, this.state.bookId],[AsyncStorageConstants.Keys.ChapterNumber, this.state.currentVisibleChapter]]);         
       })
        
   }
-  
+  //get highlights from local db  
   async getHighlights(){
     let model2 = await  DbQueries.queryHighlights(this.state.languageName,this.state.versionCode,this.state.bookId)
     if(model2  == null ){
@@ -268,10 +262,12 @@ export default class Bible extends Component {
       }
   }
   }
-  async getBookMarks(book){
+  //get bookmarks from local db
+  async getBookMarks(){
     let model = await  DbQueries.queryBookmark(this.state.languageName,this.state.versionCode,this.state.bookId)
     if (model == null) {
     }else{
+      console.log("book mark ",model)
       if(model.length > 0){
         for(var i = 0; i<=model.length-1;i++){
           var index =  model.findIndex(chapInd => chapInd.chapterNumber === this.state.currentVisibleChapter)
@@ -287,30 +283,14 @@ export default class Bible extends Component {
       }
     }
   }
-  // render data from local db
-  async queryBook() {
-    let model = await DbQueries.queryBookWithId(this.props.screenProps.versionCode, 
-        this.props.screenProps.languageName, this.state.bookId);
-    if (model == null) {
-    } else {
-      if (model.length > 0) {
-        this.setState({chapters: model[0].chapters, bookmarksList: model[0].bookmarksList}, () => {
-              this.setState({isBookmark: this.state.bookmarksList.indexOf(this.state.currentVisibleChapter) > -1}, () => {
-                this.props.navigation.setParams({
-                    isBookmark: this.state.isBookmark,
-                    dataLength:getBookChaptersFromMapping(this.state.bookId)
-                })      
-              })
-        })
-      }
-    }
-  }
 
+  //add book mark from header icon 
   async onBookmarkPress(){
     index = this.state.bookmarksList.findIndex(chapInd => chapInd.chapterNumber === this.state.currentVisibleChapter);
-
+    console.log(" index ",index )
     await DbQueries.updateBookmarkInBook(this.state.languageName,this.state.versionCode,this.state.bookId,this.state.currentVisibleChapter, index > -1 ? false : true);
     this.setState({isBookmark: index > -1 ? false : true}, () => {
+      console.log("is bookmark ",this.state.isBookmark)
       this.props.navigation.setParams({isBookmark: this.state.isBookmark}) 
         if(index > -1){
           this.state.bookmarksList.splice(index, 1)
@@ -322,6 +302,7 @@ export default class Bible extends Component {
     })
 
   }
+//remove bookmark from bottom bar 
   onBookmarkRemove = async( id,chapterNum ) =>{
     index = this.state.bookmarksList.findIndex(chapInd => chapInd.chapterNumber ===this.state.currentVisibleChapter);
     
@@ -335,7 +316,7 @@ export default class Bible extends Component {
     }
 
   }
-
+//selected reference for highlighting verse
   getSelectedReferences(vIndex, chapterNum, vNum) {
     let obj = chapterNum + '_' + vIndex + '_' + vNum
     
@@ -368,7 +349,6 @@ export default class Bible extends Component {
     })
   }
   
-
   addToNotes = () => {
     let refList = []
     let id = this.state.bookId
@@ -383,6 +363,7 @@ export default class Bible extends Component {
     this.setState({selectedReferenceSet: [], showBottomBar: false})
   }
 
+  //after selected reference do highlight 
   doHighlight = async () => {
     if (this.state.menuHighlightedText == true) {
       for (let item of this.state.selectedReferenceSet) {
@@ -405,6 +386,7 @@ export default class Bible extends Component {
     this.setState({ selectedReferenceSet: [], showBottomBar: false})
   }
 
+//remove highlight from bottom or split screen on press delete or cross icon
   removeHighlightFromBottom = async( chapterNum,verseNum)=>{
     for(var i=0; i<=this.state.HightlightedVerseArray.length-1; i++){
       if(this.state.HightlightedVerseArray[i].chapterNumber == chapterNum && this.state.HightlightedVerseArray[i].verseNumber == verseNum){
@@ -414,10 +396,12 @@ export default class Bible extends Component {
       }
     }
   }
+
   getVerseText(cNum, vIndex) {
     return getResultText(this.state.chapters[cNum - 1].verseModels[vIndex].text)
   }
 
+  //share verse
   addToShare = () => {
     let bookName = getBookNameFromMapping(this.state.bookId,this.state.languageName)
     let shareText = ''
@@ -453,12 +437,12 @@ export default class Bible extends Component {
 
   }
 
-  updateCurrentChapter = (val)=>{
+  //update chapter number on right or left icon button 
+  updateCurrentChapter(val){
       let currChapter = this.state.currentVisibleChapter + val
 
       APIFetch.getChapterContent(this.state.sourceId,this.state.bookId,currChapter ).then(res =>{
         
-        console.log("BIBLE CONTENT ",this.state.sourceId)
         this.setState({
           currentVisibleChapter: currChapter,
           dataLength: getBookChaptersFromMapping(this.state.bookId),
@@ -472,41 +456,54 @@ export default class Bible extends Component {
           })
       })
 
-
-        
+      AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.ChapterNumber, currChapter);         
   }
 
-  
-  updateLanguage = async(sourceId,language,version,bookId,chapter) =>{
-    console.log("source  id in update language ",sourceId, "LAN  ",language,"VER",version,"BOOKID",bookId,"CHAPTER",chapter)
-    if(bookId !=null && chapter !=null){
-      console.log("book id get from api ",bookId)
-      this.props.navigation.setParams({
-        currentChapter: chapter,
-        bookName: getBookNameFromMapping(bookId,this.state.languageName),
-      })
+  //update source id, langauge,version, bookid and chapter number on back naviagtion it is a callback function for language page and selete tab page
+  updateLanguage = async(sourceId,language,version,downloaded,bookId,chapter) =>{
+    let res = await AsyncStorageUtil.getAllItems([
+      AsyncStorageConstants.Keys.LanguageName,
+      AsyncStorageConstants.Keys.VersionCode,
+      AsyncStorageConstants.Keys.BookId,
+      AsyncStorageConstants.Keys.ChapterNumber,
+      AsyncStorageConstants.Keys.sourceId,
+    ])
+
+    console.log("downloaded ",true)
+    if(downloaded == true ){
+      var response = await dbQueries.queryVersions(language,version,this.state.bookId)
+      // console.log("response ",response[0].chapters[this.state.currentVisibleChapter-1])
+      this.setState({
+        chapters:response[0].chapters[res[3][1]-1].verses,sourceId,languageName:language,versionCode:version,downloaded:true})
+    }
+    else{
       APIFetch.getChapterContent(sourceId,bookId,chapter).then(res =>{
-        this.setState({chapters:res.chapterContent.verses,currentVisibleChapter:chapter,bookId})
+        this.setState({chapters:res.chapterContent.verses,currentVisibleChapter:chapter,bookId,dataLength: getBookChaptersFromMapping(bookId),})
        })
-      
     }
-    if(language !=null && version !=null){
-      console.log("book id get from local db",AsyncStorageConstants.Values.DefBookId)
-        this.props.navigation.setParams({
-        bibleLanguage: language,
-        bibleVersion: version,
-        bookName: getBookNameFromMapping(AsyncStorageConstants.Values.DefBookId,language)
-      })
-      var response = await dbQueries.queryVersions(language,version,AsyncStorageConstants.Values.DefBookId,language)
-      console.log("response ",response)
-      this.setState({chapters:response[0].chapters[0].verses,sourceId,languageName:language,versionCode:version})
-    }
-  }
+    // console.log(" book id ", res[2][1],"source id ", res[4][1])
+    // AsyncStorageUtil.setAllItems([
+    //   [AsyncStorageConstants.Keys.LanguageName, language ==null ? res[0][1] : language],
+    //   [AsyncStorageConstants.Keys.VersionCode, version  ==null ? res[1][1] : version ],
+    //   [AsyncStorageConstants.Keys.bookId, bookId  ==null ?  res[2][1] : bookId],
+    //   [AsyncStorageConstants.Keys.ChapterNumber,chapter  ==null ?  res[3][1] : chapter ],
+    //   [AsyncStorageConstants.Keys.sourceId, sourceId ==null ? res[4][1] : sourceId  ]
+    // ]); 
+    // this.setState({
+    //   languageName: language ==null ? res[0][1] : language,
+    //   versionCode:  version  ==null ? res[1][1] : version ,
+    //   bookId :  bookId  ==null ?  res[2][1] : bookId,
+    //   bookName: getBookNameFromMapping(bookId  ==null ?  res[2][1] : bookId,language ==null ? res[0][1] : language),
+    //   sourceId : sourceId ==null ? res[4][1] : sourceId ,
+    //   currentVisibleChapter:chapter  ==null ?  res[3][1] : chapter
+    //  })
 
+  }
+  //close split screen 
     closeSplitScreen = ()=>{
      this.setState({close:!this.state.close})
   }
-
+//change book from split screen 
   changeBookFromSplit = ( id,chapterNum) => {
     this.setState({bookId:id,currentVisibleChapter:chapterNum,bookName:getBookNameFromMapping(id,this.state.languageName)})
     this.props.navigation.setParams({
@@ -519,7 +516,8 @@ export default class Bible extends Component {
   _keyExtractor = (item, index) => item.number;
 
   render() {
-
+    console.log("language name ",this.state.languageName)
+    console.log("bookmark list ",this.state.bookmarksList)
     const thumbSize = this.state.thumbSize;
       return (
         <View style={this.styles.container}>

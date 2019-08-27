@@ -17,7 +17,7 @@ const SelectionTab = TabNavigator(
         // tabBarPosition: 'bottom',
         activeTintColor:'#fff',
         inactiveTintColor:'#D3D3D3',
-        swipeEnabled:false,
+        swipeEnabled:true,
         tabBarOptions: {
             labelStyle: { fontSize: 16,margin:0,padding:0 },
             showIcon: true,
@@ -43,17 +43,17 @@ export default class SelectionStack extends Component {
     constructor(props){
         super(props)
         this.state = {
-            bookId:this.props.screenProps.bookId,
-            chapterNumber:this.props.screenProps.chapterNumber
+            bookId:'',
+            chapterNumber:''
         }
     }
     updateSelectedBook = (bookId)=>{
         this.setState({bookId})
     }
     updateSelectedChapter = (bookId,chapterNumber)=>{
-        this.setState({chapterNumber})
+        this.setState({chapterNumber,bookId})
         // this.props.screenProps.updateChapterData(bookId,chapterNumber)
-        this.props.navigation.state.params.updateLanguage(null,null,null,bookId,chapterNumber)
+        this.props.navigation.state.params.updateLanguage(null,null,null,null,bookId,chapterNumber)
         // this.props.navigation.state.params.updateLanguage(chapterNumber)
         this.props.navigation.goBack()
 
@@ -67,13 +67,13 @@ export default class SelectionStack extends Component {
                     sizeFile:this.props.screenProps.sizeFile,
                     colorMode:this.props.screenProps.colorMode,
                     booksList:this.props.screenProps.booksList,
-                    languageName:this.props.screenProps.languageName,
+                    languageName:this.props.navigation.state.params.languageName,
                     versionCode:this.props.screenProps.versionCode,
                     bookId:this.state.bookId,
-                    chapterNumber:this.state.chapterNumber,
+                    bookName:this.props.navigation.state.params.bookName,
+                    chapterNumber:this.props.navigation.state.params.chapterNumber,
                     updateSelectedBook:this.updateSelectedBook,
                     updateSelectedChapter:this.updateSelectedChapter,
-                    // booksKey:this.props.navigation.state.params.booksKey
                 }}
             
             />

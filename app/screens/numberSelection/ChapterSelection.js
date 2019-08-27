@@ -97,7 +97,7 @@ export default class ChapterSelection extends Component {
             //  style={{flex:0.25,borderColor:'black',borderRightWidth:1, borderBottomWidth:1,
             // height:width/4, justifyContent:"center"}}
             >
-                <Text style={this.styles.chapterNum}>{item}</Text>
+                <Text style={[this.styles.chapterNum,{fontWeight: item == this.props.screenProps.chapterNumber ? "bold":"normal"}]}>{item}</Text>
             </View>
             </TouchableOpacity>
         }

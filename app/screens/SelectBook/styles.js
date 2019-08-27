@@ -8,7 +8,7 @@ export const SelectBookPageStyle =(colorFile, sizeFile) =>{
     return StyleSheet.create({
    container:{
     flex:1,
-    flexDirection:'row'
+    // flexDirection:'row'
    },
     textStyle: {
         fontSize:sizeFile.titleText,

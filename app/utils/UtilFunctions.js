@@ -46,6 +46,7 @@ export function getBookChaptersFromMapping(id){
     var obj = id_name_map.id_name_map;
     for (var key in obj) {
         if (obj.hasOwnProperty(key)) {
+            // console.log("bookid in get Book Chapters From Mapping ",id)
             var bookId =  id.toUpperCase()
             if (key == bookId) {
                 var val = obj[key];

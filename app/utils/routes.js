@@ -3,7 +3,6 @@ import React, { Component } from 'react'
 import {StackNavigator, DrawerNavigator,} from 'react-navigation'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-// import SelectBook from '../screens/SelectBook/SelectBook'
 import About from '../screens/About/About'
 import Search from '../screens/Search/Search'
 import Settings from '../screens/settings/Settings'
@@ -75,12 +74,7 @@ const StackNavigate = StackNavigator(
            
         })
       },
-      // SelectBook: {
-      //   screen: SelectBook,
-      //   navigationOptions: {
-      //     headerTitle:"Select Book"
-      // }
-      // },
+  
       About: {
         screen: About,
       },
@@ -88,12 +82,6 @@ const StackNavigate = StackNavigator(
       Settings: {
         screen: Settings,
       },
-      // ChapterSelection: {
-      //   screen: ChapterSelection,
-      //   navigationOptions: {
-      //       headerTitle:"Select Chapter"
-      //   }
-      // },
       ReferenceSelection: {
         screen: ReferenceSelection,
       },
@@ -122,7 +110,11 @@ const StackNavigate = StackNavigator(
         screen:Account
       },
       SelectionTab:{
-        screen:SelectionTab
+        screen:SelectionTab,
+        navigationOptions: {
+                headerTitle:"Select Chapter"
+            }
+
       }
      
   },
@@ -156,8 +148,8 @@ export default class App extends Component {
         languageCode: AsyncStorageConstants.Values.DefLanguageCode,
         versionCode: AsyncStorageConstants.Values.DefVersionCode,
 
-        languageName:AsyncStorageConstants.Values.DefLanguageName,
-        versionName:AsyncStorageConstants.Values.DefVersionName,
+        // languageName:AsyncStorageConstants.Values.DefLanguageName,
+        // versionName:AsyncStorageConstants.Values.DefVersionName,
         colorMode: AsyncStorageConstants.Values.DayMode,
         // bookId:AsyncStorageConstants.Values.DefBookId,
         // bookName:AsyncStorageConstants.Values.DefBookName,

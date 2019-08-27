@@ -242,7 +242,7 @@ export default class LanguageList extends Component {
         [AsyncStorageConstants.Keys.sourceId, JSON.stringify(sourceId)],
         [AsyncStorageConstants.Keys.LanguageName, langName],
         [AsyncStorageConstants.Keys.VersionCode, verCode]]); 
-      this.props.navigation.state.params.updateLanguage(sourceId,langName,verCode,null,null)
+      this.props.navigation.state.params.updateLanguage(sourceId,langName,verCode,true,null,null)
       this.props.navigation.dispatch(NavigationActions.back())    
     }
   
