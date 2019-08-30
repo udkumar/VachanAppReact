@@ -45,11 +45,12 @@ export default class SelectionStack extends Component {
         super(props)
         this.state = {
             bookId:'',
-            chapterNumber:''
+            chapterNumber:'',
+            totalNumberOfChapter:this.props.navigation.state.params.totalNumberOfChapter
         }
     }
-    updateSelectedBook = (bookId)=>{
-        this.setState({bookId})
+    updateSelectedBook = (bookId,totalNumberOfChapter)=>{
+        this.setState({bookId,totalNumberOfChapter})
               
     }
     updateSelectedChapter = (bookId,chapterNumber)=>{
@@ -59,8 +60,8 @@ export default class SelectionStack extends Component {
         this.props.navigation.goBack()
     }
     // async componentDidMount(){
-        // var booksid = await DbQueries.getDownloadedBook(this.props.navigation.state.params.languageName,this.props.navigation.state.params.versionCode)
-        // console.log("bookssssId  ",booksid)
+    //     var booksid = await DbQueries.getDownloadedBook(this.props.navigation.state.params.languageName,this.props.navigation.state.params.versionCode)
+    //     console.log("bookssssId  ",booksid)
     // }
     render(){
         return(
@@ -78,7 +79,8 @@ export default class SelectionStack extends Component {
                     updateSelectedBook:this.updateSelectedBook,
                     updateSelectedChapter:this.updateSelectedChapter,
                     sourceId:this.props.navigation.state.params.sourceId,
-                    downloaded:this.props.navigation.state.params.downloaded
+                    downloaded:this.props.navigation.state.params.downloaded,
+                    totalNumberOfChapter:this.props.navigation.state.params.totalNumberOfChapter
                 }}
             
             />

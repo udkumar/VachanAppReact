@@ -19,6 +19,7 @@ const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil'
+import {id_name_map} from '../../assets/mappings.json'
 
 import {NavigationActions} from 'react-navigation'
 import APIFetch from '../../utils/APIFetch'
@@ -80,14 +81,28 @@ export default class SelectBook extends Component {
      this.getBook()
   }
   async getBook(){
-    console.log("SCREENPROPS OF BOOK SELECT ",this.props)
-    // if(this.props.screenProps.downloaded){
-    //     var booksid = await DbQueries.getDownloadedBook(this.props.screenProps.languageName,this.props.screenProps.versionCode)
-    //   console.log("DOWNLOADED BOOKIS FROM SELECTED BOOK",booksid)
-    //   }
-    // else{
+    var bookListData=[]
+
+    // console.log("SCREENPROPS OF BOOK SELECT ",this.props)
+    if(this.props.screenProps.downloaded){
+        var booksid = await DbQueries.getDownloadedBook(this.props.screenProps.languageName,this.props.screenProps.versionCode)
+          for(var i = 0; i<=booksid.length-1;i++){
+          console.log(" book id from db chapter length",booksid[i].chapters.length)
+          var bookId = booksid[i].bookId
+          var bookList = {
+                bookId:bookId,
+                bookName: booksid[i].bookName,
+                section:getBookSectionFromMapping(bookId),
+                bookNumber:getBookNumberFromMapping(bookId),
+                languageName: this.props.screenProps.languageName, 
+                versionCode:this.props.screenProps.versionCode, 
+                numOfChapters:getBookChaptersFromMapping(bookId)}
+                bookListData.push(bookList)
+          }
+
+      }
+    else{
       var booksid = await APIFetch.availableBooks(this.props.screenProps.sourceId)
-      var bookListData=[]
       console.log("response ",JSON.stringify(booksid))
         for(var key in booksid[0].books){
           console.log(" key and books id "+key+" book vakue "+JSON.stringify(booksid[0].books[key]),)
@@ -95,21 +110,22 @@ export default class SelectBook extends Component {
           var bookList = {bookId:bookId,
                 bookName: getBookNameFromMapping(bookId,this.props.screenProps.languageName),
                 section:getBookSectionFromMapping(bookId),bookNumber:getBookNumberFromMapping(bookId),
-                languageName: this.props.screenProps.languageName, versionCode:this.props.screenProps.versionCode, numOfChapters:getBookChaptersFromMapping(bookId)}
+                languageName: this.props.screenProps.languageName, 
+                versionCode:this.props.screenProps.versionCode, 
+                numOfChapters:getBookChaptersFromMapping(bookId)}
                 bookListData.push(bookList)
         }
-    
-      var result = bookListData.sort(function(a, b){
-        return parseFloat(a.bookNumber) - parseFloat(b.bookNumber);  
-      })
-      this.setState({booksList:result})
-    // }
-   
+    }
+    var result = bookListData.sort(function(a, b){
+      return parseFloat(a.bookNumber) - parseFloat(b.bookNumber);  
+    })
+    this.setState({booksList:result})
   }
   navigateToChapter(item){
+    // console.log("  from book chapter length",this.props.navigation.state.params.chaptersLength)
     AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.BookId, item.bookId); 
-    this.props.screenProps.updateSelectedBook(item.bookId)
-    this.props.navigation.navigate('Chapters',{bookId:item.bookId})
+    this.props.screenProps.updateSelectedBook(item.bookId,item.numOfChapters)
+    this.props.navigation.navigate('Chapters',{bookId:item.bookId,chaptersLength:item.numOfChapters})
   }
 renderItem = ({item, index})=> {
     return (

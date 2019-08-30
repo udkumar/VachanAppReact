@@ -40,30 +40,25 @@ export default class ChapterSelection extends Component {
   //   this.fetchChapters()
   // }
   async componentWillReceiveProps(props){
-    var response = await APIFetch.getNumberOfChapter(this.props.screenProps.sourceId,props.screenProps.bookId)
-      var chapters = []
-        for(var i=0; i<response.length;i++){
-          var number = response[i].chapter.number
-          console.log("number chapter "+JSON.stringify(response[i].chapter.number))
-          chapters.push(number)
-        }
-        this.setState({chapterData:chapters})
-   
+  this.fetchChapters()
   }
   componentDidMount(){
     this.fetchChapters()
   }
   async fetchChapters(){
-  var response = await APIFetch.getNumberOfChapter(this.props.screenProps.sourceId,this.state.bookId)
-  console.log("response chapter number ",response)
-  console.log("chapters response ",this.props.screenProps.bookId)
-    var chapters = []
-      for(var i=0; i<response.length;i++){
-        var number = response[i].chapter.number
-        console.log("number chapter "+JSON.stringify(response[i].chapter.number))
-        chapters.push(number)
-      }
-      this.setState({chapterData:chapters})
+
+    console.log("chapternumber ",this.props.screenProps.totalNumberOfChapter)
+    console.log("chapternumber 2 ",this.props.navigation.state.params.chaptersLength)
+
+    this.setState({chapterData:this.props.screenProps.totalNumberOfChapter})
+  // var response = await APIFetch.getNumberOfChapter(this.props.screenProps.sourceId,this.state.bookId)
+  //   var chapters = []
+  //     for(var i=0; i<response.length;i++){
+  //       var number = response[i].chapter.number
+  //       console.log("number chapter "+JSON.stringify(response[i].chapter.number))
+  //       chapters.push(number)
+  //     }
+  //     this.setState({chapterData:chapters})
 }
 
   onNumPress(item){

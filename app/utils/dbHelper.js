@@ -365,11 +365,12 @@ class DbHelper {
 		console.log("languaeg name ",langName,"version code ",verCode)
 		let realm = await this.getRealm();
 		if(realm){
-					// let result = realm.objects('BookModel').filtered('languageName == "' + langName +'" && versionCode == "' + verCode +'" ');
-					let result = realm.objects('BookModel');
+					let result = realm.objects('BookModel').filtered('languageName == "' + langName +'" && versionCode == "' + verCode +'" ');
+					// let result = realm.objects('BookModel');
+					console.log("RESULT BOOK id " ,result[0])
 					
-					console.log("RESULT BOOK id " ,result)
-					// return result
+					console.log("RESULT BOOK id " ,result[0].bookName)
+					return result
 		}
 	}
 	async addNewVersion(langName,versCode,bookmodel,sourceId){
