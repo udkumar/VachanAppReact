@@ -213,7 +213,6 @@ class DbHelper {
 	
 
 	async updateBookmarkInBook(langName,verCode,bId,cNum, isBookmark) {
-		console.log("language name in update bookmark "+langName+" vercode "+verCode+" bid "+bId+" cnum "+cNum+" isbookmark "+isBookmark)
 		let realm = await this.getRealm();
 		if(realm){
 			realm.write(() => {
@@ -346,7 +345,8 @@ class DbHelper {
 		if(realm){
 			for(var i=0; i<languages.length; i++){
 				realm.write(() => {
-					console.log("langauge added")
+					console.log("langauge added",languages[i])
+
 					realm.create('LanguageModel', languages[i])
 				})
 			}
@@ -361,7 +361,17 @@ class DbHelper {
 		}
 		return null
 	}
-
+	async getDownloadedBook(langName,verCode){
+		console.log("languaeg name ",langName,"version code ",verCode)
+		let realm = await this.getRealm();
+		if(realm){
+					// let result = realm.objects('BookModel').filtered('languageName == "' + langName +'" && versionCode == "' + verCode +'" ');
+					let result = realm.objects('BookModel');
+					
+					console.log("RESULT BOOK id " ,result)
+					// return result
+		}
+	}
 	async addNewVersion(langName,versCode,bookmodel,sourceId){
 		let realm = await this.getRealm();
 		if(realm){
@@ -401,7 +411,6 @@ class DbHelper {
 					realm.write(() => {
 						realm.create('BookModel', bookmodel[i])
 						resultsA[0].downloaded = true;
-
 					})
 				}
 			}
@@ -410,10 +419,10 @@ class DbHelper {
 	}
 	}
 
-	async queryVersions(langName,verCode,bookId){
+	async queryVersions(langName,verCode,bookId,chapterNumber){
 		let realm = await this.getRealm()
 		if(realm){
-		var version = realm.objects('BookModel').filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId ==   "' + bookId + '" ' )
+		var version = realm.objects('BookModel').filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId ==   "' + bookId + '"' )
 		return version
 		}
 	}

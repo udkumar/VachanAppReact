@@ -116,7 +116,7 @@ export default class Setting extends Component {
     this.setState({verseInLine:!this.state.verseInLine}, ()=>{
         this.props.screenProps.updateVerseInLine(this.state.verseInLine);
           AsyncStorageUtil.setAllItems([
-          [AsyncStorageConstants.Keys.VerseViewMode, this.state.verseInLine],
+          [AsyncStorageConstants.Keys.VerseViewMode, JSON.stringify(this.state.verseInLine)],
         ]);
       })
   }

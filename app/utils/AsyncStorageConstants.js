@@ -16,7 +16,8 @@ export const AsyncStorageConstants = {
         BackupRestoreEmail:'backup_restore_email',
         ChapterNumber:"chapter_number",
         BookNumber:"book_number",
-        sourceId:"source_id"
+        SourceId:"source_id",
+        Downloaded:"downloaded"
 
     },
     Values: {
@@ -46,7 +47,8 @@ export const AsyncStorageConstants = {
         DefBookName:getBookNameFromMapping("1jn","Hindi"),
         DefBookChapter:1,
         DefBookNumber:getBookNumberFromMapping("1jn"),
-        DefSourceId:22
+        DefSourceId:22,
+        DefDownloaded:false
        
     }
 }

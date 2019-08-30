@@ -11,6 +11,7 @@ export default class AsyncStorageUtil {
         }
     }
     static async setAllItems (keyValuePairs){
+        
         try {
             AsyncStorage.multiSet(keyValuePairs);
           } catch (error) {

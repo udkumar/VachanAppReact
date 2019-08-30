@@ -7,14 +7,13 @@ import APIFetch from '../../utils/APIFetch'
 import timestamp from '../../assets/timestamp.json'
 import {NavigationActions} from 'react-navigation'
 import { getBookNameFromMapping, getBookSectionFromMapping, getBookNumberFromMapping } from '../../utils/UtilFunctions';
-import dbQueries from '../../utils/dbQueries';
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants';
+import * as Progress from 'react-native-progress';
 
 const languageList = async () => { 
-  return await dbQueries.getLangaugeList()
+  return await DbQueries.getLangaugeList()
 }
- 
 
 class ExpandableItemComponent extends Component {
   constructor() {
@@ -77,8 +76,13 @@ class ExpandableItemComponent extends Component {
                </TouchableOpacity>
                :
               <TouchableOpacity style={{alignSelf:'center'}} onPress={()=>{this.props.DownloadBible(this.props.item.languageName,item.versionCode,index,item.sourceId)}}>
-                <Icon name="file-download" size={24} 
-                />
+              {/* {
+                this.props.startDownload ?
+                 <Progress.Bar progress={0.3} width={200} /> 
+              : 
+              <Icon name="file-download" size={24} />
+              } */}
+              <Icon name="file-download" size={24} />
                </TouchableOpacity>}
             </View>
           ))}
@@ -105,6 +109,8 @@ export default class LanguageList extends Component {
           text: '',
           languages:[],
           searchList:[],
+          startDownload:false
+
       }
     }
    
@@ -130,12 +136,11 @@ export default class LanguageList extends Component {
       var ud = new Date(timestamp.languageUpdate)
       var diffDays = Math.round(Math.abs((d.getTime() - ud.getTime())/(oneDay)))
         if(diffDays <= 20 ){
-          var languageList =  await dbQueries.getLangaugeList()
-            for(var i =0 ; i<languageList.length-1;i++){
+          var languageList =  await DbQueries.getLangaugeList()
+            for(var i =0 ; i<languageList.length;i++){
               lanVer.push(languageList[i])
             }
             if(languageList.length == 0){
-             
               const languageRes = await APIFetch.getVersions()
               for(var i = 0; i<languageRes.length;i++){
                 var versions = []
@@ -147,8 +152,9 @@ export default class LanguageList extends Component {
                 lanVer.push({languageName:language,versionModels:versions})
 
               }
+
               console.log("language list",lanVer)
-              dbQueries.addLangaugeList(lanVer)
+              DbQueries.addLangaugeList(lanVer)
             }
          }
          else{
@@ -163,8 +169,8 @@ export default class LanguageList extends Component {
             lanVer.push({languageName:language,versionModels:versions})
 
           }
-          console.log("language list",lanVer)
-          dbQueries.addLangaugeList(lanVer)
+          // console.log("language list",lanVer)
+          DbQueries.addLangaugeList(lanVer)
          
         }
     
@@ -175,7 +181,7 @@ export default class LanguageList extends Component {
     }
 
     goToVersionScreen(value){
-     this.props.navigation.navigate('VersionList',  {versions: value });
+    //  this.props.navigation.navigate('VersionList',  {versions: value });
     }
 
     SearchFilterFunction = (text)=>{
@@ -190,8 +196,7 @@ export default class LanguageList extends Component {
         })
     }
 
-    DownloadBible = async(langName,versCode,index,sourceId)=>{
-      console.log("source id   ",sourceId)
+    DownloadBible = async(langName,verCode,index,sourceId)=>{
       var bookModels = []
       var content = await APIFetch.getAllBooks(sourceId,"json")
       var content = content.bibleContent
@@ -217,7 +222,7 @@ export default class LanguageList extends Component {
       console.log("book id ",id)
       bookModels.push({
         languageName: langName,
-        versionCode: versCode,
+        versionCode: verCode,
         bookId: id,
         bookName:getBookNameFromMapping(id,langName),
         chapters: chapterModels,
@@ -225,13 +230,13 @@ export default class LanguageList extends Component {
         bookNumber: getBookNumberFromMapping(id)
       })
       }
-      console.log("book model ",bookModels)
-      await DbQueries.addNewVersion(langName,versCode,bookModels,sourceId)
+      // console.log("book model ",bookModels)
+      await DbQueries.addNewVersion(langName,verCode,bookModels,sourceId)
       languageList().then(async(language) => {
         this.setState({languages:language})
       })
-      .catch((error)=>{console.log("error")})
-     
+      .catch((error)=>{console.log("error",error)})
+      
     }
     setModalVisible=()=>{
       this.setState({modalVisible:!this.state.modalVisible})
@@ -239,15 +244,17 @@ export default class LanguageList extends Component {
     goToBible = (langName,verCode,sourceId)=>{
       console.log("sourceID",sourceId)
       AsyncStorageUtil.setAllItems([
-        [AsyncStorageConstants.Keys.sourceId, JSON.stringify(sourceId)],
+        [AsyncStorageConstants.Keys.SourceId, sourceId.toString()],
         [AsyncStorageConstants.Keys.LanguageName, langName],
-        [AsyncStorageConstants.Keys.VersionCode, verCode]]); 
-      this.props.navigation.state.params.updateLanguage(sourceId,langName,verCode,true,null,null)
+        [AsyncStorageConstants.Keys.VersionCode, verCode],
+        [AsyncStorageConstants.Keys.Downloaded, JSON.stringify(true)]
+      ]); 
+      this.props.navigation.state.params.queryBookFromAPI()
       this.props.navigation.dispatch(NavigationActions.back())    
     }
   
     render(){
-      
+      console.log("LANGUAGE IN RENDER ",this.state.languages.length)
       return (
             <View style={styles.MainContainer}>
             {this.state.languages.length == 0 ?
@@ -272,6 +279,7 @@ export default class LanguageList extends Component {
               item={item}
               DownloadBible = {this.DownloadBible}
               goToBible = {this.goToBible}
+              startDownload ={this.state.startDownload}
               // setModalVisible={this.setModalVisible}
             />
           ))}

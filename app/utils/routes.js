@@ -245,12 +245,12 @@ export default class App extends Component {
   }
 
   updateLanguage = async(languageCode,languageName,versionCode,versionName) => {
-    console.log("in ROTES update language"+languageCode+" "+languageName+" "+versionCode+" "+versionName)
+    // console.log("in ROTES update language"+languageCode+" "+languageName+" "+versionCode+" "+versionName)
     this.setState({languageCode, languageName,versionCode,versionName})
   }
 
   handleFirstConnectivityChange = (isConnected)=> {
-    console.log("is connected in routes "+isConnected)
+    // console.log("is connected in routes "+isConnected)
     if (isConnected == true) {
       this.setState({
         isConnected: true
@@ -282,8 +282,8 @@ export default class App extends Component {
       // AsyncStorageConstants.Keys.sourceId,
 
     ])
-    console.log("GET ALL ITEM ",res)
-    console.log("res of asynstorage value ",res)
+    // console.log("GET ALL ITEM ",res)
+    // console.log("res of asynstorage value ",res)
     this.setState({
       colorMode: res[0][1]== null ? AsyncStorageConstants.Values.DayMode : parseInt(res[0][1]),
       colorFile: res[0][1] == null ? dayColors : (parseInt(res[0][1]) == AsyncStorageConstants.Values.DayMode ? dayColors : nightColors),

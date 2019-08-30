@@ -24,6 +24,7 @@ import {NavigationActions} from 'react-navigation'
 import APIFetch from '../../utils/APIFetch'
 import {getBookNameFromMapping,getBookSectionFromMapping,getBookNumberFromMapping,getBookChaptersFromMapping} from '../../utils/UtilFunctions';
 
+import DbQueries from '../../utils/dbQueries.js';
 export default class SelectBook extends Component {
 
   constructor(props){
@@ -75,27 +76,38 @@ export default class SelectBook extends Component {
     { length: 48, offset: 48 * index, index }
   )
 
-  async componentDidMount(){
-     var booksid = await APIFetch.availableBooks(22)
-    var bookListData=[]
-    console.log("response ",JSON.stringify(booksid))
-      for(var key in booksid[0].books){
-        console.log(" key and books id "+key+" book vakue "+JSON.stringify(booksid[0].books[key]),)
-        var bookId = booksid[0].books[key].abbreviation
-        var bookList = {bookId:bookId,
-              bookName: getBookNameFromMapping(bookId,this.props.screenProps.languageName),
-              section:getBookSectionFromMapping(bookId),bookNumber:getBookNumberFromMapping(bookId),
-              languageName: this.props.screenProps.languageName, versionCode:this.props.screenProps.versionCode, numOfChapters:getBookChaptersFromMapping(bookId)}
-              bookListData.push(bookList)
-      }
-  
-    var result = bookListData.sort(function(a, b){
-      return parseFloat(a.bookNumber) - parseFloat(b.bookNumber);  
-    })
-    this.setState({booksList:result})
+  componentDidMount(){
+     this.getBook()
+  }
+  async getBook(){
+    console.log("SCREENPROPS OF BOOK SELECT ",this.props)
+    // if(this.props.screenProps.downloaded){
+    //     var booksid = await DbQueries.getDownloadedBook(this.props.screenProps.languageName,this.props.screenProps.versionCode)
+    //   console.log("DOWNLOADED BOOKIS FROM SELECTED BOOK",booksid)
+    //   }
+    // else{
+      var booksid = await APIFetch.availableBooks(this.props.screenProps.sourceId)
+      var bookListData=[]
+      console.log("response ",JSON.stringify(booksid))
+        for(var key in booksid[0].books){
+          console.log(" key and books id "+key+" book vakue "+JSON.stringify(booksid[0].books[key]),)
+          var bookId = booksid[0].books[key].abbreviation
+          var bookList = {bookId:bookId,
+                bookName: getBookNameFromMapping(bookId,this.props.screenProps.languageName),
+                section:getBookSectionFromMapping(bookId),bookNumber:getBookNumberFromMapping(bookId),
+                languageName: this.props.screenProps.languageName, versionCode:this.props.screenProps.versionCode, numOfChapters:getBookChaptersFromMapping(bookId)}
+                bookListData.push(bookList)
+        }
+    
+      var result = bookListData.sort(function(a, b){
+        return parseFloat(a.bookNumber) - parseFloat(b.bookNumber);  
+      })
+      this.setState({booksList:result})
+    // }
+   
   }
   navigateToChapter(item){
-    AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.bookId, item.bookId); 
+    AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.BookId, item.bookId); 
     this.props.screenProps.updateSelectedBook(item.bookId)
     this.props.navigation.navigate('Chapters',{bookId:item.bookId})
   }

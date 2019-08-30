@@ -40,7 +40,7 @@ export default class ChapterSelection extends Component {
   //   this.fetchChapters()
   // }
   async componentWillReceiveProps(props){
-    var response = await APIFetch.getNumberOfChapter(22,props.screenProps.bookId)
+    var response = await APIFetch.getNumberOfChapter(this.props.screenProps.sourceId,props.screenProps.bookId)
       var chapters = []
         for(var i=0; i<response.length;i++){
           var number = response[i].chapter.number
@@ -54,7 +54,8 @@ export default class ChapterSelection extends Component {
     this.fetchChapters()
   }
   async fetchChapters(){
-  var response = await APIFetch.getNumberOfChapter(22,this.state.bookId)
+  var response = await APIFetch.getNumberOfChapter(this.props.screenProps.sourceId,this.state.bookId)
+  console.log("response chapter number ",response)
   console.log("chapters response ",this.props.screenProps.bookId)
     var chapters = []
       for(var i=0; i<response.length;i++){
@@ -82,7 +83,8 @@ export default class ChapterSelection extends Component {
 
   
   render() {
-    console.log("chapter number ",this.props.screenProps.bookId)
+    console.log("book id  ",this.props.screenProps.bookId)
+    console.log("chapter number ",this.state.chapterData)
     return (
       <View style={this.styles.chapterSelectionContainer}>
       
