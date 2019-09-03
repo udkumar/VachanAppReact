@@ -335,21 +335,19 @@ class DbHelper {
 			if (resultsA.length == 0) {
 				realm.delete(result)
 			}
-			console.log("language deleted")
 		})
 	}
 
 	async addLangaugeList(languages){
 		let realm = await this.getRealm()
-			
 		if(realm){
-			for(var i=0; i<languages.length; i++){
+			
 				realm.write(() => {
 					console.log("langauge added",languages[i])
-
-					realm.create('LanguageModel', languages[i])
+					for(var i=0; i<languages.length; i++){
+						realm.create('LanguageModel', languages[i])
+					}
 				})
-			}
 		}
 	}
 	
@@ -386,15 +384,15 @@ class DbHelper {
 			}
 			else{
 			if(resultBoook.length == 0){
-				for(var i=0;i<bookmodel.length;i++){
+				
 					realm.write(() => {
+						for(var i=0;i<bookmodel.length;i++){
 						realm.create('BookModel', bookmodel[i])
 						// resultsB[0].downloaded = true;
-					})
-				}
-				realm.write(() => {
+					}
 					resultsB[0].downloaded = true;
-				})
+
+					})
 				
 			}
 			else{
@@ -408,12 +406,13 @@ class DbHelper {
 			}
 			if(found==false){
 				console.log("add version ")
-				for(var i=0;i<bookmodel.length;i++){
+				
 					realm.write(() => {
+						for(var i=0;i<bookmodel.length;i++){
 						realm.create('BookModel', bookmodel[i])
+						}
 						resultsA[0].downloaded = true;
 					})
-				}
 			}
 		}
 	}

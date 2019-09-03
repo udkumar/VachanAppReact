@@ -77,10 +77,7 @@ export default class SelectBook extends Component {
     { length: 48, offset: 48 * index, index }
   )
 
-  componentDidMount(){
-     this.getBook()
-  }
-  async getBook(){
+  async componentDidMount(){
     var bookListData=[]
 
     // console.log("SCREENPROPS OF BOOK SELECT ",this.props)
@@ -121,6 +118,7 @@ export default class SelectBook extends Component {
     })
     this.setState({booksList:result})
   }
+ 
   navigateToChapter(item){
     // console.log("  from book chapter length",item.numOfChapter)
     AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.BookId, item.bookId); 

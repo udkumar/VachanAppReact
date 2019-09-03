@@ -250,11 +250,17 @@ export default class Bible extends Component {
           let response = await dbQueries.queryVersions(languageName,versionCode,bookId,currentVisibleChapter)
           
           console.log("response of bible page 1",response)
-          this.setState({
-            chapter:response[0].verses,
-            totalChapters: getBookChaptersFromMapping(bookId),
-            isLoading:false
-          })
+          if(response.length != 0){
+            this.setState({
+              chapter:response[0].verses,
+              totalChapters: getBookChaptersFromMapping(bookId),
+              isLoading:false
+            })
+          }
+          else{
+            alert("no book found of ",bookId)
+          }
+          
         }
         else{
           let response =  await APIFetch.getChapterContent(sourceId,bookId,currentVisibleChapter)
@@ -269,25 +275,30 @@ export default class Bible extends Component {
       this.getBookMarks()
        
   }
+  
   //update chapter number on right or left icon button 
   async updateCurrentChapter(val){
     let currChapter = this.state.currentVisibleChapter + val
 
     if(this.state.downloaded == true){
         let response = await dbQueries.queryVersions(this.state.languageName,this.state.versionCode,this.state.bookId,this.state.currentVisibleChapter)
-        
-      this.setState({
-          currentVisibleChapter: currChapter,
-          chapter:response[0].verses,
-          totalChapters: getBookChaptersFromMapping(this.state.bookId),
-          isBookmark: this.state.bookmarksList.findIndex(chapInd => chapInd.chapterNumber === this.state.currentVisibleChapter) > -1 ? true : false
-        }, () => { 
-              this.props.navigation.setParams({
-                  isBookmark: this.state.isBookmark,
-                  currentChapter:this.state.currentVisibleChapter,
-              })
-          })
-     
+        if(response.length !=0){
+          this.setState({
+            currentVisibleChapter: currChapter,
+            chapter:response[0].verses,
+            totalChapters: getBookChaptersFromMapping(this.state.bookId),
+            isBookmark: this.state.bookmarksList.findIndex(chapInd => chapInd.chapterNumber === this.state.currentVisibleChapter) > -1 ? true : false
+          }, () => { 
+                this.props.navigation.setParams({
+                    isBookmark: this.state.isBookmark,
+                    currentChapter:this.state.currentVisibleChapter,
+                })
+            })
+        }
+        else{
+          alert("book not found")
+        }
+   
     }
     else{
       APIFetch.getChapterContent(this.state.sourceId,this.state.bookId,currChapter ).then(res =>{
