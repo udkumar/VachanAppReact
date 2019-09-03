@@ -48,7 +48,7 @@ class ExpandableItemComponent extends Component {
           onPress={this.props.onClickFunction}
           style={styles.header}
         >
-          <Text style={styles.headerText}>{this.props.item.languageName}</Text>
+          <Text style={styles.headerText}>{  this.props.item.languageName }</Text>
           <Icon name={this.props.item.isExpanded ? "keyboard-arrow-down" : "keyboard-arrow-up" } style={styles.iconStyle} size={24}/>
         </TouchableOpacity>
         <View
@@ -144,13 +144,12 @@ export default class LanguageList extends Component {
               const languageRes = await APIFetch.getVersions()
               for(var i = 0; i<languageRes.length;i++){
                 var versions = []
-                const language = languageRes[i].language
+                const language = languageRes[i].language.charAt(0).toUpperCase() + languageRes[i].language.slice(1)
                 for(var j= 0; j<languageRes[i].languageVersions.length;j++){
                   const  {version} = languageRes[i].languageVersions[j]
                   versions.push({sourceId:languageRes[i].languageVersions[j].sourceId,versionName:version.name,versionCode:version.code,license:"license",year:2019,downloaded:false})
                 }
                 lanVer.push({languageName:language,versionModels:versions})
-
               }
 
               console.log("language list",lanVer)
@@ -161,7 +160,7 @@ export default class LanguageList extends Component {
           const languageRes = await APIFetch.getVersions()
           for(var i = 0; i<languageRes.length;i++){
             var versions = []
-            const language = languageRes[i].language
+            const language = languageRes[i].language.charAt(0).toUpperCase() + languageRes[i].language.slice(1)
             for(var j= 0; j<languageRes[i].languageVersions.length;j++){
               const  {version} = languageRes[i].languageVersions[j]
               versions.push({sourceId:languageRes[i].languageVersions[j].sourceId,versionName:version.name,versionCode:version.code,license:"license",year:2019,downloaded:false})
@@ -197,6 +196,7 @@ export default class LanguageList extends Component {
     }
 
     DownloadBible = async(langName,verCode,index,sourceId)=>{
+       console.log("language name ",langName)
       var bookModels = []
       var content = await APIFetch.getAllBooks(sourceId,"json")
       var content = content.bibleContent

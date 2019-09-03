@@ -87,7 +87,7 @@ export default class SelectBook extends Component {
     if(this.props.screenProps.downloaded){
         var booksid = await DbQueries.getDownloadedBook(this.props.screenProps.languageName,this.props.screenProps.versionCode)
           for(var i = 0; i<=booksid.length-1;i++){
-          console.log(" book id from db chapter length",booksid[i].chapters.length)
+          // console.log(" book id from db chapter length",booksid[i].chapters.length)
           var bookId = booksid[i].bookId
           var bookList = {
                 bookId:bookId,
@@ -105,7 +105,7 @@ export default class SelectBook extends Component {
       var booksid = await APIFetch.availableBooks(this.props.screenProps.sourceId)
       console.log("response ",JSON.stringify(booksid))
         for(var key in booksid[0].books){
-          console.log(" key and books id "+key+" book vakue "+JSON.stringify(booksid[0].books[key]),)
+          // console.log(" key and books id "+key+" book vakue "+JSON.stringify(booksid[0].books[key]),)
           var bookId = booksid[0].books[key].abbreviation
           var bookList = {bookId:bookId,
                 bookName: getBookNameFromMapping(bookId,this.props.screenProps.languageName),
@@ -122,7 +122,7 @@ export default class SelectBook extends Component {
     this.setState({booksList:result})
   }
   navigateToChapter(item){
-    // console.log("  from book chapter length",this.props.navigation.state.params.chaptersLength)
+    // console.log("  from book chapter length",item.numOfChapter)
     AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.BookId, item.bookId); 
     this.props.screenProps.updateSelectedBook(item.bookId,item.numOfChapters)
     this.props.navigation.navigate('Chapters',{bookId:item.bookId,chaptersLength:item.numOfChapters})
@@ -178,7 +178,7 @@ renderItem = ({item, index})=> {
   }
 
   onViewableItemsChanged = ({ viewableItems, changed }) => {
-      console.log("Visible items are", viewableItems);
+      // console.log("Visible items are", viewableItems);
       if (viewableItems.length > 0) {
         if (viewableItems[0].index < this.state.OTSize) {
           // toggel to OT
@@ -192,7 +192,7 @@ renderItem = ({item, index})=> {
 
 
   render(){
-    console.log("book id ",this.props.screenProps.bookName)
+    // console.log("book id ",this.props.screenProps.bookName)
     let activeBgColor = 
       this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#3F51B5' : '#fff'
     let inactiveBgColor = 

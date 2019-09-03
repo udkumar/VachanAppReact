@@ -15,6 +15,7 @@ import { numberSelection } from './styles.js';
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil'
 
+import {getBookChaptersFromMapping} from '../../utils/UtilFunctions';
 
 
 export default class ChapterSelection extends Component {
@@ -40,17 +41,30 @@ export default class ChapterSelection extends Component {
   //   this.fetchChapters()
   // }
   async componentWillReceiveProps(props){
-  this.fetchChapters()
+    
+    console.log(" componentWillReceiveProps ",props.screenProps.bookId)
+    var totalChapter = getBookChaptersFromMapping(props.screenProps.bookId)
+    var chapterData = []
+    for(var i=1;i<=totalChapter;i++){
+      chapterData.push(i)
+  }
+  this.setState({chapterData})
+
+  // this.fetchChapters()
   }
   componentDidMount(){
+    console.log("DID MOUNT CALLING CHAPTER PAGE ")
     this.fetchChapters()
   }
   async fetchChapters(){
-
-    console.log("chapternumber ",this.props.screenProps.totalNumberOfChapter)
-    console.log("chapternumber 2 ",this.props.navigation.state.params.chaptersLength)
-
-    this.setState({chapterData:this.props.screenProps.totalNumberOfChapter})
+    var totalChapter = getBookChaptersFromMapping(this.props.screenProps.bookId)
+    var chapterData = []
+    for(var i=1;i<=totalChapter;i++){
+      chapterData.push(i)
+  }
+  this.setState({chapterData})
+    // console.log("chapternumber ",this.props.screenProps.totalNumberOfChapter)
+    // this.setState({chapterData:this.props.navigation.state.params.chaptersLength})
   // var response = await APIFetch.getNumberOfChapter(this.props.screenProps.sourceId,this.state.bookId)
   //   var chapters = []
   //     for(var i=0; i<response.length;i++){
@@ -79,10 +93,10 @@ export default class ChapterSelection extends Component {
   
   render() {
     console.log("book id  ",this.props.screenProps.bookId)
-    console.log("chapter number ",this.state.chapterData)
+    console.log("chapter number ",this.state.chapterData.length)
     return (
-      <View style={this.styles.chapterSelectionContainer}>
       
+      <View style={this.styles.chapterSelectionContainer}>
         <FlatList
         numColumns={4}
         data={this.state.chapterData}

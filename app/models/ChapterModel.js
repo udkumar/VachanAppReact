@@ -9,7 +9,7 @@ ChapterModel.schema = {
       chapterNumber: 'int',
       numberOfVerses:'int',
       verses: 'VerseModel[]',
-      // chapterOwner: {type: 'linkingObjects', objectType: 'BookModel', property:'chapters' }
+      chapterOwner: {type: 'linkingObjects', objectType: 'BookModel', property:'chapters' }
     }
 };
 

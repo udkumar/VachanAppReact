@@ -365,7 +365,7 @@ class DbHelper {
 		console.log("languaeg name ",langName,"version code ",verCode)
 		let realm = await this.getRealm();
 		if(realm){
-					let result = realm.objects('BookModel').filtered('languageName == "' + langName +'" && versionCode == "' + verCode +'" ');
+					let result = realm.objects('BookModel').filtered('languageName ==[c] "' + langName +'" && versionCode ==[c] "' + verCode +'" ');
 					// let result = realm.objects('BookModel');
 					console.log("RESULT BOOK id " ,result[0])
 					
@@ -421,11 +421,14 @@ class DbHelper {
 	}
 
 	async queryVersions(langName,verCode,bookId,chapterNumber){
+		console.log("chapter number ",chapterNumber)
 		let realm = await this.getRealm()
 		if(realm){
-		var version = realm.objects('BookModel').filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId ==   "' + bookId + '"' )
+		var version = realm.objects('ChapterModel').filtered('chapterOwner.languageName ==[c] "' + langName + '" && chapterOwner.versionCode ==[c] "' + verCode + '" && chapterOwner.bookId ==   "' + bookId + '" && chapterNumber ==   "' + chapterNumber + '"' )
+		// let result = realm.objects('BookModel').filtered('languageName ==[c] "' + langName +'" && versionCode ==[c] "' + verCode +'" ');
 		return version
 		}
+
 	}
 }
 

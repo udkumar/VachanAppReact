@@ -46,24 +46,21 @@ export default class SelectionStack extends Component {
         this.state = {
             bookId:'',
             chapterNumber:'',
-            totalNumberOfChapter:this.props.navigation.state.params.totalNumberOfChapter
+            totalChapters:''
         }
     }
-    updateSelectedBook = (bookId,totalNumberOfChapter)=>{
-        this.setState({bookId,totalNumberOfChapter})
-              
+    updateSelectedBook = (bookId,totalChapters)=>{
+        this.setState({bookId,totalChapters})
     }
+
     updateSelectedChapter = (bookId,chapterNumber)=>{
         this.setState({chapterNumber,bookId})
-        // this.props.screenProps.updateChapterData(bookId,chapterNumber)
         this.props.navigation.state.params.queryBookFromAPI()
         this.props.navigation.goBack()
     }
-    // async componentDidMount(){
-    //     var booksid = await DbQueries.getDownloadedBook(this.props.navigation.state.params.languageName,this.props.navigation.state.params.versionCode)
-    //     console.log("bookssssId  ",booksid)
-    // }
+ 
     render(){
+        console.log("total chapter ",this.props.navigation.state.params.totalChapters)
         return(
             <SelectionTab
                 screenProps={{
@@ -80,7 +77,7 @@ export default class SelectionStack extends Component {
                     updateSelectedChapter:this.updateSelectedChapter,
                     sourceId:this.props.navigation.state.params.sourceId,
                     downloaded:this.props.navigation.state.params.downloaded,
-                    totalNumberOfChapter:this.props.navigation.state.params.totalNumberOfChapter
+                    totalChapters:this.props.navigation.state.params.totalChapters
                 }}
             
             />
