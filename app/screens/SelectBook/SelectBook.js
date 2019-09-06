@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react';
 import {
   StyleSheet,
@@ -83,8 +82,8 @@ export default class SelectBook extends Component {
     // console.log("SCREENPROPS OF BOOK SELECT ",this.props)
     if(this.props.screenProps.downloaded){
         var booksid = await DbQueries.getDownloadedBook(this.props.screenProps.languageName,this.props.screenProps.versionCode)
-          for(var i = 0; i<=booksid.length-1;i++){
-          // console.log(" book id from db chapter length",booksid[i].chapters.length)
+        console.log(" books .......",booksid[0].bookId)
+        for(var i = 0; i<=booksid.length-1;i++){
           var bookId = booksid[i].bookId
           var bookList = {
                 bookId:bookId,
@@ -223,7 +222,6 @@ renderItem = ({item, index})=> {
               : null}
               {
                 this.state.NTSize > 0 
-
               ?
               <Button 
                 active={!this.state.activeTab} 

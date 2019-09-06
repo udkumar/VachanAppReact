@@ -16,9 +16,9 @@
       android:theme="@style/AppTheme"
       android:largeHeap="true"
     >
-    <meta-data android:name="com.facebook.sdk.ApplicationId"
-          android:value="@string/facebook_app_id"/>
-      <receiver android:name="io.invertase.firebase.notifications.RNFirebaseNotificationReceiver"/>
+    <!-- <meta-data android:name="com.facebook.sdk.ApplicationId"
+          android:value="@string/facebook_app_id"/> -->
+      <!-- <receiver android:name="io.invertase.firebase.notifications.RNFirebaseNotificationReceiver"/>
       <receiver android:enabled="true" android:exported="true"  android:name="io.invertase.firebase.notifications.RNFirebaseNotificationsRebootReceiver">
         <intent-filter>
           <action android:name="android.intent.action.BOOT_COMPLETED"/>
@@ -26,8 +26,8 @@
           <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
           <category android:name="android.intent.category.DEFAULT" />
         </intent-filter>
-      </receiver>
-      <service android:name="io.invertase.firebase.messaging.RNFirebaseMessagingService">
+      </receiver> -->
+      <!-- <service android:name="io.invertase.firebase.messaging.RNFirebaseMessagingService">
         <intent-filter>
           <action android:name="com.google.firebase.MESSAGING_EVENT" />
         </intent-filter>
@@ -37,7 +37,7 @@
           <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
         </intent-filter>
       </service>
-      <service android:name="io.invertase.firebase.messaging.RNFirebaseBackgroundMessagingService" />
+      <service android:name="io.invertase.firebase.messaging.RNFirebaseBackgroundMessagingService" /> -->
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
@@ -50,7 +50,7 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
-      <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+      <!-- <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" /> -->
     </application>
      
 

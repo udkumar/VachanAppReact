@@ -43,7 +43,7 @@ export const AsyncStorageConstants = {
         DefLanguageName:'Hindi',
         DefVersionCode:'IRV',
         DefVersionName:'Indian Revised Version',
-        DefBookId:"1jn",
+        DefBookId:"3jn",
         DefBookName:getBookNameFromMapping("1jn","Hindi"),
         DefBookChapter:1,
         DefBookNumber:getBookNumberFromMapping("1jn"),

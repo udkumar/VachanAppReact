@@ -196,7 +196,7 @@ export default class LanguageList extends Component {
     }
 
     DownloadBible = async(langName,verCode,index,sourceId)=>{
-       console.log("language name ",langName)
+       console.log("language name ",langName," verCode ",verCode)
       var bookModels = []
       var content = await APIFetch.getAllBooks(sourceId,"json")
       var content = content.bibleContent
@@ -242,7 +242,7 @@ export default class LanguageList extends Component {
       this.setState({modalVisible:!this.state.modalVisible})
     }
     goToBible = (langName,verCode,sourceId)=>{
-      console.log("sourceID",sourceId)
+      console.log("sourceID",sourceId,"langauge name ",langName,"versioncode",verCode)
       AsyncStorageUtil.setAllItems([
         [AsyncStorageConstants.Keys.SourceId, sourceId.toString()],
         [AsyncStorageConstants.Keys.LanguageName, langName],

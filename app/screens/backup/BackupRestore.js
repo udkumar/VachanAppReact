@@ -73,7 +73,7 @@ export default class BackupRestore extends Component {
         // }
     }
 
-    // continueSignIn = (email, url) => {
+    continueSignIn = (email, url) => {
     //     firebase.auth().signInWithEmailLink(email, url)
     //         .then(function(result) {
     //             AsyncStorageUtil.removeItem(AsyncStorageConstants.Keys.BackupRestoreEmail)
@@ -85,7 +85,7 @@ export default class BackupRestore extends Component {
     //             // Some error occurred, you can inspect the code: error.code
     //             // Common errors could be invalid email and invalid or expired OTPs.
     //         });
-    // }
+    }
 
     componentWillReceiveProps(props) {
         console.log("componentWillReceiveProps : " + JSON.stringify(props) )
@@ -108,7 +108,7 @@ export default class BackupRestore extends Component {
     //     return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
     // }
 
-    // startBackup = (uid, emailId) => {
+    startBackup = (uid, emailId) => {
     //     var self = this;
 
     //     // Points to the root reference
@@ -190,9 +190,9 @@ export default class BackupRestore extends Component {
     //                 break;
     //         }
     //     });
-    // }
+    }
 
-    // doBackup = () => {
+    doBackup = () => {
     //     var emailId = this.state.user == null ? null : this.state.user.email;
     //     if (emailId == null) {
     //         Alert.alert("User not found")
@@ -202,9 +202,9 @@ export default class BackupRestore extends Component {
     //     this.setState({isLoading: true}, () => {
     //         this.startBackup(uid, emailId)
     //     })
-    // }
+    }
 
-    // doList = () => {
+    doList = () => {
     //     var emailId = this.state.user == null ? null : this.state.user.email;
     //     if (emailId == null) {
     //     } else {
@@ -219,9 +219,9 @@ export default class BackupRestore extends Component {
     //                 this.setState({dataSource})
     //             })
     //     }
-    // }
+    }
 
-    // startRestore = (item) => {
+    startRestore = (item) => {
     //     console.log('OK Pressed .. ' + item.url)
 
     //     RNFS.downloadFile({
@@ -233,9 +233,9 @@ export default class BackupRestore extends Component {
     //             console.log("result byteswritten = " + result.bytesWritten);
     //             // todo restart app
     //         });
-    // }
+    }
 
-    // doRestore = (item) => {
+    doRestore = (item) => {
     //     console.log("DO RESTORE , show dialog")
     //     Alert.alert("Restore", 
     //         "This backup will be restored, and current saved data, if any, will be deleted. Are you sure you want to proceed?", 
@@ -245,7 +245,7 @@ export default class BackupRestore extends Component {
     //         ],
     //         { cancelable: true }
     //     )
-    // }
+    }
 
     renderItem = ({item,index})=>{
         return(

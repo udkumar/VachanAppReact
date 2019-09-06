@@ -41,14 +41,19 @@ export default class Bible extends Component {
           <View style={{flexDirection:'row',flex:1}}>
           
             <TouchableOpacity style={{flexDirection:'row'}}  onPress={() =>{navigation.navigate("SelectionTab", 
-            {queryBookFromAPI:params.queryBookFromAPI,
-              bookName:params.bookName,
-              chapterNumber:params.currentChapter,
-              languageName:params.bibleLanguage,
-              downloaded:params.downloaded,
-              sourceId:params.sourceId,versionCode:params.bibleVersion,
-              totalChapters:params.totalChapters
-              })}}>
+              {
+                queryBookFromAPI:params.queryBookFromAPI,
+                bookName:params.bookName,
+                bookId:params.bookId,
+                chapterNumber:params.currentChapter,
+                languageName:params.bibleLanguage,
+                downloaded:params.downloaded,
+                sourceId:params.sourceId,
+                versionCode:params.bibleVersion,
+                totalChapters:params.totalChapters
+              }
+            )}
+            }>
               <Text 
                 style={{fontSize:16,color:"#fff",alignSelf:'center',alignItems:'center',marginHorizontal:4}}
                 >{params.bookName}
@@ -227,7 +232,6 @@ export default class Bible extends Component {
         AsyncStorageConstants.Keys.SourceId,
         AsyncStorageConstants.Keys.Downloaded,
       ])
-
       const   isLoading = true
       var languageName = res[0][1] == null ? AsyncStorageConstants.Values.DefLanguageName : res[0][1]
       var versionCode = res[1][1] == null ? AsyncStorageConstants.Values.DefVersionCode : res[1][1]
@@ -236,6 +240,8 @@ export default class Bible extends Component {
       var sourceId = res[4][1] == null ? AsyncStorageConstants.Values.DefSourceId : parseInt(res[4][1])
       var downloaded = res[5][1] == null ? AsyncStorageConstants.Values.DefDownloaded : JSON.parse(res[5][1])
       
+      console.log("book id is ",bookId )
+
       this.props.navigation.setParams({
         bookName:getBookNameFromMapping(bookId,languageName),
         currentChapter:currentVisibleChapter,
@@ -243,6 +249,7 @@ export default class Bible extends Component {
         bibleVersion: versionCode,
         downloaded:downloaded,
         sourceId:sourceId,
+        bookId:bookId,
         totalChapters:getBookChaptersFromMapping(bookId)
       })
         if(downloaded == true ){
@@ -264,11 +271,18 @@ export default class Bible extends Component {
         }
         else{
           let response =  await APIFetch.getChapterContent(sourceId,bookId,currentVisibleChapter)
+          console.log("response ",response)
+          if(response.length !=0){
           this.setState({chapter:response.chapterContent.verses,
             totalChapters: getBookChaptersFromMapping(bookId),
             isLoading:false
           })
         }
+        else{
+          alert("check internet connection")
+        }
+        }
+
         this.setState({isLoading:true, languageName,versionCode,bookId,currentVisibleChapter,sourceId,downloaded})
        
       this.getHighlights()

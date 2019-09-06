@@ -18,7 +18,6 @@
     "react": "^16.8.4",
     "react-native": "^0.59.1",
     "react-native-collapsible": "^0.12.0",
-    "react-native-firebase": "^5.5.5",
     "react-native-fs": "^2.13.3",
     "react-native-gesture-responder": "^0.1.1",
     "react-native-modal": "^11.3.1",
