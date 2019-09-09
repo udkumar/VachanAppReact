@@ -26,7 +26,7 @@ class DbHelper {
     async getRealm() {
     	try {
     		return await Realm.open({
-				schemaVersion: 19,
+				schemaVersion: 21,
 				// deleteRealmIfMigrationNeeded: true, 
 				path:
 					Platform.OS === 'ios'
@@ -362,14 +362,18 @@ class DbHelper {
 	async getDownloadedBook(langName,verCode){
 		console.log("languaeg name ",langName,"version code ",verCode)
 		let realm = await this.getRealm();
+		console.log("realm ",realm)
 		if(realm){
-					let result = realm.objects('BookModel').filtered('languageName ==[c] "' + langName +'" && versionCode ==[c] "' + verCode +'" ');
-					console.log("RESULT BOOK id " ,result)
-					return result
+			console.log("realm  inside")
+
+					let result = realm.objectForPrimaryKey("LanguageModel", langName);
+					let resultsA = result.versionModels;
+					let resultB = resultsA.filtered('versionCode == "'+verCode+'" ');
+					return resultB[0].bookNameList
 		}
 	}
 
-	async addNewVersion(langName,verCode,bookmodel,sourceId){
+	async addNewVersion(langName,verCode,bookmodel,sourceId,booklist){
 		console.log("languaeg name ",langName,"version code ",verCode,"book model ",bookmodel,"source id",sourceId)
 		let realm = await this.getRealm();
 		if(realm){
@@ -383,16 +387,14 @@ class DbHelper {
 			}
 			else{
 			if(resultBoook.length == 0){
-				for(var i=0;i<bookmodel.length;i++){
-					realm.write(() => {
+				realm.write(() => {
+						for(var i=0;i<bookmodel.length;i++){
 						realm.create('BookModel', bookmodel[i])
 						// resultsB[0].downloaded = true;
-					})
-				}
-				realm.write(() => {
+						}
+					resultsB[0].bookNameList = booklist
 					resultsB[0].downloaded = true;
 				})
-				
 			}
 			else{
 			var found = false;
@@ -405,13 +407,15 @@ class DbHelper {
 			}
 			if(found==false){
 				console.log("add version ")
-				for(var i=0;i<bookmodel.length;i++){
+				
 					realm.write(() => {
+						for(var i=0;i<bookmodel.length;i++){
 						realm.create('BookModel', bookmodel[i])
-						resultsA[0].downloaded = true;
-
+					}
+					resultsA[0].downloaded = true;
+					resultsB[0].bookNameList = booklist
 					})
-				}
+					
 			}
 		}
 	}
@@ -420,6 +424,7 @@ class DbHelper {
 
 	async queryVersions(langName,verCode,bookId,chapterNumber){
 		let realm = await this.getRealm()
+		console.log("realm path ",realm.path)
 		if(realm){
 		var version = realm.objects('ChapterModel').filtered('chapterOwner.languageName ==[c] "' + langName + '" && chapterOwner.versionCode ==[c] "' + verCode + '" && chapterOwner.bookId ==   "' + bookId + '" && chapterNumber ==   "' + chapterNumber + '"' )
 		return version

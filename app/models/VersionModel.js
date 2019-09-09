@@ -12,6 +12,8 @@ VersionModel.schema = {
     	license: 'string',
 		year: 'int',
 		downloaded:'bool',
+		bookNameList:'string[]',
+		// bookModels:'BookModel[]',
         versionOwner: {type: 'linkingObjects', objectType: 'LanguageModel', property: 'versionModels' }
     }
 };

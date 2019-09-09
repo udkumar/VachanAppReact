@@ -79,20 +79,23 @@ export default class SelectBook extends Component {
   async componentDidMount(){
     var bookListData=[]
 
-    // console.log("SCREENPROPS OF BOOK SELECT ",this.props)
-    if(this.props.screenProps.downloaded){
+    console.log("SCREENPROPS OF BOOK SELECT ",this.props.screenProps.downloaded)
+    if(this.props.screenProps.downloaded == true){
+      console.log(" SelectBook ",this.props.screenProps.downloaded)
         var booksid = await DbQueries.getDownloadedBook(this.props.screenProps.languageName,this.props.screenProps.versionCode)
-        console.log(" books .......",booksid[0].bookId)
+        console.log(" books .......",booksid)
         for(var i = 0; i<=booksid.length-1;i++){
-          var bookId = booksid[i].bookId
+        console.log(" books inside....... ",booksid[i])
+          var bookId = booksid[i]
           var bookList = {
                 bookId:bookId,
-                bookName: booksid[i].bookName,
+                bookName:getBookNameFromMapping(bookId,this.props.screenProps.languageName),
                 section:getBookSectionFromMapping(bookId),
                 bookNumber:getBookNumberFromMapping(bookId),
                 languageName: this.props.screenProps.languageName, 
                 versionCode:this.props.screenProps.versionCode, 
-                numOfChapters:getBookChaptersFromMapping(bookId)}
+                numOfChapters:getBookChaptersFromMapping(bookId)
+            }
                 bookListData.push(bookList)
           }
 
@@ -112,10 +115,8 @@ export default class SelectBook extends Component {
                 bookListData.push(bookList)
         }
     }
-    var result = bookListData.sort(function(a, b){
-      return parseFloat(a.bookNumber) - parseFloat(b.bookNumber);  
-    })
-    this.setState({booksList:result})
+    this.setState({booksList:bookListData})
+    console.log("bookList data ",bookListData)
   }
  
   navigateToChapter(item){
@@ -189,7 +190,7 @@ renderItem = ({item, index})=> {
 
 
   render(){
-    // console.log("book id ",this.props.screenProps.bookName)
+    // console.log("book id ",t)
     let activeBgColor = 
       this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#3F51B5' : '#fff'
     let inactiveBgColor = 

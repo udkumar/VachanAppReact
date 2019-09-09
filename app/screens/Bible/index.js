@@ -643,5 +643,3 @@ export default class Bible extends Component {
       )
   }
 }
-
-
