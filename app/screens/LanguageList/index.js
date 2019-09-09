@@ -58,33 +58,21 @@ class ExpandableItemComponent extends Component {
           }}>
           {/*Content under the header of the Expandable List Item*/}
           {this.props.item.versionModels.map((item, index,key) => (
-            <View style={styles.content}>
-            <TouchableOpacity
-              // onPress={this.props.goToBible}
-              >
-              <View style={{flex:1,flexDirection:'column',}}>
-              <Text  style={{fontWeight:'bold',fontSize:18}}>{item.versionCode} </Text>
-              <Text style={{fontSize:18}}> {item.versionName}</Text>
+            <TouchableOpacity style={styles.content} onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId, item.downloaded ? true : false )}}>
+              <View style={{alignSelf:'center'}}>
+                <Text  style={{fontWeight:'bold',fontSize:18}}>{item.versionCode} </Text>
+                <Text style={{fontSize:18}}> {item.versionName}</Text>
+              </View>
+              <View style={{alignSelf:'center'}}>
+                {
+                  item.downloaded == true ? 
+                  <Icon name="check" size={24}  onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId,true)}}
+                  />
+                :
+                <Icon name="file-download" size={24} onPress={()=>{this.props.DownloadBible(this.props.item.languageName,item.versionCode,index,item.sourceId)}}/>
+                }
               </View>
               </TouchableOpacity>
-              {
-                item.downloaded==true ? 
-             
-              <TouchableOpacity style={{alignSelf:'center'}} onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId)}}>
-                <Icon name="check" size={24} 
-                />
-               </TouchableOpacity>
-               :
-              <TouchableOpacity style={{alignSelf:'center'}} onPress={()=>{this.props.DownloadBible(this.props.item.languageName,item.versionCode,index,item.sourceId)}}>
-              {/* {
-                this.props.startDownload ?
-                 <Progress.Bar progress={0.3} width={200} /> 
-              : 
-              <Icon name="file-download" size={24} />
-              } */}
-              <Icon name="file-download" size={24} />
-               </TouchableOpacity>}
-            </View>
           ))}
         </View>
       </Card>
@@ -251,20 +239,20 @@ export default class LanguageList extends Component {
     setModalVisible=()=>{
       this.setState({modalVisible:!this.state.modalVisible})
     }
-    goToBible = (langName,verCode,sourceId)=>{
+    goToBible = (langName,verCode,sourceId,downloaded)=>{
       console.log("sourceID",sourceId,"langauge name ",langName,"versioncode",verCode)
       AsyncStorageUtil.setAllItems([
         [AsyncStorageConstants.Keys.SourceId, sourceId.toString()],
         [AsyncStorageConstants.Keys.LanguageName, langName],
         [AsyncStorageConstants.Keys.VersionCode, verCode],
-        [AsyncStorageConstants.Keys.Downloaded, JSON.stringify(true)]
+        [AsyncStorageConstants.Keys.Downloaded, JSON.stringify(downloaded)]
       ]); 
       this.props.navigation.state.params.queryBookFromAPI()
-      this.props.navigation.dispatch(NavigationActions.back())    
+      this.props.navigation.goBack()
     }
   
     render(){
-      console.log("LANGUAGE IN RENDER ",this.state.languages.length)
+      console.log("LANGUAGE IN RENDER ",this.state)
       return (
             <View style={styles.MainContainer}>
             {this.state.languages.length == 0 ?

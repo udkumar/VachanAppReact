@@ -256,7 +256,7 @@ export default class Bible extends Component {
           console.log("chapter number ...........in bible page",currentVisibleChapter)
           let response = await dbQueries.queryVersions(languageName,versionCode,bookId,currentVisibleChapter)
           
-          console.log("response of bible page 1",response)
+          console.log("response of downloaded bible ",response)
           if(response.length != 0){
             this.setState({
               chapter:response[0].verses,
@@ -271,7 +271,7 @@ export default class Bible extends Component {
         }
         else{
           let response =  await APIFetch.getChapterContent(sourceId,bookId,currentVisibleChapter)
-          console.log("response ",response)
+          console.log("response of not downloaded book ",response)
           if(response.length !=0){
           this.setState({chapter:response.chapterContent.verses,
             totalChapters: getBookChaptersFromMapping(bookId),
@@ -544,7 +544,7 @@ export default class Bible extends Component {
   _keyExtractor = (item, index) => item.number;
 
   render() {
-    // console.log("chopter value in bible page ",this.state.chapter)
+    console.log("BOOKMARK LIST value in bible page ",this.state.bookmarksList)
       return (
         <View style={this.styles.container}>
         
