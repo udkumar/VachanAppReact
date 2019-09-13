@@ -41,7 +41,6 @@ export default class ChapterSelection extends Component {
   //   this.fetchChapters()
   // }
   async componentWillReceiveProps(props){
-    
     console.log(" componentWillReceiveProps ",props.screenProps.bookId)
     var totalChapter = getBookChaptersFromMapping(props.screenProps.bookId)
     var chapterData = []
@@ -53,11 +52,12 @@ export default class ChapterSelection extends Component {
   // this.fetchChapters()
   }
   componentDidMount(){
-    console.log("DID MOUNT CALLING CHAPTER PAGE ")
+    console.log("DID MOUNT CALLING CHAPTER PAGE ",this.props.screenProps.bookId)
     this.fetchChapters()
   }
   async fetchChapters(){
     var totalChapter = getBookChaptersFromMapping(this.props.screenProps.bookId)
+
     var chapterData = []
     for(var i=1;i<=totalChapter;i++){
       chapterData.push(i)

@@ -237,13 +237,22 @@ class DbHelper {
 		}
 
 	}
-	async queryBookmark(langName,verCode,bId){
+	async queryBookmark(langName,verCode,bId,chapter){
+		console.log("wuery book marks ",langName,verCode,bId,chapter)
+
 		let realm = await this.getRealm()
 
 			if (realm){
 				let result1 = realm.objects("BookmarksListModel");
-				let bookmarks = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '"')
-				return bookmarks
+				
+				if(bId == null && chapter == null){
+					let bookmarksList = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId =="' + bId + '"')
+					return bookmarksList
+				}
+				else{
+					let bookmarks = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId =="' + bId + '" && chapterNumber == "' + chapter + '"')
+					return bookmarks
+				}
 			}
 	}
 	async queryNotes() {

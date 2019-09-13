@@ -44,7 +44,7 @@ export default class SelectionStack extends Component {
     constructor(props){
         super(props)
         this.state = {
-            bookId:'',
+            bookId:this.props.navigation.state.params.bookId,
             chapterNumber:'',
             totalChapters:''
         }

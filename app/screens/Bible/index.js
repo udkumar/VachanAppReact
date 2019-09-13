@@ -222,7 +222,7 @@ export default class Bible extends Component {
   }
 
   // render data onAPI Call 
-      queryBookFromAPI = async()=>{
+    queryBookFromAPI = async()=>{
         this.state.chapter = []
       let res = await AsyncStorageUtil.getAllItems([
         AsyncStorageConstants.Keys.LanguageName,
@@ -287,26 +287,51 @@ export default class Bible extends Component {
        
       this.getHighlights()
       this.getBookMarks()
-       
+      let model = await  DbQueries.queryBookmark(languageName,versionCode,bookId,currentVisibleChapter)
+      if (model == null) {
+      }
+      else{
+        if(model.length > 0){
+        console.log("book mark in query page  ",model)
+
+        //   for(var i = 0; i<=model.length-1;i++){
+        //     var index =  model.findIndex(chapInd => chapInd.chapterNumber === this.state.currentVisibleChapter)
+        //     console.log("Index ",index)
+        //     this.setState({ 
+        //       bookmarksList:[...this.state.bookmarksList,{"bookId":model[i].bookId,"chapterNumber":model[i].chapterNumber}],
+        //       isBookmark: index == -1  ? false : true
+        //       }, () => {
+        //         this.props.navigation.setParams({
+        //             isBookmark: this.state.isBookmark,
+        //         })      
+        //     })
+        //     console.log("is book mark in get bookmarks ",this.state.isBookmark)
+        //   }
+        }
+      }
   }
   
   //update chapter number on right or left icon button 
   async updateCurrentChapter(val){
     let currChapter = this.state.currentVisibleChapter + val
 
+    var index =  this.state.bookmarksList.findIndex(chapInd => chapInd.chapterNumber === currChapter)
+    this.setState({ 
+      isBookmark: index == -1  ? false : true,
+      currentVisibleChapter: currChapter,
+      }, () => {
+        this.props.navigation.setParams({
+            isBookmark: this.state.isBookmark,
+            currentChapter:this.state.currentVisibleChapter,
+        })      
+    })
+
     if(this.state.downloaded == true){
         let response = await dbQueries.queryVersions(this.state.languageName,this.state.versionCode,this.state.bookId,this.state.currentVisibleChapter)
         if(response.length !=0){
           this.setState({
-            currentVisibleChapter: currChapter,
             chapter:response[0].verses,
             totalChapters: getBookChaptersFromMapping(this.state.bookId),
-            isBookmark: this.state.bookmarksList.findIndex(chapInd => chapInd.chapterNumber === this.state.currentVisibleChapter) > -1 ? true : false
-            }, () => { 
-                this.props.navigation.setParams({
-                    isBookmark: this.state.isBookmark,
-                    currentChapter:this.state.currentVisibleChapter,
-                })
             })
         }
         else{
@@ -318,19 +343,12 @@ export default class Bible extends Component {
       APIFetch.getChapterContent(this.state.sourceId,this.state.bookId,currChapter ).then(res =>{
         this.setState({
           chapter:res.chapterContent.verses,
-          currentVisibleChapter: currChapter,
-          totalChapters: getBookChaptersFromMapping(this.state.bookId),
-          isBookmark: this.state.bookmarksList.findIndex(chapInd => chapInd.chapterNumber === this.state.currentVisibleChapter) > -1 ? true : false
-        }, () => { 
-              this.props.navigation.setParams({
-                  isBookmark: this.state.isBookmark,
-                  currentChapter:this.state.currentVisibleChapter,
-              })
-          })
-      })
+          totalChapters: getBookChaptersFromMapping(this.state.bookId)
+        })
+    })
     }
+     
     AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.ChapterNumber, currChapter);    
-    this.getBookMarks()     
 }
   //get highlights from local db  
   async getHighlights(){
@@ -350,7 +368,7 @@ export default class Bible extends Component {
   }
   //get bookmarks from local db
   async getBookMarks(){
-    let model = await  DbQueries.queryBookmark(this.state.languageName,this.state.versionCode,this.state.bookId)
+    let model = await  DbQueries.queryBookmark(this.state.languageName,this.state.versionCode,this.state.bookId,this.state.currentVisibleChapter)
     if (model == null) {
     }
     else{
@@ -374,11 +392,11 @@ export default class Bible extends Component {
   }
 
   //add book mark from header icon 
-  async onBookmarkPress(){
+  onBookmarkPress(){
     console.log("bookmarksList ",this.state.bookmarksList)
     index = this.state.bookmarksList.findIndex(chapInd => chapInd.chapterNumber === this.state.currentVisibleChapter);
     console.log(" index ",index)
-    await DbQueries.updateBookmarkInBook(this.state.languageName,this.state.versionCode,this.state.bookId,this.state.currentVisibleChapter, index > -1 ? false : true);
+     DbQueries.updateBookmarkInBook(this.state.languageName,this.state.versionCode,this.state.bookId,this.state.currentVisibleChapter, index > -1 ? false : true);
     this.setState({isBookmark: index > -1 ? false : true}, () => {
       console.log("is bookmark ",this.state.isBookmark)
       this.props.navigation.setParams({isBookmark: this.state.isBookmark}) 
@@ -393,7 +411,6 @@ export default class Bible extends Component {
 //remove bookmark from bottom bar 
   onBookmarkRemove = async( id,chapterNum ) =>{
     index = this.state.bookmarksList.findIndex(chapInd => chapInd.chapterNumber ===this.state.currentVisibleChapter);
-    
     for(var i = 0; i<=this.state.bookmarksList.length;i++ ){
       if(this.state.bookmarksList[i].chapterNumber == chapterNum && this.state.bookmarksList[i].bookId == id ){
         this.props.navigation.setParams({isBookmark:false }) 
