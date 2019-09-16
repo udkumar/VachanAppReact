@@ -105,11 +105,11 @@ class DbHelper {
 	}
 	async queryHighlights(langName, verCode, bookId){
 		let realm = await this.getRealm();
-					if (realm){
-						let result1 = realm.objects("HighlightsModel");
-						let highlight = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId ==[c]   "' + bookId + '"' )
-						return highlight
-					}
+		if (realm){
+			let result1 = realm.objects("HighlightsModel");
+			let highlight = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId ==[c]   "' + bookId + '"' )
+			return highlight
+		}
 				
 	}
 	async updateHighlightsInVerse(langName, verCode, bId, cNum, vNum, isHighlight){
@@ -216,7 +216,7 @@ class DbHelper {
 		let realm = await this.getRealm();
 		if(realm){
 			realm.write(() => {
-			let chapter = realm.objects('BookmarksListModel').filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" &&  bookId == "' + bId + '" && chapterNumber == "'+cNum+'"')
+			// let chapter = realm.objects('BookmarksListModel').filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" &&  bookId == "' + bId + '" && chapterNumber == "'+cNum+'"')
 			if(isBookmark){
 				console.log(" if bookmark "+isBookmark)
 				realm.create('BookmarksListModel',{

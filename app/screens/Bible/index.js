@@ -223,7 +223,7 @@ export default class Bible extends Component {
 
   // render data onAPI Call 
     queryBookFromAPI = async()=>{
-        this.state.chapter = []
+      this.state.chapter = []
       let res = await AsyncStorageUtil.getAllItems([
         AsyncStorageConstants.Keys.LanguageName,
         AsyncStorageConstants.Keys.VersionCode,
@@ -570,7 +570,8 @@ export default class Bible extends Component {
           // <View style={{alignItems: 'center',justifyContent:'center',flex:1}}>   
           <ActivityIndicator 
           size="large" 
-          color="#0000ff"/>
+          color="#0000ff"
+          />
           // </View> 
           :
                <View>

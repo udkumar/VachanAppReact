@@ -18,7 +18,6 @@ export const AsyncStorageConstants = {
         BookNumber:"book_number",
         SourceId:"source_id",
         Downloaded:"downloaded"
-
     },
     Values: {
         DayMode: 1,

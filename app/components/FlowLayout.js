@@ -17,10 +17,6 @@ var {
 
 
 class FlowView extends Component {
-
-	constructor(props) {
-		super(props);
-	}
 	
 	render() {
 		return (
