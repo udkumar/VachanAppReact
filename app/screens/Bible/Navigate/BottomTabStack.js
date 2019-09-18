@@ -1,6 +1,6 @@
 import { StackNavigator ,TabNavigator} from "react-navigation";
 import StudyHelp from '../Navigate/StudyHelp'
-import NotePad from '../Navigate/NotePad'
+import More from '../Navigate/More'
 import Audio from '../Navigate/Audio'
 import Video from '../Navigate/Video'
 import Foonotes from '../Navigate/Footnotes'
@@ -16,13 +16,6 @@ import History from '../Navigate/History'
 
 const BottomTab = TabNavigator(
 	{
-    NotePad:{
-        screen:NotePad,
-        navigationOptions: {
-            tabBarLabel: 'My Content',
-            // tabBarIcon: () => <Icon name="list" size={35} style={{color:'#fff'}}/>,
-        }
-    },
     StudyHelp:{
         screen:StudyHelp,
         navigationOptions: {
@@ -43,7 +36,14 @@ const BottomTab = TabNavigator(
             tabBarLabel: 'Video',
            
         }
-    }
+    },
+    More:{
+        screen:More,
+        navigationOptions: {
+            tabBarLabel: 'More',
+            // tabBarIcon: () => <Icon name="list" size={35} style={{color:'#fff'}}/>,
+        }
+    },
     },
     {   
         tabBarPosition: 'bottom',

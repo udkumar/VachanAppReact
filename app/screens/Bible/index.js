@@ -37,6 +37,7 @@ export default class Bible extends Component {
   static navigationOptions = ({navigation}) =>{
     const { params = {} } = navigation.state
     return{
+     
         headerTitle:(
           <View style={{flexDirection:'row',flex:1}}>
           

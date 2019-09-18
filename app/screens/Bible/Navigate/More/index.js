@@ -9,7 +9,7 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons'
 const height = Dimensions.get('window').height;
 
-export default class Notepad extends Component {
+export default class More extends Component {
     constructor(props){
         super(props)
         console.log("PROPS ON NOTEPAD "+JSON.stringify(props))
@@ -20,11 +20,11 @@ export default class Notepad extends Component {
     static navigationOptions = ({navigation}) =>{
         const { params = {} } = navigation.state;
             return{
-                headerTitle:(<Text style={{fontSize:14,color:"white",marginLeft:10}}>Notepad</Text>),
+                headerTitle:(<Text style={{fontSize:14,color:"white",marginLeft:10}}>More</Text>),
                 headerRight:(
                     <Icon name="close"  style={{fontSize:20,marginRight:10,color:"#fff"}} onPress={() => {params.closeOnPress()}} />
                 ),
-                tabBarIcon: (<Icon name="content-paste" size={20} style={{color:'#fff'}} />)
+                tabBarIcon: (<Icon name="menu" size={20} style={{color:'#fff'}} />)
             }
     }
 

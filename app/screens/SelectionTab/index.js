@@ -7,29 +7,40 @@ import DbQueries from '../../utils/dbQueries'
 const SelectionTab = TabNavigator(
 	{
         Books: {
-            screen: SelectBook
+            screen: SelectBook,
+            navigationOptions: {
+                tabBarLabel: 'SelectBook',
+                // tabBarIcon: ({ tintColor }) => <MaterialIcons name='account-circle' size={26} style={{ color: tintColor }} />
+              },
         },
         Chapters:{
-            screen:ChapterSelection
+            screen:ChapterSelection,
+            navigationOptions: {
+                tabBarLabel: 'Select Chapter',
+                // tabBarIcon: ({ tintColor }) => <MaterialIcons name='account-circle' size={26} style={{ color: tintColor }} />
+              },
         },
        
     },
     {   
         // tabBarPosition: 'bottom',
-        activeTintColor:'#fff',
-        inactiveTintColor:'#D3D3D3',
+        // activeTintColor:'#3F51B5',
+        inactiveTintColor:'#000',
         swipeEnabled:true,
         tabBarOptions: {
-            labelStyle: { fontSize: 16,margin:0,padding:0 },
-            showIcon: true,
-            showLabel: true,
-            activeTintColor: '#fff',
+            labelStyle: { fontSize: 16,margin:0,padding:0,color:"#3F51B5" },
+            // showIcon: true,
+            // showLabel: true,
+            // activeTintColor: '#3F51B5',
+            // inactiveTintColor:"#fff",
             upperCaseLabel: false,
             style: {
-                backgroundColor: '#3F51B5', // Makes Android tab bar white instead of standard blue
+                backgroundColor:"#fff",
+                // backgroundColor: '#3F51B5', // Makes Android tab bar white instead of standard blue
+                height:36
             },
             indicatorStyle: {
-                backgroundColor: '#fff',
+                backgroundColor: '#3F51B5',
             },
         },
       

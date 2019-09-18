@@ -65,12 +65,24 @@ const StackNavigate = StackNavigator(
       Bible:{
         screen:Bible,
         navigationOptions: ({ navigation }) => ({
+          headerStyle: {
+            // elevation: 0,
+            // shadowOpacity: 0,
+            // height: 40,
+            backgroundColor:"#3F51B5",
+            shadowColor: 'black',
+            shadowRadius: 5,
+            shadowOpacity: 0.1,
+            shadowOffset: {
+              height: 3,
+              width: 0,
+            },
+          },
           headerLeft :<MenuIcon navigate={navigation.navigate}/>,
           headerTintColor: '#fff',
           headerTitleStyle: {
             fontWeight: 'bold',
           },
-          
            
         })
       },
@@ -127,6 +139,7 @@ const StackNavigate = StackNavigator(
       },
       headerTitleStyle: {
         fontWeight: 'normal',
+
       },
     
     })

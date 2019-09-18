@@ -96,17 +96,17 @@ export default class VerseView extends Component {
                       </MenuOption>
             </MenuOptions>
           </Menu>    
-             <Text style={this.props.styles.verseWrapperText}>
-            <Text style={this.props.styles.verseNumber} >
+             <Text style={[this.props.styles.verseWrapperText]}>
+            <Text style={[this.props.styles.verseNumber,{fontWeight:'bold',fontSize:16,color:"#4d4f4e"}]} >
               {this.props.verseData.number}{" "}
             </Text>
-              <Text style={isSelect && isHighlight 
+              <Text style={[isSelect && isHighlight 
                       ? this.props.styles.verseTextSelectedHighlighted 
                       : !isSelect && !isHighlight 
                       ? this.props.styles.verseTextNotSelectedNotHighlighted
                       : !isSelect && isHighlight
                       ? this.props.styles.verseTextNotSelectedHighlighted
-                      : this.props.styles.verseTextSelectedNotHighlighted}
+                      : this.props.styles.verseTextSelectedNotHighlighted,{lineHeight: 22.4,fontSize:16,color:"#4d4f4e",fontFamily:"Lucida Sans Unicode"}]}
                       >
                 {getResultText(this.props.verseData.text)}
               </Text> 

@@ -9,19 +9,21 @@ import {NavigationActions} from 'react-navigation'
 import { getBookNameFromMapping, getBookSectionFromMapping, getBookNumberFromMapping } from '../../utils/UtilFunctions';
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants';
-import * as Progress from 'react-native-progress';
+import { styles } from './styles.js';
 
 const languageList = async () => { 
   return await DbQueries.getLangaugeList()
 }
 
 class ExpandableItemComponent extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       layoutHeight: 0,
       modalVisible:true,
+
     };
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);    
   }
   componentWillReceiveProps(nextProps){
     if (nextProps.item.isExpanded) {
@@ -41,15 +43,15 @@ class ExpandableItemComponent extends Component {
  
   render() {
     return (
-      <View>
+      <View style={this.styles.container}>
       <Card>
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={this.props.onClickFunction}
-          style={styles.header}
+          style={this.styles.header}
         >
-          <Text style={styles.headerText}>{  this.props.item.languageName }</Text>
-          <Icon name={this.props.item.isExpanded ? "keyboard-arrow-down" : "keyboard-arrow-up" } style={styles.iconStyle} size={24}/>
+          <Text style={this.styles.headerText}>{  this.props.item.languageName }</Text>
+          <Icon name={this.props.item.isExpanded ? "keyboard-arrow-down" : "keyboard-arrow-up" } style={this.styles.iconStyle} size={24}/>
         </TouchableOpacity>
         <View
           style={{
@@ -58,7 +60,7 @@ class ExpandableItemComponent extends Component {
           }}>
           {/*Content under the header of the Expandable List Item*/}
           {this.props.item.versionModels.map((item, index,key) => (
-            <TouchableOpacity style={styles.content} onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId, item.downloaded ? true : false )}}>
+            <TouchableOpacity style={this.styles.content} onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId, item.downloaded ? true : false )}}>
               <View style={{alignSelf:'center'}}>
                 <Text  style={{fontWeight:'bold',fontSize:18}}>{item.versionCode} </Text>
                 <Text style={{fontSize:18}}> {item.versionName}</Text>
@@ -97,9 +99,12 @@ export default class LanguageList extends Component {
           text: '',
           languages:[],
           searchList:[],
-          startDownload:false
+          startDownload:false,
+          colorFile:this.props.screenProps.colorFile,
+          sizeFile:this.props.screenProps.sizeFile,
 
       }
+      this.styles = styles(this.state.colorFile, this.state.sizeFile);    
     }
    
     updateLayout(index){
@@ -254,110 +259,42 @@ export default class LanguageList extends Component {
     render(){
       console.log("LANGUAGE IN RENDER ",this.state)
       return (
-            <View style={styles.MainContainer}>
+        <View style={this.styles.MainContainer}>
             {this.state.languages.length == 0 ?
               <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>   
               <ActivityIndicator 
                 size="large" 
                 color="#0000ff"/>
                 </View>:
-                <View>
+        <View style={{flex:1}}>
         <TextInput 
-          style={styles.TextInputStyleClass}
+          style={this.styles.TextInputStyleClass}
           onChangeText={(text) => this.SearchFilterFunction(text)}
           value={this.state.text}
           underlineColorAndroid='transparent'
           placeholder="Search Here"
         />  
         <ScrollView>
-          {this.state.languages.map((item, index) => (
-            <ExpandableItemComponent
-              // key={item}
-              onClickFunction={this.updateLayout.bind(this, index)}
-              item={item}
-              DownloadBible = {this.DownloadBible}
-              goToBible = {this.goToBible}
-              startDownload ={this.state.startDownload}
-              // setModalVisible={this.setModalVisible}
-            />
-          ))}
-        </ScrollView>
-        
+        <FlatList
+          data={this.state.languages}
+          renderItem={({item, index, separators}) =><ExpandableItemComponent
+            // key={item}
+            onClickFunction={this.updateLayout.bind(this, index)}
+            item={item}
+            DownloadBible = {this.DownloadBible}
+            goToBible = {this.goToBible}
+            startDownload ={this.state.startDownload}
+            colorFile={this.state.colorFile}
+            sizeFile={this.state.sizeFile}
+            // setModalVisible={this.setModalVisible}
+          />}
+
+        />
+      </ScrollView>
       </View>
             }
-            </View>
+      
+      </View>
       )
     }
 }
-const styles = StyleSheet.create({
- 
-    MainContainer :{
-     flex:1,
-     margin:8
-     },
-    
-    rowViewContainer: {
-      fontSize: 17,
-      padding: 10
-     },
-    
-     TextInputStyleClass:{
-      // position:'absolute',
-      // top:0,
-      textAlign: 'center',
-      height: 40,
-
-      borderWidth: 1,
-      borderColor: '#009688',
-      borderRadius: 7 ,
-      backgroundColor : "#FFFFFF"
-           
-      },
-      container: {
-        flex: 1,
-        paddingTop: 30,
-        backgroundColor: '#F5FCFF',
-      },
-      topHeading: {
-        paddingLeft: 10,
-        fontSize: 20,
-      },
-      header: {
-        flexDirection:"row",
-        padding: 6,
-        paddingHorizontal:10,
-        justifyContent:'space-between'
-      },
-      headerText: {
-        fontSize: 16,
-        // fontWeight: '500',
-        // alignItems:'flex-start'
-      },
-      iconStyle:{
-        // alignItems:'flex-end'
-      },
-      separator: {
-        height: 0.5,
-        backgroundColor: '#808080',
-        width: '95%',
-        marginLeft: 16,
-        marginRight: 16,
-      },
-      text: {
-        fontSize: 16,
-        color: '#606070',
-        // paddingLeft:10
-      },
-      content: {
-
-        paddingHorizontal:20,
-        paddingVertical:10,
-        // paddingLeft: 20,
-        // paddingRight: 20,
-        flexDirection:"row",
-        justifyContent:'space-between',
-        backgroundColor: '#fff',
-      },
-    
-   });
-

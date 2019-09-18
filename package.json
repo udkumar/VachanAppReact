@@ -78,5 +78,10 @@
     "transformIgnorePatterns": [
       "node_modules/(realm)/"
     ]
-  }
+  },
+  "rnpm": {
+    "assets": [
+	"./assets/fonts/"
+    ]
+}
 }
