@@ -4,6 +4,7 @@ const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 export const styles =(colorFile, sizeFile) =>{
+    console.log("colorFile",colorFile, "sizeFile",sizeFile)
     return StyleSheet.create({
     container:{
         flex:1,
@@ -110,9 +111,7 @@ export const styles =(colorFile, sizeFile) =>{
     },
     addToSharefooterComponent:{
 
-    }
-
-   
+    },
 
     })
 }

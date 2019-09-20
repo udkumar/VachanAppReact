@@ -55,7 +55,7 @@ export default class SelectionStack extends Component {
     constructor(props){
         super(props)
         this.state = {
-            bookId:this.props.navigation.state.params.bookId,
+            bookId:this.props.navigation.state.params.params.bookId,
             chapterNumber:'',
             totalChapters:''
         }
@@ -66,12 +66,12 @@ export default class SelectionStack extends Component {
 
     updateSelectedChapter = (bookId,chapterNumber)=>{
         this.setState({chapterNumber,bookId})
-        this.props.navigation.state.params.queryBookFromAPI()
+        this.props.navigation.state.params.params.queryBookFromAPI()
         this.props.navigation.goBack()
     }
  
     render(){
-        console.log("total chapter ",this.props.navigation.state.params.totalChapters)
+        const params  = this.props.navigation.state.params.params
         return(
             <SelectionTab
                 screenProps={{
@@ -79,16 +79,16 @@ export default class SelectionStack extends Component {
                     sizeFile:this.props.screenProps.sizeFile,
                     colorMode:this.props.screenProps.colorMode,
                     booksList:this.props.screenProps.booksList,
-                    languageName:this.props.navigation.state.params.languageName,
-                    versionCode:this.props.navigation.state.params.versionCode,
+                    languageName:params.languageName,
+                    versionCode:params.versionCode,
                     bookId:this.state.bookId,
-                    bookName:this.props.navigation.state.params.bookName,
-                    chapterNumber:this.props.navigation.state.params.chapterNumber,
+                    bookName:params.bookName,
+                    chapterNumber:params.chapterNumber,
                     updateSelectedBook:this.updateSelectedBook,
                     updateSelectedChapter:this.updateSelectedChapter,
-                    sourceId:this.props.navigation.state.params.sourceId,
-                    downloaded:this.props.navigation.state.params.downloaded,
-                    totalChapters:this.props.navigation.state.params.totalChapters
+                    sourceId:params.sourceId,
+                    downloaded:params.downloaded,
+                    totalChapters:params.totalChapters
                 }}
             
             />

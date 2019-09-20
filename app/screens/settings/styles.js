@@ -20,8 +20,8 @@ export const settingsPageStyle =(colorFile, sizeFile) =>{
     },
     
     cardItemStyle:{
-       paddingTop:16,
-       paddingBottom:16,
+       paddingTop:8,
+       paddingBottom:8,
        backgroundColor:colorFile.backgroundColor
     },
     switchButtonCard:{
@@ -54,7 +54,7 @@ export const settingsPageStyle =(colorFile, sizeFile) =>{
     },
     cardItemIconCustom:{
         marginHorizontal:4,
-        marginVertical:8,
+        marginVertical:4,
         color:colorFile.settingsIconColor,
         fontSize:32   
     },

@@ -6,6 +6,7 @@ import {
   FlatList,
   ActivityIndicator,
   Dimensions,
+  StyleSheet,
   TouchableOpacity,
   Share,
   Button
@@ -35,56 +36,42 @@ import dbQueries from '../../utils/dbQueries';
 
 export default class Bible extends Component {
   static navigationOptions = ({navigation}) =>{
-    const { params = {} } = navigation.state
+    const { params={} } = navigation.state 
+
     return{
-     
         headerTitle:(
-          <View style={{flexDirection:'row',flex:1}}>
-          
-            <TouchableOpacity style={{flexDirection:'row'}}  onPress={() =>{navigation.navigate("SelectionTab", 
-              {
-                queryBookFromAPI:params.queryBookFromAPI,
-                bookName:params.bookName,
-                bookId:params.bookId,
-                chapterNumber:params.currentChapter,
-                languageName:params.bibleLanguage,
-                downloaded:params.downloaded,
-                sourceId:params.sourceId,
-                versionCode:params.bibleVersion,
-                totalChapters:params.totalChapters
-              }
-            )}
-            }>
-              <Text 
-                style={{fontSize:16,color:"#fff",alignSelf:'center',alignItems:'center',marginHorizontal:4}}
-                >{params.bookName}
-              </Text>
-              <Text 
-                style={{fontSize:16,color:"#fff",alignSelf:'center',alignItems:'center',marginHorizontal:4}}
-                >{params.currentChapter }
-              </Text>
-            </TouchableOpacity>
-         
-      </View>
+          <View style={navStyles.headerLeftStyle}>
+            <View style={{marginRight:10}}>
+              <TouchableOpacity style={navStyles.touchableStyleLeft}  onPress={() =>{navigation.navigate("SelectionTab", {params:params})}}>
+                <Text  style={navStyles.headerTextStyle}>{params.bookName}  {params.currentChapter }</Text>
+                <Icon name="arrow-drop-down" color="#fff" size={24}/>
+              </TouchableOpacity>
+            </View>
+            <View style={{marginRight:10}}>
+              <TouchableOpacity onPress={() =>{navigation.navigate("LanguageList", {queryBookFromAPI:params.queryBookFromAPI})}} style={navStyles.headerLeftStyle}>
+                <Text style={navStyles.headerTextStyle}>{params.languageName}  {params.versionCode}</Text>
+                <Icon name="arrow-drop-down" color="#fff" size={24}/>
+              </TouchableOpacity>
+           
+            </View>
+          </View>
        
       ), 
         headerTintColor:"#fff",
         headerRight:(
-          <View  style={{flexDirection:'row',flex:1}}>
-            <TouchableOpacity onPress={() =>{navigation.navigate("LanguageList", {queryBookFromAPI:params.queryBookFromAPI})}}  style={{flexDirection:'row',alignSelf:'center',alignItems:'center'
-              }}>
-              <Text style={{
-                fontSize:16,color:"#fff",alignSelf:'center',alignItems:'center'
-              }}>{params.bibleLanguage} {params.bibleVersion}</Text>
-              <Icon name="arrow-drop-down" color="#fff" size={28}/>
-            </TouchableOpacity>
-            <Icon 
-                onPress={()=> {params.onBookmark()}} 
-                name={'bookmark'} 
-                color={params.isBookmark ? "red" : "white"} 
-                size={24} 
-                style={{marginHorizontal:8}} 
-            />    
+          <View style={navStyles.headerRightStyle}>
+              <TouchableOpacity  style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
+              <Icon 
+                  onPress={()=> {params.onBookmark(params.bookId,params.currentChapter,params.isBookmark)}} 
+                  name='bookmark'
+                  color={params.isBookmark ? "red" : "white"} 
+                  size={24} 
+              /> 
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() =>{navigation.navigate("More",{languageName:params.languageName,versionCode:params.versionCode,bookId:params.bookId})}} style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
+                <Icon name="more-vert" color="#fff" size={24} />
+              </TouchableOpacity>
+             
           </View>
         )
     }
@@ -94,7 +81,6 @@ export default class Bible extends Component {
     super(props);
     this.leftIsScrolling = false;
     this.rigthIsScrolling = false;
-    console.log("PROPS VALUE BIBLE "+JSON.stringify(props))
 
     this.getSelectedReferences = this.getSelectedReferences.bind(this)
     this.onBookmarkPress = this.onBookmarkPress.bind(this)
@@ -141,6 +127,11 @@ export default class Bible extends Component {
     this.pinchTime = new Date().getTime()
     this.styles = styles(this.state.colorFile, this.state.sizeFile);    
     this.modelValue = "modal1"
+    this.props.navigation.setParams({
+      color:this.props.screenProps.colorFile,
+      size:this.props.screenProps.sizeFile
+      // styles:this.styles
+    })  
     
   }
 
@@ -153,7 +144,7 @@ export default class Bible extends Component {
     //   bookName:props.screenProps.bookName,
     //   currentChapter:props.screenProps.currentChapter
     })
-    this.styles = styles(props.screenProps.colorFile, props.screenProps.sizeFile);   
+    this.styles = styles(props.screenProps.colorFile, props.screenProps.sizeFile);  
   }
 
   async componentDidMount(){
@@ -217,6 +208,7 @@ export default class Bible extends Component {
       isBookmark:this.state.isBookmark,
       queryBookFromAPI:this.queryBookFromAPI,
       
+      // styles:this.styles
     })   
     this.queryBookFromAPI()
        
@@ -241,75 +233,50 @@ export default class Bible extends Component {
       var sourceId = res[4][1] == null ? AsyncStorageConstants.Values.DefSourceId : parseInt(res[4][1])
       var downloaded = res[5][1] == null ? AsyncStorageConstants.Values.DefDownloaded : JSON.parse(res[5][1])
       
-      console.log("book id is ",bookId )
-
-      this.props.navigation.setParams({
-        bookName:getBookNameFromMapping(bookId,languageName),
-        currentChapter:currentVisibleChapter,
-        bibleLanguage: languageName, 
-        bibleVersion: versionCode,
-        downloaded:downloaded,
-        sourceId:sourceId,
-        bookId:bookId,
-        totalChapters:getBookChaptersFromMapping(bookId)
-      })
-        if(downloaded == true ){
-          console.log("chapter number ...........in bible page",currentVisibleChapter)
-          let response = await dbQueries.queryVersions(languageName,versionCode,bookId,currentVisibleChapter)
-          
-          console.log("response of downloaded bible ",response)
-          if(response.length != 0){
-            this.setState({
-              chapter:response[0].verses,
-              totalChapters: getBookChaptersFromMapping(bookId),
-              isLoading:false
+        this.setState({isLoading:true, languageName,versionCode,bookId,currentVisibleChapter,sourceId,downloaded},async()=>{
+        
+            if(downloaded == true ){
+              let response = await dbQueries.queryVersions(languageName,versionCode,bookId,currentVisibleChapter)
+              
+              if(response.length != 0){
+                this.setState({
+                  chapter:response[0].verses,
+                  totalChapters: getBookChaptersFromMapping(bookId),
+                  isLoading:false
+                })
+              }
+              else{
+                alert("no book found of ",bookId)
+              }
+              
+            }
+            else{
+              let response =  await APIFetch.getChapterContent(sourceId,bookId,currentVisibleChapter)
+              if(response.length !=0){
+              this.setState({chapter:response.chapterContent.verses,
+                totalChapters: getBookChaptersFromMapping(bookId),
+                isLoading:false
+              })
+            }
+            else{
+              alert("check internet connection")
+            }
+            this.props.navigation.setParams({
+              bookName:getBookNameFromMapping(bookId,languageName),
+              currentChapter:currentVisibleChapter,
+              languageName: languageName, 
+              versionCode: versionCode,
+              downloaded:downloaded,
+              sourceId:sourceId,
+              bookId:bookId,
+              totalChapters:getBookChaptersFromMapping(bookId)
             })
-          }
-          else{
-            alert("no book found of ",bookId)
-          }
-          
-        }
-        else{
-          let response =  await APIFetch.getChapterContent(sourceId,bookId,currentVisibleChapter)
-          console.log("response of not downloaded book ",response)
-          if(response.length !=0){
-          this.setState({chapter:response.chapterContent.verses,
-            totalChapters: getBookChaptersFromMapping(bookId),
-            isLoading:false
-          })
-        }
-        else{
-          alert("check internet connection")
-        }
-        }
-
-        this.setState({isLoading:true, languageName,versionCode,bookId,currentVisibleChapter,sourceId,downloaded})
+            }
+        })
        
       this.getHighlights()
-      this.getBookMarks()
-      let model = await  DbQueries.queryBookmark(languageName,versionCode,bookId,currentVisibleChapter)
-      if (model == null) {
-      }
-      else{
-        if(model.length > 0){
-        console.log("book mark in query page  ",model)
-
-        //   for(var i = 0; i<=model.length-1;i++){
-        //     var index =  model.findIndex(chapInd => chapInd.chapterNumber === this.state.currentVisibleChapter)
-        //     console.log("Index ",index)
-        //     this.setState({ 
-        //       bookmarksList:[...this.state.bookmarksList,{"bookId":model[i].bookId,"chapterNumber":model[i].chapterNumber}],
-        //       isBookmark: index == -1  ? false : true
-        //       }, () => {
-        //         this.props.navigation.setParams({
-        //             isBookmark: this.state.isBookmark,
-        //         })      
-        //     })
-        //     console.log("is book mark in get bookmarks ",this.state.isBookmark)
-        //   }
-        }
-      }
+      this.getBookMarks(bookId,currentVisibleChapter)
+     
   }
   
   //update chapter number on right or left icon button 
@@ -348,7 +315,7 @@ export default class Bible extends Component {
         })
     })
     }
-     
+    this.getBookMarks(this.state.bookId,currChapter)
     AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.ChapterNumber, currChapter);    
 }
   //get highlights from local db  
@@ -357,7 +324,6 @@ export default class Bible extends Component {
     if(model2  == null ){
     }
     else{
-      // conosole.log("model highlight "+)
       if(model2.length > 0){
         for(var i = 0; i<=model2.length-1;i++){
           this.setState({
@@ -368,60 +334,33 @@ export default class Bible extends Component {
   }
   }
   //get bookmarks from local db
-  async getBookMarks(){
-    let model = await  DbQueries.queryBookmark(this.state.languageName,this.state.versionCode,this.state.bookId,this.state.currentVisibleChapter)
+  async getBookMarks(bookId,chapter){
+    let model = await  DbQueries.queryBookmark(this.state.languageName,this.state.versionCode,bookId,chapter)
     if (model == null) {
+      this.setState({isBookmark:false})
+      this.props.navigation.setParams({
+        isBookmark:true
+      })
     }
     else{
-      console.log("book mark ",model)
       if(model.length > 0){
-        for(var i = 0; i<=model.length-1;i++){
-          var index =  model.findIndex(chapInd => chapInd.chapterNumber === this.state.currentVisibleChapter)
-          console.log("Index ",index)
-          this.setState({ 
-            bookmarksList:[...this.state.bookmarksList,{"bookId":model[i].bookId,"chapterNumber":model[i].chapterNumber}],
-            isBookmark: index == -1  ? false : true
-            }, () => {
-              this.props.navigation.setParams({
-                  isBookmark: this.state.isBookmark,
-              })      
-          })
-          console.log("is book mark in get bookmarks ",this.state.isBookmark)
-        }
+        console.log("book marked ",model)
+        this.setState({isBookmark:true})
+        this.props.navigation.setParams({
+          isBookmark:true
+        })
       }
     }
   }
 
   //add book mark from header icon 
-  onBookmarkPress(){
-    console.log("bookmarksList ",this.state.bookmarksList)
-    index = this.state.bookmarksList.findIndex(chapInd => chapInd.chapterNumber === this.state.currentVisibleChapter);
-    console.log(" index ",index)
-     DbQueries.updateBookmarkInBook(this.state.languageName,this.state.versionCode,this.state.bookId,this.state.currentVisibleChapter, index > -1 ? false : true);
-    this.setState({isBookmark: index > -1 ? false : true}, () => {
-      console.log("is bookmark ",this.state.isBookmark)
+  onBookmarkPress(bookId,chapter,isbookmark){
+    DbQueries.updateBookmarkInBook(this.state.languageName,this.state.versionCode,bookId,chapter, isbookmark  ? false : true);
+      this.setState({isBookmark: isbookmark ? false : true}, () => {
       this.props.navigation.setParams({isBookmark: this.state.isBookmark}) 
-        if(index > -1){
-          this.state.bookmarksList.splice(index, 1)
-        }
-        else{
-          this.setState({bookmarksList:[...this.state.bookmarksList,{bookId:this.state.bookId,chapterNumber:this.state.currentVisibleChapter}]})
-      }
     })
   }
-//remove bookmark from bottom bar 
-  onBookmarkRemove = async( id,chapterNum ) =>{
-    index = this.state.bookmarksList.findIndex(chapInd => chapInd.chapterNumber ===this.state.currentVisibleChapter);
-    for(var i = 0; i<=this.state.bookmarksList.length;i++ ){
-      if(this.state.bookmarksList[i].chapterNumber == chapterNum && this.state.bookmarksList[i].bookId == id ){
-        this.props.navigation.setParams({isBookmark:false }) 
-        await DbQueries.updateBookmarkInBook(this.state.languageName,this.state.versionCode,id,chapterNum,false);
-        this.state.bookmarksList.splice(index, 1)
-        this.setState({bookmarksList:this.state.bookmarksList,isBookmark:false})
-      } 
-    }
 
-  }
 //selected reference for highlighting verse
   getSelectedReferences(vIndex, chapterNum, vNum) {
     let obj = chapterNum + '_' + vIndex + '_' + vNum
@@ -492,17 +431,6 @@ export default class Bible extends Component {
     this.setState({ selectedReferenceSet: [], showBottomBar: false})
   }
 
-//remove highlight from bottom or split screen on press delete or cross icon
-  removeHighlightFromBottom = async( chapterNum,verseNum)=>{
-    for(var i=0; i<=this.state.HightlightedVerseArray.length-1; i++){
-      if(this.state.HightlightedVerseArray[i].chapterNumber == chapterNum && this.state.HightlightedVerseArray[i].verseNumber == verseNum){
-        this.state.HightlightedVerseArray.splice(i, 1)
-        await DbQueries.updateHighlightsInVerse(this.props.screenProps.languageName, this.state.versionCode,this.state.bookId,chapterNum, verseNum,this.state.menuHighlightedText)
-        this.setState({HightlightedVerseArray:this.state.HightlightedVerseArray})
-      }
-    }
-  }
-
   getVerseText(cNum, vIndex) {
     return getResultText(this.state.chapter[cNum - 1].verseModels[vIndex].text)
   }
@@ -560,12 +488,8 @@ export default class Bible extends Component {
   _keyExtractor = (item, index) => item.number;
 
   render() {
-    console.log("BOOKMARK LIST value in bible page ",this.state.bookmarksList)
-    console.log("IS BOOKMARK ",this.state.isBookmark)
-
       return (
         <View style={this.styles.container}>
-        
         <MenuContext style={this.styles.verseWrapperText}>
           {this.state.chapter.length  == 0   ?
           // <View style={{alignItems: 'center',justifyContent:'center',flex:1}}>   
@@ -634,7 +558,7 @@ export default class Bible extends Component {
         } 
     
         </MenuContext>
-        {
+        {/* {
             this.state.close == true ? 
             <TouchableOpacity style={{ width:width,backgroundColor:"#3F51B5",flexDirection:'row',justifyContent:'flex-end'}} onPress={()=>this.setState({close:!this.state.close})}>
               <Text style={{color:'#fff',textAlign:'center',fontSize:16}}>See More </Text>
@@ -657,8 +581,34 @@ export default class Bible extends Component {
                 changeBookFromSplit={this.changeBookFromSplit}
 
             />
-            }
+            } */}
       </View>
       )
   }
 }
+
+
+const navStyles = StyleSheet.create({
+
+headerLeftStyle:{
+  flexDirection:'row',
+  flex:1,
+},
+headerRightStyle:{
+  flexDirection:'row',
+  flex:1,
+},
+touchableStyleRight:{
+    flexDirection:"row",
+    marginRight:10
+},
+touchableStyleLeft:{
+  flexDirection:"row",
+    marginLeft:10,
+},
+headerTextStyle:{
+    fontSize:16,
+    color:"#fff",
+    textAlign:'center'
+},
+})

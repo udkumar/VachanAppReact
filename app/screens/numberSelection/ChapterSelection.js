@@ -25,12 +25,8 @@ export default class ChapterSelection extends Component {
 
     this.state = {
       bookId: this.props.screenProps.bookId,
-      // bookName: this.props.navigation.state.params.bookName,
-      // bookIndex: this.props.navigation.state.params.bookIndex,
-      // numOfChapters: this.props.navigation.state.params.numOfChapters,
-      // bookNumber:this.props.navigation.state.params.bookNumber,
+     
       chapterData:[]
-      // bookData: Array.from(new Array(this.props.navigation.state.params.numOfChapters), (x,i) => i+1),
     }
     //  console.log("bookdata"+ this.state.bookData)
     this.styles = numberSelection(props.screenProps.colorFile, props.screenProps.sizeFile);   
@@ -64,7 +60,6 @@ export default class ChapterSelection extends Component {
   }
   this.setState({chapterData})
     // console.log("chapternumber ",this.props.screenProps.totalNumberOfChapter)
-    // this.setState({chapterData:this.props.navigation.state.params.chaptersLength})
   // var response = await APIFetch.getNumberOfChapter(this.props.screenProps.sourceId,this.state.bookId)
   //   var chapters = []
   //     for(var i=0; i<response.length;i++){

@@ -1,5 +1,6 @@
 // all of our routes
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import {Animated,Easing} from 'react-native';
 import {StackNavigator, DrawerNavigator,} from 'react-navigation'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
@@ -7,16 +8,26 @@ import About from '../screens/About/About'
 import Search from '../screens/Search/Search'
 import Settings from '../screens/settings/Settings'
 import Account from '../screens/Account'
+import Notes from '../screens/Bible/Navigate/Note'
+import Highlights from '../screens/Bible/Navigate/Highlights/'
+import History from '../screens/Bible/Navigate/History/'
+import Audio from '../screens/Bible/Navigate/Audio/'
+import Video from '../screens/Bible/Navigate/Video/'
+import StudyHelp from '../screens/Bible/Navigate/StudyHelp/'
+
+
+
 import ReferenceSelection from '../screens/numberSelection/ReferenceSelection'
 // import ChapterSelection from '../screens/numberSelection/ChapterSelection'
 import Hints from '../screens/Hints/Hints'
 import BackupRestore from '../screens/backup/BackupRestore'
 import DrawerScreen from '../screens/DrawerScreen/DrawerScreen'
-import  Bible from '../screens/Bible'
+import Bible from '../screens/Bible'
 import BottomTab from '../screens/Bible/BottomTab'
 import GoogleMaps from  '../screens/GoogleMaps'
 import Images from '../screens/Images'
-import LanguageList from '../screens/LanguageList' 
+import LanguageList from '../screens/LanguageList'
+import More from '../screens/More'
 import ModalForChapter from '../screens/Bible/component/ModalForChapter'
 
 import SelectionTab from '../screens/SelectionTab'
@@ -26,6 +37,7 @@ import {nightColors, dayColors} from './colors.js'
 import {extraSmallFont,smallFont,mediumFont,largeFont,extraLargeFont} from './dimens.js'
 import { styleFile } from './styles.js'
 import {AsyncStorageConstants} from './AsyncStorageConstants'
+import BookMarks from '../screens/Bible/Navigate/Bookmarks/';
 
 
 const DrawerNavigate = (styles) => DrawerNavigator({
@@ -56,6 +68,9 @@ const MenuIcon = (navigation) => {
 const StackNavigate = StackNavigator(
 
   {  
+    // More:{
+    //   screen:More
+    // },
     // ModalForChapter:{
     //   screen:ModalForChapter,
     // },
@@ -65,20 +80,20 @@ const StackNavigate = StackNavigator(
       Bible:{
         screen:Bible,
         navigationOptions: ({ navigation }) => ({
-          headerStyle: {
-            // elevation: 0,
-            // shadowOpacity: 0,
-            // height: 40,
-            backgroundColor:"#3F51B5",
-            shadowColor: 'black',
-            shadowRadius: 5,
-            shadowOpacity: 0.1,
-            shadowOffset: {
-              height: 3,
-              width: 0,
-            },
-          },
-          headerLeft :<MenuIcon navigate={navigation.navigate}/>,
+          // headerStyle: {
+          //   // elevation: 0,
+          //   // shadowOpacity: 0,
+          //   // height: 40,
+          //   backgroundColor:"#3F51B5",
+          //   shadowColor: 'black',
+          //   shadowRadius: 5,
+          //   shadowOpacity: 0.1,
+          //   shadowOffset: {
+          //     height: 3,
+          //     width: 0,
+          //   },
+          // },
+          // headerLeft :<MenuIcon navigate={navigation.navigate}/>,
           headerTintColor: '#fff',
           headerTitleStyle: {
             fontWeight: 'bold',
@@ -121,18 +136,50 @@ const StackNavigate = StackNavigator(
       Account:{
         screen:Account
       },
+      More:{
+        screen:More,
+        navigationOptions: {
+          headerTitle:"More"
+      }
+      },
       SelectionTab:{
         screen:SelectionTab,
         navigationOptions: {
                 headerTitle:"Select Chapter"
             }
 
-      }
+      },
+      BookMarks:{
+        screen:BookMarks
+      },
+      Highlights:{
+        screen:Highlights
+      },
+      Notes:{
+        screen:Notes
+      },
+      History:{
+        screen:History
+      },
+      Video:{
+        screen:Video
+      },
+      Audio:{
+        screen:Audio
+      },
      
   },
   
-  {
-    navigationOptions: ({ navigation }) => ({
+  { 
+  transitionConfig:() => ({
+  	transitionSpec: {
+  		duration: 200,
+  		timing: Animated.timing,
+  		easing: Easing.step0,
+  	},
+  }),
+
+    navigationOptions: ({ navigation,transitioning }) => ({
       headerTintColor: '#fff',
       headerStyle:{
         backgroundColor:"#3F51B5"

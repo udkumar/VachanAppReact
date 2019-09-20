@@ -227,7 +227,6 @@ class DbHelper {
 				})
 			}
 			else{
-			console.log("else bookmark "+isBookmark)
 			let bookmarkData = realm.objects('BookmarksListModel').filtered('chapterNumber = $0', cNum)
 			console.log("len bookmark : " + bookmarkData)
 			realm.delete(bookmarkData); 
@@ -245,12 +244,14 @@ class DbHelper {
 			if (realm){
 				let result1 = realm.objects("BookmarksListModel");
 				
-				if(bId == null && chapter == null){
+				if(chapter == null){
 					let bookmarksList = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId =="' + bId + '"')
+					console.log("book and chapter bookmark from db ",bookmarksList)
 					return bookmarksList
 				}
 				else{
 					let bookmarks = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId =="' + bId + '" && chapterNumber == "' + chapter + '"')
+					console.log("book and chapter bookmark from db ",bookmarks)
 					return bookmarks
 				}
 			}

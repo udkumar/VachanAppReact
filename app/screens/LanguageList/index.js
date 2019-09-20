@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Text, StyleSheet,ScrollView,Dimensions, Modal,View,ActivityIndicator,TextInput,FlatList,LayoutAnimation,UIManager,Platform,TouchableOpacity} from 'react-native';
-import {Card} from 'native-base'
+import {Card,ListItem,Left,Right,List} from 'native-base'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import DbQueries from '../../utils/dbQueries'
 import APIFetch from '../../utils/APIFetch'
@@ -44,15 +44,17 @@ class ExpandableItemComponent extends Component {
   render() {
     return (
       <View style={this.styles.container}>
-      <Card>
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={this.props.onClickFunction}
-          style={this.styles.header}
-        >
-          <Text style={this.styles.headerText}>{  this.props.item.languageName }</Text>
-          <Icon name={this.props.item.isExpanded ? "keyboard-arrow-down" : "keyboard-arrow-up" } style={this.styles.iconStyle} size={24}/>
-        </TouchableOpacity>
+      {/* <Card> */}
+      <List>
+      <ListItem button={true} onPress={this.props.onClickFunction}>
+        <Left>
+        <Text >{this.props.item.languageName }</Text>
+        </Left>
+        <Right>
+          <Icon name={this.props.item.isExpanded ? "keyboard-arrow-down" : "keyboard-arrow-up" }  size={24}/>
+        </Right>
+        </ListItem>
+        </List>
         <View
           style={{
             height: this.state.layoutHeight,
@@ -60,12 +62,15 @@ class ExpandableItemComponent extends Component {
           }}>
           {/*Content under the header of the Expandable List Item*/}
           {this.props.item.versionModels.map((item, index,key) => (
-            <TouchableOpacity style={this.styles.content} onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId, item.downloaded ? true : false )}}>
-              <View style={{alignSelf:'center'}}>
-                <Text  style={{fontWeight:'bold',fontSize:18}}>{item.versionCode} </Text>
-                <Text style={{fontSize:18}}> {item.versionName}</Text>
-              </View>
-              <View style={{alignSelf:'center'}}>
+              <List>
+                <ListItem button={true}onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId, item.downloaded ? true : false )}}>
+                <Left>
+                <View style={{alignSelf:'center'}}>
+                  <Text  style={{fontWeight:'bold',fontSize:18}}>{item.versionCode} </Text>
+                  <Text style={{fontSize:18}}> {item.versionName}</Text>
+                </View>
+                </Left>
+                <Right>
                 {
                   item.downloaded == true ? 
                   <Icon name="check" size={24}  onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId,true)}}
@@ -73,11 +78,13 @@ class ExpandableItemComponent extends Component {
                 :
                 <Icon name="file-download" size={24} onPress={()=>{this.props.DownloadBible(this.props.item.languageName,item.versionCode,index,item.sourceId)}}/>
                 }
-              </View>
-              </TouchableOpacity>
+              
+              </Right>
+              </ListItem>
+              </List>
           ))}
         </View>
-      </Card>
+      {/* </Card> */}
 
       </View>
     );
@@ -145,7 +152,6 @@ export default class LanguageList extends Component {
                 lanVer.push({languageName:language,versionModels:versions})
               }
 
-              console.log("language list",lanVer)
               DbQueries.addLangaugeList(lanVer)
             }
          }
@@ -161,7 +167,6 @@ export default class LanguageList extends Component {
             lanVer.push({languageName:language,versionModels:versions})
 
           }
-          // console.log("language list",lanVer)
           DbQueries.addLangaugeList(lanVer)
          
         }
@@ -189,13 +194,11 @@ export default class LanguageList extends Component {
     }
 
     DownloadBible = async(langName,verCode,index,sourceId)=>{
-       console.log("language name ",langName," verCode ",verCode)
       var bookModels = []
       var content = await APIFetch.getAllBooks(sourceId,"json")
       var content = content.bibleContent
       for(var id in content){
       var  chapterModels = []
-        // console.log("content ",content[id].chapters.length)
       if(content != null){
 
         for(var i=0; i< content[id].chapters.length; i++){
@@ -212,7 +215,6 @@ export default class LanguageList extends Component {
           chapterModels.push(chapterModel)
         }
       }
-      console.log("book id ",id)
       bookModels.push({
         languageName: langName,
         versionCode: verCode,
@@ -233,19 +235,16 @@ export default class LanguageList extends Component {
         var bookId = booksid[0].books[key].abbreviation
         bookListData.push(bookId)
       }
-      // console.log("book model ",bookModels)
       await DbQueries.addNewVersion(langName,verCode,result,sourceId,bookListData)
       languageList().then(async(language) => {
         this.setState({languages:language})
       })
-      .catch((error)=>{console.log("error",error)})
       
     }
     setModalVisible=()=>{
       this.setState({modalVisible:!this.state.modalVisible})
     }
     goToBible = (langName,verCode,sourceId,downloaded)=>{
-      console.log("sourceID",sourceId,"langauge name ",langName,"versioncode",verCode)
       AsyncStorageUtil.setAllItems([
         [AsyncStorageConstants.Keys.SourceId, sourceId.toString()],
         [AsyncStorageConstants.Keys.LanguageName, langName],
@@ -257,7 +256,6 @@ export default class LanguageList extends Component {
     }
   
     render(){
-      console.log("LANGUAGE IN RENDER ",this.state)
       return (
         <View style={this.styles.MainContainer}>
             {this.state.languages.length == 0 ?

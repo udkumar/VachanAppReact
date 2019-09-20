@@ -12,7 +12,7 @@ import {
   ScrollView
 } from 'react-native';
 import { HeaderBackButton, NavigationActions} from 'react-navigation'
-import { Container, Header, Content, Card, CardItem, Right, Left } from 'native-base';
+import { Container, Header, Content, List, ListItem, Right, Left } from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {extraSmallFont,smallFont,mediumFont,largeFont,extraLargeFont} from '../../utils/dimens.js'
 import { settingsPageStyle } from './styles.js'
@@ -21,15 +21,15 @@ import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
 
 
-const setParamsAction = ({colorFile}) => NavigationActions.setParams({
-  params: { colorFile },
-  key: 'SelectBook',
-});
+// const setParamsAction = ({colorFile}) => NavigationActions.setParams({
+//   params: { colorFile },
+//   key: 'SelectBook',
+// });
 
-const setParamsAction2 = ({sizeFile}) => NavigationActions.setParams({
-  params: { sizeFile },
-  key: 'SelectBook',
-});
+// const setParamsAction2 = ({sizeFile}) => NavigationActions.setParams({
+//   params: { sizeFile },
+//   key: 'SelectBook',
+// });
 
 export default class Setting extends Component {
   static navigationOptions = {
@@ -38,7 +38,7 @@ export default class Setting extends Component {
 
   constructor(props) {
     super(props);
-
+    console.log("props",props)
     this.state = {
       sizeMode:this.props.screenProps.sizeMode,
       sizeFile:this.props.screenProps.sizeFile,
@@ -53,7 +53,7 @@ export default class Setting extends Component {
    onSizeFileUpdate(sizeMode, sizeFile){
     this.setState({sizeFile})
     this.props.screenProps.updateSize(sizeMode, sizeFile)
-    this.props.navigation.dispatch(setParamsAction2(sizeFile));
+    // this.props.navigation.dispatch(setParamsAction2(sizeFile));
     this.styles = settingsPageStyle(this.state.colorFile, sizeFile);
   }
 
@@ -101,7 +101,7 @@ export default class Setting extends Component {
 
     this.setState({colorMode: value, colorFile: changeColorFile},()=>{
       this.props.screenProps.updateColor(this.state.colorMode,this.state.colorFile);
-      this.props.navigation.dispatch(setParamsAction(this.state.colorFile))
+      // this.props.navigation.dispatch(setParamsAction(this.state.colorFile))
       
       AsyncStorageUtil.setAllItems([
         [AsyncStorageConstants.Keys.ColorMode, JSON.stringify(this.state.colorMode)],
@@ -131,8 +131,8 @@ export default class Setting extends Component {
       <View style={this.styles.container}>
         <View style={this.styles.containerMargin}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            <Card >
-              <CardItem style={this.styles.cardItemStyle}>
+            <List >
+              <ListItem style={this.styles.cardItemStyle}>
                 <Left>
                   <Text style={this.styles.textStyle}>
                     Reading Mode
@@ -179,11 +179,11 @@ export default class Setting extends Component {
                   </View>
                 </View>
                 </Right>
-              </CardItem>
-            </Card>
+              </ListItem>
+            </List>
             
-            <Card>
-              <CardItem  bordered style={this.styles.cardItemStyle}>
+            <List>
+              <ListItem  bordered style={this.styles.cardItemStyle}>
                 <Right style={this.styles.cardItemAlignRight}>
                   <View style={this.styles.cardItemRow}>
                     <Icon name='format-size' style={this.styles.cardItemIconCustom} />
@@ -200,56 +200,57 @@ export default class Setting extends Component {
                     value={JSON.parse(this.state.sizeMode)}
                   />
                 </Right>
-              </CardItem>
-            </Card>
+              </ListItem>
+            </List>
            
-            <Card style={{elevation:4}}>
-              <CardItem style={this.styles.switchButtonCard}>
+            <List style={{elevation:4}}>
+              <ListItem style={this.styles.switchButtonCard}>
                 <Text style={this.styles.textStyle}>One Verse Per Line</Text>
                 <Switch 
                   size={24} 
                   thumbColor={this.state.colorMode == AsyncStorageConstants.Values.DayMode ? dayModeIconColor: nightModeIconColor}
                   onValueChange={this.onVerseInLineModeChange.bind(this)}
                   value={this.state.verseInLine}
+                  style={this.styles.cardItemIconCustom} 
                 />
-              </CardItem>
-            </Card>
+              </ListItem>
+            </List>
 
-            <Card>
+            <List>
               <TouchableOpacity onPress={()=>this.props.navigation.navigate('BackupRestore')}>              
-                <CardItem style={this.styles.cardItemStyle}>
+                <ListItem style={this.styles.cardItemStyle}>
                   <Icon name='settings-backup-restore' size={24} style={this.styles.cardItemIconCustom} />
                   <Text style={this.styles.textStyle}>Backup and Restore</Text>
-                </CardItem>
+                </ListItem>
               </TouchableOpacity>
-            </Card>
+            </List>
            
-            <Card>
+            <List>
               <TouchableOpacity onPress={()=>this.props.navigation.navigate('DownloadLanguage')}>              
-                <CardItem style={this.styles.cardItemStyle}>
+                <ListItem style={this.styles.cardItemStyle}>
                   <Icon name='cloud-download' style={this.styles.cardItemIconCustom} />
                   <Text style={this.styles.textStyle}>Download More Bibles</Text>
-                </CardItem>
+                </ListItem>
               </TouchableOpacity>
-            </Card>
+            </List>
           {/*             
-            <Card>
+            <List>
               <TouchableOpacity onPress={()=>this.props.navigation.navigate('Hints')}>
-                <CardItem style={this.styles.cardItemStyle}>
+                <ListItem style={this.styles.cardItemStyle}>
                   <Icon name='help' style={this.styles.cardItemIconCustom} />
                   <Text style={this.styles.textStyle}>Open Hints</Text>
-                </CardItem>
+                </ListItem>
               </TouchableOpacity>
-            </Card>
+            </List>
              */}
-            <Card>
+            <List>
             <TouchableOpacity onPress={()=>this.props.navigation.navigate('About')}>
-              <CardItem style={this.styles.cardItemStyle}>
+              <ListItem style={this.styles.cardItemStyle}>
                 <Icon name='info' style={this.styles.cardItemIconCustom}/>
                 <Text style={this.styles.textStyle}>About</Text>
-              </CardItem>
+              </ListItem>
             </TouchableOpacity>
-            </Card>
+            </List>
           </ScrollView>
         </View>
       </View>
