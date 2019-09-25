@@ -120,7 +120,7 @@ class DbHelper {
 		console.log("LANG CODE "+langName+"bVER CODE "+verCode+" BID "+bId+" CNUM "+cNum+" VNUM "+vNum+" ISHIGHLIGHT "+isHighlight)
 		if (realm) {
 			realm.write(() => {
-				if(isHighlight){
+				if(isHighlight == true){
 				realm.create('HighlightsModel', {
 					languageName: langName,
 					versionCode: verCode,
@@ -216,15 +216,21 @@ class DbHelper {
 		let realm = await this.getRealm();
 		if(realm){
 			realm.write(() => {
-			// let chapter = realm.objects('BookmarksListModel').filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" &&  bookId == "' + bId + '" && chapterNumber == "'+cNum+'"')
+			let chapter = realm.objects('BookmarksListModel').filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" &&  bookId == "' + bId + '" && chapterNumber == "'+cNum+'"')
 			if(isBookmark){
-				console.log(" if bookmark "+isBookmark)
-				realm.create('BookmarksListModel',{
-					bookId:bId,
-					chapterNumber:cNum,
-					versionCode:verCode,
-					languageName:langName
-				})
+				if(chapter==cNum){
+					return
+				}
+				else{
+					console.log(" if bookmark "+isBookmark)
+					realm.create('BookmarksListModel',{
+						bookId:bId,
+						chapterNumber:cNum,
+						versionCode:verCode,
+						languageName:langName
+					})
+				}
+				
 			}
 			else{
 			let bookmarkData = realm.objects('BookmarksListModel').filtered('chapterNumber = $0', cNum)

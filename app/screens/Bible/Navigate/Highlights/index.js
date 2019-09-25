@@ -52,6 +52,7 @@ export default class HighLights extends Component {
     }
     else{
       if(model2.length > 0){
+        console.log("model  ",model2)
         for(var i = 0; i<=model2.length-1;i++){
           this.setState({
             HightlightedVerseArray:[...this.state.HightlightedVerseArray,{"chapterNumber":model2[i].chapterNumber,"verseNumber":model2[i].verseNumber}]
@@ -69,7 +70,9 @@ export default class HighLights extends Component {
       }
     }
   }
-
+  componentDidMount(){
+    this.getHighlights()
+  }
 
   render() {
     console.log("langugueg name "+this.state.languageName)

@@ -63,20 +63,20 @@ class ExpandableItemComponent extends Component {
           {/*Content under the header of the Expandable List Item*/}
           {this.props.item.versionModels.map((item, index,key) => (
               <List>
-                <ListItem button={true}onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId, item.downloaded ? true : false )}}>
+                <ListItem button={true} onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId, item.downloaded ? true : false )}}>
                 <Left>
-                <View style={{alignSelf:'center'}}>
-                  <Text  style={{fontWeight:'bold',fontSize:18}}>{item.versionCode} </Text>
-                  <Text style={{fontSize:18}}> {item.versionName}</Text>
+                <View style={{alignSelf:'center',marginLeft:12}}>
+                  <Text  style={{fontWeight:'bold'}}>{item.versionCode} </Text>
+                  <Text style={{marginLeft:8}}> {item.versionName}</Text>
                 </View>
                 </Left>
                 <Right>
                 {
                   item.downloaded == true ? 
-                  <Icon name="check" size={24}  onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId,true)}}
+                  <Icon name="check" size={24} style={{marginRight:8}}  onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId,true)}}
                   />
                 :
-                <Icon name="file-download" size={24} onPress={()=>{this.props.DownloadBible(this.props.item.languageName,item.versionCode,index,item.sourceId)}}/>
+                <Icon name="file-download" size={24} style={{marginRight:12}} onPress={()=>{this.props.DownloadBible(this.props.item.languageName,item.versionCode,index,item.sourceId)}}/>
                 }
               
               </Right>
@@ -194,41 +194,41 @@ export default class LanguageList extends Component {
     }
 
     DownloadBible = async(langName,verCode,index,sourceId)=>{
-      var bookModels = []
-      var content = await APIFetch.getAllBooks(sourceId,"json")
-      var content = content.bibleContent
-      for(var id in content){
-      var  chapterModels = []
-      if(content != null){
+      console.log("language name"+langName+" ver code  "+verCode+" source id "+sourceId)
 
-        for(var i=0; i< content[id].chapters.length; i++){
-          
-        var  verseModels = []
-          for(var j=0; j< content[id].chapters[i].verses.length; j++){
-              verseModels.push(content[id].chapters[i].verses[j])
-          }
-          var chapterModel = { 
+      var bookModels = []
+      try{
+        var content = await APIFetch.getAllBooks(sourceId,"json")
+        var content = content.bibleContent
+        for(var id in content){
+          var  chapterModels = []
+          if(content != null){
+            for(var i=0; i< content[id].chapters.length; i++){
+              var  verseModels = []
+              for(var j=0; j< content[id].chapters[i].verses.length; j++){
+                verseModels.push(content[id].chapters[i].verses[j])
+              }
+              var chapterModel = { 
                 chapterNumber:  parseInt(content[id].chapters[i].header.title),
                 numberOfVerses: parseInt(content[id].chapters[i].verses.length),
                 verses:verseModels,
               }
-          chapterModels.push(chapterModel)
+              chapterModels.push(chapterModel)
+            }
+          }
+          bookModels.push({
+            languageName: langName,
+            versionCode: verCode,
+            bookId: id,
+            bookName:getBookNameFromMapping(id,langName),
+            chapters: chapterModels,
+            section: getBookSectionFromMapping(id),
+            bookNumber: getBookNumberFromMapping(id)
+          })
         }
-      }
-      bookModels.push({
-        languageName: langName,
-        versionCode: verCode,
-        bookId: id,
-        bookName:getBookNameFromMapping(id,langName),
-        chapters: chapterModels,
-        section: getBookSectionFromMapping(id),
-        bookNumber: getBookNumberFromMapping(id)
-      })
-      }
       var result = bookModels.sort(function(a, b){
         return parseFloat(a.bookId) - parseFloat(b.bookId);  
       })
-
       const booksid = await APIFetch.availableBooks(sourceId)
       var bookListData=[]
       for(var key in booksid[0].books){
@@ -239,12 +239,15 @@ export default class LanguageList extends Component {
       languageList().then(async(language) => {
         this.setState({languages:language})
       })
-      
+      }catch(error){
+        alert("There is some error on downloading this version please select another version")
+      }
     }
     setModalVisible=()=>{
       this.setState({modalVisible:!this.state.modalVisible})
     }
     goToBible = (langName,verCode,sourceId,downloaded)=>{
+      console.log("language name"+langName+" ver code  "+verCode+" source id "+sourceId+" downloaded "+downloaded)
       AsyncStorageUtil.setAllItems([
         [AsyncStorageConstants.Keys.SourceId, sourceId.toString()],
         [AsyncStorageConstants.Keys.LanguageName, langName],

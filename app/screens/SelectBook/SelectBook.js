@@ -9,7 +9,8 @@ import {
   FlatList,
   Linking,
   Platform,
-  Alert
+  Alert,
+  ActivityIndicator
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {Segment,Button,Tab,Tabs} from 'native-base'
@@ -38,6 +39,7 @@ export default class SelectBook extends Component {
       booksList: [],
       OTSize:this.getOTSize(this.props.screenProps.booksList),
       NTSize:this.getNTSize(this.props.screenProps.booksList),
+      isLoading:false
     }
     console.log("IN SelectBook, bok len"  + JSON.stringify(this.props.screenProps.booksList))
     this.styles = SelectBookPageStyle(this.state.colorFile, this.state.sizeFile);
@@ -78,10 +80,9 @@ export default class SelectBook extends Component {
 
   async componentDidMount(){
     var bookListData=[]
-
-    console.log("SCREENPROPS OF BOOK SELECT ",this.props.screenProps.downloaded)
+    // this.setState({isLoading:bookListData.length == 0 ? true : false})
     if(this.props.screenProps.downloaded == true){
-      console.log(" SelectBook ",this.props.screenProps.downloaded)
+        this.setState({isLoading:true})
         var booksid = await DbQueries.getDownloadedBook(this.props.screenProps.languageName,this.props.screenProps.versionCode)
         console.log(" books .......",booksid)
         for(var i = 0; i<=booksid.length-1;i++){
@@ -101,21 +102,34 @@ export default class SelectBook extends Component {
 
       }
     else{
+      this.setState({isLoading:true})
       var booksid = await APIFetch.availableBooks(this.props.screenProps.sourceId)
       console.log("response ",JSON.stringify(booksid))
-        for(var key in booksid[0].books){
-          // console.log(" key and books id "+key+" book vakue "+JSON.stringify(booksid[0].books[key]),)
-          var bookId = booksid[0].books[key].abbreviation
-          var bookList = {bookId:bookId,
-                bookName: getBookNameFromMapping(bookId,this.props.screenProps.languageName),
-                section:getBookSectionFromMapping(bookId),bookNumber:getBookNumberFromMapping(bookId),
-                languageName: this.props.screenProps.languageName, 
-                versionCode:this.props.screenProps.versionCode, 
-                numOfChapters:getBookChaptersFromMapping(bookId)}
-                bookListData.push(bookList)
+        if(booksid.length !=0){
+          if(booksid.status == 500){
+            alert("sorry are unavailable ")
+          }
+          else{
+            for(var key in booksid[0].books){
+              // console.log(" key and books id "+key+" book vakue "+JSON.stringify(booksid[0].books[key]),)
+              var bookId = booksid[0].books[key].abbreviation
+              var bookList = {bookId:bookId,
+                    bookName: getBookNameFromMapping(bookId,this.props.screenProps.languageName),
+                    section:getBookSectionFromMapping(bookId),bookNumber:getBookNumberFromMapping(bookId),
+                    languageName: this.props.screenProps.languageName, 
+                    versionCode:this.props.screenProps.versionCode, 
+                    numOfChapters:getBookChaptersFromMapping(bookId)}
+                    bookListData.push(bookList)
+            }
+          }
+          
         }
+        else{
+          alert("check internet connection")
+        }
+       
     }
-    this.setState({booksList:bookListData})
+    this.setState({booksList:bookListData,isLoading:false})
     console.log("bookList data ",bookListData)
   }
  
@@ -196,53 +210,11 @@ renderItem = ({item, index})=> {
     let inactiveBgColor = 
       this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#fff' : '#3F51B5'
    
-   
+      console.log("loader ",this.state.isLoading)
     return (
       <View style={this.styles.container}>
-       
+        <ActivityIndicator animating ={this.state.isLoading ? true : false} size="large" color="#0000ff"/>
         <View style={this.styles.bookNameContainer}>
-            {/* <Segment>
-              {
-                this.state.OTSize > 0 
-              ?
-              <Button 
-                active={this.state.activeTab} 
-                style={[{
-                  backgroundColor: this.state.activeTab ? activeBgColor : inactiveBgColor,
-                  width: this.state.NTSize == 0 ? width : width,
-                  },this.styles.segmentButton]} 
-                onPress={this.toggleButton.bind(this,true)
-                }
-              >
-                <Text 
-                  style={{color:this.state.activeTab ? inactiveBgColor : activeBgColor
-                  }}>
-                  Old Testament
-                </Text>
-              </Button>
-              : null}
-              {
-                this.state.NTSize > 0 
-              ?
-              <Button 
-                active={!this.state.activeTab} 
-                style={[{
-                  backgroundColor: !this.state.activeTab ? activeBgColor : inactiveBgColor,
-                  width: this.state.OTSize == 0 ? width : width,                  
-                },this.styles.segmentButton]} 
-                onPress={this.toggleButton.bind(this,false)}>
-                <Text 
-                  active={!this.state.activeTab} 
-                  style={[
-                    {
-                      color:!this.state.activeTab ? inactiveBgColor : activeBgColor
-                    },this.styles.buttonText]
-                  }>
-                  New Testament
-                </Text>
-              </Button>
-              :null}
-            </Segment> */}
             <FlatList
               ref={ref => this.flatlistRef = ref}
               data={this.state.booksList}
