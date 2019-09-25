@@ -30,8 +30,8 @@ class DbQueries {
         return DbHelper.queryInVerseText(verCode, langName, text);
     }
     //for api data 
-    queryHighlights(langName, verCode, bookId, chapterNumber) {
-            return DbHelper.queryHighlights(langName, verCode, bookId,chapterNumber);
+    queryHighlights(langName, verCode, bookId) {
+            return DbHelper.queryHighlights(langName, verCode, bookId);
     }
 
   

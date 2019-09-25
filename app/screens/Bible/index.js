@@ -345,6 +345,7 @@ export default class Bible extends Component {
 }
   //get highlights from local db  
   async getHighlights(){
+
     let model2 = await  DbQueries.queryHighlights(this.state.languageName,this.state.versionCode,this.state.bookId)
     if(model2  == null ){
     }
@@ -352,7 +353,7 @@ export default class Bible extends Component {
       if(model2.length > 0){
         for(var i = 0; i<=model2.length-1;i++){
           this.setState({
-            HightlightedVerseArray:[...this.state.HightlightedVerseArray,{"chapterNumber":model2[i].chapterNumber,"verseNumber":model2[i].verseNumber}]
+            HightlightedVerseArray:[{"bookId":model2[i].bookId,"chapterNumber":model2[i].chapterNumber,"verseNumber":model2[i].verseNumber}]
           })
         }
       }
@@ -423,7 +424,7 @@ export default class Bible extends Component {
       for (let item of this.state.selectedReferenceSet) {
           let tempVal = item.split('_')
           for(var i=0; i<=this.state.HightlightedVerseArray.length-1; i++ ){
-              if ( tempVal[2] == this.state.HightlightedVerseArray[i].verseNumber && this.state.currentVisibleChapter == this.state.HightlightedVerseArray[i].chapterNumber) {
+              if ( JSON.parse(tempVal[2]) == this.state.HightlightedVerseArray[i].verseNumber && JSON.parse(tempVal[0]) == this.state.HightlightedVerseArray[i].chapterNumber && this.state.HightlightedVerseArray[i].bookId == this.state.bookId  ) {
                 highlightCount++
               }
           }
@@ -456,14 +457,14 @@ export default class Bible extends Component {
         console.log("selected reference ",this.state.selectedReferenceSet)
         let tempVal = item.split('_')
         await DbQueries.updateHighlightsInVerse( this.state.languageName, this.state.versionCode,this.state.bookId,this.state.currentVisibleChapter, tempVal[2], true)
-        this.setState({HightlightedVerseArray:[...this.state.HightlightedVerseArray,{"chapterNumber":this.state.currentVisibleChapter,"verseNumber":tempVal[2]}]})
+        this.setState({HightlightedVerseArray:[...this.state.HightlightedVerseArray,{"bookId":this.state.bookId,"chapterNumber":this.state.currentVisibleChapter,"verseNumber":tempVal[2]}]})
       }
     } else {
       // remove highlight
       for (let item of this.state.selectedReferenceSet){
         let tempVal = item.split('_')
         for(var i=0; i<=this.state.HightlightedVerseArray.length-1; i++){
-          if(this.state.HightlightedVerseArray[i].chapterNumber == this.state.currentVisibleChapter && this.state.HightlightedVerseArray[i].verseNumber == tempVal[2]){
+          if(this.state.HightlightedVerseArray[i].chapterNumber == JSON.parse(tempVal[0]) && this.state.HightlightedVerseArray[i].verseNumber == JSON.parse(tempVal[2]) &&  this.state.HightlightedVerseArray[i].bookId == this.state.bookId) {
             await DbQueries.updateHighlightsInVerse( this.state.languageName, this.state.versionCode,this.state.bookId,this.state.currentVisibleChapter, tempVal[2],false)
             this.state.HightlightedVerseArray.splice(i, 1)
           }
@@ -526,7 +527,6 @@ export default class Bible extends Component {
   _keyExtractor = (item, index) => item.number;
 
   render() {
-    console.log(" Highlight verse ",this.state.HightlightedVerseArray)
       return (
         <View style={this.styles.container}>
         <MenuContext style={this.styles.verseWrapperText}>
@@ -556,13 +556,10 @@ export default class Bible extends Component {
                                 getSelection = {(verseIndex, chapterNumber, verseNumber) => {
                                 this.getSelectedReferences(verseIndex, chapterNumber, verseNumber)
                                 }}
-                                makeHighlight={this.doHighlight}
-                                makeNotes={this.addToNotes}
-                                share={this.addToShare}
-                                // menuHighlightedText={this.state.menuHighlightedText}
-                                showFootNote = {this.state.showFootNote}
+                                
                                 HightlightedVerse = {this.state.HightlightedVerseArray}
                                 chapterNumber ={this.state.currentVisibleChapter}
+                                bookId={this.state.bookId}
                                 showBottomBar={this.state.showBottomBar}
                             />
                         

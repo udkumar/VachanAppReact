@@ -106,9 +106,17 @@ class DbHelper {
 	async queryHighlights(langName, verCode, bookId){
 		let realm = await this.getRealm();
 		if (realm){
-			let result1 = realm.objects("HighlightsModel");
-			let highlight = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId ==[c]   "' + bookId + '"' )
-			return highlight
+			var result1 = realm.objects("HighlightsModel");
+			if(bookId == null ){
+				
+				let highlightList = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '"' )
+				return highlightList
+			}
+			else{
+				let highlight = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId ==[c]   "' + bookId + '"' )
+				return highlight
+			}
+			
 		}
 				
 	}
@@ -243,15 +251,15 @@ class DbHelper {
 
 	}
 	async queryBookmark(langName,verCode,bId,chapter){
-		console.log("wuery book marks ",langName,verCode,bId,chapter)
+		console.log("wuery book marks ",langName,verCode)
 
 		let realm = await this.getRealm()
 
 			if (realm){
 				let result1 = realm.objects("BookmarksListModel");
 				
-				if(chapter == null){
-					let bookmarksList = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId =="' + bId + '"')
+				if(chapter == null  && bId == null){
+					let bookmarksList = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" ')
 					console.log("book and chapter bookmark from db ",bookmarksList)
 					return bookmarksList
 				}

@@ -47,7 +47,7 @@ export default class HighLights extends Component {
     
   }
   async getHighlights(){
-    let model2 = await  DbQueries.queryHighlights(this.state.languageName,this.state.versionCode,this.state.bookId)
+    let model2 = await  DbQueries.queryHighlights(this.state.languageName,this.state.versionCode,null)
     if(model2  == null ){
     }
     else{

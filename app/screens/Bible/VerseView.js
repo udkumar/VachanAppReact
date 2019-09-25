@@ -72,7 +72,7 @@ export default class VerseView extends Component {
     // var verseNumber =  this.props.HightlightedVerse[0].verseNumber
     for(var i = 0 ;i<=this.props.HightlightedVerse.length-1;i++ ){
         console.log("verse highlight ",this.props.HightlightedVerse[i].verseNumber)
-        if(this.props.HightlightedVerse[i].verseNumber == this.props.verseData.number){
+        if( this.props.HightlightedVerse[i].bookId  == this.props.bookId && this.props.HightlightedVerse[i].verseNumber == this.props.verseData.number && this.props.chapterNumber == this.props.HightlightedVerse[i].chapterNumber){
           return true
         }
        
@@ -82,13 +82,7 @@ export default class VerseView extends Component {
   render() {
     let obj = this.props.chapterNumber + '_' + this.props.index + '_' + this.props.verseData.number;
     let isSelect = this.has(this.props.selectedReferences, obj)
-    // let isHighlight = this.props.HightlightedVerse[0]["versreNumber"] == this.props.verseData.number ? true : false
     let isHighlight = this.isHighlight()
-  
-    // console.log( "iss selected  ",isHighlight )
-    console.log( "iss highlighted verse  ", this.props.HightlightedVerse[0].verseNumber)
-
-    
         return (
           <Text onPress={() => {this.onPress()}}>
             <Text style={this.props.styles.verseNumber} >

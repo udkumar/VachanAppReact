@@ -69,7 +69,7 @@ export default class BookMarks extends Component {
   } 
   async getBookMarks(){
     const params = this.props.navigation.state.params
-    let model = await  DbQueries.queryBookmark(this.state.languageName,this.state.versionCode,this.state.bookId,null)
+    let model = await  DbQueries.queryBookmark(this.state.languageName,this.state.versionCode,null,null)
     if (model == null) {
       
     }
