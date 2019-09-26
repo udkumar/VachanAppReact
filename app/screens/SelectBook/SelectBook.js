@@ -26,6 +26,7 @@ import APIFetch from '../../utils/APIFetch'
 import {getBookNameFromMapping,getBookSectionFromMapping,getBookNumberFromMapping,getBookChaptersFromMapping} from '../../utils/UtilFunctions';
 
 import DbQueries from '../../utils/dbQueries.js';
+
 export default class SelectBook extends Component {
 
   constructor(props){
@@ -36,12 +37,46 @@ export default class SelectBook extends Component {
       sizeFile:this.props.screenProps.sizeFile,
       colorMode:this.props.screenProps.colorMode,
       activeTab:true,
-      booksList: [],
-      OTSize:this.getOTSize(this.props.screenProps.booksList),
-      NTSize:this.getNTSize(this.props.screenProps.booksList),
+      bookList: [],
+      // OTSize:this.getOTSize(),
+      OTSize: function(){
+        console.log("this ",this.bookList)
+          var count = 0;
+          if(this.bookList.length == 0){
+          return 0
+          }else{
+            for(var i=0 ; i<this.bookList.length ; i++){
+              if(this.bookList[i].bookNumber <= 39){
+                count ++;
+              }
+              else{
+                break;
+              }
+            }
+          }
+   
+    return count 
+    },
+      NTSize:function(){
+        console.log("this ",this.bookList)
+        var count = 0;
+        if(this.bookList.length == 0 ){
+          return 0
+        }else{
+          for(var i=this.bookList.length-1 ; i>=0 ; i--){
+            if(this.bookList[i].bookNumber >= 40){
+              count++
+            }
+            else{
+              break;
+            }
+          }
+        }
+        return count 
+      },
       isLoading:false
     }
-    console.log("IN SelectBook, bok len"  + JSON.stringify(this.props.screenProps.booksList))
+    // console.log("IN SelectBook, bok len"  + JSON.stringify(this.props.screenProps.booksList))
     this.styles = SelectBookPageStyle(this.state.colorFile, this.state.sizeFile);
     this.navigateToChapter = this.navigateToChapter.bind(this)
     this.viewabilityConfig = {
@@ -54,7 +89,7 @@ export default class SelectBook extends Component {
     this.setState({activeTab:value})
     if(value == false){
       console.log("pressed")
-      this.flatlistRef.scrollToIndex({index:this.state.OTSize,viewPosition:0,animated: false,viewOffset:0})
+      this.flatlistRef.scrollToIndex({index:this.state.OTSize(),viewPosition:0,animated: false,viewOffset:0})
     }
     else{
       this.flatlistRef.scrollToIndex({index:0,viewPosition:0,animated: false,viewOffset:0})
@@ -67,8 +102,8 @@ export default class SelectBook extends Component {
         sizeFile:props.screenProps.sizeFile,
         lastRead: props.screenProps.lastRead,
         // booksList: props.screenProps.booksList,
-        OTSize:this.getOTSize(props.screenProps.booksList),
-        NTSize:this.getNTSize(props.screenProps.booksList)
+        // OTSize:this.getOTSize(),
+        // NTSize:this.getNTSize(props.screenProps.booksList)
       })
    
     this.styles = SelectBookPageStyle(props.screenProps.colorFile, props.screenProps.sizeFile);   
@@ -88,7 +123,7 @@ export default class SelectBook extends Component {
         for(var i = 0; i<=booksid.length-1;i++){
         console.log(" books inside....... ",booksid[i])
           var bookId = booksid[i]
-          var bookList = {
+          var books= {
                 bookId:bookId,
                 bookName:getBookNameFromMapping(bookId,this.props.screenProps.languageName),
                 section:getBookSectionFromMapping(bookId),
@@ -97,42 +132,46 @@ export default class SelectBook extends Component {
                 versionCode:this.props.screenProps.versionCode, 
                 numOfChapters:getBookChaptersFromMapping(bookId)
             }
-                bookListData.push(bookList)
+                bookListData.push(books)
           }
 
       }
     else{
       this.setState({isLoading:true})
+      try{
       var booksid = await APIFetch.availableBooks(this.props.screenProps.sourceId)
-      console.log("response ",JSON.stringify(booksid))
+      var res = booksid[0].books.sort(function(a, b){return a.bibleBookID - b.bibleBookID})
         if(booksid.length !=0){
           if(booksid.status == 500){
             alert("sorry are unavailable ")
           }
           else{
-            for(var key in booksid[0].books){
-              // console.log(" key and books id "+key+" book vakue "+JSON.stringify(booksid[0].books[key]),)
-              var bookId = booksid[0].books[key].abbreviation
-              var bookList = {bookId:bookId,
+            for(var key in res){
+              console.log(" key and books id "+res[key].abbreviation)
+              var bookId = res[key].abbreviation
+              var books= {
+                    bookId:bookId,
                     bookName: getBookNameFromMapping(bookId,this.props.screenProps.languageName),
                     section:getBookSectionFromMapping(bookId),bookNumber:getBookNumberFromMapping(bookId),
+                    bookNumber:getBookNumberFromMapping(bookId),
                     languageName: this.props.screenProps.languageName, 
                     versionCode:this.props.screenProps.versionCode, 
                     numOfChapters:getBookChaptersFromMapping(bookId)}
-                    bookListData.push(bookList)
+                    bookListData.push(books)
             }
           }
-          
         }
         else{
           alert("check internet connection")
         }
-       
+      }
+      catch(error){
+        console.log("error ",error)
+      }
     }
-    this.setState({booksList:bookListData,isLoading:false})
-    console.log("bookList data ",bookListData)
+    this.setState({bookList:bookListData,isLoading:false})
   }
- 
+
   navigateToChapter(item){
     // console.log("  from book chapter length",item.numOfChapter)
     AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.BookId, item.bookId); 
@@ -162,37 +201,49 @@ renderItem = ({item, index})=> {
     );
   }
 
-  getOTSize(bookList){
+  getOTSize(){
+    console.log("book list in ot ",this.state.bookList)
     var count = 0;
-    for(var i=0 ; i<bookList.length ; i++){
-      if(bookList[i].bookNumber <= 39){
-        count ++;
+    if(this.state.bookList.length == 0){
+     return
+    }else{
+      for(var i=0 ; i<this.state.bookList.length ; i++){
+        if(this.state.bookList[i].bookNumber <= 39){
+          count ++;
+        }
+        else{
+          break;
+        }
       }
-      else{
-        break;
-      }
-
     }
+   
     return count 
   }
 
-  getNTSize(bookList){
+  getNTSize(){
+    console.log("book list in nt ",this.state.bookList)
+
     var count = 0;
-    for(var i=bookList.length-1 ; i>=0 ; i--){
-      if(bookList[i].bookNumber >= 41){
-        count++
-      }
-      else{
-        break;
+    if(this.state.bookList.length == 0 ){
+      return
+    }else{
+      for(var i=this.state.bookList.length-1 ; i>=0 ; i--){
+        if(this.state.bookList[i].bookNumber >= 40){
+          count++
+        }
+        else{
+          break;
+        }
       }
     }
+    
     return count 
   }
 
   onViewableItemsChanged = ({ viewableItems, changed }) => {
       // console.log("Visible items are", viewableItems);
       if (viewableItems.length > 0) {
-        if (viewableItems[0].index < this.state.OTSize) {
+        if (viewableItems[0].index < this.state.OTSize()) {
           // toggel to OT
           this.setState({activeTab:true})
         } else {
@@ -205,19 +256,64 @@ renderItem = ({item, index})=> {
 
   render(){
     // console.log("book id ",t)
-    let activeBgColor = 
-      this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#3F51B5' : '#fff'
-    let inactiveBgColor = 
-      this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#fff' : '#3F51B5'
+    let activeBgColor = this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#3F51B5' : '#fff'
+    let inactiveBgColor =  this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#fff' : '#3F51B5'
    
-      console.log("loader ",this.state.isLoading)
+      console.log("booklist otsize",this.state.OTSize())
+      console.log("booklist ntsize",this.state.NTSize())
+
     return (
       <View style={this.styles.container}>
+      {this.state.isLoading ? 
         <ActivityIndicator animating ={this.state.isLoading ? true : false} size="large" color="#0000ff"/>
+        :
         <View style={this.styles.bookNameContainer}>
+        <Segment>
+              {
+                this.state.OTSize() > 0 
+              ?
+              <Button 
+                active={this.state.activeTab} 
+                style={[{
+                  backgroundColor: this.state.activeTab ? activeBgColor : inactiveBgColor,
+                  width: this.state.NTSize() == 0 ? width : width*1/2,
+                  },this.styles.segmentButton]} 
+                onPress={this.toggleButton.bind(this,true)
+                }
+              >
+                <Text 
+                  style={{color:this.state.activeTab ? inactiveBgColor : activeBgColor
+                  }}>
+                  Old Testament
+                </Text>
+              </Button>
+              : null}
+              {
+                this.state.NTSize() > 0 
+
+              ?
+              <Button 
+                active={!this.state.activeTab} 
+                style={[{
+                  backgroundColor: !this.state.activeTab ? activeBgColor : inactiveBgColor,
+                  width: this.state.OTSize() == 0 ? width : width*1/2,                  
+                },this.styles.segmentButton]} 
+                onPress={this.toggleButton.bind(this,false)}>
+                <Text 
+                  active={!this.state.activeTab} 
+                  style={[
+                    {
+                      color:!this.state.activeTab ? inactiveBgColor : activeBgColor
+                    },this.styles.buttonText]
+                  }>
+                  New Testament
+                </Text>
+              </Button>
+              :null}
+            </Segment>
             <FlatList
               ref={ref => this.flatlistRef = ref}
-              data={this.state.booksList}
+              data={this.state.bookList}
               getItemLayout={this.getItemLayout}
               onScroll={this.handleScroll}
               renderItem={this.renderItem}
@@ -227,6 +323,7 @@ renderItem = ({item, index})=> {
               viewabilityConfig={this.viewabilityConfig}
             />
         </View> 
+      }
       </View>
     );
   }

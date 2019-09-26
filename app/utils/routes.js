@@ -9,13 +9,12 @@ import Search from '../screens/Search/Search'
 import Settings from '../screens/settings/Settings'
 import Account from '../screens/Account'
 import Notes from '../screens/Bible/Navigate/Note'
+import EditNote from '../screens/Bible/Navigate/Note/EditNote'
 import Highlights from '../screens/Bible/Navigate/Highlights/'
 import History from '../screens/Bible/Navigate/History/'
 import Audio from '../screens/Bible/Navigate/Audio/'
 import Video from '../screens/Bible/Navigate/Video/'
 import StudyHelp from '../screens/Bible/Navigate/StudyHelp/'
-
-
 
 import ReferenceSelection from '../screens/numberSelection/ReferenceSelection'
 // import ChapterSelection from '../screens/numberSelection/ChapterSelection'
@@ -167,6 +166,9 @@ const StackNavigate = StackNavigator(
       Audio:{
         screen:Audio
       },
+      EditNote:{
+        screen:EditNote
+      }
      
   },
   

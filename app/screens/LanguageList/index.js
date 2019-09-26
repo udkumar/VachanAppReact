@@ -226,15 +226,15 @@ export default class LanguageList extends Component {
             bookNumber: getBookNumberFromMapping(id)
           })
         }
-      var result = bookModels.sort(function(a, b){
-        return parseFloat(a.bookId) - parseFloat(b.bookId);  
-      })
+
       const booksid = await APIFetch.availableBooks(sourceId)
-      var bookListData=[]
-      for(var key in booksid[0].books){
-        var bookId = booksid[0].books[key].abbreviation
-        bookListData.push(bookId)
+      var bookListData = []
+      var res = booksid[0].books.sort(function(a, b){return a.bibleBookID - b.bibleBookID})
+       for(var key in res){
+        var bookId = res[key].abbreviation
+        bookListData.push({bookId})
       }
+
       await DbQueries.addNewVersion(langName,verCode,result,sourceId,bookListData)
       languageList().then(async(language) => {
         this.setState({languages:language})

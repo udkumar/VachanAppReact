@@ -22,6 +22,7 @@ import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
 // import {getResultText} from '../../utils/UtilFunctions';
 import {getBookNameFromMapping,getBookChaptersFromMapping} from '../../utils/UtilFunctions';
 import APIFetch from '../../utils/APIFetch'
+import SplashScreen from 'react-native-splash-screen'
 import {
   MenuContext
 } from 'react-native-popup-menu';
@@ -207,14 +208,15 @@ export default class Bible extends Component {
     this.props.navigation.setParams({
       onBookmark: this.onBookmarkPress,
       isBookmark:this.state.isBookmark,
+      bookName:this.state.bookName.length > 8 ? this.state.bookName.slice(0,7)+"..." : this.state.bookName,
+      currentChapter:this.state.currentVisibleChapter,
+      languageName: this.state.languageName, 
+      versionCode: this.state.versionCode,
       queryBookFromAPI:this.queryBookFromAPI,
-      
-      // styles:this.styles
     })   
+    SplashScreen.hide();
     this.queryBookFromAPI()
-       
   }
-
   // render data onAPI Call 
     queryBookFromAPI = async()=>{
       this.state.chapter = []

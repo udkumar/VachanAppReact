@@ -14,11 +14,11 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import FlowLayout from '../../components/FlowLayout'
+import FlowLayout from '../../../../components/FlowLayout'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { HeaderBackButton, NavigationActions } from 'react-navigation';
 import {RichTextEditor, actions} from 'react-native-zss-rich-text-editor';
-import RichTextToolbar from '../../utils/RichTextToolbar'
+import RichTextToolbar from '../../../../utils/RichTextToolbar'
 const height = Dimensions.get('window').height;
 import { noteStyle } from './styles.js';
 import {getBookNameFromMapping} from '../../../../utils/UtilFunctions';
