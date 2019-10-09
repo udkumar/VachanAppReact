@@ -17,15 +17,13 @@ import {Segment,Button,Tab,Tabs} from 'native-base'
 import { SelectBookPageStyle } from './styles.js';
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
-import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
-import AsyncStorageUtil from '../../utils/AsyncStorageUtil'
-import {id_name_map} from '../../assets/mappings.json'
+import {AsyncStorageConstants} from '../../../utils/AsyncStorageConstants'
+import AsyncStorageUtil from '../../../utils/AsyncStorageUtil'
 
-import {NavigationActions} from 'react-navigation'
-import APIFetch from '../../utils/APIFetch'
-import {getBookNameFromMapping,getBookSectionFromMapping,getBookNumberFromMapping,getBookChaptersFromMapping} from '../../utils/UtilFunctions';
+import APIFetch from '../../../utils/APIFetch'
+import {getBookNameFromMapping,getBookSectionFromMapping,getBookNumberFromMapping,getBookChaptersFromMapping} from '../../../utils/UtilFunctions';
 
-import DbQueries from '../../utils/dbQueries.js';
+import DbQueries from '../../../utils/dbQueries.js';
 
 export default class SelectBook extends Component {
 
@@ -165,10 +163,9 @@ export default class SelectBook extends Component {
   }
 
   navigateToChapter(item){
-    // console.log("  from book chapter length",item.numOfChapter)
     AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.BookId, item.bookId); 
-    this.props.screenProps.updateSelectedBook(item.bookId,item.numOfChapters,item.bookName)
-    this.props.navigation.navigate('Chapters',)
+    this.props.screenProps.updateSelectedBook(item.bookId,item.numOfChapters)
+    this.props.navigation.navigate('Chapters',{bookId:item.bookId,chaptersLength:item.numOfChapters})
   }
 renderItem = ({item, index})=> {
     return (
@@ -194,7 +191,6 @@ renderItem = ({item, index})=> {
   }
 
   getOTSize(){
-    console.log("book list in ot ",this.state.bookList)
     var count = 0;
     if(this.state.bookList.length == 0){
      return
@@ -213,7 +209,6 @@ renderItem = ({item, index})=> {
   }
 
   getNTSize(){
-    console.log("book list in nt ",this.state.bookList)
 
     var count = 0;
     if(this.state.bookList.length == 0 ){
@@ -233,7 +228,6 @@ renderItem = ({item, index})=> {
   }
 
   onViewableItemsChanged = ({ viewableItems, changed }) => {
-      // console.log("Visible items are", viewableItems);
       if (viewableItems.length > 0) {
         if (viewableItems[0].index < this.state.OTSize()) {
           // toggel to OT
@@ -247,12 +241,9 @@ renderItem = ({item, index})=> {
 
 
   render(){
-    // console.log("book id ",t)
     let activeBgColor = this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#3F51B5' : '#fff'
     let inactiveBgColor =  this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#fff' : '#3F51B5'
    
-      console.log("booklist otsize",this.state.OTSize())
-      console.log("booklist ntsize",this.state.NTSize())
 
     return (
       <View style={this.styles.container}>

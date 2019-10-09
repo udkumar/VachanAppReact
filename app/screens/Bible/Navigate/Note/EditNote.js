@@ -38,14 +38,15 @@ export default class EditNote extends Component {
   constructor(props){
     super(props);
     this.state = {
-        noteIndex: this.props.navigation.state.params.index,
-        noteObject: this.props.navigation.state.params.noteObject,
-        noteBody: this.props.navigation.state.params.index == -1 
-          ? ''
-          : this.props.navigation.state.params.noteObject.body == '' ? '' : JSON.parse(this.props.navigation.state.params.noteObject.body),
-        referenceList: this.props.navigation.state.params.index == -1 
-          ? [] 
-          : this.props.navigation.state.params.noteObject.references,
+        // noteIndex: this.props.navigation.state.params.index,
+        // noteObject: this.props.navigation.state.params.noteObject,
+        // noteBody: this.props.navigation.state.params.index == -1 
+        //   ? ''
+        //   : this.props.navigation.state.params.noteObject.body == '' ? '' : JSON.parse(this.props.navigation.state.params.noteObject.body),
+        referenceList:  this.props.navigation.state.params.referenceList,
+        // this.props.navigation.state.params.index == -1 
+        //   ? [] 
+        //   : this.props.navigation.state.params.noteObject.references,
         // todo here fix reference list
         referenceList2: this.props.navigation.state.params.referenceList,
     }
@@ -199,7 +200,9 @@ export default class EditNote extends Component {
   }
 
   onAddVersePress() {
-    this.props.navigation.navigate('ReferenceSelection', {getReference: this.getReference})
+    // this.props.navigation.navigate('ReferenceSelection', {getReference: this.getReference})
+    this.props.navigation.navigate('SelectionTab', {getReference: this.getReference,params:this.props.navigation.state.params.params})
+
   }
 
   openReference(index) {
@@ -217,6 +220,7 @@ export default class EditNote extends Component {
   }
 
   render() {
+    console.log("params value in edit page ",this.props.navigation.state.routeName)
     return (
      <ScrollView style={this.styles.containerEditNote}>
       <View style={this.styles.subContainer}>

@@ -445,7 +445,7 @@ export default class Bible extends Component {
         versionCode: this.props.screenProps.versionCode, languageName: this.props.screenProps.languageName};
       refList.push(refModel)
     }
-    this.props.navigation.navigate('Notes', {referenceList: refList})
+    this.props.navigation.navigate('EditNote', {referenceList: refList,params:this.state})
     this.setState({selectedReferenceSet: [], showBottomBar: false})
   }
 
@@ -529,6 +529,7 @@ export default class Bible extends Component {
   _keyExtractor = (item, index) => item.number;
 
   render() {
+    console.log("verse length ",this.state.chapter.length)
       return (
         <View style={this.styles.container}>
         <MenuContext style={this.styles.verseWrapperText}>

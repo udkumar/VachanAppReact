@@ -6,16 +6,12 @@ import {
   FlatList,
   Dimensions,
 } from 'react-native';
-import DbQueries from '../../utils/dbQueries'
-const height = Dimensions.get('window').height;
-const width = Dimensions.get('window').width;
-import {NavigationActions} from 'react-navigation'
-import APIFetch from '../../utils/APIFetch'
+import DbQueries from '../../../utils/dbQueries'
 import { numberSelection } from './styles.js';
-import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
-import AsyncStorageUtil from '../../utils/AsyncStorageUtil'
+import {AsyncStorageConstants} from '../../../utils/AsyncStorageConstants'
+import AsyncStorageUtil from '../../../utils/AsyncStorageUtil'
 
-import {getBookChaptersFromMapping} from '../../utils/UtilFunctions';
+import {getBookChaptersFromMapping} from '../../../utils/UtilFunctions';
 
 
 export default class ChapterSelection extends Component {
@@ -37,8 +33,7 @@ export default class ChapterSelection extends Component {
   //   this.fetchChapters()
   // }
   async componentWillReceiveProps(props){
-    console.log(" componentWillReceiveProps ",props.screenProps.bookId)
-    var totalChapter = props.screenProps.totalChapters
+    var totalChapter = getBookChaptersFromMapping(props.screenProps.bookId)
     var chapterData = []
     for(var i=1;i<=totalChapter;i++){
       chapterData.push(i)
@@ -48,7 +43,6 @@ export default class ChapterSelection extends Component {
   // this.fetchChapters()
   }
   componentDidMount(){
-    console.log("DID MOUNT CALLING CHAPTER PAGE ",this.props.screenProps.bookId)
     this.fetchChapters()
   }
   async fetchChapters(){
@@ -82,13 +76,11 @@ export default class ChapterSelection extends Component {
     // this.props.navigation.replace('Bible', {bookId: this.state.bookId, bookNumber:this.state.bookNumber,
       // bookName: this.state.bookName, chapterNumber: item })
       AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.ChapterNumber, item); 
-      this.props.screenProps.updateSelectedChapter(item)
+      this.props.screenProps.updateSelectedChapter(this.props.screenProps.bookId,item)
   }
 
   
   render() {
-    console.log("book id  ",this.props.screenProps.bookId)
-    console.log("chapter number ",this.state.chapterData.length)
     return (
       
       <View style={this.styles.chapterSelectionContainer}>
