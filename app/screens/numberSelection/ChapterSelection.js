@@ -83,6 +83,7 @@ export default class ChapterSelection extends Component {
       // bookName: this.state.bookName, chapterNumber: item })
       AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.ChapterNumber, item); 
       this.props.screenProps.updateSelectedChapter(item)
+      this.props.navigation.navigate('Verses',)
   }
 
   

@@ -4,7 +4,6 @@ const Constants = require('./constants')
 
 
 export function getBookNameFromMapping(id,language) {
-    console.log("languagueg name from get book name "+language)
         var obj = id_name_map.id_name_map;
         for (var key in obj) {
             if (obj.hasOwnProperty(key)) {
@@ -14,8 +13,6 @@ export function getBookNameFromMapping(id,language) {
                     for(var key2 in val.book_name){
                         var lang =  language.toLowerCase()
                         if(lang == key2){
-                            console.log("language of selected book"+ val.book_name[key2])
-
                             return val.book_name[key2]
                         }
                     }

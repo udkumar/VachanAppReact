@@ -10,6 +10,7 @@ import Settings from '../screens/settings/Settings'
 import Account from '../screens/Account'
 import Notes from '../screens/Bible/Navigate/Note'
 import EditNote from '../screens/Bible/Navigate/Note/EditNote'
+import NotePage from '../screens/Bible/Navigate/Note/NotePage'
 import Highlights from '../screens/Bible/Navigate/Highlights/'
 import History from '../screens/Bible/Navigate/History/'
 import Audio from '../screens/Bible/Navigate/Audio/'
@@ -168,6 +169,9 @@ const StackNavigate = StackNavigator(
       },
       EditNote:{
         screen:EditNote
+      },
+      NotePage:{
+        screen:NotePage
       }
      
   },

@@ -71,9 +71,6 @@ export default class SelectionStack extends Component {
  
     render(){
         const params  = this.props.navigation.state.params.params
-        console.log("LAST SCREEN NAME IS   ",this.props.navigation.state)
-
-        console.log("LAST SCREEN NAME IS  = = = ",this.props.navigation.state.routeName)
 
         return(
             <SelectionTab

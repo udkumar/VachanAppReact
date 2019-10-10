@@ -76,7 +76,12 @@ class ExpandableItemComponent extends Component {
                   <Icon name="check" size={24} style={{marginRight:8}}  onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId,true)}}
                   />
                 :
-                <Icon name="file-download" size={24} style={{marginRight:12}} onPress={()=>{this.props.DownloadBible(this.props.item.languageName,item.versionCode,index,item.sourceId)}}/>
+                  (
+                  this.props.isLoading ?
+                  <ActivityIndicator  size="small"  color="#0000ff"/> 
+                  : 
+                  <Icon name="file-download" size={24} style={{marginRight:12}} onPress={()=>{this.props.DownloadBible(this.props.item.languageName,item.versionCode,index,item.sourceId)}}/>
+                  )
                 }
               
               </Right>
@@ -165,7 +170,6 @@ export default class LanguageList extends Component {
               versions.push({sourceId:languageRes[i].languageVersions[j].sourceId,versionName:version.name,versionCode:version.code,license:"license",year:2019,downloaded:false})
             }
             lanVer.push({languageName:language,versionModels:versions})
-
           }
           DbQueries.addLangaugeList(lanVer)
          
@@ -193,55 +197,66 @@ export default class LanguageList extends Component {
         })
     }
 
-    DownloadBible = async(langName,verCode,index,sourceId)=>{
-      console.log("language name"+langName+" ver code  "+verCode+" source id "+sourceId)
+    DownloadBible = (langName,verCode,index,sourceId)=>{
 
       var bookModels = []
-      try{
-        var content = await APIFetch.getAllBooks(sourceId,"json")
-        var content = content.bibleContent
-        for(var id in content){
-          var  chapterModels = []
-          if(content != null){
-            for(var i=0; i< content[id].chapters.length; i++){
-              var  verseModels = []
-              for(var j=0; j< content[id].chapters[i].verses.length; j++){
-                verseModels.push(content[id].chapters[i].verses[j])
+      var verseModels = []
+      var  chapterModels = []
+      this.setState({isLoading:true},async()=>{
+
+        try{
+          var content = await APIFetch.getAllBooks(sourceId,"json")
+          var content = content.bibleContent
+          for(var id in content){
+            if(content != null){
+              for(var i=0; i< content[id].chapters.length; i++){
+                const verses = content[id].chapters[i].verses
+                for(var j=0; j< verses.length; j++){
+                  verseModels.push({
+                    text: verses[j].text,
+                    number: verses[j].number,
+                    metadata:verses[j].metadata ? ( verses[j].metadata[0].styling ? verses[j].metadata[0].styling : "" ) : "",
+                  })
+                }
+                  var chapterModel = { 
+                    chapterNumber:  parseInt(content[id].chapters[i].header.title),
+                    numberOfVerses: parseInt(content[id].chapters[i].verses.length),
+                    verses:verseModels,
+                  }
+                  chapterModels.push(chapterModel)
               }
-              var chapterModel = { 
-                chapterNumber:  parseInt(content[id].chapters[i].header.title),
-                numberOfVerses: parseInt(content[id].chapters[i].verses.length),
-                verses:verseModels,
-              }
-              chapterModels.push(chapterModel)
             }
+            bookModels.push({
+              languageName: langName,
+              versionCode: verCode,
+              bookId: id,
+              bookName:getBookNameFromMapping(id,langName),
+              chapters: chapterModels,
+              section: getBookSectionFromMapping(id),
+              bookNumber: getBookNumberFromMapping(id)
+            })
           }
-          bookModels.push({
-            languageName: langName,
-            versionCode: verCode,
-            bookId: id,
-            bookName:getBookNameFromMapping(id,langName),
-            chapters: chapterModels,
-            section: getBookSectionFromMapping(id),
-            bookNumber: getBookNumberFromMapping(id)
-          })
+          console.log("book model .......",bookModels)
+        const booksid = await APIFetch.availableBooks(sourceId)
+        var bookListData = []
+        var res = booksid[0].books.sort(function(a, b){return a.bibleBookID - b.bibleBookID})
+         for(var key in res){
+          var bookId = res[key].abbreviation
+          bookListData.push({bookId})
+        }
+  
+        await DbQueries.addNewVersion(langName,verCode,bookModels,sourceId,bookListData.length == 0 ? 0 : bookListData)
+        this.setState({isLoading:false})
+        languageList().then(async(language) => {
+          this.setState({languages:language})
+        })
+        }catch(error){
+          console.log("error ",error)
+          // alert("There is some error on downloading this version please select another version")
         }
 
-      const booksid = await APIFetch.availableBooks(sourceId)
-      var bookListData = []
-      var res = booksid[0].books.sort(function(a, b){return a.bibleBookID - b.bibleBookID})
-       for(var key in res){
-        var bookId = res[key].abbreviation
-        bookListData.push({bookId})
-      }
-
-      await DbQueries.addNewVersion(langName,verCode,result,sourceId,bookListData)
-      languageList().then(async(language) => {
-        this.setState({languages:language})
       })
-      }catch(error){
-        alert("There is some error on downloading this version please select another version")
-      }
+
     }
     setModalVisible=()=>{
       this.setState({modalVisible:!this.state.modalVisible})
@@ -261,12 +276,13 @@ export default class LanguageList extends Component {
     render(){
       return (
         <View style={this.styles.MainContainer}>
-            {this.state.languages.length == 0 ?
-              <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>   
-              <ActivityIndicator 
-                size="large" 
-                color="#0000ff"/>
-                </View>:
+        {this.state.languages.length == 0 ?
+        <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>   
+          <ActivityIndicator 
+            size="large" 
+            color="#0000ff"/>
+        </View> 
+          :
         <View style={{flex:1}}>
         <TextInput 
           style={this.styles.TextInputStyleClass}
@@ -278,8 +294,10 @@ export default class LanguageList extends Component {
         <ScrollView>
         <FlatList
           data={this.state.languages}
+          extraData={this.state}
           renderItem={({item, index, separators}) =><ExpandableItemComponent
             // key={item}
+           
             onClickFunction={this.updateLayout.bind(this, index)}
             item={item}
             DownloadBible = {this.DownloadBible}
@@ -287,14 +305,15 @@ export default class LanguageList extends Component {
             startDownload ={this.state.startDownload}
             colorFile={this.state.colorFile}
             sizeFile={this.state.sizeFile}
+            isLoading = {this.state.isLoading}
             // setModalVisible={this.setModalVisible}
           />}
 
         />
       </ScrollView>
       </View>
-            }
-      
+      }
+  
       </View>
       )
     }

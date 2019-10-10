@@ -22,6 +22,7 @@ import RichTextToolbar from '../../../../utils/RichTextToolbar'
 const height = Dimensions.get('window').height;
 import { noteStyle } from './styles.js';
 import {getBookNameFromMapping} from '../../../../utils/UtilFunctions';
+import DbQueries from '../../../../utils/dbQueries'
 
 export default class EditNote extends Component {
   static navigationOptions = ({navigation}) =>({
@@ -38,11 +39,9 @@ export default class EditNote extends Component {
   constructor(props){
     super(props);
     this.state = {
-        // noteIndex: this.props.navigation.state.params.index,
+        noteIndex: this.props.navigation.state.params.noteIndex,
         // noteObject: this.props.navigation.state.params.noteObject,
-        // noteBody: this.props.navigation.state.params.index == -1 
-        //   ? ''
-        //   : this.props.navigation.state.params.noteObject.body == '' ? '' : JSON.parse(this.props.navigation.state.params.noteObject.body),
+        noteBody: this.props.navigation.state.params.noteIndex == -1 ? '' : this.props.navigation.state.params.noteObject.body == '' ? '' : JSON.parse(this.props.navigation.state.params.noteObject.body),
         referenceList:  this.props.navigation.state.params.referenceList,
         // this.props.navigation.state.params.index == -1 
         //   ? [] 
@@ -86,6 +85,9 @@ export default class EditNote extends Component {
     console.log("time "+time)
     var contentBody = await this.getHtml()
     console.log("content body "+contentBody)
+    await DbQueries.addOrUpdateNote(this.state.noteIndex, contentBody, 
+    this.state.noteIndex == -1 ? time : this.state.noteObject.createdTime, time, this.state.referenceList);
+  
     if (contentBody == '' && this.state.referenceList.length == 0) {
       console.log("INSIDE FIRST IF ... ")
       if(this.state.noteIndex != -1){
@@ -93,7 +95,7 @@ export default class EditNote extends Component {
         this.props.navigation.state.params.onDelete(this.state.noteIndex, this.state.noteObject.createdTime)
       }
     } else {
-      this.props.navigation.state.params.onRefresh(this.state.noteIndex, contentBody, 
+      await DbQueries.addOrUpdateNote(this.state.noteIndex, contentBody, 
         this.state.noteIndex == -1 ? time : this.state.noteObject.createdTime, time, this.state.referenceList);
     }
     this.props.navigation.dispatch(NavigationActions.back())
@@ -120,7 +122,8 @@ export default class EditNote extends Component {
           this.showAlert();
           return
         }
-      } else {
+      } 
+      else {
         if(contentBody !== this.props.navigation.state.params.noteObject.body 
             || !this.checkRefArrayEqual()){
               console.log("changes to content body changes ")
@@ -179,7 +182,8 @@ export default class EditNote extends Component {
         let referenceList = [...this.state.referenceList]        
         for (var i=0; i<this.state.referenceList2.length; i++) {
           let item = this.state.referenceList2[i]
-          if (!this.checkIfReferencePresent(item.bookId, item.bookName, item.chapterNumber, item.verseNumber)) {
+          const verseNumber = item.verseNumber.toString()
+          if (!this.checkIfReferencePresent(item.bookId, item.bookName, item.chapterNumber,verseNumber)) {
             referenceList.push(item)
           }
         }
@@ -189,10 +193,11 @@ export default class EditNote extends Component {
   }
 
   getReference = (id, name, cNum, vNum) => {
-    if (this.checkIfReferencePresent(id, name, cNum, vNum)) {
+    const verseNum = vNum.toString()
+    if (this.checkIfReferencePresent(id, name, cNum, verseNum)) {
       return;
     }
-    let refModel = {bookId: id, bookName: name, chapterNumber: cNum, verseNumber: vNum, 
+    let refModel = {bookId: id, bookName: name, chapterNumber: cNum, verseNumber: verseNum, 
       versionCode: this.props.screenProps.versionCode, languageName: this.props.screenProps.languageName};
     let referenceList = [...this.state.referenceList]
     referenceList.push(refModel)

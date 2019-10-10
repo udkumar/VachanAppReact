@@ -43,7 +43,7 @@ export default class Bible extends Component {
         headerTitle:(
           <View style={navStyles.headerLeftStyle}>
             <View style={{marginRight:10}}>
-              <TouchableOpacity style={navStyles.touchableStyleLeft}  onPress={() =>{navigation.navigate("SelectionTab", {params:params})}}>
+              <TouchableOpacity style={navStyles.touchableStyleLeft}  onPress={() =>{navigation.navigate("SelectionTab", {params:params,getReference:params.queryBookFromAPI})}}>
                 <Text  style={navStyles.headerTextStyle}>{params.bookName}  {params.currentChapter }</Text>
                 <Icon name="arrow-drop-down" color="#fff" size={24}/>
               </TouchableOpacity>
@@ -91,7 +91,7 @@ export default class Bible extends Component {
     this.state = {
       // languageCode: this.props.screenProps.languageCode,
       languageName:AsyncStorageConstants.Values.DefLanguageName,
-      versionCode: AsyncStorageConstants.Values.DefLanguageCode,
+      versionCode: AsyncStorageConstants.Values.DefVersionCode,
       isLoading: false,
       showBottomBar: false,
       bookId:AsyncStorageConstants.Values.DefBookId,
@@ -120,6 +120,8 @@ export default class Bible extends Component {
       // chaptersArray:[],
       message:'',
       downloaded:false,
+      totalVerses:0,
+
 
       //modal value for showing chapter grid 
       sourceId:AsyncStorageConstants.Values.DefSourceId
@@ -129,11 +131,7 @@ export default class Bible extends Component {
     this.pinchTime = new Date().getTime()
     this.styles = styles(this.state.colorFile, this.state.sizeFile);    
     this.modelValue = "modal1"
-    this.props.navigation.setParams({
-      color:this.props.screenProps.colorFile,
-      size:this.props.screenProps.sizeFile
-      // styles:this.styles
-    })  
+   
     
   }
 
@@ -213,6 +211,7 @@ export default class Bible extends Component {
       languageName: this.state.languageName, 
       versionCode: this.state.versionCode,
       queryBookFromAPI:this.queryBookFromAPI,
+      totalVerses:this.state.totalVerses
     })   
     SplashScreen.hide();
     this.queryBookFromAPI()
@@ -238,15 +237,20 @@ export default class Bible extends Component {
       
       console.log("languagge name ",languageName)
       console.log("Version code   ",versionCode)
-
         this.setState({isLoading:true, languageName,versionCode,bookId,currentVisibleChapter,sourceId,downloaded},async()=>{
             if(downloaded == true ){
               let response = await dbQueries.queryVersions(languageName,versionCode,bookId,currentVisibleChapter)
               if(response.length != 0){
                 this.setState({
                   chapter:response[0].verses,
+                  totalVerses:response[0].verses.length,
+
                   totalChapters: getBookChaptersFromMapping(bookId),
                   isLoading:false
+                })
+                this.props.navigation.setParams({
+                  totalVerses:response.chapterContent.verses.length
+
                 })
               }
               else{
@@ -264,8 +268,14 @@ export default class Bible extends Component {
                   }else{
                     this.setState({chapter:response.chapterContent.verses,
                       totalChapters: getBookChaptersFromMapping(bookId),
+                      totalVerses:response.chapterContent.verses.length,
                       isLoading:false
                     })
+                    this.props.navigation.setParams({
+                      totalVerses:response.chapterContent.verses.length
+
+                    })
+
                   }
               }
               else{
@@ -273,7 +283,8 @@ export default class Bible extends Component {
               }
               }
               catch(error) {
-                alert("error coming on this language data please change language from language page",error)
+                console.log("error on fetching content ",error)
+                // alert("error coming on this language data please change language from language page",error)
               }
             }
             const book_name = getBookNameFromMapping(bookId,languageName)
@@ -285,7 +296,7 @@ export default class Bible extends Component {
               downloaded:downloaded,
               sourceId:sourceId,
               bookId:bookId,
-              totalChapters:getBookChaptersFromMapping(bookId)
+              totalChapters:getBookChaptersFromMapping(bookId),
             })
         })
        
@@ -441,12 +452,14 @@ export default class Bible extends Component {
     let name = getBookNameFromMapping(this.state.bookId,this.state.languageName)
     for (let item of this.state.selectedReferenceSet) {
       let tempVal = item.split('_')
-      let refModel = {bookId: id, bookName: name, chapterNumber: parseInt(tempVal[0]), verseNumber: tempVal[2], 
+      const verseNumber =  tempVal[2].toString()
+      let refModel = {bookId: id, bookName: name, chapterNumber: parseInt(tempVal[0]), verseNumber: verseNumber, 
         versionCode: this.props.screenProps.versionCode, languageName: this.props.screenProps.languageName};
       refList.push(refModel)
     }
-    this.props.navigation.navigate('EditNote', {referenceList: refList,params:this.state})
+    this.props.navigation.navigate('EditNote', {referenceList: refList,params:this.state,noteIndex:-1})
     this.setState({selectedReferenceSet: [], showBottomBar: false})
+    
   }
 
   //after selected reference do highlight 

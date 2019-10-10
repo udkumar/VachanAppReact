@@ -87,7 +87,7 @@ export default class Note extends Component {
   }
 
   openEdit(index, noteObject) {
-    this.props.navigation.navigate('EditNote',{index:index, 
+    this.props.navigation.navigate('EditNote',{noteIndex:index, 
       noteObject: noteObject, 
       onDelete: this.onDelete, 
       onRefresh: this.onRefresh, 
@@ -98,7 +98,11 @@ export default class Note extends Component {
     })
   }
   
+  openNoteContent = ()=>{
+    this.props.navigation.navigate("NotePage",{notesData:this.state.notesData})
+  }
   renderItem = ({item,index})=>{
+    console.log("item reference ",item.references[0].verseNumber)
     // TODO fix max lines in WEBVIEW
     var date = new Date(item.modifiedTime);
     console.log("render : "+ item.modifiedTime + " == " + date)
@@ -112,7 +116,7 @@ export default class Note extends Component {
     
     return(
     <TouchableOpacity style={this.styles.noteContent}
-        onPress={() =>this.openEdit(index,item)}>
+        onPress={()=>{this.props.navigation.navigate("NotePage",{note:item.references[0]})}}>
       <Card>
       <CardItem style={this.styles.cardItemStyle}>
         <View style={this.styles.notesContentView}> 

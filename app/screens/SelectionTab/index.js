@@ -72,33 +72,36 @@ export default class SelectionStack extends Component {
             bookName:'',
             verseNumber:''
         }
+        
     }
     updateSelectedBook = (bookId,totalChapters,bookName)=>{
         this.setState({bookId,totalChapters,bookName})
     }
 
     updateSelectedChapter = (chapterNumber)=>{
-        this.setState({chapterNumber,bookId})
+        this.setState({chapterNumber})
         // this.props.navigation.state.params.params.quseryBookFromAPI()
-        this.props.navigation.state.params.getReference(
-            this.state.bookId, 
-            this.state.bookName, 
-            chapterNumber, 
-            1
-        )
+        
         // this.props.navigation.goBack()
     }
     
-    updateSelectedVerse(verseNumber){
-        this.setState({verseNumber}) 
-        // this.props.navigation.goBack()
+    updateSelectedVerse=(verseNumber)=>{
+        console.log("state value ",this.state)
+        this.props.navigation.state.params.getReference(
+            this.state.bookId, 
+            this.state.bookName, 
+            this.state.chapterNumber, 
+            verseNumber
+        )
+        // this.setState({verseNumber}) 
+        this.props.navigation.goBack()
 
     }
     render(){
         const params  = this.props.navigation.state.params.params
         console.log("LAST SCREEN NAME IS   ",this.props.navigation.state)
 
-        console.log("LAST SCREEN NAME IS  = = = ",this.props.navigation.state.routeName)
+        console.log("LAST SCREEN NAME IS  = = = ",params.totalVerses)
         return(
             <SelectionTab
                 screenProps={{
@@ -116,6 +119,7 @@ export default class SelectionStack extends Component {
                     sourceId:params.sourceId,
                     downloaded:params.downloaded,
                     totalChapters:params.totalChapters,
+                    totalVerses:params.totalVerses,
 
                     updateSelectedBook:this.updateSelectedBook,
                     updateSelectedChapter:this.updateSelectedChapter,

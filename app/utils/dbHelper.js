@@ -1,18 +1,20 @@
 'use strict';
 
-import Realm from 'realm'
-import LanguageModel from '../models/LanguageModel'
-import VersionModel from '../models/VersionModel'
-import BookModel from '../models/BookModel'
-import NoteModel from '../models/NoteModel'
-import ChapterModel from '../models/ChapterModel'
-import VerseModel from '../models/VerseModel'
-import StylingModel from '../models/StylingModel'
-import ReferenceModel from '../models/ReferenceModel'
-import BookmarksListModel from '../models/BookmarksListModel'
-import HighlightsModel from '../models/HighlightsModel'
+import Realm from 'realm';
+import LanguageModel from '../models/LanguageModel';
+import VersionModel from '../models/VersionModel';
+import BookModel from '../models/BookModel';
+import NoteModel from '../models/NoteModel';
+import ChapterModel from '../models/ChapterModel';
+import VerseModel from '../models/VerseModel';
+import NoteStylingModel from '../models/NoteStylingModel';
+import VerseStylingModel from '../models/VerseStylingModel';
+import ReferenceModel from '../models/ReferenceModel';
+import BookmarksListModel from '../models/BookmarksListModel';
+import HighlightsModel from '../models/HighlightsModel';
 import HistoryModel from '../models/HistoryModel';
-import VerseMetadataModel from '../models/VerseMetadataModel'
+import VerseMetadataModel from '../models/VerseMetadataModel';
+
 
 import {
 	Platform,
@@ -26,13 +28,13 @@ class DbHelper {
     async getRealm() {
     	try {
     		return await Realm.open({
-				schemaVersion: 21,
+				schemaVersion: 23,
 				// deleteRealmIfMigrationNeeded: true, 
 				path:
 					Platform.OS === 'ios'
 					? RNFS.MainBundlePath + '/vachanApp.realm'
 					: RNFS.DocumentDirectoryPath + '/vachanApp.realm',
-				schema: [LanguageModel, VersionModel, BookModel, ChapterModel, VerseModel, NoteModel, StylingModel, ReferenceModel, HistoryModel,BookmarksListModel,HighlightsModel,VerseMetadataModel] });
+				schema: [LanguageModel, VersionModel, BookModel, ChapterModel, VerseModel, NoteModel, NoteStylingModel,VerseStylingModel, ReferenceModel, HistoryModel,BookmarksListModel,HighlightsModel,VerseMetadataModel] });
 				// console.log('create db:', db.path)
 			} catch (err) {
 			console.log("error in getItem"+err)

@@ -1,4 +1,6 @@
-import {StyleSheet} from 'react-native'
+import {StyleSheet,Dimensions} from 'react-native'
+const height = Dimensions.get('window').height;
+const width = Dimensions.get('window').width;
 
 export const styles =(colorFile, sizeFile) =>{
     return StyleSheet.create({
@@ -27,8 +29,16 @@ export const styles =(colorFile, sizeFile) =>{
       backgroundColor : "#FFFFFF"
            
       },
-   
-   
+      overlay:{
+        flex: 1,
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        opacity: 0.5,
+        backgroundColor: 'black',
+        width: width , 
+        height: 360
+      },
       header: {
         flexDirection:"row",
         padding: 6,

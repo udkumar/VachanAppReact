@@ -2,9 +2,9 @@
 
 import Realm from 'realm'
 
-export default class StylingModel extends Realm.Object {}
-StylingModel.schema = {
-    name: 'StylingModel',
+export default class NoteStylingModel extends Realm.Object {}
+NoteStylingModel.schema = {
+    name: 'NoteStylingModel',
     properties: {
         characterIndex:'int',
         // format: 'int[]',
