@@ -37,10 +37,8 @@ export default class NotePage extends Component {
     SplashScreen.hide();
   }
   openMenu =()=>{
-    console.log("open menu")
   }
   goToEditPage=()=>{
-    console.log("book id is ",this.props.navigation.state.params.bookId)
     this.props.navigation.navigate("EditNote",{
       referenceList: this.state.noteData,
       noteIndex:this.props.navigation.state.params.noteIndex,

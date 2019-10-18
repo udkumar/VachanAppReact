@@ -84,10 +84,8 @@ export default class EditNote extends Component {
     var time =  new Date()
     console.log("time "+time)
     var contentBody = await this.getHtml()
-    console.log("content body "+contentBody)
 
     if (contentBody == '' && this.state.referenceList.length == 0) {
-      console.log("INSIDE FIRST IF ... ",this.state.referenceList.length)
       if(this.state.noteIndex != -1){
         // delete note
         this.props.navigation.state.params.onDelete(this.state.noteIndex, this.state.noteObject.createdTime)
