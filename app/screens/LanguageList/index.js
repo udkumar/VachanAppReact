@@ -77,7 +77,7 @@ class ExpandableItemComponent extends Component {
                   />
                 :
                   (
-                  this.props.isLoading ?
+                  (this.props.isLoading &&  index == this.props.index ) ?
                   <ActivityIndicator  size="small"  color="#0000ff"/> 
                   : 
                   <Icon name="file-download" size={24} style={{marginRight:12}} onPress={()=>{this.props.DownloadBible(this.props.item.languageName,item.versionCode,index,item.sourceId)}}/>
@@ -114,6 +114,7 @@ export default class LanguageList extends Component {
           startDownload:false,
           colorFile:this.props.screenProps.colorFile,
           sizeFile:this.props.screenProps.sizeFile,
+          index : -1
 
       }
       this.styles = styles(this.state.colorFile, this.state.sizeFile);    
@@ -202,51 +203,58 @@ export default class LanguageList extends Component {
       var bookModels = []
       var verseModels = []
       var  chapterModels = []
-      this.setState({isLoading:true},async()=>{
+      this.setState({isLoading:true,index},async()=>{
 
         try{
-          var content = await APIFetch.getAllBooks(sourceId,"json")
-          var content = content.bibleContent
-          for(var id in content){
-            if(content != null){
-              for(var i=0; i< content[id].chapters.length; i++){
-                const verses = content[id].chapters[i].verses
-                for(var j=0; j< verses.length; j++){
-                  verseModels.push({
-                    text: verses[j].text,
-                    number: verses[j].number,
-                    metadata:verses[j].metadata ? ( verses[j].metadata[0].styling ? verses[j].metadata[0].styling : "" ) : "",
-                  })
-                }
-                  var chapterModel = { 
-                    chapterNumber:  parseInt(content[id].chapters[i].header.title),
-                    numberOfVerses: parseInt(content[id].chapters[i].verses.length),
-                    verses:verseModels,
+          var mainContent = await APIFetch.getAllBooks(sourceId,"json")
+          
+          if(mainContent.length != 0){
+            var content = mainContent.bibleContent
+            console.log("JSON CONTENT ",content)
+            for(var id in content){
+              // if(content != null){
+                for(var i=0; i< content[id].chapters.length; i++){
+                  const verses = content[id].chapters[i].verses
+                  for(var j=0; j< verses.length; j++){
+                    verseModels.push({
+                      text: verses[j].text,
+                      number: verses[j].number,
+                      // metadata:verses[j].metadata ? ( verses[j].metadata[0].styling ? verses[j].metadata[0].styling : "" ) : "",
+                    })
                   }
-                  chapterModels.push(chapterModel)
-              }
+                    var chapterModel = { 
+                      chapterNumber:  parseInt(content[id].chapters[i].header.title),
+                      numberOfVerses: parseInt(content[id].chapters[i].verses.length),
+                      verses:verseModels,
+                    }
+                    chapterModels.push(chapterModel)
+                }
+              // }
+              // console.log("verse model .......>>...",verseModels)
+              bookModels.push({
+                languageName: langName,
+                versionCode: verCode,
+                bookId: id,
+                bookName:getBookNameFromMapping(id,langName),
+                chapters: chapterModels,
+                section: getBookSectionFromMapping(id),
+                bookNumber: getBookNumberFromMapping(id)
+              })
+              
             }
-            bookModels.push({
-              languageName: langName,
-              versionCode: verCode,
-              bookId: id,
-              bookName:getBookNameFromMapping(id,langName),
-              chapters: chapterModels,
-              section: getBookSectionFromMapping(id),
-              bookNumber: getBookNumberFromMapping(id)
-            })
           }
+          
           console.log("book model .......",bookModels)
-        const booksid = await APIFetch.availableBooks(sourceId)
-        var bookListData = []
-        var res = booksid[0].books.sort(function(a, b){return a.bibleBookID - b.bibleBookID})
-         for(var key in res){
-          var bookId = res[key].abbreviation
-          bookListData.push({bookId})
-        }
+        // const booksid = await APIFetch.availableBooks(sourceId)
+        // var bookListData = []
+        // var res = booksid[0].books.sort(function(a, b){return a.bibleBookID - b.bibleBookID})
+        //  for(var key in res){
+        //   var bookId = res[key].abbreviation
+        //   bookListData.push({bookId})
+        // }
   
-        await DbQueries.addNewVersion(langName,verCode,bookModels,sourceId,bookListData.length == 0 ? 0 : bookListData)
-        this.setState({isLoading:false})
+        await DbQueries.addNewVersion(langName,verCode,bookModels,sourceId)
+        this.setState({isLoading:false,})
         languageList().then(async(language) => {
           this.setState({languages:language})
         })
@@ -306,6 +314,7 @@ export default class LanguageList extends Component {
             colorFile={this.state.colorFile}
             sizeFile={this.state.sizeFile}
             isLoading = {this.state.isLoading}
+            index = {this.state.index}
             // setModalVisible={this.setModalVisible}
           />}
 

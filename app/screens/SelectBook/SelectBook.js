@@ -165,10 +165,10 @@ export default class SelectBook extends Component {
   }
 
   navigateToChapter(item){
-    // console.log("  from book chapter length",item.numOfChapter)
-    AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.BookId, item.bookId); 
+    
+    console.log("  from book chapter length",item.bookId)
     this.props.screenProps.updateSelectedBook(item.bookId,item.numOfChapters,item.bookName)
-    this.props.navigation.navigate('Chapters',)
+    this.props.navigation.navigate('Chapters')
   }
 renderItem = ({item, index})=> {
     return (

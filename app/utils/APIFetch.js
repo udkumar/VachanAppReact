@@ -116,6 +116,7 @@ var APIFetch = {
             .then((response) => response.json())
             .catch(e => e)
         } catch(error) {
+            console.log("error on getting all books ",error)
             return error;
         }
     },

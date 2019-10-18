@@ -28,8 +28,8 @@ class DbHelper {
     async getRealm() {
     	try {
     		return await Realm.open({
-				schemaVersion: 23,
-				// deleteRealmIfMigrationNeeded: true, 
+				schemaVersion: 25,
+				deleteRealmIfMigrationNeeded: true, 
 				path:
 					Platform.OS === 'ios'
 					? RNFS.MainBundlePath + '/vachanApp.realm'
@@ -399,7 +399,7 @@ class DbHelper {
 		}
 	}
 
-	async addNewVersion(langName,verCode,bookmodel,sourceId,booklist){
+	async addNewVersion(langName,verCode,bookmodel,sourceId){
 		console.log("languaeg name ",langName,"version code ",verCode,"book model ",bookmodel,"source id",sourceId)
 		let realm = await this.getRealm();
 		if(realm){
@@ -413,12 +413,15 @@ class DbHelper {
 			}
 			else{
 			if(resultBoook.length == 0){
+
+
+				// direct adding data to db 
 				realm.write(() => {
 						for(var i=0;i<bookmodel.length;i++){
 						realm.create('BookModel', bookmodel[i])
 						// resultsB[0].downloaded = true;
 						}
-					resultsB[0].bookNameList = booklist
+					resultsB[0].bookNameList = bookmodel[i].bookId
 					resultsB[0].downloaded = true;
 				})
 			}
@@ -438,8 +441,9 @@ class DbHelper {
 						for(var i=0;i<bookmodel.length;i++){
 						realm.create('BookModel', bookmodel[i])
 					}
+					resultsB[0].bookNameList = bookmodel[i].bookId
 					resultsA[0].downloaded = true;
-					resultsB[0].bookNameList = booklist
+
 					})
 					
 			}

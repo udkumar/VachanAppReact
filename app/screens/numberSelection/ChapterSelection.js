@@ -53,7 +53,6 @@ export default class ChapterSelection extends Component {
   }
   async fetchChapters(){
     var totalChapter = getBookChaptersFromMapping(this.props.screenProps.bookId)
-
     var chapterData = []
     for(var i=1;i<=totalChapter;i++){
       chapterData.push(i)
@@ -70,10 +69,27 @@ export default class ChapterSelection extends Component {
   //     this.setState({chapterData:chapters})
 }
 
-  onNumPress(item){
+  async onNumPress(item){
     var time =  new Date()
     DbQueries.addHistory(this.props.screenProps.languageName, this.props.screenProps.versionCode, 
     this.state.bookId, item, time)
+
+    try{
+      let response =  await APIFetch.getChapterContent(this.props.screenProps.sourceId,this.state.bookId,item)
+      if(response.length != 0){
+        // console.log("res",response.chapterContent.verses[vNum-1].text)
+        if(response.success == false){
+          alert("response success false")
+        }else{
+          this.props.screenProps.updateSelectedChapter(item,response.chapterContent.verses.length)
+          this.props.navigation.navigate('Verses')
+
+        }
+      }
+    }
+      catch(error){
+        console.log(error)
+      }
     // const resetAction = NavigationActions.reset({
     //   index: 0,
     //   actions: [NavigationActions.navigate({ routeName: 'Bible' })]
@@ -81,9 +97,7 @@ export default class ChapterSelection extends Component {
     // this.props.navigation.dispatch(resetAction)
     // this.props.navigation.replace('Bible', {bookId: this.state.bookId, bookNumber:this.state.bookNumber,
       // bookName: this.state.bookName, chapterNumber: item })
-      AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.ChapterNumber, item); 
-      this.props.screenProps.updateSelectedChapter(item)
-      this.props.navigation.navigate('Verses',)
+    
   }
 
   

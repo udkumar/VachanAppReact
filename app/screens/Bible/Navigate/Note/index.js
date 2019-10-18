@@ -14,6 +14,8 @@ import { Card, CardItem, Content, Right, Left } from 'native-base';
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 import DbQueries from '../../../../utils/dbQueries'
+import {getBookChaptersFromMapping,getBookNameFromMapping} from '../../../../utils/UtilFunctions'
+
 import { noteStyle } from './styles.js';
 
 var moment = require('moment');
@@ -47,7 +49,16 @@ export default class Note extends Component {
  
   
   createNewNote = (index) => {
-    this.openEdit(index, null)
+    this.props.navigation.navigate('EditNote',{
+      noteIndex:index, 
+      noteObject: null,
+      onDelete: this.onDelete, 
+      onRefresh: this.onRefresh, 
+      referenceList:  this.props.navigation.state.params.referenceList,
+      bookId: this.props.screenProps.bookId,
+      chapterNumber:1,
+      totalVerses:null
+    })
   };
 
   onDelete(index, time) {
@@ -69,7 +80,7 @@ export default class Note extends Component {
 
   async queryDb() {
     let res = await DbQueries.queryNotes();
-    console.log("NOTES RESULTS ............"+res)
+    console.log("NOTES RESULTS ............",res)
     if(res==null){
       return
     }
@@ -86,23 +97,25 @@ export default class Note extends Component {
       this.queryDb()
   }
 
-  openEdit(index, noteObject) {
-    this.props.navigation.navigate('EditNote',{noteIndex:index, 
-      noteObject: noteObject, 
-      onDelete: this.onDelete, 
-      onRefresh: this.onRefresh, 
-      referenceList:  this.props.navigation.state.params.referenceList,
-      bookId: this.state.bookId,
-      versionCode: this.state.versionCode,
-      languageName: this.state.languageName,
-    })
-  }
-  
-  openNoteContent = ()=>{
-    this.props.navigation.navigate("NotePage",{notesData:this.state.notesData})
-  }
+  // openNoteContent = ()=>{
+    //  openNoteContent = (note,bodyText)=>{
+  //   this.props.navigation.navigate("NotePage",{
+  //     bodyText:bodyText,
+  //     note:note,
+  //     onDelete: this.onDelete, 
+  //     onRefresh: this.onRefresh, 
+  //     referenceList:  this.props.navigation.state.params.referenceList,
+  //     bookId: this.state.bookId,
+  //     versionCode: this.state.versionCode,
+  //     languageName: this.state.languageName,
+  //   })
+  // }
+  //   this.props.navigation.navigate("NotePage",{notesData:this.state.notesData})
+  // }
   renderItem = ({item,index})=>{
-    console.log("item reference ",item.references[0].verseNumber)
+    // console.log("item reference ",item.references[0].verseNumber)
+    console.log("item reference ",item.references)
+
     // TODO fix max lines in WEBVIEW
     var date = new Date(item.modifiedTime);
     console.log("render : "+ item.modifiedTime + " == " + date)
@@ -116,7 +129,7 @@ export default class Note extends Component {
     
     return(
     <TouchableOpacity style={this.styles.noteContent}
-        onPress={()=>{this.props.navigation.navigate("NotePage",{note:item.references[0]})}}>
+        onPress={()=>{this.props.navigation.navigate("NotePage",{note:item.references,bodyText:bodyText,createdTime:item.createdTime,queryDb:this.queryDb,noteObject:item,noteIndex:index,bookId:this.props.screenProps.bookId})}}>
       <Card>
       <CardItem style={this.styles.cardItemStyle}>
         <View style={this.styles.notesContentView}> 
@@ -149,9 +162,7 @@ export default class Note extends Component {
           </TouchableOpacity>
         }
       />
-      
       </View>
-
     );
   }
 }

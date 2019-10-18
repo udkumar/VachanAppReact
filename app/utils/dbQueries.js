@@ -43,8 +43,8 @@ class DbQueries {
     // addNewBook(bookModel, versionModel, languageModel) {
     //     DbHelper.insertNewBook(bookModel, versionModel, languageModel);
     // }
-    addNewVersion(langName,versCode,bookModels,sourceId,booklist){
-        DbHelper.addNewVersion(langName,versCode,bookModels,sourceId,booklist)
+    addNewVersion(langName,versCode,bookModels,sourceId){
+        DbHelper.addNewVersion(langName,versCode,bookModels,sourceId)
     }
 
     // queryVersion(langName,versCode){

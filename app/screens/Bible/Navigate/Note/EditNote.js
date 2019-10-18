@@ -21,8 +21,9 @@ import {RichTextEditor, actions} from 'react-native-zss-rich-text-editor';
 import RichTextToolbar from '../../../../utils/RichTextToolbar'
 const height = Dimensions.get('window').height;
 import { noteStyle } from './styles.js';
-import {getBookNameFromMapping} from '../../../../utils/UtilFunctions';
 import DbQueries from '../../../../utils/dbQueries'
+import APIFetch from '../../../../utils/APIFetch'
+
 
 export default class EditNote extends Component {
   static navigationOptions = ({navigation}) =>({
@@ -40,12 +41,11 @@ export default class EditNote extends Component {
     super(props);
     this.state = {
         noteIndex: this.props.navigation.state.params.noteIndex,
-        // noteObject: this.props.navigation.state.params.noteObject,
+        noteObject:this.props.navigation.state.params.noteObject,
         noteBody: this.props.navigation.state.params.noteIndex == -1 ? '' : this.props.navigation.state.params.noteObject.body == '' ? '' : JSON.parse(this.props.navigation.state.params.noteObject.body),
-        referenceList:  this.props.navigation.state.params.referenceList,
-        // this.props.navigation.state.params.index == -1 
-        //   ? [] 
-        //   : this.props.navigation.state.params.noteObject.references,
+        referenceList:this.props.navigation.state.params.noteIndex == -1 
+          ? [] 
+          : this.props.navigation.state.params.referenceList,
         // todo here fix reference list
         referenceList2: this.props.navigation.state.params.referenceList,
     }
@@ -85,18 +85,18 @@ export default class EditNote extends Component {
     console.log("time "+time)
     var contentBody = await this.getHtml()
     console.log("content body "+contentBody)
-    await DbQueries.addOrUpdateNote(this.state.noteIndex, contentBody, 
-    this.state.noteIndex == -1 ? time : this.state.noteObject.createdTime, time, this.state.referenceList);
-  
+
     if (contentBody == '' && this.state.referenceList.length == 0) {
-      console.log("INSIDE FIRST IF ... ")
+      console.log("INSIDE FIRST IF ... ",this.state.referenceList.length)
       if(this.state.noteIndex != -1){
         // delete note
         this.props.navigation.state.params.onDelete(this.state.noteIndex, this.state.noteObject.createdTime)
       }
     } else {
+      console.log("add new note ")
       await DbQueries.addOrUpdateNote(this.state.noteIndex, contentBody, 
         this.state.noteIndex == -1 ? time : this.state.noteObject.createdTime, time, this.state.referenceList);
+
     }
     this.props.navigation.dispatch(NavigationActions.back())
   }
@@ -192,21 +192,46 @@ export default class EditNote extends Component {
     }
   }
 
-  getReference = (id, name, cNum, vNum) => {
+  getReference = async(id, name, cNum, vNum) => {
     const verseNum = vNum.toString()
     if (this.checkIfReferencePresent(id, name, cNum, verseNum)) {
       return;
     }
-    let refModel = {bookId: id, bookName: name, chapterNumber: cNum, verseNumber: verseNum, 
-      versionCode: this.props.screenProps.versionCode, languageName: this.props.screenProps.languageName};
-    let referenceList = [...this.state.referenceList]
-    referenceList.push(refModel)
-    this.setState({referenceList})
+    try{
+    let response =  await APIFetch.getChapterContent(35,id,cNum)
+    if(response.length != 0){
+      console.log("res",response.chapterContent.verses[vNum-1].text)
+      if(response.success == false){
+        alert("response success false")
+      }else{
+        let refModel = {bookId: id, 
+          bookName: name, 
+          chapterNumber: cNum, 
+          verseNumber: verseNum, 
+          verseText:response.chapterContent.verses[vNum-1].text,
+          versionCode: this.props.screenProps.versionCode, 
+          languageName: this.props.screenProps.languageName
+        };
+        let referenceList = [...this.state.referenceList]
+        referenceList.push(refModel)
+        this.setState({referenceList})
+      }
+    }
+  }
+    catch(error){
+      console.log(error)
+    }
+   
   }
 
   onAddVersePress() {
+    
     // this.props.navigation.navigate('ReferenceSelection', {getReference: this.getReference})
-    this.props.navigation.navigate('SelectionTab', {getReference: this.getReference,params:this.props.navigation.state.params.params})
+    this.props.navigation.navigate('SelectionTab', {getReference: this.getReference,
+        bookId:this.props.navigation.state.params.bookId,
+        chapterNumber:this.props.navigation.state.params.chapterNumber,
+        totalVerses:this.props.navigation.state.params.totalVerses,
+      })
 
   }
 

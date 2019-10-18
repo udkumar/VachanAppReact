@@ -9,6 +9,6 @@ VerseMetadataModel.schema = {
         // styling:{type: 'string?[]'},
         styling:'VerseStylingModel[]',
 
-        VerseMetadataOwner: {type: 'linkingObjects', objectType: 'VerseModel', property: 'metadata' }
+        // VerseMetadataOwner: {type: 'linkingObjects', objectType: 'VerseModel', property: 'metadata' }
     }
 };

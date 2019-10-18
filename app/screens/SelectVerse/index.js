@@ -27,7 +27,7 @@ export default class SelectVerse extends Component {
       selectedBookId: this.props.screenProps.bookId,
       selectedChapterNumber: this.props.screenProps.chapterNumber,
       bookData: [], 
-      selectedIndex: 0,
+      // selectedIndex: 0,
     }
     this.styles = numberSelection(props.screenProps.colorFile, props.screenProps.sizeFile);   
     
@@ -48,7 +48,6 @@ export default class SelectVerse extends Component {
     }
 
   onVerseSelected(item, index) {
-    this.setState({selectedIndex: index})
     // shift to tab 2
     console.log("on select" + item)
     this.props.screenProps.updateSelectedVerse(item)
@@ -65,8 +64,7 @@ export default class SelectVerse extends Component {
           {backgroundColor:'transparent'}]}
           onPress={()=>this.onVerseSelected(item, index)}
           >
-                <Text style={[this.styles.selectText, 
-                  {fontWeight: this.state.selectedIndex == index ? "bold" : "normal"}]}>{item}</Text>
+                <Text style={this.styles.selectText}>{item}</Text>
             </TouchableOpacity>
         }
       />
