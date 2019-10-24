@@ -1,4 +1,4 @@
-import { StackNavigator ,TabNavigator} from "react-navigation";
+import { createStackNavigator ,createBottomTabNavigator} from "react-navigation";
 import StudyHelp from '../Navigate/StudyHelp'
 import More from '../Navigate/More'
 import Audio from '../Navigate/Audio'
@@ -14,7 +14,7 @@ import History from '../Navigate/History'
 
 
 
-const BottomTab = TabNavigator(
+const BottomTab = createBottomTabNavigator(
 	{
     StudyHelp:{
         screen:StudyHelp,
@@ -67,7 +67,7 @@ const BottomTab = TabNavigator(
     }
 	
 )
-const BottomTabNav = StackNavigator({
+const BottomTabNav = createStackNavigator({
     BottomTab:{
         screen:BottomTab
     },

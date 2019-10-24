@@ -27,6 +27,10 @@ target 'AutographaGo_ReactNative' do
 
     pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
 
+    pod 'RNReanimated', :path => '../node_modules/react-native-reanimated'
+
+    pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
+
   end
 
   target 'AutographaGo_ReactNativeTests' do
