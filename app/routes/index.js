@@ -5,11 +5,11 @@ import About from '../screens/About/About'
 import Search from '../screens/Search/Search'
 import Settings from '../screens/settings/Settings'
 import Account from '../screens/Account'
-import Notes from '../screens/Bible/Navigate/Note'
-import EditNote from '../screens/Bible/Navigate/Note/EditNote'
-import NotePage from '../screens/Bible/Navigate/Note/NotePage'
-import Highlights from '../screens/Bible/Navigate/Highlights/'
-import History from '../screens/Bible/Navigate/History/'
+import Notes from '../screens/Note/index'
+import EditNote from '../screens/Note/EditNote'
+import NotePage from '../screens/Note/NotePage'
+import Highlights from '../screens/Highlights/'
+import History from '../screens/History/'
 // import Audio from '../screens/Bible/Navigate/Audio/'
 // import Video from '../screens/Bible/Navigate/Video/'
 // import StudyHelp from '../screens/Bible/Navigate/StudyHelp/'
@@ -27,7 +27,7 @@ import LanguageList from '../screens/LanguageList'
 import More from '../screens/More'
 
 import SelectionTab from '../screens/ReferenceSelection/'
-import BookMarks from '../screens/Bible/Navigate/Bookmarks/';
+import BookMarks from '../screens/Bookmarks/';
 const StackNavigate = createStackNavigator(
 
   {  

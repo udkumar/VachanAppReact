@@ -33,7 +33,10 @@
     "react-native-zip-archive": "^2.2.6",
     "react-native-zss-rich-text-editor": "^1.1.0",
     "react-navigation": "^3.12.0",
+    "react-redux": "^7.1.1",
     "realm": "^2.5.0",
+    "redux": "^4.0.4",
+    "redux-thunk": "^2.3.0",
     "usfm-grammar": "^1.0.0"
   },
   "devDependencies": {

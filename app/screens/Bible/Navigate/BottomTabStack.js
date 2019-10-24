@@ -7,10 +7,10 @@ import Foonotes from '../Navigate/Footnotes'
 import Summary from '../Navigate/Summary'
 import Commentary from '../Navigate/Commentary'
 import Dictionary from '../Navigate/Dictionary'
-import HighLights from '../Navigate/Highlights'
-import Note from '../Navigate/Note'
-import Bookmarks from '../Navigate/Bookmarks'
-import History from '../Navigate/History'
+// import HighLights from '../Navigate/Highlights'
+// import Note from '../Navigate/Note'
+// import Bookmarks from '../Navigate/Bookmarks'
+// import History from '../Navigate/History'
 
 
 
@@ -83,18 +83,18 @@ const BottomTabNav = createStackNavigator({
     Dictionary:{
         screen:Dictionary
     },
-    HighLights: {
-		screen: HighLights,
-	},
-	Bookmarks:{
-		screen:Bookmarks
-    },
-    Note:{
-        screen:Note
-	},
-	History:{
-		screen:History
-    }
+    // HighLights: {
+	// 	screen: HighLights,
+	// },
+	// Bookmarks:{
+	// 	screen:Bookmarks
+    // },
+    // Note:{
+    //     screen:Note
+	// },
+	// History:{
+	// 	screen:History
+    // }
 },
 {
     navigationOptions: {

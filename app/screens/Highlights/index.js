@@ -11,8 +11,8 @@ import {
   Dimensions
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import DbQueries from '../../../../utils/dbQueries'
-import {getBookNameFromMapping} from '../../../../utils/UtilFunctions';
+import DbQueries from '../../utils/dbQueries'
+import {getBookNameFromMapping} from '../../utils/UtilFunctions';
 import { highlightstyle } from './styles'
 
 export default class HighLights extends Component {

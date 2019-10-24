@@ -11,9 +11,9 @@ import {
   ActivityIndicator
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import DbQueries from '../../../../utils/dbQueries'
+import DbQueries from '../../utils/dbQueries'
 import { bookStyle } from './styles.js'
-import {getBookNameFromMapping} from '../../../../utils/UtilFunctions';
+import {getBookNameFromMapping} from '../../utils/UtilFunctions';
 Dimensions.get('window').width
 
 export default class BookMarks extends Component {

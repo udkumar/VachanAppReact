@@ -1,19 +1,16 @@
-import { AppRegistry } from 'react-native';
-// import App from './app/utils/routes'
-import App from './App'
-
-// import App from './app/navigation'
-// import Audio from './app/screens/Audio'
 import React, {Component} from 'react'
+import { AppRegistry } from 'react-native';
+import App from './App'
+import { Provider } from "react-redux";
+import {editNoteReducer} from './app/store/reducer/editNoteReducer'
 
-//import AddData from './app/utils/AddData'
-export default class AutographaGo extends Component {
+import configureStore from './app/store/configureStore';
+const store = configureStore()
 
+class RNRedux extends Component{
     render(){
-        return(
-            <App/>
-        )
+    return <Provider store={store}><App/></Provider>
+
     }
 }
-
-AppRegistry.registerComponent('AutographaGo_ReactNative', () =>App);
+AppRegistry.registerComponent('AutographaGo_ReactNative', () =>RNRedux);

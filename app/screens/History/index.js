@@ -9,10 +9,10 @@ import {
   Dimensions,
   TextInput
 } from 'react-native';
-import DbQueries from '../../../../utils/dbQueries'
+import DbQueries from '../../utils/dbQueries'
 import { View } from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import {getBookNameFromMapping} from '../../../../utils/UtilFunctions';
+import {getBookNameFromMapping} from '../../utils/UtilFunctions';
 import Accordion from 'react-native-collapsible/Accordion';
 import {List,ListItem} from 'native-base'
 import { historyStyle } from './styles.js'

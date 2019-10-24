@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { getBookChaptersFromMapping, getBookNameFromMapping } from '../../utils/UtilFunctions';
 import {SelectionTab} from './routes/'
+import {connect} from 'react-redux'
+import {updateBCV} from './../../store/action'
 
-export default class ReferenceSelection extends Component {
+class ReferenceSelection extends Component {
 
     constructor(props){
         super(props)
@@ -31,12 +33,14 @@ export default class ReferenceSelection extends Component {
     
     updateSelectedVerse=(verseNumber)=>{
         console.log("state value ",this.state)
+        
         this.props.navigation.state.params.getReference(
             this.state.bookId, 
             this.state.bookName, 
             this.state.chapterNumber, 
             verseNumber
         )
+        this.props.updateBCV(this.state.bookId,this.state.chapterNumber,verseNumber)
         // this.setState({verseNumber}) 
         this.props.navigation.goBack()
 
@@ -72,3 +76,19 @@ export default class ReferenceSelection extends Component {
         )
     }
 }
+
+// const mapStateToProps = state =>{
+//     return{
+//       bookId:state.editNote.bookId,
+//       chapterNumber:state.editNote.chapterNumber,
+//       verseNumber: state.editNote.verseNumber,
+//       index:state.editNote.index,
+//     }
+//   }
+  
+  const mapDispatchToProps = dispatch =>{
+    return {
+      updateBCV: (id,chapNum,verseNum)=>dispatch(updateBCV(id,chapNum,verseNum)),
+    }
+  }
+  export  default connect(null,mapDispatchToProps)(ReferenceSelection)

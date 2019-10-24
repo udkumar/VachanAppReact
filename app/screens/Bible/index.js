@@ -30,9 +30,10 @@ const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 import { styles } from './styles.js';
 
-import BottomTab from './BottomTab'
+// import BottomTab from './BottomTab'
 import dbQueries from '../../utils/dbQueries';
 
+import {connect} from 'react-redux'
 
 
 export default class Bible extends Component {
@@ -219,7 +220,7 @@ export default class Bible extends Component {
   }
   // render data onAPI Call 
     queryBookFromAPI = async()=>{
-      console.log("chapter",this.state.currentVisibleChapter,this.state.bookId)
+      console.log("Chapter QUERY  ",this.state.currentVisibleChapter,this.state.bookId)
       this.state.chapter = []
         this.setState({isLoading:true},async()=>{
             if(this.state.downloaded == true ){
@@ -259,7 +260,6 @@ export default class Bible extends Component {
                     })
                     this.props.navigation.setParams({
                       totalVerses:response.chapterContent.verses.length
-
                     })
 
                   }
@@ -275,13 +275,20 @@ export default class Bible extends Component {
             }
            
         })
+        
        
       this.getHighlights()
       this.getBookMarks(this.state.bookId,this.state.currentVisibleChapter)
      
   }
   callBackForUpdateBook=(bookId,bookName,chapterNum,verseNumber)=>{
+    
     this.setState({bookId,currentVisibleChapter:chapterNum,bookName})
+    this.props.navigation.setParams({
+      currentChapter:chapterNum,
+      bookName:bookName.length > 8 ? bookName.slice(0,7)+"..." : bookName,
+    })   
+    this.queryBookFromAPI()
     // AsyncStorageUtil.setAllItems([
     //   [AsyncStorageConstants.Keys.BookId, bookId],
     //   [AsyncStorageConstants.Keys.ChapterNumber, chapterNum.toString]]
@@ -343,7 +350,7 @@ export default class Bible extends Component {
   //get highlights from local db  
   async getHighlights(){
 
-    let model2 = await  DbQueries.queryHighlights(this.state.languageName,this.state.versionCode,this.state.bookId)
+    let model2 = await  DbQueries.queryHighlights(this.state.languageName,this.state.versionCode,this.props.bookId)
     if(model2  == null ){
     }
     else{

@@ -10,7 +10,7 @@ import {
 import { Card, CardItem, Content,Container,Header, Right, Left,Body } from 'native-base';
 import { HeaderBackButton, NavigationActions } from 'react-navigation';
 import { noteStyle } from './styles.js';
-import DbQueries from '../../../../utils/dbQueries'
+import DbQueries from '../../utils/dbQueries'
 import SplashScreen from 'react-native-splash-screen';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {

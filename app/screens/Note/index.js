@@ -13,8 +13,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Card, CardItem, Content, Right, Left } from 'native-base';
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
-import DbQueries from '../../../../utils/dbQueries'
-import {getBookChaptersFromMapping,getBookNameFromMapping} from '../../../../utils/UtilFunctions'
+import DbQueries from '../../utils/dbQueries'
 
 import { noteStyle } from './styles.js';
 

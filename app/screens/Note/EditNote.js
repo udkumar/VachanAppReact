@@ -14,18 +14,19 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import FlowLayout from '../../../../components/FlowLayout'
+import FlowLayout from '../../components/FlowLayout'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { HeaderBackButton, NavigationActions } from 'react-navigation';
 import {RichTextEditor, actions} from 'react-native-zss-rich-text-editor';
-import RichTextToolbar from '../../../../utils/RichTextToolbar'
+import RichTextToolbar from '../../utils/RichTextToolbar'
 const height = Dimensions.get('window').height;
 import { noteStyle } from './styles.js';
-import DbQueries from '../../../../utils/dbQueries'
-import APIFetch from '../../../../utils/APIFetch'
+import DbQueries from '../../utils/dbQueries'
+import APIFetch from '../../utils/APIFetch'
+import {connect} from 'react-redux'
+import { updateBCV,deleteNote } from '../../store/action';
 
-
-export default class EditNote extends Component {
+class EditNote extends Component {
   static navigationOptions = ({navigation}) =>({
     headerTitle: 'Edit Note',
     headerLeft:(<HeaderBackButton tintColor='white' onPress={()=>navigation.state.params.handleBack()}/>),
@@ -248,7 +249,7 @@ export default class EditNote extends Component {
   }
 
   render() {
-    console.log("params value in edit page ",this.props.navigation.state.routeName)
+    console.log("book id from the redux ",this.props.bookId)
     return (
      <ScrollView style={this.styles.containerEditNote}>
       <View style={this.styles.subContainer}>
@@ -338,6 +339,21 @@ export default class EditNote extends Component {
       />
     );
   }
-
-  
 }
+
+const mapStateToProps = state =>{
+  return{
+    bookId:state.editNote.bookId,
+    chapterNumber:state.editNote.chapterNumber,
+    verseNumber: state.editNote.verseNumber,
+    index:state.editNote.index,
+    
+  }
+}
+
+const mapDispatchToProps = dispatch =>{
+  return {
+    updateBCV: (id,chapNum,verseNum)=>dispatch(updateBCV(id,chapNum,verseNum)),
+  }
+}
+export  default connect(mapStateToProps,mapDispatchToProps)(EditNote)
