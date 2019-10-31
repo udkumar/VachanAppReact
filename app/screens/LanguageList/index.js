@@ -5,11 +5,12 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import DbQueries from '../../utils/dbQueries'
 import APIFetch from '../../utils/APIFetch'
 import timestamp from '../../assets/timestamp.json'
-import {NavigationActions} from 'react-navigation'
 import { getBookNameFromMapping, getBookSectionFromMapping, getBookNumberFromMapping } from '../../utils/UtilFunctions';
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants';
 import { styles } from './styles.js';
+import {connect} from 'react-redux';
+import {updateVersion} from '../../store/action/'
 
 const languageList = async () => { 
   return await DbQueries.getLangaugeList()
@@ -97,7 +98,7 @@ class ExpandableItemComponent extends Component {
 }
 
 
-export default class LanguageList extends Component {
+class LanguageList extends Component {
     static navigationOptions = ({navigation}) => ({
         headerTitle: 'Languages',
     });
@@ -270,18 +271,21 @@ export default class LanguageList extends Component {
       this.setState({modalVisible:!this.state.modalVisible})
     }
     goToBible = (langName,verCode,sourceId,downloaded)=>{
-      console.log("language name"+langName+" ver code  "+verCode+" source id "+sourceId+" downloaded "+downloaded)
       AsyncStorageUtil.setAllItems([
         [AsyncStorageConstants.Keys.SourceId, sourceId.toString()],
         [AsyncStorageConstants.Keys.LanguageName, langName],
         [AsyncStorageConstants.Keys.VersionCode, verCode],
         [AsyncStorageConstants.Keys.Downloaded, JSON.stringify(downloaded)]
       ]); 
-      this.props.navigation.state.params.queryBookFromAPI()
+      this.props.updateVersion(langName,verCode,sourceId,downloaded)
+      this.props.navigation.state.params.callBackForUpdateBook()
       this.props.navigation.goBack()
+
     }
   
     render(){
+      console.log("PROPS VALUE IN LANGUAGE PAGE ",this.props.language,this.props.version)
+
       return (
         <View style={this.styles.MainContainer}>
         {this.state.languages.length == 0 ?
@@ -305,7 +309,6 @@ export default class LanguageList extends Component {
           extraData={this.state}
           renderItem={({item, index, separators}) =><ExpandableItemComponent
             // key={item}
-           
             onClickFunction={this.updateLayout.bind(this, index)}
             item={item}
             DownloadBible = {this.DownloadBible}
@@ -327,3 +330,19 @@ export default class LanguageList extends Component {
       )
     }
 }
+
+const mapStateToProps = state =>{
+  return{
+    language: state.updateVersion.language,
+    version:state.updateVersion.version,
+    sourceId:state.updateVersion.sourceId,
+    downloaded:state.updateVersion.downloaded
+  }
+}
+
+const mapDispatchToProps = dispatch =>{
+  return {
+    updateVersion: (language,version,sourceId,downloaded)=>dispatch(updateVersion(language,version,sourceId,downloaded)),
+  }
+}
+export default connect(mapStateToProps,mapDispatchToProps)(LanguageList)

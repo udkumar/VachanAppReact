@@ -19,6 +19,7 @@ export default class SelectVerse extends Component {
     super(props)
     console.log("props number : "+JSON.stringify(props.navigation))
 
+
     this.onVerseSelected = this.onVerseSelected.bind(this)
     this.queryBook = this.queryBook.bind(this)
 
@@ -32,13 +33,23 @@ export default class SelectVerse extends Component {
     this.styles = numberSelection(props.screenProps.colorFile, props.screenProps.sizeFile);   
     
   }
+async componentWillReceiveProps(props){
+    console.log(" componentWillReceiveProps ",props.screenProps.totalVerses)
+    var totalVerses = props.screenProps.totalVerses
+    var bookData = []
+    for(var i=1;i<=totalVerses;i++){
+      bookData.push(i)
+  }
+  this.setState({bookData})
 
+  // this.fetchChapters()
+  }
   componentDidMount() {
       this.queryBook()
   }
 
   queryBook() {
-   console.log("total verse ",this.props.screenProps.totalVerses)
+   console.log("total verse in verse page",this.props.screenProps.totalVerses)
     const bookData = []
       for(var i = 1; i<=this.props.screenProps.totalVerses; i++ ){
           console.log("total verse ",i)
@@ -54,6 +65,7 @@ export default class SelectVerse extends Component {
   }
   
   render() {
+
     return (
       <View style={this.styles.tabContainer}>
         <FlatList

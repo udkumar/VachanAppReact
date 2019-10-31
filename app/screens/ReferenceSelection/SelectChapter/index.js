@@ -79,6 +79,7 @@ export default class ChapterSelection extends Component {
         if(response.success == false){
           alert("response success false")
         }else{
+          console.log("item length  ",response.chapterContent.verses.length)
           this.props.screenProps.updateSelectedChapter(item,response.chapterContent.verses.length)
           this.props.navigation.navigate('Verses')
 

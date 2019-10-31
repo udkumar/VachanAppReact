@@ -21,8 +21,10 @@ import {AsyncStorageConstants} from '../../../utils/AsyncStorageConstants'
 
 import APIFetch from '../../../utils/APIFetch'
 import {getBookNameFromMapping,getBookSectionFromMapping,getBookNumberFromMapping,getBookChaptersFromMapping} from '../../../utils/UtilFunctions';
-
 import DbQueries from '../../../utils/dbQueries.js';
+import {connect} from 'react-redux'
+import referenceUpdate from '../../../store/action/'
+// import { changeBook } from '../../../store/action/referenceUpdate.js';
 
 export default class SelectBook extends Component {
 
@@ -124,7 +126,6 @@ export default class SelectBook extends Component {
             }
                 bookListData.push(books)
           }
-
       }
     else{
       this.setState({isLoading:true})
@@ -318,3 +319,5 @@ renderItem = ({item, index})=> {
   }
 
 }
+
+
