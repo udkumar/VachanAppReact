@@ -4,7 +4,9 @@ const initialState = {
    language:'Hindi',
    version:'IRV',
    sourceId:'35',
-   downloaded:false
+   downloaded:false,
+   bookId:'3jn',
+   bookName:'3 john'
 }
 function UpdateVersionReducer(state=initialState,action){
     switch(action.type) {

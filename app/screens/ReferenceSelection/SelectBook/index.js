@@ -23,10 +23,12 @@ import APIFetch from '../../../utils/APIFetch'
 import {getBookNameFromMapping,getBookSectionFromMapping,getBookNumberFromMapping,getBookChaptersFromMapping} from '../../../utils/UtilFunctions';
 import DbQueries from '../../../utils/dbQueries.js';
 import {connect} from 'react-redux'
-import referenceUpdate from '../../../store/action/'
+import {selectedBook} from '../../../store/action/'
+
+
 // import { changeBook } from '../../../store/action/referenceUpdate.js';
 
-export default class SelectBook extends Component {
+ class SelectBook extends Component {
 
   constructor(props){
     super(props)
@@ -110,18 +112,18 @@ export default class SelectBook extends Component {
   async componentDidMount(){
     var bookListData=[]
     // this.setState({isLoading:bookListData.length == 0 ? true : false})
-    if(this.props.screenProps.downloaded == true){
+    if(this.props.downloaded == true){
         this.setState({isLoading:true})
-        var booksid = await DbQueries.getDownloadedBook(this.props.screenProps.languageName,this.props.screenProps.versionCode)
+        var booksid = await DbQueries.getDownloadedBook(this.props.language,this.props.version)
         for(var i = 0; i<=booksid.length-1;i++){
           var bookId = booksid[i]
           var books= {
                 bookId:bookId,
-                bookName:getBookNameFromMapping(bookId,this.props.screenProps.languageName),
+                bookName:getBookNameFromMapping(bookId,this.props.language),
                 section:getBookSectionFromMapping(bookId),
                 bookNumber:getBookNumberFromMapping(bookId),
-                languageName: this.props.screenProps.languageName, 
-                versionCode:this.props.screenProps.versionCode, 
+                languageName: this.props.language, 
+                versionCode:this.props.version, 
                 numOfChapters:getBookChaptersFromMapping(bookId)
             }
                 bookListData.push(books)
@@ -130,7 +132,7 @@ export default class SelectBook extends Component {
     else{
       this.setState({isLoading:true})
       try{
-      var booksid = await APIFetch.availableBooks(this.props.screenProps.sourceId)
+      var booksid = await APIFetch.availableBooks(this.props.sourceId)
       var res = booksid[0].books.sort(function(a, b){return a.bibleBookID - b.bibleBookID})
         if(booksid.length !=0){
           if(booksid.status == 500){
@@ -141,11 +143,11 @@ export default class SelectBook extends Component {
               var bookId = res[key].abbreviation
               var books= {
                     bookId:bookId,
-                    bookName: getBookNameFromMapping(bookId,this.props.screenProps.languageName),
+                    bookName: getBookNameFromMapping(bookId,this.props.language),
                     section:getBookSectionFromMapping(bookId),bookNumber:getBookNumberFromMapping(bookId),
                     bookNumber:getBookNumberFromMapping(bookId),
-                    languageName: this.props.screenProps.languageName, 
-                    versionCode:this.props.screenProps.versionCode, 
+                    languageName: this.props.language, 
+                    versionCode:this.props.version, 
                     numOfChapters:getBookChaptersFromMapping(bookId)}
                     bookListData.push(books)
             }
@@ -163,12 +165,11 @@ export default class SelectBook extends Component {
   }
 
   navigateToChapter(item){
-    
-    console.log("  from book chapter length",item.bookId)
-    this.props.screenProps.updateSelectedBook(item.bookId,item.numOfChapters,item.bookName)
+    this.props.selectedBook(item.bookId,item.bookName,item.numOfChapters)
     this.props.navigation.navigate('Chapters')
   }
 renderItem = ({item, index})=> {
+  console.log("boook id ",item.bookName)
     return (
       <TouchableOpacity 
           onPress={()=>{this.navigateToChapter(item,index)}}>
@@ -176,7 +177,7 @@ renderItem = ({item, index})=> {
             style={this.styles.bookList}>
             <Text
               style={
-                [this.styles.textStyle,{fontWeight:item.bookName == this.props.screenProps.bookName ? "bold" : "normal"}]
+                [this.styles.textStyle,{fontWeight:item.bookName == this.props.bookName ? "bold" : "normal"}]
               }
               >
               {item.bookName}
@@ -231,7 +232,6 @@ renderItem = ({item, index})=> {
   }
 
   onViewableItemsChanged = ({ viewableItems, changed }) => {
-      // console.log("Visible items are", viewableItems);
       if (viewableItems.length > 0) {
         if (viewableItems[0].index < this.state.OTSize()) {
           // toggel to OT
@@ -245,13 +245,8 @@ renderItem = ({item, index})=> {
 
 
   render(){
-    // console.log("book id ",t)
     let activeBgColor = this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#3F51B5' : '#fff'
     let inactiveBgColor =  this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#fff' : '#3F51B5'
-   
-      console.log("booklist otsize",this.state.OTSize())
-      console.log("booklist ntsize",this.state.NTSize())
-
     return (
       <View style={this.styles.container}>
       {this.state.isLoading ? 
@@ -321,3 +316,21 @@ renderItem = ({item, index})=> {
 }
 
 
+const mapStateToProps = state =>{
+  return{
+    language: state.updateVersion.language,
+    version:state.updateVersion.version,
+    sourceId:state.updateVersion.sourceId,
+    downloaded:state.updateVersion.downloaded,
+    
+    bookId:state.selectReference.bookId,
+    bookName:state.selectReference.bookName,
+  }
+}
+
+const mapDispatchToProps = dispatch =>{
+  return {
+    selectedBook:(bookId,bookName,totalChapters) =>dispatch(selectedBook(bookId,bookName,totalChapters))
+  }
+}
+export  default connect(mapStateToProps,mapDispatchToProps)(SelectBook)

@@ -15,72 +15,53 @@ import { numberSelection } from './styles.js';
 
 import {getBookChaptersFromMapping} from '../../../utils/UtilFunctions';
 
+import {connect} from 'react-redux'
+import {selectedChapter} from '../../../store/action/'
 
-export default class ChapterSelection extends Component {
+
+
+class ChapterSelection extends Component {
 
   constructor(props){
     super(props)
 
     this.state = {
-      bookId: this.props.screenProps.bookId,
-     
       chapterData:[]
     }
-    //  console.log("bookdata"+ this.state.bookData)
-    this.styles = numberSelection(props.screenProps.colorFile, props.screenProps.sizeFile);   
-    // this.onNumPress = this.onNumPress.bind(this)
+    this.styles = numberSelection(this.props.screenProps.colorFile, this.props.screenProps.sizeFile);   
   }
-  //get no of chapters from api
-  //  componentWillReceiveProps(){
-  //   this.fetchChapters()
-  // }
-  async componentWillReceiveProps(props){
-    console.log(" componentWillReceiveProps ",props.screenProps.bookId)
-    var totalChapter = props.screenProps.totalChapters
+
+  componentWillReceiveProps(props){
     var chapterData = []
-    for(var i=1;i<=totalChapter;i++){
+    for(var i=1;i<=props.totalChapters;i++){
       chapterData.push(i)
   }
   this.setState({chapterData})
 
-  // this.fetchChapters()
   }
   componentDidMount(){
-    console.log("DID MOUNT CALLING CHAPTER PAGE ",this.props.screenProps.bookId)
-    this.fetchChapters()
-  }
-  async fetchChapters(){
-    var totalChapter = getBookChaptersFromMapping(this.props.screenProps.bookId)
     var chapterData = []
-    for(var i=1;i<=totalChapter;i++){
+    for(var i=1;i<=this.props.totalChapters;i++){
       chapterData.push(i)
   }
   this.setState({chapterData})
-    // console.log("chapternumber ",this.props.screenProps.totalNumberOfChapter)
-  // var response = await APIFetch.getNumberOfChapter(this.props.screenProps.sourceId,this.state.bookId)
-  //   var chapters = []
-  //     for(var i=0; i<response.length;i++){
-  //       var number = response[i].chapter.number
-  //       console.log("number chapter "+JSON.stringify(response[i].chapter.number))
-  //       chapters.push(number)
-  //     }
-  //     this.setState({chapterData:chapters})
-}
+  }
 
   async onNumPress(item){
     var time =  new Date()
-    DbQueries.addHistory(this.props.screenProps.languageName, this.props.screenProps.versionCode, 
-    this.state.bookId, item, time)
+    DbQueries.addHistory(this.props.language, this.props.version, 
+    this.props.bookId, item, time)
 
     try{
-      let response =  await APIFetch.getChapterContent(this.props.screenProps.sourceId,this.state.bookId,item)
+      let response =  await APIFetch.getChapterContent(this.props.sourceId,this.props.bookId,item)
       if(response.length != 0){
         // console.log("res",response.chapterContent.verses[vNum-1].text)
         if(response.success == false){
           alert("response success false")
         }else{
           console.log("item length  ",response.chapterContent.verses.length)
-          this.props.screenProps.updateSelectedChapter(item,response.chapterContent.verses.length)
+          // this.props.screenProps.updateSelectedChapter(item,response.chapterContent.verses.length)
+          this.props.selectedChapter(item,response.chapterContent.verses.length)
           this.props.navigation.navigate('Verses')
 
         }
@@ -101,10 +82,7 @@ export default class ChapterSelection extends Component {
 
   
   render() {
-    console.log("book id  ",this.props.screenProps.bookId)
-    console.log("chapter number ",this.state.chapterData.length)
     return (
-      
       <View style={this.styles.chapterSelectionContainer}>
         <FlatList
         numColumns={4}
@@ -113,10 +91,7 @@ export default class ChapterSelection extends Component {
         <TouchableOpacity 
         style={this.styles.chapterSelectionTouchable}
           onPress={()=>{this.onNumPress(item)}}>
-            <View
-            //  style={{flex:0.25,borderColor:'black',borderRightWidth:1, borderBottomWidth:1,
-            // height:width/4, justifyContent:"center"}}
-            >
+            <View>
                 <Text style={[this.styles.chapterNum,{fontWeight: item == this.props.screenProps.chapterNumber ? "bold":"normal"}]}>{item}</Text>
             </View>
             </TouchableOpacity>
@@ -126,3 +101,23 @@ export default class ChapterSelection extends Component {
     );
   }
 };
+
+const mapStateToProps = state =>{
+  return{
+    language: state.updateVersion.language,
+    version:state.updateVersion.version,
+    sourceId:state.updateVersion.sourceId,
+    downloaded:state.updateVersion.downloaded,
+    
+    bookId:state.selectReference.bookId,
+    bookName:state.selectReference.bookName,
+    totalChapters:state.selectReference.totalChapters
+  }
+}
+
+const mapDispatchToProps = dispatch =>{
+  return {
+    selectedChapter: (chapterNumber,totalVerses)=>dispatch(selectedChapter(chapterNumber,totalVerses)),
+  }
+}
+export  default connect(mapStateToProps,mapDispatchToProps)(ChapterSelection)

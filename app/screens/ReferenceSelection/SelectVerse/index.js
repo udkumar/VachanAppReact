@@ -11,22 +11,19 @@ import { numberSelection } from './styles.js';
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 import {nightColors, dayColors} from '../../../utils/colors.js'
+import {connect} from 'react-redux'
+import {selectedVerse} from '../../../store/action/'
 
 
-export default class SelectVerse extends Component {
+class SelectVerse extends Component {
 
   constructor(props){
     super(props)
-    console.log("props number : "+JSON.stringify(props.navigation))
-
-
     this.onVerseSelected = this.onVerseSelected.bind(this)
     this.queryBook = this.queryBook.bind(this)
 
     this.state = {
       isLoading: false,      
-      selectedBookId: this.props.screenProps.bookId,
-      selectedChapterNumber: this.props.screenProps.chapterNumber,
       bookData: [], 
       // selectedIndex: 0,
     }
@@ -34,10 +31,9 @@ export default class SelectVerse extends Component {
     
   }
 async componentWillReceiveProps(props){
-    console.log(" componentWillReceiveProps ",props.screenProps.totalVerses)
-    var totalVerses = props.screenProps.totalVerses
+    var totalVerses = props.totalVerses
     var bookData = []
-    for(var i=1;i<=totalVerses;i++){
+    for(var i=1;i<=props.totalVerses;i++){
       bookData.push(i)
   }
   this.setState({bookData})
@@ -49,19 +45,17 @@ async componentWillReceiveProps(props){
   }
 
   queryBook() {
-   console.log("total verse in verse page",this.props.screenProps.totalVerses)
     const bookData = []
-      for(var i = 1; i<=this.props.screenProps.totalVerses; i++ ){
-          console.log("total verse ",i)
+      for(var i = 1; i<=this.props.totalVerses; i++ ){
           bookData.push(i)
       }
         this.setState({bookData})
     }
 
   onVerseSelected(item, index) {
-    // shift to tab 2
     console.log("on select" + item)
-    this.props.screenProps.updateSelectedVerse(item)
+    this.props.selectedVerse(item)
+    this.props.screenProps.navigateBack()
   }
   
   render() {
@@ -84,3 +78,22 @@ async componentWillReceiveProps(props){
     );
   }
 };
+
+const mapStateToProps = state =>{
+  return{
+    language: state.updateVersion.language,
+    version:state.updateVersion.version,
+    sourceId:state.updateVersion.sourceId,
+    downloaded:state.updateVersion.downloaded,
+    
+    totalVerses:state.selectReference.totalVerses,
+    // chapterNumber:state.selectReference.chapterNumber,
+  }
+}
+
+const mapDispatchToProps = dispatch =>{
+  return {
+    selectedVerse: (verseNumber)=>dispatch(selectedVerse(verseNumber)),
+  }
+}
+export  default connect(mapStateToProps,mapDispatchToProps)(SelectVerse)

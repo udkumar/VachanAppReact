@@ -1,25 +1,29 @@
-import {REFERENCE_UPDATE,CHANGE_BOOK} from './actionsType.js'
+import {SELECTED_BOOK,SELECTED_CHAPTER,SELECTED_VERSE} from './actionsType.js'
 
-export const referenceUpdate = (id,chapterNumber,totalChapters,verseNumber,totalVerses)=>{
+export const selectedBook = (bookId,bookName,totalChapters)=>{
     return {
-        type:EDIT_NOTE,
-        bookId:id,
-        chapterNumber:chapterNumber,
+        type:SELECTED_BOOK,
+        bookId:bookId,
+        bookName:bookName,
         totalChapters:totalChapters,
-        totalVerses:totalVerses,
-        verseNumber:verseNumber
-
     }
 }
-
-export const changeBook = (language,version,bookId)=>{
+export const selectedChapter = (chapterNumber,totalVerses)=>{
     return {
-        type:CHANGE_BOOK,
-        language:language,
-        version:version,
-        bookId:bookId
+        type:SELECTED_CHAPTER,
+        chapterNumber:chapterNumber,
+        totalVerses:totalVerses,
     }
 }
+
+export const selectedVerse = (verseNumber)=>{
+    return {
+        type:SELECTED_VERSE,
+        verseNumber:verseNumber,
+    }
+}
+
+
 
 
 

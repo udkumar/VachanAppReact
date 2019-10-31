@@ -336,7 +336,10 @@ const mapStateToProps = state =>{
     language: state.updateVersion.language,
     version:state.updateVersion.version,
     sourceId:state.updateVersion.sourceId,
-    downloaded:state.updateVersion.downloaded
+    downloaded:state.updateVersion.downloaded,
+
+    bookId:state.updateVersion.bookId,
+    chapterNumber:state.updateVersion.chapterNumber
   }
 }
 

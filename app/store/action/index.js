@@ -1,4 +1,4 @@
 
 export {updateBCV,deleteNote} from './editNote'
-export {referenceUpdate} from './referenceUpdate'
-export {updateVersion} from './updateVersion'
+export {selectedBook,selectedChapter,selectedVerse} from './referenceUpdate'
+export {updateVersion,updateBook} from './updateVersion'

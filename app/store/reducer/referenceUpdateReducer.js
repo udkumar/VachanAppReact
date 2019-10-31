@@ -1,30 +1,37 @@
-import { REFERENCE_UPDATE, CHANGE_BOOK  } from '../action/actionsType';
+import { SELECTED_BOOK, SELECTED_CHAPTER, SELECTED_VERSE  } from '../action/actionsType';
 
 const initialState = {
-    bookId: '1jn',
+    bookId: '3jn',
+    bookName: '3 John',
     chapterNumber:1,
+    totalChapters:1,
     verseNumber: 1,
-    bookName:'1 john'
-    
+    totalVerses:15,
+    verseText:'',
+    bookName:'3 john',
 }
+
 function referenceUpdateReducer(state=initialState,action){
     switch(action.type) {
-        case REFERENCE_UPDATE:
+        case SELECTED_BOOK:
         return {
             ...state,
-            bookId:id,
-            chapterNumber:action.chapterNumber,
+            bookId:action.bookId,
+            bookName:action.bookName,
             totalChapters:action.totalChapters,
-            totalVerses:action.totalVerses,
-            verseNumber:action.verseNumber
         }
-        case CHANGE_BOOK:
-        return{
+        case SELECTED_CHAPTER:
+        return {
             ...state,
-            language:action.language,
-            version:action.version,
-            bookId:action.bookId
+            chapterNumber:action.chapterNumber,
+            totalVerses:action.totalVerses,
         }
+        case SELECTED_VERSE:
+        return {
+            ...state,
+            verseNumber:action.verseNumber,
+        }
+       
         default: 
         return state
     }
