@@ -20,8 +20,9 @@ import {
   MenuOption,
   MenuTrigger,
 } from 'react-native-popup-menu';
-export default class NotePage extends Component {
+import {connect} from 'react-redux';
 
+ class NotePage extends Component {
   constructor(props){
     super(props);
     this.state = {
@@ -38,8 +39,13 @@ export default class NotePage extends Component {
   }
   openMenu =()=>{
   }
+  onbackNote = (list)=>{
+    this.setState({noteData:list})
+    console.log("onback refence list ",this.props.referenceNote)
+  }
   goToEditPage=()=>{
     this.props.navigation.navigate("EditNote",{
+      onbackNote:this.onbackNote,
       referenceList: this.state.noteData,
       noteIndex:this.props.navigation.state.params.noteIndex,
       noteObject:this.props.navigation.state.params.noteObject,
@@ -66,7 +72,6 @@ export default class NotePage extends Component {
   }
 
   render() {
-    
     return (
       <MenuContext>
       <Container>
@@ -122,4 +127,11 @@ export default class NotePage extends Component {
 
 
 
+const mapStateToProps = state =>{
+  return{
+    referenceNote:state.editNote.referenceNote,
+  }
+}
 
+
+export  default connect(mapStateToProps,null)(NotePage)

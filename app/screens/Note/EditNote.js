@@ -24,9 +24,9 @@ import { noteStyle } from './styles.js';
 import DbQueries from '../../utils/dbQueries'
 import APIFetch from '../../utils/APIFetch'
 import {connect} from 'react-redux'
-import { updateBCV,deleteNote } from '../../store/action';
+import { updateNoteVerse } from '../../store/action/';
 
-class EditNote extends Component {
+export default class EditNote extends Component {
   static navigationOptions = ({navigation}) =>({
     headerTitle: 'Edit Note',
     headerLeft:(<HeaderBackButton tintColor='white' onPress={()=>navigation.state.params.handleBack()}/>),
@@ -94,10 +94,11 @@ class EditNote extends Component {
     } else {
       console.log("add new note ")
       await DbQueries.addOrUpdateNote(this.state.noteIndex, contentBody, 
-        this.state.noteIndex == -1 ? time : this.state.noteObject.createdTime, time, this.state.referenceList);
-
+      this.state.noteIndex == -1 ? time : this.state.noteObject.createdTime, time, this.state.referenceList);
+      this.props.navigation.state.params.onbackNote(this.state.referenceList)
     }
     this.props.navigation.dispatch(NavigationActions.back())
+    // this.props.navigation.goBack()
   }
 
   showAlert() {
@@ -191,25 +192,28 @@ class EditNote extends Component {
     }
   }
 
-  getReference = async(id, name, cNum, vNum) => {
-    const verseNum = vNum.toString()
-    if (this.checkIfReferencePresent(id, name, cNum, verseNum)) {
+  getReference = async() => {
+    // const verseNum = this.prosps.verseNumber.toString()
+    if (this.checkIfReferencePresent(this.props.bookId, this.props.bookName, this.props.chapterNumber, this.props.verseNumber)) {
       return;
     }
     try{
-    let response =  await APIFetch.getChapterContent(35,id,cNum)
+    let response =  await APIFetch.getChapterContent(this.props.sourceId,this.props.bookId,this.props.chapterNumber)
     if(response.length != 0){
-      console.log("res",response.chapterContent.verses[vNum-1].text)
+      console.log("res -------",response)
+
       if(response.success == false){
+
         alert("response success false")
       }else{
-        let refModel = {bookId: id, 
-          bookName: name, 
-          chapterNumber: cNum, 
-          verseNumber: verseNum, 
-          verseText:response.chapterContent.verses[vNum-1].text,
-          versionCode: this.props.screenProps.versionCode, 
-          languageName: this.props.screenProps.languageName
+      console.log("res",response.chapterContent.verses[this.props.verseNumber-1].text)
+        let refModel = {bookId:this.props.bookId, 
+          bookName: this.props.bookName, 
+          chapterNumber: this.props.chapterNumber, 
+          verseNumber: this.props.verseNumber, 
+          verseText:response.chapterContent.verses[this.props.verseNumber-1].text,
+          versionCode: this.props.version, 
+          languageName: this.props.language
         };
         let referenceList = [...this.state.referenceList]
         referenceList.push(refModel)
@@ -225,7 +229,6 @@ class EditNote extends Component {
 
   onAddVersePress() {
     
-    // this.props.navigation.navigate('ReferenceSelection', {getReference: this.getReference})
     this.props.navigation.navigate('SelectionTab', {getReference: this.getReference,
         bookId:this.props.navigation.state.params.bookId,
         chapterNumber:this.props.navigation.state.params.chapterNumber,
@@ -249,7 +252,6 @@ class EditNote extends Component {
   }
 
   render() {
-    console.log("book id from the redux ",this.props.bookId)
     return (
      <ScrollView style={this.styles.containerEditNote}>
       <View style={this.styles.subContainer}>
@@ -343,7 +345,12 @@ class EditNote extends Component {
 
 const mapStateToProps = state =>{
   return{
+    language:state.updateVersion.language,
+    version:state.updateVersion.version,
+    sourceId:state.updateVersion.sourceId,
+
     bookId:state.editNote.bookId,
+    bookName:state.editNote.bookName,
     chapterNumber:state.editNote.chapterNumber,
     verseNumber: state.editNote.verseNumber,
     index:state.editNote.index,
@@ -351,9 +358,9 @@ const mapStateToProps = state =>{
   }
 }
 
-const mapDispatchToProps = dispatch =>{
-  return {
-    updateBCV: (id,chapNum,verseNum)=>dispatch(updateBCV(id,chapNum,verseNum)),
-  }
-}
-export  default connect(mapStateToProps,mapDispatchToProps)(EditNote)
+// const mapDispatchToProps = dispatch =>{
+//   return {
+//     updateNoteVerse:(arrayVerse)=>dispatch(updateNoteVerse(arrayVerse))
+//   }
+// }
+// export  default connect(null,mapDispatchToProps)(EditNote)

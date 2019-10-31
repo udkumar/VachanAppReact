@@ -1,33 +1,43 @@
-import { EDIT_NOTE, DELETE_NOTE } from '../action/actionsType';
+import {ADD_BOOK_TO_NOTE,ADD_CHAPTER_TO_NOTE,ADD_VERSE_TO_NOTE,UPDATE_NOTE_VERSE} from '../action/actionsType';
 
 const initialState = {
-    
-    bookId: '1jn',
+    bookId: '3jn',
+    bookName: '3 John',
     chapterNumber:1,
+    totalChapters:1,
     verseNumber: 1,
-    index:-1,
-    bookName:'1 john'
-    
+    totalVerses:15,
+    verseText:'',
+    bookName:'3 यूहन्ना',
+    referenceNote:[]
 }
+
 function editNoteReducer(state=initialState,action){
     switch(action.type) {
-        case EDIT_NOTE:
+        case ADD_BOOK_TO_NOTE:
         return {
             ...state,
             bookId:action.bookId,
             bookName:action.bookName,
-            chapterNumber:action.chapterNumber,
-            verseNumber:action.verseNumber
+            totalChapters:action.totalChapters,
         }
-        case DELETE_NOTE:
-        return{
+        case ADD_CHAPTER_TO_NOTE:
+        return {
             ...state,
-            mobile:action.mobile,
-            refferalStatus:action.refferalStatus,
-            iconColor:action.iconColor,
-            numberStatus:action.numberStatus,
+            chapterNumber:action.chapterNumber,
+            totalVerses:action.totalVerses,
         }
-        
+        case ADD_VERSE_TO_NOTE:
+        return {
+            ...state,
+            verseNumber:action.verseNumber,
+            verseText:action.verseText,
+        }
+        case UPDATE_NOTE_VERSE:
+        return {
+            ...state,
+            referenceNote:action.referenceNote,
+        }
         default: 
         return state
     }

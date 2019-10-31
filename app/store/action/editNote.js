@@ -1,20 +1,32 @@
-import {EDIT_NOTE} from './actionsType.js'
-import {DELETE_NOTE} from './actionsType.js'
+import {ADD_BOOK_TO_NOTE,ADD_CHAPTER_TO_NOTE,ADD_VERSE_TO_NOTE,UPDATE_NOTE_VERSE} from './actionsType.js'
 
-export const updateBCV = (id,bookName,chapNum,verseNum)=>{
+export const addBookToNote = (bookId,bookName,totalChapters)=>{
     return {
-        type:EDIT_NOTE,
-        bookId:id,
+        type:ADD_BOOK_TO_NOTE,
+        bookId:bookId,
         bookName:bookName,
-        chapterNumber:chapNum,
-        verseNumber:verseNum
+        totalChapters:totalChapters,
     }
 }
-export  const deleteNote = (time,index)=>{
-    return{
-        type:DELETE_NOTE,
-        time:time,
-        index:index
+export const addChapterToNote = (chapterNumber,totalVerses)=>{
+    return {
+        type:ADD_CHAPTER_TO_NOTE,
+        chapterNumber:chapterNumber,
+        totalVerses:totalVerses,
+    }
+}
+
+export const addVerseToNote = (verseNumber,verseText)=>{
+    return {
+        type:ADD_VERSE_TO_NOTE,
+        verseNumber:verseNumber,
+        verseText:verseText,
+    }
+}
+export const updateNoteVerse = (referenceNote)=>{
+    return {
+        type:UPDATE_NOTE_VERSE,
+        referenceNote:referenceNote,
     }
 }
 

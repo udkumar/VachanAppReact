@@ -17,6 +17,8 @@ import {getBookChaptersFromMapping} from '../../../utils/UtilFunctions';
 
 import {connect} from 'react-redux'
 import {selectedChapter} from '../../../store/action/'
+import {addChapterToNote} from '../../../store/action/'
+
 
 
 
@@ -118,6 +120,7 @@ const mapStateToProps = state =>{
 const mapDispatchToProps = dispatch =>{
   return {
     selectedChapter: (chapterNumber,totalVerses)=>dispatch(selectedChapter(chapterNumber,totalVerses)),
+    addChapterToNote:(chapterNumber,totalVerses)=>dispatch(addChapterToNote(chapterNumber,totalVerses))
   }
 }
 export  default connect(mapStateToProps,mapDispatchToProps)(ChapterSelection)

@@ -8,7 +8,7 @@ const initialState = {
     verseNumber: 1,
     totalVerses:15,
     verseText:'',
-    bookName:'3 john',
+    bookName:'3 यूहन्ना'
 }
 
 function referenceUpdateReducer(state=initialState,action){

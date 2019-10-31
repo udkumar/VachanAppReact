@@ -24,6 +24,8 @@ import {getBookNameFromMapping,getBookSectionFromMapping,getBookNumberFromMappin
 import DbQueries from '../../../utils/dbQueries.js';
 import {connect} from 'react-redux'
 import {selectedBook} from '../../../store/action/'
+import {addBookToNote} from '../../../store/action/'
+
 
 
 // import { changeBook } from '../../../store/action/referenceUpdate.js';
@@ -166,10 +168,10 @@ import {selectedBook} from '../../../store/action/'
 
   navigateToChapter(item){
     this.props.selectedBook(item.bookId,item.bookName,item.numOfChapters)
+    this.props.addBookToNote(item.bookId,item.bookName,item.numOfChapters)
     this.props.navigation.navigate('Chapters')
   }
 renderItem = ({item, index})=> {
-  console.log("boook id ",item.bookName)
     return (
       <TouchableOpacity 
           onPress={()=>{this.navigateToChapter(item,index)}}>
@@ -212,7 +214,6 @@ renderItem = ({item, index})=> {
   }
 
   getNTSize(){
-    console.log("book list in nt ",this.state.bookList)
 
     var count = 0;
     if(this.state.bookList.length == 0 ){
@@ -330,7 +331,8 @@ const mapStateToProps = state =>{
 
 const mapDispatchToProps = dispatch =>{
   return {
-    selectedBook:(bookId,bookName,totalChapters) =>dispatch(selectedBook(bookId,bookName,totalChapters))
+    selectedBook:(bookId,bookName,totalChapters) =>dispatch(selectedBook(bookId,bookName,totalChapters)),
+    addBookToNote:(bookId,bookName,totalChapters)=>dispatch(addBookToNote(bookId,bookName,totalChapters))
   }
 }
 export  default connect(mapStateToProps,mapDispatchToProps)(SelectBook)

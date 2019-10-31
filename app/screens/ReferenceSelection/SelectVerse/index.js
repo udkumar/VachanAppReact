@@ -13,6 +13,8 @@ const width = Dimensions.get('window').width;
 import {nightColors, dayColors} from '../../../utils/colors.js'
 import {connect} from 'react-redux'
 import {selectedVerse} from '../../../store/action/'
+import {addVerseToNote} from '../../../store/action/'
+
 
 
 class SelectVerse extends Component {
@@ -55,6 +57,7 @@ async componentWillReceiveProps(props){
   onVerseSelected(item, index) {
     console.log("on select" + item)
     this.props.selectedVerse(item)
+    this.props.addVerseToNote(item)
     this.props.screenProps.navigateBack()
   }
   
@@ -94,6 +97,7 @@ const mapStateToProps = state =>{
 const mapDispatchToProps = dispatch =>{
   return {
     selectedVerse: (verseNumber)=>dispatch(selectedVerse(verseNumber)),
+    addVerseToNote: (verseNumber,verseText)=>dispatch(addVerseToNote(verseNumber,verseText)),
   }
 }
 export  default connect(mapStateToProps,mapDispatchToProps)(SelectVerse)

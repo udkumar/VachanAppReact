@@ -452,6 +452,7 @@ class Bible extends Component {
     this.props.navigation.navigate('EditNote', {
         referenceList: refList,
         bookId:id,
+        onbackNote:this.onbackNote,
         chapterNumber:this.state.currentVisibleChapter,
         totalVerses:this.state.totalVerses,
         noteIndex:-1,
@@ -460,7 +461,9 @@ class Bible extends Component {
     this.setState({selectedReferenceSet: [], showBottomBar: false})
     
   }
-
+  onbackNote=()=>{
+    console.log("onback nothing in bible page")
+  }
   //after selected reference do highlight 
   doHighlight = async () => {
     // let HightlightedVerseArray = [...this.state.HightlightedVerseArray]
