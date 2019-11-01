@@ -254,7 +254,7 @@ class LanguageList extends Component {
         //   bookListData.push({bookId})
         // }
   
-        await DbQueries.addNewVersion(langName,verCode,bookModels,sourceId)
+        // await DbQueries.addNewVersion(langName,verCode,bookModels,sourceId)
         this.setState({isLoading:false,})
         languageList().then(async(language) => {
           this.setState({languages:language})

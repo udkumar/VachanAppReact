@@ -23,6 +23,11 @@ import {
 import {connect} from 'react-redux';
 
  class NotePage extends Component {
+  static navigationOptions = ({navigation}) =>({
+    headerTitle: 'Note',
+  });
+
+
   constructor(props){
     super(props);
     this.state = {

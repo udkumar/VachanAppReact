@@ -26,7 +26,7 @@ import APIFetch from '../../utils/APIFetch'
 import {connect} from 'react-redux'
 import { updateNoteVerse } from '../../store/action/';
 
-export default class EditNote extends Component {
+class EditNote extends Component {
   static navigationOptions = ({navigation}) =>({
     headerTitle: 'Edit Note',
     headerLeft:(<HeaderBackButton tintColor='white' onPress={()=>navigation.state.params.handleBack()}/>),
@@ -199,6 +199,7 @@ export default class EditNote extends Component {
     }
     try{
     let response =  await APIFetch.getChapterContent(this.props.sourceId,this.props.bookId,this.props.chapterNumber)
+    console.log("SOURCE ID ",this.props.sourceId,"BOOK ID ",this.props.bookId,"Chapter number",this.props.chapterNumber)
     if(response.length != 0){
       console.log("res -------",response)
 
@@ -210,7 +211,7 @@ export default class EditNote extends Component {
         let refModel = {bookId:this.props.bookId, 
           bookName: this.props.bookName, 
           chapterNumber: this.props.chapterNumber, 
-          verseNumber: this.props.verseNumber, 
+          verseNumber: this.props.verseNumber.toString(), 
           verseText:response.chapterContent.verses[this.props.verseNumber-1].text,
           versionCode: this.props.version, 
           languageName: this.props.language
@@ -363,4 +364,4 @@ const mapStateToProps = state =>{
 //     updateNoteVerse:(arrayVerse)=>dispatch(updateNoteVerse(arrayVerse))
 //   }
 // }
-// export  default connect(null,mapDispatchToProps)(EditNote)
+export  default connect(mapStateToProps)(EditNote)
