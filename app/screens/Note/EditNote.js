@@ -24,7 +24,6 @@ import { noteStyle } from './styles.js';
 import DbQueries from '../../utils/dbQueries'
 import APIFetch from '../../utils/APIFetch'
 import {connect} from 'react-redux'
-import { updateNoteVerse } from '../../store/action/';
 
 class EditNote extends Component {
   static navigationOptions = ({navigation}) =>({
@@ -92,10 +91,10 @@ class EditNote extends Component {
         this.props.navigation.state.params.onDelete(this.state.noteIndex, this.state.noteObject.createdTime)
       }
     } else {
-      console.log("add new note ")
+      console.log("add new note ",contentBody)
       await DbQueries.addOrUpdateNote(this.state.noteIndex, contentBody, 
       this.state.noteIndex == -1 ? time : this.state.noteObject.createdTime, time, this.state.referenceList);
-      this.props.navigation.state.params.onbackNote(this.state.referenceList)
+      this.props.navigation.state.params.onbackNote(this.state.referenceList,contentBody)
     }
     this.props.navigation.dispatch(NavigationActions.back())
     // this.props.navigation.goBack()
@@ -352,6 +351,7 @@ const mapStateToProps = state =>{
 
     bookId:state.editNote.bookId,
     bookName:state.editNote.bookName,
+    bodyText:state.editNote.bodyText,
     chapterNumber:state.editNote.chapterNumber,
     verseNumber: state.editNote.verseNumber,
     index:state.editNote.index,
@@ -359,9 +359,6 @@ const mapStateToProps = state =>{
   }
 }
 
-// const mapDispatchToProps = dispatch =>{
-//   return {
-//     updateNoteVerse:(arrayVerse)=>dispatch(updateNoteVerse(arrayVerse))
-//   }
-// }
-export  default connect(mapStateToProps)(EditNote)
+
+
+export  default connect(mapStateToProps,null)(EditNote)

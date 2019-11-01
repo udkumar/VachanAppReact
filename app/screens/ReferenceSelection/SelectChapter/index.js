@@ -16,8 +16,7 @@ import { numberSelection } from './styles.js';
 import {getBookChaptersFromMapping} from '../../../utils/UtilFunctions';
 
 import {connect} from 'react-redux'
-import {selectedChapter} from '../../../store/action/'
-import {addChapterToNote} from '../../../store/action/'
+import {selectedChapter,addChapterToNote} from '../../../store/action/'
 
 
 
@@ -111,9 +110,9 @@ const mapStateToProps = state =>{
     sourceId:state.updateVersion.sourceId,
     downloaded:state.updateVersion.downloaded,
     
-    bookId:state.selectReference.bookId,
-    bookName:state.selectReference.bookName,
-    totalChapters:state.selectReference.totalChapters
+    bookId:state.updateVersion.bookId,
+    bookName:state.updateVersion.bookName,
+    totalChapters:state.updateVersion.totalChapters
   }
 }
 

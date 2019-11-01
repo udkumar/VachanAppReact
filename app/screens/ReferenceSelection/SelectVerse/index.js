@@ -12,8 +12,7 @@ const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 import {nightColors, dayColors} from '../../../utils/colors.js'
 import {connect} from 'react-redux'
-import {selectedVerse} from '../../../store/action/'
-import {addVerseToNote} from '../../../store/action/'
+import {selectedVerse,addVerseToNote} from '../../../store/action/'
 
 
 
@@ -89,7 +88,7 @@ const mapStateToProps = state =>{
     sourceId:state.updateVersion.sourceId,
     downloaded:state.updateVersion.downloaded,
     
-    totalVerses:state.selectReference.totalVerses,
+    totalVerses:state.updateVersion.totalVerses,
     // chapterNumber:state.selectReference.chapterNumber,
   }
 }

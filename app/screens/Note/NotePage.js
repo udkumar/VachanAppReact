@@ -20,11 +20,13 @@ import {
   MenuOption,
   MenuTrigger,
 } from 'react-native-popup-menu';
-import {connect} from 'react-redux';
 
- class NotePage extends Component {
+
+export default class NotePage extends Component {
   static navigationOptions = ({navigation}) =>({
     headerTitle: 'Note',
+    // headerLeft:(<HeaderBackButton tintColor='white' onPress={()=>{navigation.state.params.handleBack()}}/>),
+
   });
 
 
@@ -33,20 +35,17 @@ import {connect} from 'react-redux';
     this.state = {
       colorFile:this.props.screenProps.colorFile,
       noteData:this.props.navigation.state.params.note,
-      createdTime:this.props.navigation.state.params.createdTime
+      createdTime:this.props.navigation.state.params.createdTime,
+      bodyText:this.props.navigation.state.params.bodyText
     }
     this.styles = noteStyle(props.screenProps.colorFile, props.screenProps.sizeFile);   
-    
   }
 
-  componentDidMount(){
-    SplashScreen.hide();
-  }
-  openMenu =()=>{
-  }
-  onbackNote = (list)=>{
-    this.setState({noteData:list})
-    console.log("onback refence list ",this.props.referenceNote)
+ 
+  onbackNote =(list,text)=>{
+    this.setState({noteData:list,bodyText:text})
+    this.props.navigation.state.params.queryDb()
+
   }
   goToEditPage=()=>{
     this.props.navigation.navigate("EditNote",{
@@ -84,7 +83,7 @@ import {connect} from 'react-redux';
         <Card>
           <CardItem header bordered>
               <Text style={{fontSize:18}}>
-                {this.props.navigation.state.params.bodyText}
+                {this.state.bodyText}
               </Text>
           </CardItem>
           <CardItem bordered>
@@ -132,11 +131,3 @@ import {connect} from 'react-redux';
 
 
 
-const mapStateToProps = state =>{
-  return{
-    referenceNote:state.editNote.referenceNote,
-  }
-}
-
-
-export  default connect(mapStateToProps,null)(NotePage)

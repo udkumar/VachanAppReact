@@ -1,4 +1,4 @@
-import {ADD_BOOK_TO_NOTE,ADD_CHAPTER_TO_NOTE,ADD_VERSE_TO_NOTE,UPDATE_NOTE_VERSE} from '../action/actionsType';
+import {ADD_BOOK_TO_NOTE,ADD_CHAPTER_TO_NOTE,ADD_VERSE_TO_NOTE,UPDATE_NOTE_BODY} from '../action/actionsType';
 
 const initialState = {
     bookId: '3jn',
@@ -9,7 +9,6 @@ const initialState = {
     totalVerses:15,
     verseText:'',
     bookName:'3 यूहन्ना',
-    referenceNote:[]
 }
 
 function editNoteReducer(state=initialState,action){
@@ -33,11 +32,12 @@ function editNoteReducer(state=initialState,action){
             verseNumber:action.verseNumber,
             verseText:action.verseText,
         }
-        case UPDATE_NOTE_VERSE:
+        case UPDATE_NOTE_BODY:
         return {
             ...state,
-            referenceNote:action.referenceNote,
+            bodyText:action.bodyText,
         }
+       
         default: 
         return state
     }

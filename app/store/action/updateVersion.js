@@ -1,15 +1,4 @@
-import { UPDATE_VERSION , UPDATE_BOOK} from "./actionsType";
-
-
-// export const changeBook = (language,version,bookId,sourceId)=>{
-//     return {
-//         type:CHANGE_BOOK,
-//         language:language,
-//         version:version,
-//         bookId:bookId,
-//         sourceId:sourceId
-//     }
-// }
+import { UPDATE_VERSION , SELECTED_BOOK,SELECTED_CHAPTER,SELECTED_VERSE} from "./actionsType";
 
 export const updateVersion = (language,version,sourceId,downloaded)=>{
     return {
@@ -21,14 +10,25 @@ export const updateVersion = (language,version,sourceId,downloaded)=>{
     }
 }
 
-export const updateBook = (bookId,bookName,chapterNumber,verseNumber,verseText)=>{
+export const selectedBook = (bookId,bookName,totalChapters)=>{
     return {
-        type:UPDATE_BOOK,
+        type:SELECTED_BOOK,
         bookId:bookId,
         bookName:bookName,
+        totalChapters:totalChapters,
+    }
+}
+export const selectedChapter = (chapterNumber,totalVerses)=>{
+    return {
+        type:SELECTED_CHAPTER,
         chapterNumber:chapterNumber,
-        verseNumber:verseNumber,
-        verseText:verseText
+        totalVerses:totalVerses,
     }
 }
 
+export const selectedVerse = (verseNumber)=>{
+    return {
+        type:SELECTED_VERSE,
+        verseNumber:verseNumber,
+    }
+}

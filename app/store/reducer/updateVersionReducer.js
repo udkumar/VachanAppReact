@@ -1,4 +1,4 @@
-import { UPDATE_VERSION, UPDATE_BOOK  } from '../action/actionsType';
+import { UPDATE_VERSION, SELECTED_BOOK,SELECTED_CHAPTER,SELECTED_VERSE, UPDATE_NOTE_BODY  } from '../action/actionsType';
 
 const initialState = {
    language:'Hindi',
@@ -6,7 +6,14 @@ const initialState = {
    sourceId:'35',
    downloaded:false,
    bookId:'3jn',
-   bookName:'3 john'
+   bookName:'3 यूहन्ना',
+
+
+   chapterNumber:1,
+   totalChapters:1,
+   verseNumber: 1,
+   totalVerses:15,
+   verseText:'',
 }
 function UpdateVersionReducer(state=initialState,action){
     switch(action.type) {
@@ -18,15 +25,26 @@ function UpdateVersionReducer(state=initialState,action){
         sourceId:action.sourceId,
         downloaded:action.downloaded
         }
-        case UPDATE_BOOK:
+        case SELECTED_BOOK:
         return {
             ...state,
             bookId:action.bookId,
             bookName:action.bookName,
-            chapterNumber:action.chapterNumber,
-            verseNumber:action.verseNumber,
-            verseText:action.verseText
+            totalChapters:action.totalChapters,
         }
+        case SELECTED_CHAPTER:
+        return {
+            ...state,
+            chapterNumber:action.chapterNumber,
+            totalVerses:action.totalVerses,
+        }
+        case SELECTED_VERSE:
+        return {
+            ...state,
+            verseNumber:action.verseNumber,
+        }
+        
+       
         default: 
         return state
     }

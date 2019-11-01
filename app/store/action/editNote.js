@@ -1,4 +1,4 @@
-import {ADD_BOOK_TO_NOTE,ADD_CHAPTER_TO_NOTE,ADD_VERSE_TO_NOTE,UPDATE_NOTE_VERSE} from './actionsType.js'
+import {ADD_BOOK_TO_NOTE,ADD_CHAPTER_TO_NOTE,ADD_VERSE_TO_NOTE,UPDATE_NOTE_VERSE,UPDATE_NOTE_BODY} from './actionsType.js'
 
 export const addBookToNote = (bookId,bookName,totalChapters)=>{
     return {
@@ -23,10 +23,11 @@ export const addVerseToNote = (verseNumber,verseText)=>{
         verseText:verseText,
     }
 }
-export const updateNoteVerse = (referenceNote)=>{
+
+export const updateNoteBody = (bodyText)=>{
     return {
-        type:UPDATE_NOTE_VERSE,
-        referenceNote:referenceNote,
+        type:UPDATE_NOTE_BODY,
+        bodyText:bodyText,
     }
 }
 

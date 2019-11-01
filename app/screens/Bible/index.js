@@ -202,7 +202,9 @@ class Bible extends Component {
     this.props.navigation.setParams({
       onBookmark: this.onBookmarkPress,
       isBookmark:this.state.isBookmark,
-      bookName:this.state.bookName.length > 8 ? this.state.bookName.slice(0,7)+"..." : this.state.bookName,
+      
+      bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
+      // bookName:this.state.bookName.length > 8 ? this.state.bookName.slice(0,7)+"..." : this.state.bookName,
       currentChapter:this.state.currentVisibleChapter,
       languageName: this.props.language, 
       versionCode: this.props.version,
@@ -232,7 +234,7 @@ class Bible extends Component {
                   totalVerses:response.chapterContent.verses.length,
                   languageName:this.props.language,
                   versionCode:this.props.version,
-                  bookName:this.state.props.bookName.length > 8 ? this.props.bookName.slice(0,7)+"..." : this.props.bookName,
+                  bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
                   currentChapter:this.props.chapterNumber
                 })
               }
@@ -260,7 +262,7 @@ class Bible extends Component {
                       totalVerses:response.chapterContent.verses.length,
                       languageName:this.props.language,
                       versionCode:this.props.version,
-                      bookName:this.props.bookName.length > 8 ? this.props.bookName.slice(0,7)+"..." : this.props.bookName,
+                      bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
                       currentChapter:this.props.chapterNumber
                     })
 
@@ -433,7 +435,7 @@ class Bible extends Component {
   addToNotes = () => {
     let refList = []
     let id = this.props.bookId
-    let name = this.state.bookName
+    let name = getBookNameFromMapping(this.props.bookId,this.props.language)
     for (let item of this.state.selectedReferenceSet) {
     console.log(this.state.selectedReferenceSet)
 
@@ -716,9 +718,9 @@ const mapStateToProps = state =>{
     sourceId:state.updateVersion.sourceId,
     downloaded:state.updateVersion.downloaded,
 
-    chapterNumber:state.selectReference.chapterNumber,
-    bookName:state.selectReference.bookName,
-    bookId:state.selectReference.bookId,
+    chapterNumber:state.updateVersion.chapterNumber,
+    bookName:state.updateVersion.bookName,
+    bookId:state.updateVersion.bookId,
 
   }
 }

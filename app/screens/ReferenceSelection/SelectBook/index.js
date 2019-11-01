@@ -23,8 +23,7 @@ import APIFetch from '../../../utils/APIFetch'
 import {getBookNameFromMapping,getBookSectionFromMapping,getBookNumberFromMapping,getBookChaptersFromMapping} from '../../../utils/UtilFunctions';
 import DbQueries from '../../../utils/dbQueries.js';
 import {connect} from 'react-redux'
-import {selectedBook} from '../../../store/action/'
-import {addBookToNote} from '../../../store/action/'
+import {selectedBook,addBookToNote} from '../../../store/action/'
 
 
 
@@ -324,8 +323,8 @@ const mapStateToProps = state =>{
     sourceId:state.updateVersion.sourceId,
     downloaded:state.updateVersion.downloaded,
     
-    bookId:state.selectReference.bookId,
-    bookName:state.selectReference.bookName,
+    bookId:state.updateVersion.bookId,
+    bookName:state.updateVersion.bookName,
   }
 }
 

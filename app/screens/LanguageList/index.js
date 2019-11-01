@@ -77,12 +77,12 @@ class ExpandableItemComponent extends Component {
                   <Icon name="check" size={24} style={{marginRight:8}}  onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId,true)}}
                   />
                 :
-                  (
-                  (this.props.isLoading &&  index == this.props.index ) ?
-                  <ActivityIndicator  size="small"  color="#0000ff"/> 
-                  : 
+                  // (
+                  // (this.props.isLoading &&  index == this.props.index ) ?
+                  // // <ActivityIndicator  size="small"  color="#0000ff"/> 
+                  // : 
                   <Icon name="file-download" size={24} style={{marginRight:12}} onPress={()=>{this.props.DownloadBible(this.props.item.languageName,item.versionCode,index,item.sourceId)}}/>
-                  )
+                  // )
                 }
               
               </Right>
@@ -200,6 +200,7 @@ class LanguageList extends Component {
     }
 
     DownloadBible = (langName,verCode,index,sourceId)=>{
+      console.log("source id ",sourceId)
 
       var bookModels = []
       var verseModels = []
@@ -212,6 +213,7 @@ class LanguageList extends Component {
           if(mainContent.length != 0){
             var content = mainContent.bibleContent
             console.log("JSON CONTENT ",content)
+
             for(var id in content){
               // if(content != null){
                 for(var i=0; i< content[id].chapters.length; i++){

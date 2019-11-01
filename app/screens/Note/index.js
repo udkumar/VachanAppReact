@@ -53,6 +53,7 @@ export default class Note extends Component {
       noteObject: null,
       onDelete: this.onDelete, 
       onRefresh: this.onRefresh, 
+      queryDb:this.queryDb,
       referenceList:  this.props.navigation.state.params.referenceList,
       bookId: this.props.screenProps.bookId,
       chapterNumber:1,
@@ -74,7 +75,7 @@ export default class Note extends Component {
   async onRefresh(noteIndex, noteBody, crTime, moTime, refList) {
     console.log("on refresh, text " + noteBody)
     await DbQueries.addOrUpdateNote(noteIndex, noteBody, crTime, moTime, refList);
-    this.queryDb()
+    // this.queryDb()
   }
 
   async queryDb() {
@@ -167,3 +168,28 @@ export default class Note extends Component {
 }
 
 
+// const mapStateToProps = state =>{
+//   return{
+//     language:state.updateVersion.language,
+//     version:state.updateVersion.version,
+//     sourceId:state.updateVersion.sourceId,
+
+//     // bookId:state.editNote.bookId,
+//     // bookName:state.editNote.bookName,
+//     // bodyText:state.editNote.bodyText,
+//     // chapterNumber:state.editNote.chapterNumber,
+//     // verseNumber: state.editNote.verseNumber,
+//     // index:state.editNote.index,
+//     // referenceNote:state.editNote.referenceNote,
+    
+//   }
+// }
+
+// // const mapDispatchToProps = dispatch =>{
+// //   return {
+// //     updateNoteBody:(text)=>dispatch(updateNoteBody(text))
+// //   }
+// // }
+
+
+// export  default connect(mapStateToProps,mapDispatchToProps)(EditNote)
