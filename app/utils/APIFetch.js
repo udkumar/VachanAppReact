@@ -1,5 +1,4 @@
 import ApiUtils from './ApiUtils'
-import { getBookNumberFromMapping } from './UtilFunctions';
 const API_BASE_URL = 'https://stagingapi.autographamt.com/v1/'
 
 var APIFetch = {
@@ -114,7 +113,7 @@ var APIFetch = {
             })
             .then(ApiUtils.checkStatus)
             .then((response) => response.json())
-            .catch(e => e)
+            .catch(e =>  console.log("erorr fetching all books ",e))
         } catch(error) {
             console.log("error on getting all books ",error)
             return error;

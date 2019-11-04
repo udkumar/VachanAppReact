@@ -8,10 +8,9 @@ import {
   Share,
 } from 'react-native';
 import { Card, CardItem, Content,Container,Header, Right, Left,Body } from 'native-base';
-import { HeaderBackButton, NavigationActions } from 'react-navigation';
+import { NavigationActions } from 'react-navigation';
 import { noteStyle } from './styles.js';
 import DbQueries from '../../utils/dbQueries'
-import SplashScreen from 'react-native-splash-screen';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {
   Menu,
@@ -110,7 +109,7 @@ export default class NotePage extends Component {
             
           <Menu onSelect={value => alert(`Selected number: ${value}`)}>
           <MenuTrigger text={<Icon name="more-vert" size={28} />} />
-          <MenuOptions>
+          <MenuOptions optionsContainerStyle={{ marginBottom: 100 }}>
             <MenuOption onSelect={this.goToEditPage}  value={1} text='Edit' />
             <MenuOption onSelect={this.onDelete} value={2} text='Delete' />
             <MenuOption onSelect={this.addToShare} value={3} text='Share' />

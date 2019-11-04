@@ -62,7 +62,7 @@ class ExpandableItemComponent extends Component {
             overflow: 'hidden',
           }}>
           {/*Content under the header of the Expandable List Item*/}
-          {this.props.item.versionModels.map((item, index,key) => (
+          {this.props.item.versionModels.map((item, index, key) => (
               <List>
                 <ListItem button={true} onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId, item.downloaded ? true : false )}}>
                 <Left>
@@ -77,12 +77,12 @@ class ExpandableItemComponent extends Component {
                   <Icon name="check" size={24} style={{marginRight:8}}  onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId,true)}}
                   />
                 :
-                  // (
-                  // (this.props.isLoading &&  index == this.props.index ) ?
-                  // // <ActivityIndicator  size="small"  color="#0000ff"/> 
-                  // : 
+                  (
+                  (this.props.isLoading &&  index == this.props.index && this.props.item.languageName ==this.props.languageName   ) ?
+                  <ActivityIndicator  size="small"  color="#0000ff"/> 
+                  : 
                   <Icon name="file-download" size={24} style={{marginRight:12}} onPress={()=>{this.props.DownloadBible(this.props.item.languageName,item.versionCode,index,item.sourceId)}}/>
-                  // )
+                  )
                 }
               
               </Right>
@@ -115,7 +115,8 @@ class LanguageList extends Component {
           startDownload:false,
           colorFile:this.props.screenProps.colorFile,
           sizeFile:this.props.screenProps.sizeFile,
-          index : -1
+          index : -1,
+          languageName:'',
 
       }
       this.styles = styles(this.state.colorFile, this.state.sizeFile);    
@@ -201,39 +202,43 @@ class LanguageList extends Component {
 
     DownloadBible = (langName,verCode,index,sourceId)=>{
       console.log("source id ",sourceId)
-
-      var bookModels = []
-      var verseModels = []
-      var  chapterModels = []
       this.setState({isLoading:true,index},async()=>{
-
+        var bookModels = []
+        var  chapterModels = []
+  
         try{
           var mainContent = await APIFetch.getAllBooks(sourceId,"json")
+          this.setState({languageName:langName})
           
           if(mainContent.length != 0){
             var content = mainContent.bibleContent
-            console.log("JSON CONTENT ",content)
-
+            console.log("JSON CONTENT ", Object.keys(mainContent.bibleContent))
             for(var id in content){
-              // if(content != null){
+              if(content != null){
                 for(var i=0; i< content[id].chapters.length; i++){
-                  const verses = content[id].chapters[i].verses
-                  for(var j=0; j< verses.length; j++){
+                  var  verseModels = []
+                  for(var j=0; j< content[id].chapters[i].verses.length; j++){
                     verseModels.push({
-                      text: verses[j].text,
-                      number: verses[j].number,
-                      // metadata:verses[j].metadata ? ( verses[j].metadata[0].styling ? verses[j].metadata[0].styling : "" ) : "",
+                      text: content[id].chapters[i].verses[j].text,
+                      number: content[id].chapters[i].verses[j].number,
+                      // content[id].chapters[i].verses[j]
                     })
+                    
                   }
-                    var chapterModel = { 
-                      chapterNumber:  parseInt(content[id].chapters[i].header.title),
-                      numberOfVerses: parseInt(content[id].chapters[i].verses.length),
-                      verses:verseModels,
-                    }
-                    chapterModels.push(chapterModel)
+                  var chapterModel = { 
+                    chapterNumber:  parseInt(content[id].chapters[i].header.title),
+                    numberOfVerses: parseInt(content[id].chapters[i].verses.length),
+                    verses:verseModels,
+                  }
+                  chapterModels.push(chapterModel)
                 }
-              // }
-              // console.log("verse model .......>>...",verseModels)
+                
+              }
+              else{
+                alert("Sorry Version is not Available for now")
+                return 
+              }
+              }
               bookModels.push({
                 languageName: langName,
                 versionCode: verCode,
@@ -243,27 +248,15 @@ class LanguageList extends Component {
                 section: getBookSectionFromMapping(id),
                 bookNumber: getBookNumberFromMapping(id)
               })
-              
-            }
+              await DbQueries.addNewVersion(langName,verCode,bookModels,sourceId)
+              this.setState({isLoading:false,})
+              languageList().then(async(language) => {
+                this.setState({languages:language})
+              })
           }
-          
-          console.log("book model .......",bookModels)
-        // const booksid = await APIFetch.availableBooks(sourceId)
-        // var bookListData = []
-        // var res = booksid[0].books.sort(function(a, b){return a.bibleBookID - b.bibleBookID})
-        //  for(var key in res){
-        //   var bookId = res[key].abbreviation
-        //   bookListData.push({bookId})
-        // }
-  
-        // await DbQueries.addNewVersion(langName,verCode,bookModels,sourceId)
-        this.setState({isLoading:false,})
-        languageList().then(async(language) => {
-          this.setState({languages:language})
-        })
+
         }catch(error){
           console.log("error ",error)
-          // alert("There is some error on downloading this version please select another version")
         }
 
       })
@@ -286,7 +279,7 @@ class LanguageList extends Component {
     }
   
     render(){
-      console.log("PROPS VALUE IN LANGUAGE PAGE ",this.props.language,this.props.version)
+      console.log("PROPS VALUE IN LANGUAGE PAGE ",this.state.isLoading)
 
       return (
         <View style={this.styles.MainContainer}>
@@ -298,13 +291,32 @@ class LanguageList extends Component {
         </View> 
           :
         <View style={{flex:1}}>
-        <TextInput 
+        {/* <TextInput 
           style={this.styles.TextInputStyleClass}
           onChangeText={(text) => this.SearchFilterFunction(text)}
           value={this.state.text}
           underlineColorAndroid='transparent'
           placeholder="Search Here"
-        />  
+        />   */}
+        {this.state.isLoading ?
+          <View 
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            opacity: 0.5,
+            backgroundColor: 'white',
+            justifyContent: 'center',
+            alignItems: 'center' 
+          }}
+            >
+          <ActivityIndicator 
+          size="large" 
+          color="#3F51B5"
+            />
+          </View> :
         <ScrollView>
         <FlatList
           data={this.state.languages}
@@ -320,14 +332,15 @@ class LanguageList extends Component {
             sizeFile={this.state.sizeFile}
             isLoading = {this.state.isLoading}
             index = {this.state.index}
+            languageName = {this.state.languageName}
             // setModalVisible={this.setModalVisible}
           />}
 
         />
       </ScrollView>
+        }
       </View>
-      }
-  
+        }
       </View>
       )
     }

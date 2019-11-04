@@ -412,6 +412,7 @@ class DbHelper {
 				alert("no data to add")
 			}
 			else{
+				var bookIdList =[]
 			if(resultBoook.length == 0){
 
 
@@ -419,9 +420,10 @@ class DbHelper {
 				realm.write(() => {
 						for(var i=0;i<bookmodel.length;i++){
 						realm.create('BookModel', bookmodel[i])
-						// resultsB[0].downloaded = true;
+						bookIdList.push(bookmodel[i].bookId)
 						}
-					resultsB[0].bookNameList = bookmodel[i].bookId
+						resultsB[0].bookNameList = bookIdList
+						console.log("book model book id ", bookIdList)
 					resultsB[0].downloaded = true;
 				})
 			}
