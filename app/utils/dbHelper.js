@@ -400,7 +400,8 @@ class DbHelper {
 	}
 
 	async addNewVersion(langName,verCode,bookmodel,sourceId){
-		console.log("languaeg name ",langName,"version code ",verCode,"book model ",bookmodel,"source id",sourceId)
+      console.log("add new version ",langName,verCode,sourceId)
+
 		let realm = await this.getRealm();
 		if(realm){
 			let result = realm.objectForPrimaryKey("LanguageModel",langName)
@@ -423,7 +424,6 @@ class DbHelper {
 						bookIdList.push(bookmodel[i].bookId)
 						}
 						resultsB[0].bookNameList = bookIdList
-						console.log("book model book id ", bookIdList)
 					resultsB[0].downloaded = true;
 				})
 			}
@@ -455,8 +455,8 @@ class DbHelper {
 	}
 
 	async queryVersions(langName,verCode,bookId,chapterNumber){
+		 console.log("query version ",langName,verCode,bookId,chapterNumber)
 		let realm = await this.getRealm()
-		console.log("realm path ",realm.path)
 		if(realm){
 		var version = realm.objects('ChapterModel').filtered('chapterOwner.languageName ==[c] "' + langName + '" && chapterOwner.versionCode ==[c] "' + verCode + '" && chapterOwner.bookId ==   "' + bookId + '" && chapterNumber ==   "' + chapterNumber + '"' )
 		return version

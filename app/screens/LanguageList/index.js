@@ -64,7 +64,7 @@ class ExpandableItemComponent extends Component {
           {/*Content under the header of the Expandable List Item*/}
           {this.props.item.versionModels.map((item, index, key) => (
               <List>
-                <ListItem button={true} onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId, item.downloaded ? true : false )}}>
+                <ListItem button={true} onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId, item.downloaded  )}}>
                 <Left>
                 <View style={{alignSelf:'center',marginLeft:12}}>
                   <Text  style={{fontWeight:'bold'}}>{item.versionCode} </Text>
@@ -74,7 +74,7 @@ class ExpandableItemComponent extends Component {
                 <Right>
                 {
                   item.downloaded == true ? 
-                  <Icon name="check" size={24} style={{marginRight:8}}  onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId,true)}}
+                  <Icon name="check" size={24} style={{marginRight:8}}  onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId,item.downloaded)}}
                   />
                 :
                   (
@@ -204,26 +204,22 @@ class LanguageList extends Component {
       console.log("source id ",sourceId)
       this.setState({isLoading:true,index},async()=>{
         var bookModels = []
-        var  chapterModels = []
   
         try{
           var mainContent = await APIFetch.getAllBooks(sourceId,"json")
           this.setState({languageName:langName})
-          
           if(mainContent.length != 0){
             var content = mainContent.bibleContent
-            console.log("JSON CONTENT ", Object.keys(mainContent.bibleContent))
             for(var id in content){
               if(content != null){
+                var  chapterModels = []
                 for(var i=0; i< content[id].chapters.length; i++){
                   var  verseModels = []
                   for(var j=0; j< content[id].chapters[i].verses.length; j++){
                     verseModels.push({
                       text: content[id].chapters[i].verses[j].text,
                       number: content[id].chapters[i].verses[j].number,
-                      // content[id].chapters[i].verses[j]
                     })
-                    
                   }
                   var chapterModel = { 
                     chapterNumber:  parseInt(content[id].chapters[i].header.title),
@@ -238,7 +234,6 @@ class LanguageList extends Component {
                 alert("Sorry Version is not Available for now")
                 return 
               }
-              }
               bookModels.push({
                 languageName: langName,
                 versionCode: verCode,
@@ -248,6 +243,8 @@ class LanguageList extends Component {
                 section: getBookSectionFromMapping(id),
                 bookNumber: getBookNumberFromMapping(id)
               })
+
+              }
               await DbQueries.addNewVersion(langName,verCode,bookModels,sourceId)
               this.setState({isLoading:false,})
               languageList().then(async(language) => {
@@ -266,20 +263,19 @@ class LanguageList extends Component {
       this.setState({modalVisible:!this.state.modalVisible})
     }
     goToBible = (langName,verCode,sourceId,downloaded)=>{
-      AsyncStorageUtil.setAllItems([
-        [AsyncStorageConstants.Keys.SourceId, sourceId.toString()],
-        [AsyncStorageConstants.Keys.LanguageName, langName],
-        [AsyncStorageConstants.Keys.VersionCode, verCode],
-        [AsyncStorageConstants.Keys.Downloaded, JSON.stringify(downloaded)]
-      ]); 
+      console.log("downloaded value in language page ",downloaded)
+      // AsyncStorageUtil.setAllItems([
+      //   [AsyncStorageConstants.Keys.SourceId, sourceId.toString()],
+      //   [AsyncStorageConstants.Keys.LanguageName, langName],
+      //   [AsyncStorageConstants.Keys.VersionCode, verCode],
+      //   [AsyncStorageConstants.Keys.Downloaded, JSON.stringify(downloaded)]
+      // ]); 
       this.props.updateVersion(langName,verCode,sourceId,downloaded)
-      this.props.navigation.state.params.callBackForUpdateBook()
+      this.props.navigation.state.params.callBackForUpdateBook(null)
       this.props.navigation.goBack()
-
     }
   
     render(){
-      console.log("PROPS VALUE IN LANGUAGE PAGE ",this.state.isLoading)
 
       return (
         <View style={this.styles.MainContainer}>
@@ -348,11 +344,6 @@ class LanguageList extends Component {
 
 const mapStateToProps = state =>{
   return{
-    language: state.updateVersion.language,
-    version:state.updateVersion.version,
-    sourceId:state.updateVersion.sourceId,
-    downloaded:state.updateVersion.downloaded,
-
     bookId:state.updateVersion.bookId,
     chapterNumber:state.updateVersion.chapterNumber
   }

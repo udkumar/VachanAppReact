@@ -31,7 +31,6 @@ const width = Dimensions.get('window').width;
 import { styles } from './styles.js';
 
 // import BottomTab from './BottomTab'
-import dbQueries from '../../utils/dbQueries';
 
 import {connect} from 'react-redux'
 
@@ -209,33 +208,34 @@ class Bible extends Component {
       languageName: this.props.language, 
       versionCode: this.props.version,
       bookId:this.props.bookId,
-      callBackForUpdateBook:this.callBackForUpdateBook,
+      callBackForUpdateBook:this.queryBookFromAPI,
       totalVerses:this.state.totalVerses
     })   
     SplashScreen.hide();
-    this.queryBookFromAPI()
+    this.queryBookFromAPI(null)
   }
   // render data onAPI Call 
-    queryBookFromAPI = async()=>{
-      console.log("Chapter QUERY  ",this.state.currentVisibleChapter,this.props.bookId)
+    queryBookFromAPI = async(val)=>{
       this.state.chapter = []
-        this.setState({isLoading:true},async()=>{
-            if(this.props.downloaded == true ){
-              let response = await dbQueries.queryVersions(this.props.language,this.props.version,this.props.bookId,this.state.currentVisibleChapter)
+        this.setState({isLoading:true,currentVisibleChapter: val != null ? this.state.currentVisibleChapter + val : this.props.chapterNumber },async()=>{
+          console.log("current visible chapter ",this.state.currentVisibleChapter) 
+          if(this.props.downloaded == true ){
+              let response = await DbQueries.queryVersions(this.props.language,this.props.version,this.props.bookId,this.state.currentVisibleChapter)
+              console.log("bible page update value of props ",this.props.language,this.props.version,this.props.sourceId,this.props.bookId)
               if(response.length != 0){
                 this.setState({
                   chapter:response[0].verses,
                   totalVerses:response[0].verses.length,
-
+                  currentVisibleChapter:this.state.currentVisibleChapter,
                   totalChapters: getBookChaptersFromMapping(this.props.bookId),
                   isLoading:false
                 })
                 this.props.navigation.setParams({
-                  totalVerses:response.chapterContent.verses.length,
+                  totalVerses:response[0].verses.length,
                   languageName:this.props.language,
                   versionCode:this.props.version,
                   bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
-                  currentChapter:this.props.chapterNumber
+                  currentChapter:this.state.currentVisibleChapter
                 })
               }
               else{
@@ -250,20 +250,20 @@ class Bible extends Component {
               let response =  await APIFetch.getChapterContent(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter)
                 if(response.length !=0){
                   if(response.success == false){
-                    console.log("response in success ",response)
                     alert(" please check internet connected or slow  OR book is not available ")
                   }else{
                     this.setState({chapter:response.chapterContent.verses,
                       totalChapters: getBookChaptersFromMapping(this.props.bookId),
                       totalVerses:response.chapterContent.verses.length,
-                      isLoading:false
+                      isLoading:false,
+                      currentVisibleChapter:this.state.currentVisibleChapter
                     })
                     this.props.navigation.setParams({
                       totalVerses:response.chapterContent.verses.length,
                       languageName:this.props.language,
                       versionCode:this.props.version,
                       bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
-                      currentChapter:this.props.chapterNumber
+                      currentChapter:this.state.currentVisibleChapter
                     })
 
                   }
@@ -279,72 +279,12 @@ class Bible extends Component {
             }
            
         })
-        
-       
       this.getHighlights()
       this.getBookMarks(this.props.bookId,this.state.currentVisibleChapter)
      
   }
  
-  callBackForUpdateBook=()=>{
-    this.queryBookFromAPI()
-  }
-  
-  //update chapter number on right or left icon button 
-  async updateCurrentChapter(val){
-    this.setState({chapter:[]})
-    // this.state.chapter = []
-    let currChapter = this.state.currentVisibleChapter + val
-    if(this.props.downloaded == true){
-      let response = await dbQueries.queryVersions(this.props.language,this.state.version,this.props.bookId,currChapter)
-        if(response.length !=0){
-          this.setState({
-            chapter:response[0].verses,
-            currentVisibleChapter:currChapter,
-            totalChapters: getBookChaptersFromMapping(this.props.bookId),
-            },()=>{
-              this.props.navigation.setParams({
-                currentChapter:currChapter
-            })    
-            })
-        }
-        else{
-          alert("no book found of ",this.props.bookId)
-        }
-   
-    } else{
-      console.log("response ",this.props.sourceId)
-
-        let response =  await APIFetch.getChapterContent(this.props.sourceId,this.props.bookId,currChapter)
-        try{
-          if(response.length !=0){
-            if(response.success == false){
-              alert(" please check internet connected or slow")
-            }else{
-              this.setState({chapter:response.chapterContent.verses,
-                currentVisibleChapter:currChapter,
-                totalChapters: getBookChaptersFromMapping(this.props.bookId),
-                },()=>{
-                this.props.navigation.setParams({
-                  currentChapter:currChapter
-                })    
-              })
-            }
-          }
-          else{
-            alert("check internet connection")
-          }
-        }catch(error){
-          alert("error ",error)
-        }
-        
-    }
-    this.getBookMarks(this.props.bookId,currChapter)
-    AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.ChapterNumber, currChapter);    
-}
-  //get highlights from local db  
   async getHighlights(){
-
     let model2 = await  DbQueries.queryHighlights(this.props.language,this.props.version,this.props.bookId)
     if(model2  == null ){
     }
@@ -358,6 +298,7 @@ class Bible extends Component {
       }
   }
   }
+
   //get bookmarks from local db
   async getBookMarks(bookId,chapter){
     console.log("book id",bookId,chapter)
@@ -545,7 +486,6 @@ class Bible extends Component {
   _keyExtractor = (item, index) => item.number;
 
   render() {
-    console.log(" PROPS VALUE OF REDUX ",this.props.sourceId,this.props.language)
 
       return (
         <View style={this.styles.container}>
@@ -595,7 +535,7 @@ class Bible extends Component {
                   <View style={this.styles.bottomBarPrevView}>
                       <Icon name={'chevron-left'} color="#3F51B5" size={32} 
                           style={this.styles.bottomBarChevrontIcon} 
-                          onPress={()=>this.updateCurrentChapter(-1)}
+                          onPress={()=>this.queryBookFromAPI(-1)}
                           />
                   </View>
                   }
@@ -605,7 +545,7 @@ class Bible extends Component {
                   <View style={this.styles.bottomBarNextView}>
                       <Icon name={'chevron-right'} color="#3F51B5" size={32} 
                           style={this.styles.bottomBarChevrontIcon} 
-                          onPress={()=>this.updateCurrentChapter(1)}
+                          onPress={()=>this.queryBookFromAPI(1)}
                           />
                   </View>
                   }
@@ -725,10 +665,4 @@ const mapStateToProps = state =>{
   }
 }
 
-// const mapDispatchToProps = dispatch =>{
-//   return {
-//     updateVersion: (language,version,sourceId,downloaded)=>dispatch(updateVersion(language,version,sourceId,downloaded)),
-//     updateBook: (bookId,bookName,chapterNumber)=>dispatch(updateBook(bookId,bookName,chapterNumber)),
-//   }
-// }
 export  default connect(mapStateToProps,null)(Bible)

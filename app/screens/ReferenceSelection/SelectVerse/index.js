@@ -32,7 +32,6 @@ class SelectVerse extends Component {
     
   }
 async componentWillReceiveProps(props){
-    var totalVerses = props.totalVerses
     var bookData = []
     for(var i=1;i<=props.totalVerses;i++){
       bookData.push(i)

@@ -113,9 +113,11 @@ import {selectedBook,addBookToNote} from '../../../store/action/'
   async componentDidMount(){
     var bookListData=[]
     // this.setState({isLoading:bookListData.length == 0 ? true : false})
+    try{
     if(this.props.downloaded == true){
         this.setState({isLoading:true})
         var booksid = await DbQueries.getDownloadedBook(this.props.language,this.props.version)
+        // console.log("res ",booksid)
         for(var i = 0; i<=booksid.length-1;i++){
           var bookId = booksid[i]
           var books= {
@@ -132,16 +134,15 @@ import {selectedBook,addBookToNote} from '../../../store/action/'
       }
     else{
       this.setState({isLoading:true})
-      try{
       var booksid = await APIFetch.availableBooks(this.props.sourceId)
-      var res = booksid[0].books.sort(function(a, b){return a.bibleBookID - b.bibleBookID})
+        console.log("books id ",booksid)
         if(booksid.length !=0){
           if(booksid.status == 500){
             alert("sorry are unavailable ")
           }
           else{
-            for(var key in res){
-              var bookId = res[key].abbreviation
+            for(var i =0;i<=booksid[0].books.length-1;i++){
+              var bookId = booksid[0].books[i].abbreviation
               var books= {
                     bookId:bookId,
                     bookName: getBookNameFromMapping(bookId,this.props.language),
@@ -149,20 +150,24 @@ import {selectedBook,addBookToNote} from '../../../store/action/'
                     bookNumber:getBookNumberFromMapping(bookId),
                     languageName: this.props.language, 
                     versionCode:this.props.version, 
-                    numOfChapters:getBookChaptersFromMapping(bookId)}
+                    numOfChapters:getBookChaptersFromMapping(bookId)
+              }
                     bookListData.push(books)
-            }
+          }
           }
         }
         else{
           alert("check internet connection")
         }
-      }
-      catch(error){
-        console.log("error ",error)
-      }
+     
     }
-    this.setState({bookList:bookListData,isLoading:false})
+  }
+  catch(error){
+    console.log("error ",error)
+  }
+    var res = bookListData.length == 0 ? [] : bookListData.sort(function(a, b){return a.bookNumber - b.bookNumber})
+    console.log("response data ",res)
+    this.setState({bookList:res,isLoading:false})
   }
 
   navigateToChapter(item){

@@ -6,14 +6,9 @@ import {
   FlatList,
   Dimensions,
 } from 'react-native';
-import DbQueries from '../../../utils/dbQueries'
-const height = Dimensions.get('window').height;
-const width = Dimensions.get('window').width;
-import {NavigationActions} from 'react-navigation'
 import APIFetch from '../../../utils/APIFetch'
 import { numberSelection } from './styles.js';
-
-import {getBookChaptersFromMapping} from '../../../utils/UtilFunctions';
+import DbQueries from '../../../utils/dbQueries'
 
 import {connect} from 'react-redux'
 import {selectedChapter,addChapterToNote} from '../../../store/action/'
@@ -54,19 +49,29 @@ class ChapterSelection extends Component {
     this.props.bookId, item, time)
 
     try{
-      let response =  await APIFetch.getChapterContent(this.props.sourceId,this.props.bookId,item)
-      if(response.length != 0){
-        // console.log("res",response.chapterContent.verses[vNum-1].text)
-        if(response.success == false){
-          alert("response success false")
-        }else{
-          console.log("item length  ",response.chapterContent.verses.length)
-          // this.props.screenProps.updateSelectedChapter(item,response.chapterContent.verses.length)
-          this.props.selectedChapter(item,response.chapterContent.verses.length)
-          this.props.navigation.navigate('Verses')
-
+      if(this.props.downloaded == true ){
+        let response = await DbQueries.queryVersions(this.props.language,this.props.version,this.props.bookId,item)
+        if(response.length != 0){
+          this.props.selectedChapter(item,response[0].verses.length)
+        }
+        else{
+          alert("no book found of ",this.props.bookId)
         }
       }
+      else{
+        let response =  await APIFetch.getChapterContent(this.props.sourceId,this.props.bookId,item)
+        if(response.length != 0){
+          if(response.success == false){
+            alert("response success false")
+          }else{
+            console.log("item length  ",response.chapterContent.verses.length)
+            this.props.selectedChapter(item,response.chapterContent.verses.length)
+  
+          }
+        }
+      }
+      this.props.navigation.navigate('Verses')
+
     }
       catch(error){
         console.log(error)
