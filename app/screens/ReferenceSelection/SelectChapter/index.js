@@ -12,8 +12,7 @@ import DbQueries from '../../../utils/dbQueries'
 
 import {connect} from 'react-redux'
 import {selectedChapter,addChapterToNote} from '../../../store/action/'
-
-
+import Spinner from 'react-native-loading-spinner-overlay';
 
 
 class ChapterSelection extends Component {
@@ -22,6 +21,7 @@ class ChapterSelection extends Component {
     super(props)
 
     this.state = {
+      isLoading:false,
       chapterData:[]
     }
     this.styles = numberSelection(this.props.screenProps.colorFile, this.props.screenProps.sizeFile);   
@@ -43,11 +43,12 @@ class ChapterSelection extends Component {
   this.setState({chapterData})
   }
 
-  async onNumPress(item){
+   onNumPress(item){
+
     var time =  new Date()
     DbQueries.addHistory(this.props.language, this.props.version, 
     this.props.bookId, item, time)
-
+    this.setState({isLoading:true},async()=>{
     try{
       if(this.props.downloaded == true ){
         let response = await DbQueries.queryVersions(this.props.language,this.props.version,this.props.bookId,item)
@@ -70,12 +71,16 @@ class ChapterSelection extends Component {
           }
         }
       }
+      this.setState({isLoading:false})
       this.props.navigation.navigate('Verses')
 
     }
       catch(error){
         console.log(error)
       }
+    }
+    )
+   
     // const resetAction = NavigationActions.reset({
     //   index: 0,
     //   actions: [NavigationActions.navigate({ routeName: 'Bible' })]
@@ -90,12 +95,20 @@ class ChapterSelection extends Component {
   render() {
     return (
       <View style={this.styles.chapterSelectionContainer}>
+      {this.state.isLoading && 
+         <Spinner
+         visible={true}
+         textContent={'Loading...'}
+        //  textStyle={styles.spinnerTextStyle}
+      />}
         <FlatList
+
         numColumns={4}
         data={this.state.chapterData}
         renderItem={({item}) => 
         <TouchableOpacity 
-        style={this.styles.chapterSelectionTouchable}
+        style={[this.styles.selectGridNum,
+          {backgroundColor:'transparent'}]}
           onPress={()=>{this.onNumPress(item)}}>
             <View>
                 <Text style={[this.styles.chapterNum,{fontWeight: item == this.props.screenProps.chapterNumber ? "bold":"normal"}]}>{item}</Text>

@@ -8,6 +8,7 @@ var ApiUtils = {
         let error = new Error(response.statusText);
         // console.log("response ok "+error)
         error.response = response;
+        console.log("error api util ",ApiUtils)
         throw error;
       }
     }

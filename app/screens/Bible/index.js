@@ -23,6 +23,8 @@ import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
 import {getBookNameFromMapping,getBookChaptersFromMapping} from '../../utils/UtilFunctions';
 import APIFetch from '../../utils/APIFetch'
 import SplashScreen from 'react-native-splash-screen'
+
+import Spinner from 'react-native-loading-spinner-overlay';
 import {
   MenuContext
 } from 'react-native-popup-menu';
@@ -221,7 +223,6 @@ class Bible extends Component {
           console.log("current visible chapter ",this.state.currentVisibleChapter) 
           if(this.props.downloaded == true ){
               let response = await DbQueries.queryVersions(this.props.language,this.props.version,this.props.bookId,this.state.currentVisibleChapter)
-              console.log("bible page update value of props ",this.props.language,this.props.version,this.props.sourceId,this.props.bookId)
               if(response.length != 0){
                 this.setState({
                   chapter:response[0].verses,
@@ -248,8 +249,10 @@ class Bible extends Component {
                 //check sourceid 
                 console.log("SOURCE ID   ",this.props.sourceId)
               let response =  await APIFetch.getChapterContent(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter)
-                if(response.length !=0){
-                  if(response.success == false){
+              console.log("response ",response)  
+              if(response.length !=0){
+                  if(response.ok == false && response.status == 500){
+                    this.setState({isLoading:false,currentVisibleChapter:this.props.chapterNumber})
                     alert(" please check internet connected or slow  OR book is not available ")
                   }else{
                     this.setState({chapter:response.chapterContent.verses,
@@ -274,7 +277,9 @@ class Bible extends Component {
               }
               catch(error) {
                 console.log("error on fetching content ",error)
-                // alert("error coming on this language data please change language from language page",error)
+
+                alert("It seems no version available or check your internet connection ",error)
+               
               }
             }
            
@@ -490,14 +495,13 @@ class Bible extends Component {
       return (
         <View style={this.styles.container}>
         <MenuContext style={this.styles.verseWrapperText}>
-          {this.state.chapter.length  == 0   ?
-          // <View style={{alignItems: 'center',justifyContent:'center',flex:1}}>   
-          <ActivityIndicator 
-          size="large" 
-          color="#0000ff"
-          />
-          // </View> 
-          :
+          {this.state.chapter.length  == 0 ?
+            <Spinner
+                visible={true}
+                textContent={'Loading...'}
+                // textStyle={styles.spinnerTextStyle}
+            />
+              :
                <View>
                <ScrollView  
                ref={(ref) => { this.scrollViewRef = ref; }}

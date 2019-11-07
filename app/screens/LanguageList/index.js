@@ -11,6 +11,8 @@ import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants';
 import { styles } from './styles.js';
 import {connect} from 'react-redux';
 import {updateVersion} from '../../store/action/'
+import Spinner from 'react-native-loading-spinner-overlay';
+
 
 const languageList = async () => { 
   return await DbQueries.getLangaugeList()
@@ -263,7 +265,8 @@ class LanguageList extends Component {
       this.setState({modalVisible:!this.state.modalVisible})
     }
     goToBible = (langName,verCode,sourceId,downloaded)=>{
-      console.log("downloaded value in language page ",downloaded)
+      
+      console.log("downloaded value in language page ",sourceId)
       // AsyncStorageUtil.setAllItems([
       //   [AsyncStorageConstants.Keys.SourceId, sourceId.toString()],
       //   [AsyncStorageConstants.Keys.LanguageName, langName],
@@ -295,24 +298,12 @@ class LanguageList extends Component {
           placeholder="Search Here"
         />   */}
         {this.state.isLoading ?
-          <View 
-          style={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            top: 0,
-            bottom: 0,
-            opacity: 0.5,
-            backgroundColor: 'white',
-            justifyContent: 'center',
-            alignItems: 'center' 
-          }}
-            >
-          <ActivityIndicator 
-          size="large" 
-          color="#3F51B5"
-            />
-          </View> :
+        <Spinner
+        visible={this.state.isLoading}
+        textContent={'Loading...'}
+        // textStyle={styles.spinnerTextStyle}
+        />
+         :
         <ScrollView>
         <FlatList
           data={this.state.languages}

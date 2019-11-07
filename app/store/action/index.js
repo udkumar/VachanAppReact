@@ -4,3 +4,4 @@ export {updateBCV,deleteNote} from './editNote'
 export {addBookToNote,addChapterToNote,addVerseToNote,updateNoteBody} from './editNote'
 
 export {updateVersion,selectedBook,selectedChapter,selectedVerse} from './updateVersion'
+export {updateFontSize,updateColorMode,updateVerseInLine} from './updateStyling'

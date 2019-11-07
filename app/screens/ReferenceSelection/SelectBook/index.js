@@ -24,6 +24,8 @@ import {getBookNameFromMapping,getBookSectionFromMapping,getBookNumberFromMappin
 import DbQueries from '../../../utils/dbQueries.js';
 import {connect} from 'react-redux'
 import {selectedBook,addBookToNote} from '../../../store/action/'
+import Spinner from 'react-native-loading-spinner-overlay';
+
 
 
 
@@ -255,7 +257,11 @@ renderItem = ({item, index})=> {
     return (
       <View style={this.styles.container}>
       {this.state.isLoading ? 
-        <ActivityIndicator animating ={this.state.isLoading ? true : false} size="large" color="#0000ff"/>
+         <Spinner
+         visible={true}
+         textContent={'Loading...'}
+        //  textStyle={styles.spinnerTextStyle}
+          />
         :
         <View style={this.styles.bookNameContainer}>
         <Segment>

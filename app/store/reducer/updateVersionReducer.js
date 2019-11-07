@@ -3,12 +3,10 @@ import { UPDATE_VERSION, SELECTED_BOOK,SELECTED_CHAPTER,SELECTED_VERSE, UPDATE_N
 const initialState = {
    language:'Hindi',
    version:'IRV',
-   sourceId:'35',
+   sourceId:'45',
    downloaded:false,
    bookId:'3jn',
    bookName:'3 यूहन्ना',
-
-
    chapterNumber:1,
    totalChapters:1,
    verseNumber: 1,

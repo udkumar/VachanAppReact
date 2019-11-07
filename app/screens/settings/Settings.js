@@ -19,7 +19,10 @@ import { settingsPageStyle } from './styles.js'
 import {nightColors, dayColors, constColors} from '../../utils/colors.js'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
-
+import {connect} from 'react-redux'
+import {updateColorMode,updateFontSize,updateVerseInLine} from '../../store/action/index'
+import SplashScreen from 'react-native-splash-screen'
+ 
 
 // const setParamsAction = ({colorFile}) => NavigationActions.setParams({
 //   params: { colorFile },
@@ -31,20 +34,19 @@ import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
 //   key: 'SelectBook',
 // });
 
-export default class Setting extends Component {
+class Setting extends Component {
   static navigationOptions = {
     headerTitle: 'Settings',
   };
 
   constructor(props) {
     super(props);
-    console.log("props",props)
     this.state = {
-      sizeMode:this.props.screenProps.sizeMode,
-      sizeFile:this.props.screenProps.sizeFile,
-      colorMode: this.props.screenProps.colorMode,
-      colorFile:this.props.screenProps.colorFile,
-      verseInLine:JSON.parse(this.props.screenProps.verseInLine)
+      sizeMode:this.props.sizeMode,
+      sizeFile:this.props.sizeFile,
+      colorMode: this.props.colorMode,
+      colorFile:this.props.colorFile,
+      verseInLine:this.props.verseInLine
     };
     
     this.styles = settingsPageStyle(this.state.colorFile, this.state.sizeFile);
@@ -52,7 +54,7 @@ export default class Setting extends Component {
 
    onSizeFileUpdate(sizeMode, sizeFile){
     this.setState({sizeFile})
-    this.props.screenProps.updateSize(sizeMode, sizeFile)
+    this.props.updateFontSize(sizeMode,sizeFile)
     // this.props.navigation.dispatch(setParamsAction2(sizeFile));
     this.styles = settingsPageStyle(this.state.colorFile, sizeFile);
   }
@@ -100,7 +102,7 @@ export default class Setting extends Component {
       : nightColors;
 
     this.setState({colorMode: value, colorFile: changeColorFile},()=>{
-      this.props.screenProps.updateColor(this.state.colorMode,this.state.colorFile);
+      this.props.updateColorMode(this.state.colorMode,this.state.colorFile);
       // this.props.navigation.dispatch(setParamsAction(this.state.colorFile))
       
       AsyncStorageUtil.setAllItems([
@@ -114,11 +116,14 @@ export default class Setting extends Component {
 
    onVerseInLineModeChange(){
     this.setState({verseInLine:!this.state.verseInLine}, ()=>{
-        this.props.screenProps.updateVerseInLine(this.state.verseInLine);
+        this.props.updateVerseInLine(this.state.verseInLine);
           AsyncStorageUtil.setAllItems([
           [AsyncStorageConstants.Keys.VerseViewMode, JSON.stringify(this.state.verseInLine)],
         ]);
       })
+  }
+  componentDidMount(){
+    SplashScreen.hide()
   }
 
   render() {
@@ -197,7 +202,7 @@ export default class Setting extends Component {
                     thumbColor={this.state.colorMode == AsyncStorageConstants.Values.DayMode ? dayModeIconColor: nightModeIconColor}
                     minimumTrackTintColor={this.state.colorMode == AsyncStorageConstants.Values.DayMode ? dayModeIconColor: nightModeIconColor}
                     onValueChange={this.onChangeSlider.bind(this)}
-                    value={JSON.parse(this.state.sizeMode)}
+                    value={this.state.sizeMode}
                   />
                 </Right>
               </ListItem>
@@ -257,3 +262,22 @@ export default class Setting extends Component {
     );
   }
 }
+
+const mapStateToProps = state =>{
+  return{
+    sizeMode:state.updateStyling.fontValue.sizeMode,
+    sizeFile:state.updateStyling.fontValue.sizeFile,
+    colorMode: state.updateStyling.colorValue.colorMode,
+    colorFile:state.updateStyling.colorValue.colorFile,
+    verseInLine:state.updateStyling.verseInLine
+  }
+}
+
+const mapDispatchToProps = dispatch =>{
+  return {
+    updateColorMode:(mode,file)=>dispatch(updateColorMode(mode,file)),
+    updateFontSize:( mode,file )=>dispatch(updateFontSize(mode,file)),
+    updateVerseInLine:(val)=>dispatch(updateVerseInLine(val))
+  }
+}
+export  default connect(mapStateToProps,mapDispatchToProps)(Setting)
