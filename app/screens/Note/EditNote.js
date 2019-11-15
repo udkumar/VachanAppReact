@@ -24,6 +24,8 @@ import { noteStyle } from './styles.js';
 import DbQueries from '../../utils/dbQueries'
 import APIFetch from '../../utils/APIFetch'
 import {connect} from 'react-redux'
+import Spinner from 'react-native-loading-spinner-overlay';
+
 
 class EditNote extends Component {
   static navigationOptions = ({navigation}) =>({
@@ -48,6 +50,7 @@ class EditNote extends Component {
           : this.props.navigation.state.params.referenceList,
         // todo here fix reference list
         referenceList2: this.props.navigation.state.params.referenceList,
+        isLoading:false
     }
 
     this.styles = noteStyle(props.screenProps.colorFile, props.screenProps.sizeFile);   
@@ -191,35 +194,38 @@ class EditNote extends Component {
     }
   }
 
-  getReference = async() => {
+  getReference = () => {
     // const verseNum = this.prosps.verseNumber.toString()
     if (this.checkIfReferencePresent(this.props.bookId, this.props.bookName, this.props.chapterNumber, this.props.verseNumber)) {
       return;
     }
     try{
-    let response =  await APIFetch.getChapterContent(this.props.sourceId,this.props.bookId,this.props.chapterNumber)
-    console.log("SOURCE ID ",this.props.sourceId,"BOOK ID ",this.props.bookId,"Chapter number",this.props.chapterNumber)
-    if(response.length != 0){
-      console.log("res -------",response)
-
-      if(response.success == false){
-
-        alert("response success false")
-      }else{
-      console.log("res",response.chapterContent.verses[this.props.verseNumber-1].text)
-        let refModel = {bookId:this.props.bookId, 
-          bookName: this.props.bookName, 
-          chapterNumber: this.props.chapterNumber, 
-          verseNumber: this.props.verseNumber.toString(), 
-          verseText:response.chapterContent.verses[this.props.verseNumber-1].text,
-          versionCode: this.props.version, 
-          languageName: this.props.language
-        };
-        let referenceList = [...this.state.referenceList]
-        referenceList.push(refModel)
-        this.setState({referenceList})
-      }
-    }
+      this.setState({isLoading:true},async()=>{
+        let response =  await APIFetch.getChapterContent(this.props.sourceId,this.props.bookId,this.props.chapterNumber)
+        console.log("SOURCE ID ",this.props.sourceId,"BOOK ID ",this.props.bookId,"Chapter number",this.props.chapterNumber)
+        if(response.length != 0){
+          console.log("res -------",response)
+    
+          if(response.success == false){
+    
+            alert("response success false")
+          }else{
+          console.log("res",response.chapterContent.verses[this.props.verseNumber-1].text)
+            let refModel = {bookId:this.props.bookId, 
+              bookName: this.props.bookName, 
+              chapterNumber: this.props.chapterNumber, 
+              verseNumber: this.props.verseNumber.toString(), 
+              verseText:response.chapterContent.verses[this.props.verseNumber-1].text,
+              versionCode: this.props.version, 
+              languageName: this.props.language
+            };
+            let referenceList = [...this.state.referenceList]
+            referenceList.push(refModel)
+            this.setState({referenceList,isLoading:false})
+          }
+        }
+      })
+ 
   }
     catch(error){
       console.log(error)
@@ -255,6 +261,12 @@ class EditNote extends Component {
     return (
      <ScrollView style={this.styles.containerEditNote}>
       <View style={this.styles.subContainer}>
+      {this.state.isLoading &&
+        <Spinner
+        visible={this.state.isLoading}
+        textContent={'Loading...'}
+        // textStyle={styles.spinnerTextStyle}
+        />}
         {this.state.referenceList.length == 0 
           ? 
           <Text style={this.styles.tapButton}>Tap button to add references</Text> 

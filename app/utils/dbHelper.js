@@ -123,21 +123,25 @@ class DbHelper {
 				
 	}
 	async updateHighlightsInVerse(langName, verCode, bId, cNum, vNum, isHighlight){
-		console.log("is highlightes "+isHighlight)
 		let realm = await this.getRealm()
 		let  result1= realm.objects('HighlightsModel');
 		let highlight = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" &&  bookId == "' + bId + '" && chapterNumber == "'+cNum+'" && verseNumber == "'+vNum+'"')
-		console.log("LANG CODE "+langName+"bVER CODE "+verCode+" BID "+bId+" CNUM "+cNum+" VNUM "+vNum+" ISHIGHLIGHT "+isHighlight)
+		// console.log("LANG CODE "+langName+"bVER CODE "+verCode+" BID "+bId+" CNUM "+cNum+" VNUM "+vNum+" ISHIGHLIGHT "+isHighlight)
 		if (realm) {
 			realm.write(() => {
 				if(isHighlight == true){
-				realm.create('HighlightsModel', {
-					languageName: langName,
-					versionCode: verCode,
-					bookId: bId,
-					chapterNumber: cNum,
-					verseNumber: vNum
-				})
+				if(Object.keys(highlight).length === 0){
+				console.log("highlight length",Object.keys(highlight).length)
+				console.log("highlight ",highlight)
+
+					realm.create('HighlightsModel', {
+						languageName: langName,
+						versionCode: verCode,
+						bookId: bId,
+						chapterNumber: cNum,
+						verseNumber: vNum
+					})
+				}
 				}
 				else{
 					realm.delete(highlight); 
@@ -253,7 +257,6 @@ class DbHelper {
 
 	}
 	async queryBookmark(langName,verCode,bId,chapter){
-		console.log("wuery book marks ",langName,verCode)
 
 		let realm = await this.getRealm()
 
@@ -262,12 +265,10 @@ class DbHelper {
 				
 				if(chapter == null  && bId == null){
 					let bookmarksList = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" ')
-					console.log("book and chapter bookmark from db ",bookmarksList)
 					return bookmarksList
 				}
 				else{
 					let bookmarks = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId =="' + bId + '" && chapterNumber == "' + chapter + '"')
-					console.log("book and chapter bookmark from db ",bookmarks)
 					return bookmarks
 				}
 			}

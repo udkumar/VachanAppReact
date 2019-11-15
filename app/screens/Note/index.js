@@ -53,6 +53,7 @@ export default class Note extends Component {
       noteObject: null,
       onDelete: this.onDelete, 
       onRefresh: this.onRefresh, 
+      onbackNote:this.queryDb,
       queryDb:this.queryDb,
       referenceList:  this.props.navigation.state.params.referenceList,
       bookId: this.props.screenProps.bookId,

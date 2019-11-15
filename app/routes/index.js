@@ -31,8 +31,6 @@ import BookMarks from '../screens/Bookmarks/';
 const StackNavigate = createStackNavigator(
 
   {  
-
-    Settings: { screen: Settings },
       Bible:{screen:Bible,
         navigationOptions: () => ({
           headerStyle: {

@@ -95,6 +95,7 @@ class Bible extends Component {
       isLoading: false,
       showBottomBar: false,
       bookName:getBookNameFromMapping(this.props.bookId,this.props.language),
+      bookId:this.props.bookId,
       // menuHighlightedText: false,
       bookmarksList: [],
       isBookmark: false,
@@ -218,8 +219,7 @@ class Bible extends Component {
   }
   // render data onAPI Call 
     queryBookFromAPI = async(val)=>{
-      this.state.chapter = []
-        this.setState({isLoading:true,currentVisibleChapter: val != null ? this.state.currentVisibleChapter + val : this.props.chapterNumber },async()=>{
+        this.setState({isLoading:true,chapter:[],currentVisibleChapter: val != null ? this.state.currentVisibleChapter + val : this.props.chapterNumber },async()=>{
           console.log("current visible chapter ",this.state.currentVisibleChapter) 
           if(this.props.downloaded == true ){
               let response = await DbQueries.queryVersions(this.props.language,this.props.version,this.props.bookId,this.state.currentVisibleChapter)
@@ -282,10 +282,10 @@ class Bible extends Component {
                
               }
             }
-           
+            this.getHighlights()
+            this.getBookMarks(this.props.bookId,this.state.currentVisibleChapter)
         })
-      this.getHighlights()
-      this.getBookMarks(this.props.bookId,this.state.currentVisibleChapter)
+      
      
   }
  
@@ -295,11 +295,14 @@ class Bible extends Component {
     }
     else{
       if(model2.length > 0){
+        const HightlightedVerseArray = []
         for(var i = 0; i<=model2.length-1;i++){
-          this.setState({
-            HightlightedVerseArray:[{"bookId":model2[i].bookId,"chapterNumber":model2[i].chapterNumber,"verseNumber":model2[i].verseNumber}]
-          })
+          const obj = {"bookId":model2[i].bookId,"chapterNumber":model2[i].chapterNumber,"verseNumber":model2[i].verseNumber}
+          HightlightedVerseArray.push(obj)
         }
+        
+        this.setState({HightlightedVerseArray})
+       
       }
   }
   }
@@ -348,7 +351,7 @@ class Bible extends Component {
 //selected reference for highlighting verse
   getSelectedReferences(vIndex, chapterNum, vNum,text) {
 
-    let obj = chapterNum + '_' + vIndex + '_' + vNum + '_' + text
+    let obj = chapterNum+'_' +vIndex+'_'+vNum+'_'+text
     let selectedReferenceSet = [...this.state.selectedReferenceSet]
     
     var found = false;
@@ -363,18 +366,23 @@ class Bible extends Component {
     if (!found) {
       selectedReferenceSet.push(obj)
     }
-
+    // console.log("HightlightedVerseArray get selected ",this.state.HightlightedVerseArray)
     this.setState({selectedReferenceSet}, () => {
       let selectedCount = this.state.selectedReferenceSet.length, highlightCount = 0;
       for (let item of this.state.selectedReferenceSet) {
           let tempVal = item.split('_')
           for(var i=0; i<=this.state.HightlightedVerseArray.length-1; i++ ){
-              if ( JSON.parse(tempVal[2]) == this.state.HightlightedVerseArray[i].verseNumber && JSON.parse(tempVal[0]) == this.state.HightlightedVerseArray[i].chapterNumber && this.state.HightlightedVerseArray[i].bookId == this.props.bookId  ) {
+
+              if (this.state.HightlightedVerseArray[i].verseNumber == JSON.parse(tempVal[2]) && this.state.HightlightedVerseArray[i].chapterNumber ==JSON.parse(tempVal[0]) && this.state.HightlightedVerseArray[i].bookId == this.state.bookId  ) {
+                console.log("selected highlight",this.state.HightlightedVerseArray[i].verseNumber)
                 highlightCount++
               }
+              
           }
       }
-      this.setState({showBottomBar: this.state.selectedReferenceSet.length > 0 ? true : false, bottomHighlightText: selectedCount == highlightCount ? false : true})
+      console.log("SELECT COUNT ",selectedCount,"HIGHLIGHTED COUNT ",highlightCount)
+
+      this.setState({showBottomBar: this.state.selectedReferenceSet.length > 0 ? true : false, bottomHighlightText: selectedCount == highlightCount ?  false : true})
     })
   }
   
@@ -412,24 +420,33 @@ class Bible extends Component {
   onbackNote=()=>{
     console.log("onback nothing in bible page")
   }
+ 
   //after selected reference do highlight 
   doHighlight = async () => {
     // let HightlightedVerseArray = [...this.state.HightlightedVerseArray]
       console.log("bottom highlight ",this.state.bottomHighlightText )
     if (this.state.bottomHighlightText == true) {
       // do highlight
+      var arr = []
       for (let item of this.state.selectedReferenceSet){
         console.log("selected reference ",this.state.selectedReferenceSet)
         let tempVal = item.split('_')
         await DbQueries.updateHighlightsInVerse( this.props.language, this.props.version,this.props.bookId,this.state.currentVisibleChapter, tempVal[2], true)
-        this.setState({HightlightedVerseArray:[...this.state.HightlightedVerseArray,{"bookId":this.state.bookId,"chapterNumber":this.state.currentVisibleChapter,"verseNumber":tempVal[2]}]})
-      }
+        var highlightArr = this.state.HightlightedVerseArray
+        highlightArr.push({"bookId":this.props.bookId,"chapterNumber":this.state.currentVisibleChapter,"verseNumber":JSON.parse(tempVal[2])})
+        var arr = highlightArr.sort( function( a, b){ return a.verseNumber - b.verseNumber; } );
+        for( var i=0; i<arr.length-1; i++ ) {
+        if ( arr[i].verseNumber == arr[i+1].verseNumber ){
+          arr.splice(i+1,1)
+        }
+        }
+        }
     } else {
       // remove highlight
       for (let item of this.state.selectedReferenceSet){
         let tempVal = item.split('_')
         for(var i=0; i<=this.state.HightlightedVerseArray.length-1; i++){
-          if(this.state.HightlightedVerseArray[i].chapterNumber == JSON.parse(tempVal[0]) && this.state.HightlightedVerseArray[i].verseNumber == JSON.parse(tempVal[2]) &&  this.state.HightlightedVerseArray[i].bookId == this.props.bookId) {
+          if(this.state.HightlightedVerseArray[i].chapterNumber == JSON.parse(tempVal[0]) && this.state.HightlightedVerseArray[i].verseNumber == JSON.parse(tempVal[2]) &&  this.state.HightlightedVerseArray[i].bookId == this.state.bookId) {
             await DbQueries.updateHighlightsInVerse( this.props.language, this.props.version,this.props.bookId,this.state.currentVisibleChapter, tempVal[2],false)
             this.state.HightlightedVerseArray.splice(i, 1)
           }
@@ -438,6 +455,7 @@ class Bible extends Component {
     }
     this.setState({ selectedReferenceSet: [], showBottomBar: false})
   }
+
 
   //share verse
   addToShare = () => {
@@ -491,7 +509,7 @@ class Bible extends Component {
   _keyExtractor = (item, index) => item.number;
 
   render() {
-
+    console.log("HightlightedVerseArray  ",this.state.HightlightedVerseArray)
       return (
         <View style={this.styles.container}>
         <MenuContext style={this.styles.verseWrapperText}>
@@ -523,7 +541,7 @@ class Bible extends Component {
                                 
                                 HightlightedVerse = {this.state.HightlightedVerseArray}
                                 chapterNumber ={this.state.currentVisibleChapter}
-                                bookId={this.props.bookId}
+                                bookId={this.state.bookId}
                                 showBottomBar={this.state.showBottomBar}
                             />
                         

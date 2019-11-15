@@ -79,12 +79,7 @@ class ExpandableItemComponent extends Component {
                   <Icon name="check" size={24} style={{marginRight:8}}  onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId,item.downloaded)}}
                   />
                 :
-                  (
-                  (this.props.isLoading &&  index == this.props.index && this.props.item.languageName ==this.props.languageName   ) ?
-                  <ActivityIndicator  size="small"  color="#0000ff"/> 
-                  : 
                   <Icon name="file-download" size={24} style={{marginRight:12}} onPress={()=>{this.props.DownloadBible(this.props.item.languageName,item.versionCode,index,item.sourceId)}}/>
-                  )
                 }
               
               </Right>
@@ -204,7 +199,7 @@ class LanguageList extends Component {
 
     DownloadBible = (langName,verCode,index,sourceId)=>{
       console.log("source id ",sourceId)
-      this.setState({isLoading:true,index},async()=>{
+      this.setState({isLoading:true,isdownLoading:true,index},async()=>{
         var bookModels = []
   
         try{
@@ -248,7 +243,7 @@ class LanguageList extends Component {
 
               }
               await DbQueries.addNewVersion(langName,verCode,bookModels,sourceId)
-              this.setState({isLoading:false,})
+              this.setState({isLoading:false,isdownLoading:false})
               languageList().then(async(language) => {
                 this.setState({languages:language})
               })
