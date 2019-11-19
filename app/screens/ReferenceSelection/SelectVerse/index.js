@@ -28,7 +28,7 @@ class SelectVerse extends Component {
       bookData: [], 
       // selectedIndex: 0,
     }
-    this.styles = numberSelection(props.screenProps.colorFile, props.screenProps.sizeFile);   
+    this.styles = numberSelection(this.props.colorFile, this.props.sizeFile);   
     
   }
 async componentWillReceiveProps(props){
@@ -88,6 +88,9 @@ const mapStateToProps = state =>{
     downloaded:state.updateVersion.downloaded,
     
     totalVerses:state.updateVersion.totalVerses,
+
+    sizeFile:state.updateStyling.sizeFile,
+    colorFile:state.updateStyling.colorFile,
     // chapterNumber:state.selectReference.chapterNumber,
   }
 }

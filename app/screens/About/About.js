@@ -7,15 +7,15 @@ import {
 } from 'react-native';
 import packageJson from '../../../package.json'
 import { aboutPage } from './styles.js'
+import {connect} from 'react-redux'
 
-
-export default class About extends Component {
+class About extends Component {
   static navigationOptions = {
     headerTitle: 'About',
   };
   constructor(props){
     super(props);
-    this.styles = aboutPage(props.screenProps.colorFile, props.screenProps.sizeFile);   
+    this.styles = aboutPage(this.props.colorFile, this.props.sizeFile);   
   }
   render() {
     const bulletIcon = '\u2022'
@@ -93,3 +93,11 @@ export default class About extends Component {
     );
   }
 }
+const mapStateToProps = state =>{
+  return{
+    sizeFile:state.updateStyling.sizeFile,
+    colorFile:state.updateStyling.colorFile,
+  }
+}
+
+export  default connect(mapStateToProps,null)(About)

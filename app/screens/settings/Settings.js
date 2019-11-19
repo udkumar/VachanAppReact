@@ -32,6 +32,10 @@ class Setting extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      colorMode:this.props.colorMode,
+      colorFile:this.props.colorFile,
+      sizeMode:this.props.sizeMode,
+      sizeFile:this.props.sizeFile,
       verseInLine:false
     }
     this.styles = settingsPageStyle(this.props.colorFile, this.props.sizeFile);
@@ -40,9 +44,8 @@ class Setting extends Component {
 
 
   async onChangeSlider(value){
-    console.log("value ",value)
     await this.props.updateFontSize(value)
-
+    // this.styles = settingsPageStyle(this.props.colorFile, this.props.sizeFile);
     AsyncStorageUtil.setAllItems([
       [AsyncStorageConstants.Keys.SizeMode, JSON.stringify(value)],
       ]);
@@ -50,8 +53,9 @@ class Setting extends Component {
   }
 
    async onColorModeChange(value){
+    console.log("value ",value,"color mode props ",this.props.colorMode)
       await this.props.updateColorMode(value)
-      this.styles = settingsPageStyle(this.props.colorFile, this.props.sizeFile);
+      // this.styles = settingsPageStyle(this.props.colorFile, this.props.sizeFile);
       AsyncStorageUtil.setAllItems([
       [AsyncStorageConstants.Keys.ColorMode, JSON.stringify(value)],
       ]);
@@ -76,8 +80,10 @@ class Setting extends Component {
     }
   }
   render() {
-    const dayModeIconColor = this.props.colorMode == AsyncStorageConstants.Values.DayMode  ? dayColors.accentColor : 'grey'
-    const nightModeIconColor =  this.props.colorMode == AsyncStorageConstants.Values.NightMode  ? nightColors.accentColor : 'grey'
+    this.styles = settingsPageStyle(this.props.colorFile,this.props.sizeFile)
+    console.log(" color mode ",this.state.colorMode)
+    const dayModeIconColor = this.state.colorMode == AsyncStorageConstants.Values.DayMode  ? dayColors.accentColor : 'grey'
+    const nightModeIconColor =  this.state.colorMode == AsyncStorageConstants.Values.NightMode  ? nightColors.accentColor : 'grey'
     const modeIconConstColor = constColors.accentColor
 
     return (
@@ -141,10 +147,10 @@ class Setting extends Component {
                     step={1}
                     minimumValue={0}
                     maximumValue={4}
-                    thumbColor={this.props.colorMode == AsyncStorageConstants.Values.DayMode ? dayModeIconColor: nightModeIconColor}
-                    minimumTrackTintColor={this.props.colorMode == AsyncStorageConstants.Values.DayMode ? dayModeIconColor: nightModeIconColor}
+                    thumbColor={this.state.colorMode == AsyncStorageConstants.Values.DayMode ? dayModeIconColor: nightModeIconColor}
+                    minimumTrackTintColor={this.state.colorMode == AsyncStorageConstants.Values.DayMode ? dayModeIconColor: nightModeIconColor}
                     onValueChange={(value)=>{this.onChangeSlider(value)}}
-                    value={this.props.sizeMode}
+                    value={this.state.sizeMode}
                   />
                 </Right>
               </ListItem>
@@ -155,7 +161,7 @@ class Setting extends Component {
                 <Text style={this.styles.textStyle}>One Verse Per Line</Text>
                 <Switch 
                   size={24} 
-                  thumbColor={this.props.colorMode == AsyncStorageConstants.Values.DayMode ? dayModeIconColor: nightModeIconColor}
+                  thumbColor={this.state.colorMode == AsyncStorageConstants.Values.DayMode ? dayModeIconColor: nightModeIconColor}
                   onValueChange={()=>this.onVerseInLineModeChange}
                   value={this.state.verseInLine}
                   style={this.styles.cardItemIconCustom} 

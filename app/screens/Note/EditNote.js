@@ -53,7 +53,7 @@ class EditNote extends Component {
         isLoading:false
     }
 
-    this.styles = noteStyle(props.screenProps.colorFile, props.screenProps.sizeFile);   
+    this.styles = noteStyle(props.colorFile, props.sizeFile);   
     
     this.getReference = this.getReference.bind(this)
     this.openReference = this.openReference.bind(this)
@@ -367,6 +367,9 @@ const mapStateToProps = state =>{
     chapterNumber:state.editNote.chapterNumber,
     verseNumber: state.editNote.verseNumber,
     index:state.editNote.index,
+    
+    sizeFile:state.updateStyling.sizeFile,
+    colorFile:state.updateStyling.colorFile,
     
   }
 }

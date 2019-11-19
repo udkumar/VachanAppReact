@@ -10,9 +10,11 @@ import EditNote from '../screens/Note/EditNote'
 import NotePage from '../screens/Note/NotePage'
 import Highlights from '../screens/Highlights/'
 import History from '../screens/History/'
+import Commentary from '../screens/StudyHelp/Commentary/'
+
 // import Audio from '../screens/Bible/Navigate/Audio/'
 // import Video from '../screens/Bible/Navigate/Video/'
-// import StudyHelp from '../screens/Bible/Navigate/StudyHelp/'
+import StudyHelp from '../screens/StudyHelp/'
 
 // import ReferenceSelection from 
 // import ChapterSelection from '../screens/numberSelection/ChapterSelection'
@@ -29,8 +31,8 @@ import More from '../screens/More'
 import SelectionTab from '../screens/ReferenceSelection/'
 import BookMarks from '../screens/Bookmarks/';
 const StackNavigate = createStackNavigator(
-
   {  
+      // StudyHelp:{screen:StudyHelp},
       Bible:{screen:Bible,
         navigationOptions: () => ({
           headerStyle: {
@@ -73,7 +75,9 @@ const StackNavigate = createStackNavigator(
       History:{ screen:History},
 
       EditNote:{  screen:EditNote },
-      NotePage:{ screen:NotePage }
+      NotePage:{ screen:NotePage },
+      // StudyHelp:{screen:StudyHelp},
+      Commentary:{screen:Commentary}
       // Video:{
       //   screen:Video
       // },

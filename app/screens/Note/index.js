@@ -14,12 +14,14 @@ import { Card, CardItem, Content, Right, Left } from 'native-base';
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 import DbQueries from '../../utils/dbQueries'
+import {connect} from 'react-redux'
+
 
 import { noteStyle } from './styles.js';
 
 var moment = require('moment');
 
-export default class Note extends Component {
+class Note extends Component {
 
   static navigationOptions = ({navigation}) => ({
     headerTitle: 'My Content',
@@ -33,12 +35,12 @@ export default class Note extends Component {
   constructor(props){
     super(props);
     this.state = {
-      colorFile:this.props.screenProps.colorFile,
-      sizeFile:this.props.screenProps.sizeFile,
+      colorFile:this.props.colorFile,
+      sizeFile:this.props.sizeFile,
       notesData:[],
       referenceList:[],
     }
-    this.styles = noteStyle(props.screenProps.colorFile, props.screenProps.sizeFile);   
+    this.styles = noteStyle(props.colorFile, props.sizeFile);   
     
     this.queryDb = this.queryDb.bind(this)
     this.onDelete = this.onDelete.bind(this)
@@ -56,7 +58,7 @@ export default class Note extends Component {
       onbackNote:this.queryDb,
       queryDb:this.queryDb,
       referenceList:  this.props.navigation.state.params.referenceList,
-      bookId: this.props.screenProps.bookId,
+      bookId: this.props.bookId,
       chapterNumber:1,
       totalVerses:null
     })
@@ -130,7 +132,7 @@ export default class Note extends Component {
     
     return(
     <TouchableOpacity style={this.styles.noteContent}
-        onPress={()=>{this.props.navigation.navigate("NotePage",{note:item.references,bodyText:bodyText,createdTime:item.createdTime,queryDb:this.queryDb,noteObject:item,noteIndex:index,bookId:this.props.screenProps.bookId})}}>
+        onPress={()=>{this.props.navigation.navigate("NotePage",{note:item.references,bodyText:bodyText,createdTime:item.createdTime,queryDb:this.queryDb,noteObject:item,noteIndex:index,bookId:this.props.bookId})}}>
       <Card>
       <CardItem style={this.styles.cardItemStyle}>
         <View style={this.styles.notesContentView}> 
@@ -168,7 +170,14 @@ export default class Note extends Component {
   }
 }
 
+const mapStateToProps = state =>{
+  return{
+    sizeFile:state.updateStyling.sizeFile,
+    colorFile:state.updateStyling.colorFile,
+  }
+}
 
+export  default connect(mapStateToProps,null)(Note)
 // const mapStateToProps = state =>{
 //   return{
 //     language:state.updateVersion.language,

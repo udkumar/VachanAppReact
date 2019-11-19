@@ -36,9 +36,9 @@ import Spinner from 'react-native-loading-spinner-overlay';
   constructor(props){
     super(props)
     this.state = {
-      colorFile:this.props.screenProps.colorFile,
-      sizeFile:this.props.screenProps.sizeFile,
-      colorMode:this.props.screenProps.colorMode,
+      colorFile:this.props.colorFile,
+      sizeFile:this.props.sizeFile,
+      colorMode:this.props.colorMode,
       activeTab:true,
       bookList: [],
       // OTSize:this.getOTSize(),
@@ -96,16 +96,16 @@ import Spinner from 'react-native-loading-spinner-overlay';
   }
    componentWillReceiveProps(props){
      this.setState({
-        colorFile:props.screenProps.colorFile,
-        colorMode: props.screenProps.colorMode,
-        sizeFile:props.screenProps.sizeFile,
+        colorFile:props.colorFile,
+        colorMode: props.colorMode,
+        sizeFile:props.sizeFile,
         lastRead: props.screenProps.lastRead,
         // booksList: props.screenProps.booksList,
         // OTSize:this.getOTSize(),
         // NTSize:this.getNTSize(props.screenProps.booksList)
       })
    
-    this.styles = SelectBookPageStyle(props.screenProps.colorFile, props.screenProps.sizeFile);   
+    this.styles = SelectBookPageStyle(props.colorFile, props.sizeFile);   
   }
  
   getItemLayout = (data, index) => (
@@ -336,6 +336,10 @@ const mapStateToProps = state =>{
     
     bookId:state.updateVersion.bookId,
     bookName:state.updateVersion.bookName,
+
+    sizeFile:state.updateStyling.sizeFile,
+    colorFile:state.updateStyling.colorFile,
+    colorMode:state.updateStyling.colorMode
   }
 }
 

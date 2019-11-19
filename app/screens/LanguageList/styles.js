@@ -53,6 +53,8 @@ export const styles =(colorFile, sizeFile) =>{
         // alignItems:'flex-start'
       },
       iconStyle:{
+        fontSize:sizeFile.iconSize,
+        color:colorFile.iconColor
         // alignItems:'flex-end'
       },
       separator: {

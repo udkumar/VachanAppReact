@@ -88,7 +88,8 @@ export const styles =(colorFile, sizeFile) =>{
         fontSize: sizeFile.chevronIconSize
     },
     verseNumber:{
-        fontSize:sizeFile.contentText
+        fontSize:sizeFile.contentText,
+        color:colorFile.textColor
     },
     verseChapterNumber:{
         fontSize:sizeFile.titleText,
@@ -97,16 +98,23 @@ export const styles =(colorFile, sizeFile) =>{
     verseTextSelectedHighlighted:{
         backgroundColor:colorFile.highlightColor,
         textDecorationLine: 'underline',
+        color:colorFile.textColor
         
     },
     verseTextNotSelectedNotHighlighted:{
+        color:colorFile.textColor
+
 
     },
     verseTextNotSelectedHighlighted:{
-        backgroundColor:colorFile.highlightColor
+        backgroundColor:colorFile.highlightColor,
+        color:colorFile.textColor
+
     },
     verseTextSelectedNotHighlighted:{
         textDecorationLine: 'underline',
+        color:colorFile.textColor
+
     },
     addToSharefooterComponent:{
 

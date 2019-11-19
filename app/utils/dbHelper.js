@@ -110,7 +110,6 @@ class DbHelper {
 		if (realm){
 			var result1 = realm.objects("HighlightsModel");
 			if(bookId == null ){
-				
 				let highlightList = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '"' )
 				return highlightList
 			}

@@ -17,15 +17,16 @@ import {backupPageStyle} from './styles.js'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
 var RNFS = require('react-native-fs');
+import {connect} from 'react-redux'
 
-export default class BackupRestore extends Component {
+class BackupRestore extends Component {
 
     static navigationOptions = ({navigation}) => ({
         headerTitle: 'Backup and Restore',
     });
 
     constructor(props){
-        console.log("backup page"+JSON.stringify(props.screenProps.colorFile)+"sizefile"+JSON.stringify(props.screenProps.sizeFile))
+        console.log("backup page"+JSON.stringify(props.colorFile)+"sizefile"+JSON.stringify(props.sizeFile))
         super(props);
         this.unsubscriber = null;
 
@@ -37,7 +38,7 @@ export default class BackupRestore extends Component {
             dataSource: [],
 
         }
-        this.styles = backupPageStyle(this.props.screenProps.colorFile, this.props.screenProps.sizeFile);
+        this.styles = backupPageStyle(this.props.colorFile, this.props.sizeFile);
 
     }
 
@@ -295,3 +296,14 @@ export default class BackupRestore extends Component {
         );
     }
 }
+
+
+const mapStateToProps = state =>{
+    return{
+      sizeFile:state.updateStyling.sizeFile,
+      colorFile:state.updateStyling.colorFile,
+      // chapterNumber:state.selectReference.chapterNumber,
+    }
+  }
+  
+  export  default connect(mapStateToProps,null)(BackupRestore)

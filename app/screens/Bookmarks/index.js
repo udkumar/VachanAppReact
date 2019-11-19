@@ -15,8 +15,9 @@ import DbQueries from '../../utils/dbQueries'
 import { bookStyle } from './styles.js'
 import {getBookNameFromMapping} from '../../utils/UtilFunctions';
 Dimensions.get('window').width
+import {connect} from 'react-redux'
 
-export default class BookMarks extends Component {
+class BookMarks extends Component {
   static navigationOptions = {
     headerTitle: 'Bookmarks',
     // headerTitle: (
@@ -60,7 +61,7 @@ export default class BookMarks extends Component {
       bookId:this.props.navigation.state.params.bookId
     }
     
-    this.styles = bookStyle(props.screenProps.colorFile, props.screenProps.sizeFile);   
+    this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);   
     // this.refreshData = this.refreshData.bind(this)
   }
 
@@ -88,14 +89,6 @@ export default class BookMarks extends Component {
   //   return { length: height, offset: height * index, index };
   // }
 
-  // componentWillReceiveProps(props) {
-  //   console.log("RECEIVE PROPS ::: " + JSON.stringify(props))
-  //   console.log("RECEIVE PROPS BOOK<ARKS ::: " + JSON.stringify(props.screenProps.updateBookmarks))
-  //   if (props.screenProps.updateBookmarks == true) {
-  //     this.refreshData()
-  //   }
-  // }
-  
     
   async onBookmarkRemove(id,chapterNum){
   await DbQueries.updateBookmarkInBook(this.state.languageName,this.state.versionCode,id,chapterNum,false);
@@ -123,7 +116,7 @@ export default class BookMarks extends Component {
               >
 
               <Text style={this.styles.bookmarksText}>
-              {getBookNameFromMapping(item.bookId,this.props.screenProps.languageName)} {":"} {item.chapterNumber}
+              {getBookNameFromMapping(item.bookId,this.props.languageName)} {":"} {item.chapterNumber}
               </Text>
               <Icon name='delete-forever' style={this.styles.iconCustom}   
                 onPress={() => {this.onBookmarkRemove(item.bookId,item.chapterNumber)} } 
@@ -148,3 +141,15 @@ export default class BookMarks extends Component {
     );
   }
 }
+
+const mapStateToProps = state =>{
+  return{
+    languageName: state.updateVersion.language,
+    sizeFile:state.updateStyling.sizeFile,
+    colorFile:state.updateStyling.colorFile,
+  }
+}
+
+
+export  default connect(mapStateToProps,null)(BookMarks)
+
