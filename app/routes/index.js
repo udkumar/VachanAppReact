@@ -32,7 +32,7 @@ import SelectionTab from '../screens/ReferenceSelection/'
 import BookMarks from '../screens/Bookmarks/';
 const StackNavigate = createStackNavigator(
   {  
-      // StudyHelp:{screen:StudyHelp},
+    Commentary:{screen:Commentary},
       Bible:{screen:Bible,
         navigationOptions: () => ({
           headerStyle: {
@@ -76,7 +76,7 @@ const StackNavigate = createStackNavigator(
 
       EditNote:{  screen:EditNote },
       NotePage:{ screen:NotePage },
-      // StudyHelp:{screen:StudyHelp},
+      StudyHelp:{screen:StudyHelp},
       Commentary:{screen:Commentary}
       // Video:{
       //   screen:Video

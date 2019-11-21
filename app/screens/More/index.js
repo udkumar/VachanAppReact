@@ -35,8 +35,8 @@ const ListItems = [
     },
     {
         iconName:"more",
-        screenName:"StudyHelp",
-        title:"Study Help",
+        screenName:"Commentary",
+        title:"Commentary ",
     },
     {
         iconName:"video-library",
