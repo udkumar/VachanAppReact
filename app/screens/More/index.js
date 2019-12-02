@@ -5,8 +5,6 @@ import { TouchableOpacity,View,Text } from 'react-native';
 import {connect} from 'react-redux'
 import { styles } from './styles.js';
 
-
-
 const ListItems = [
     {
         iconName:"bookmark",

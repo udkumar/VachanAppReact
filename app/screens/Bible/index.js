@@ -35,6 +35,7 @@ import { styles } from './styles.js';
 // import BottomTab from './BottomTab'
 
 import {connect} from 'react-redux'
+import {selectedChapter} from '../../store/action/'
 
 
 class Bible extends Component {
@@ -217,6 +218,7 @@ class Bible extends Component {
   // render data onAPI Call 
     queryBookFromAPI = async(val)=>{
         this.setState({isLoading:true,chapter:[],currentVisibleChapter: val != null ? this.state.currentVisibleChapter + val : this.props.chapterNumber },async()=>{
+        
           console.log("current visible chapter ",this.state.currentVisibleChapter) 
           if(this.props.downloaded == true ){
               let response = await DbQueries.queryVersions(this.props.language,this.props.version,this.props.bookId,this.state.currentVisibleChapter)
@@ -235,6 +237,7 @@ class Bible extends Component {
                   bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
                   currentChapter:this.state.currentVisibleChapter
                 })
+              this.props.selectedChapter(this.state.currentVisibleChapter,response[0].verses.length)
               }
               else{
                 alert("no book found of ",this.props.bookId)
@@ -265,7 +268,7 @@ class Bible extends Component {
                       bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
                       currentChapter:this.state.currentVisibleChapter
                     })
-
+                  this.props.selectedChapter(this.state.currentVisibleChapter,response.chapterContent.verses.length)
                   }
               }
               else{
@@ -715,5 +718,9 @@ const mapStateToProps = state =>{
 
   }
 }
-
-export  default connect(mapStateToProps,null)(Bible)
+const mapDispatchToProps = dispatch =>{
+  return {
+    selectedChapter: (chapterNumber,totalVerses)=>dispatch(selectedChapter(chapterNumber,totalVerses)),
+  }
+}
+export  default connect(mapStateToProps,mapDispatchToProps)(Bible)

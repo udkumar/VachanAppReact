@@ -10,6 +10,7 @@ import {
 var RNFS = require('react-native-fs');
 import SplashScreen from 'react-native-splash-screen'
 import Spinner from 'react-native-loading-spinner-overlay';
+import {connect} from 'react-redux'
 
 
 const DATA = [
@@ -28,8 +29,9 @@ const DATA = [
 ];
 
 
-export default class commentary extends Component {
+class Commentary extends Component {
     constructor(props){
+       console.log("commentry props ",props)
       super(props)
         this.state = {
           commentary: []
@@ -38,39 +40,32 @@ export default class commentary extends Component {
   getCommmentary(){
     RNFS.readFileAssets('mhcc_commentary.csv').then((res) => {
       var lines = res.split("\n");
-      const id = 'GEN'
+      // const id = this.props.bookId.toUpperCase()
+      const id ='GEN'
+
       let commentary = []
-      let bookIntro = ''
-      let chapterNumber = 1
-      let chapterContent = []
       for(var i=0; i<=lines.length-1; i++){
+        commentaryContent = {}
         const substr =  lines[i].split("\t")
-        if(id == substr[0] && chapterNumber == (!isNaN(parseInt(substr[1])) && substr[1])){
-          let content = substr.slice(3)
-          // const b = /<b[^>]*>([\s\S]*?)<\/b>/ig
-          // const br = /<br\s*\/?>/ig;
-      
-          bookIntro = isNaN(parseInt(substr[1])) && content
-          chapterNumber =  !isNaN(parseInt(substr[1])) && substr[1] 
-            chapterContent.push({ 
-            chapterIntro:isNaN(parseInt(substr[2])) && content,
-            verseNumber:!isNaN(parseInt(substr[2])) && substr[2],
-            content : content
-          })
+        let string = substr.slice(3).toString()
+        let exRegex = /<b>(.*?)<\/b>/g
+
+        let content = string.replace(exRegex,'$1').replace(/<br>|<br\/>/g,'\n')
+
+        if(id == substr[0]){
+          commentaryContent["book"] = substr[0]
+          commentaryContent["chapter"] = substr[1]
+          commentaryContent["verse"] = substr[2]
+          commentaryContent["content"] = content
+          commentary.push(commentaryContent)
         }
       }
-      let book = {
-        bookId:id,
-        bookIntro:bookIntro,
-        chapterNumber:chapterNumber,
-        chapter:chapterContent
-      }
-      commentary.push(book)
+
       this.setState({commentary})
-      console.log(" commentary  ....",commentary.length)
     })
     .catch(error=>{console.log("erorr ",error)})
   }
+
   componentDidMount(){
     this.getCommmentary()
     SplashScreen.hide();
@@ -78,8 +73,8 @@ export default class commentary extends Component {
   }
 
   render(){
-   
-    console.log("state ",this.state.commentary)
+    var textElem = React.createElement(Text, [], ['Hello world']);
+
     return (
 
       <SafeAreaView style={styles.container}>
@@ -95,13 +90,20 @@ export default class commentary extends Component {
           data={this.state.commentary}
           renderItem={({ item }) => (
             <View>
-              <Text>{item.bookId}</Text>
-              {item.chapter.map((chap) =>(<View>
+              {/* <Text  style={{alignSelf:'center'}}>Book Name {this.props.bookName}</Text>
+              <Text  style={{alignSelf:'center'}}>Book Inro</Text>
+              <Text  style={{alignSelf:'center'}}>{item.book}</Text>
+              <Text  style={{alignSelf:'center'}}>{item.chapter}</Text>
+              <Text  style={{alignSelf:'center'}}>{item.verse}</Text> */}
+              <Text  style={{alignSelf:'center'}}>{item.content}</Text>
+
+
+              {/* {item.chapter.map((chap) =>(<View>
                   <Text>{chap.chapterIntro}</Text>
                   <Text>{chap.verseNumber}</Text>
                   <Text>{chap.content}</Text>
                 </View>
-              ))}
+              ))} */}
               {/* <Text>{item.bookId}</Text>
               <Text  style={{alignSelf:'center'}}>{typeof item.chapter === 'undefined' ? "Book Intro" : " Chapter "+item.chapter }</Text>
               <Text style={{alignSelf:'center'}}>{typeof item.verse === 'undefined' ? "Chapter Intro" : item.verse }</Text>  
@@ -135,3 +137,18 @@ const styles = StyleSheet.create({
     fontSize: 32,
   },
 });
+
+
+const mapStateToProps = state =>{
+  return{
+    chapterNumber:state.updateVersion.chapterNumber,
+    totalChapters:state.updateVersion.totalChapters,
+    bookName:state.updateVersion.bookName,
+    bookId:state.updateVersion.bookId,
+    sizeFile:state.updateStyling.sizeFile,
+    colorFile:state.updateStyling.colorFile,
+
+  }
+}
+
+export  default connect(mapStateToProps,null)(Commentary)
