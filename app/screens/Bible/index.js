@@ -1,4 +1,4 @@
-import React, { Component, version } from 'react';
+import React, { Component} from 'react';
 import {
   Text,
   View,
@@ -605,7 +605,7 @@ class Bible extends Component {
         } 
     
         </MenuContext>
-        {
+        {/* {
             this.props.close ? 
             <TouchableOpacity style={{ width:width,backgroundColor:"#3F51B5",flexDirection:'row',justifyContent:'flex-end'}} onPress={()=>this.props.closeSplitScreen(false)}>
               <Text style={{color:'#fff',textAlign:'center',fontSize:16}}>Study Help</Text>
@@ -627,7 +627,7 @@ class Bible extends Component {
                 // onBookmarkRemove = {this.onBookmarkRemove}
                 // changeBookFromSplit={this.changeBookFromSplit}
             />
-            }
+            } */}
               {this.state.showBottomBar 
           ? 
           <View style={this.styles.bottomBar}>

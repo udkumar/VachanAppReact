@@ -30,6 +30,21 @@ const DATA = [
 
 
 class Commentary extends Component {
+  static navigationOptions = ({navigation}) =>{
+    const { params={} } = navigation.state 
+
+    return{
+      headerTitle:(
+        <View style={styles.headerLeftStyle}>
+          <View style={{marginRight:10}}>
+              <Text  style={styles.headerTextStyle}>{params.bookName}  {params.currentChapter }</Text>
+          </View>
+          
+        </View>
+     
+    ), 
+    }
+  }
     constructor(props){
        console.log("commentry props ",props)
       super(props)
@@ -40,8 +55,9 @@ class Commentary extends Component {
   getCommmentary(){
     RNFS.readFileAssets('mhcc_commentary.csv').then((res) => {
       var lines = res.split("\n");
-      // const id = this.props.bookId.toUpperCase()
-      const id ='GEN'
+      const id = this.props.bookId.toUpperCase()
+      // const id ='GEN'
+      console.log("book id ",id)
 
       let commentary = []
       for(var i=0; i<=lines.length-1; i++){
@@ -49,11 +65,15 @@ class Commentary extends Component {
         const substr =  lines[i].split("\t")
         let string = substr.slice(3).toString()
         let exRegex = /<b>(.*?)<\/b>/g
-
+        var match = exRegex.exec(string);
+        console.log("eeregex ",(match && match[1]!=null))
+        
+        // React.createElement("Text", {style: {color: "red", backgroundColor: "blue"}}, this.props.paragraph)
         let content = string.replace(exRegex,'$1').replace(/<br>|<br\/>/g,'\n')
         // const element = React.createElement('Text', { }, capturedContent)
-        let regexMatch = string.match(regex)
-        console.log("regex match ",regexMatch)
+        // var textElem = React.createElement(Text, [], ['Hello world']);
+        // let regexMatch = string.match(regex)
+        // console.log("regex match ",regexMatch)
         
         if(id == substr[0]){
           commentaryContent["book"] = substr[0]
@@ -65,18 +85,26 @@ class Commentary extends Component {
       }
 
       this.setState({commentary})
+      this.props.navigation.setParams({
+        bookName:this.props.bookName
+      })
     })
     .catch(error=>{console.log("erorr ",error)})
   }
-
+  componentDidUpdate(prevProps) {
+    // Typical usage (don't forget to compare props):
+    if (this.props.bookId !== prevProps.bookId) {
+      this.getCommmentary()
+    }
+  }
+  
   componentDidMount(){
     this.getCommmentary()
     SplashScreen.hide();
-    
   }
 
   render(){
-    var textElem = React.createElement(Text, [], ['Hello world']);
+    // var textElem = React.createElement(Text, [], ['Hello world']);
 
     return (
 
@@ -89,16 +117,17 @@ class Commentary extends Component {
          // textStyle={styles.spinnerTextStyle}
      />
       :
+      <View>
+        {/* <Text style={{alignSelf:'center',fontWeight:'bold',fontSize:20,marginHorizontal:10}}>{this.props.bookName}</Text>  */}
         <FlatList
           data={this.state.commentary}
           renderItem={({ item }) => (
-            <View>
-              {/* <Text  style={{alignSelf:'center'}}>Book Name {this.props.bookName}</Text>
-              <Text  style={{alignSelf:'center'}}>Book Inro</Text>
+            <View style={{margin:10}}>
+              {/* <Text  style={{alignSelf:'center'}}>Book Inro</Text>
               <Text  style={{alignSelf:'center'}}>{item.book}</Text>
               <Text  style={{alignSelf:'center'}}>{item.chapter}</Text>
               <Text  style={{alignSelf:'center'}}>{item.verse}</Text> */}
-              <Text  style={{alignSelf:'center'}}>{item.content}</Text>
+              <Text  style={{alignSelf:'center',fontSize:14}}>{item.content}</Text>
 
 
               {/* {item.chapter.map((chap) =>(<View>
@@ -116,6 +145,7 @@ class Commentary extends Component {
           )}
           keyExtractor={item => item.bookId}
         />
+        </View>
         }
       </SafeAreaView>
     );
@@ -128,7 +158,6 @@ const styles = StyleSheet.create({
   
   container: {
     flex: 1,
-    margin:4
   },
   item: {
     backgroundColor: '#f9c2ff',
@@ -139,6 +168,15 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
   },
+  headerTextStyle:{
+    fontSize:16,
+    color:"#fff",
+    textAlign:'center'
+},
+headerLeftStyle:{
+  flex:1,
+  marginHorizontal:10
+},
 });
 
 
