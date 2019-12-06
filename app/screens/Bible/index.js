@@ -38,14 +38,38 @@ import {connect} from 'react-redux'
 
 
 class Bible extends Component {
+  // constructor(props) {
+  //   super(props);
+  //   //Default visible isVisible
+  //   this.isVisible = true;
+  // }
+
+ // this.state.onFullScreen 
+  // onFullScreen() {
+  //   // Set the params to pass in fullscreen isVisible to navigationOptions
+  //   this.props.navigation.setParams({
+  //     fullscreen: !this.isVisible,
+  //   });
+  //   this.isVisible = !this.isVisible;
+  //   this.setState({onFullScreen: this.state.onFullScreen ? true : false})
+
+  // }
+  
   static navigationOptions = ({navigation}) =>{
     const { params={} } = navigation.state 
+    // if (navigation.state.params && !navigation.state.params.fullscreen) {
+    //   //Hide Header by returning null
+    //   return { header: null };
+    // } else 
+  
+    
 
     return{
         headerTitle:(
           <View style={navStyles.headerLeftStyle}>
             <View style={{marginRight:10}}>
-              <TouchableOpacity style={navStyles.touchableStyleLeft}  onPress={() =>{navigation.navigate("SelectionTab", {bookId:params.bookId,chapterNumber:params.currentChapter,totalVerses:params.totalVerses,getReference:params.callBackForUpdateBook})}}>
+              <TouchableOpacity style={navStyles.touchableStyleLeft}  
+              onPress={() =>{navigation.navigate("SelectionTab", {bookId:params.bookId,chapterNumber:params.currentChapter,totalVerses:params.totalVerses,getReference:params.callBackForUpdateBook})}}>
                 <Text  style={navStyles.headerTextStyle}>{params.bookName}  {params.currentChapter }</Text>
               <Icon name="arrow-drop-down" color="#fff" size={24}/>
               </TouchableOpacity>
@@ -63,28 +87,48 @@ class Bible extends Component {
         headerTintColor:"#fff",
         headerRight:(
           <View style={navStyles.headerRightStyle}>
-              <TouchableOpacity  style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
+              <TouchableOpacity  onPress={params.ShowHideTextComponentView}
+               style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
               <Icon 
-                  onPress={()=> {params.onBookmark(params.bookId,params.currentChapter,params.isBookmark)}} 
-                  name='bookmark'
+                  
+                  name='volume-up'
                   color={params.isBookmark ? "red" : "white"} 
                   size={24} 
               /> 
               </TouchableOpacity>
+             
               <TouchableOpacity onPress={() =>{navigation.navigate("More",{languageName:params.languageName,versionCode:params.versionCode,bookId:params.bookId})}} style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
-                <Icon name="more-vert" color="#fff" size={24} />
-              </TouchableOpacity>
+              <Icon name="more-vert" color="#fff" size={24} />
+             </TouchableOpacity>
              
           </View>
         )
+        // headerRight:(
+        //   <View style={navStyles.headerRightStyle}>
+        //       <TouchableOpacity  style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
+        //       <Icon 
+        //           onPress={()=> {params.onBookmark(params.bookId,params.currentChapter,params.isBookmark)}} 
+        //           name='volume-up'
+        //           color={params.isBookmark ? "red" : "white"} 
+        //           size={24} 
+        //       /> 
+        //       </TouchableOpacity>
+        //       <TouchableOpacity onPress={() =>{navigation.navigate("More",{languageName:params.languageName,versionCode:params.versionCode,bookId:params.bookId})}} style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
+        //         <Icon name="more-vert" color="#fff" size={24} />
+        //       </TouchableOpacity>
+             
+        //   </View>
+        // )
+        
     }
   }
+         
 
   constructor(props) {
     super(props);
     this.leftIsScrolling = false;
     this.rigthIsScrolling = false;
-
+    this.isVisible = true;
     this.getSelectedReferences = this.getSelectedReferences.bind(this)
     this.onBookmarkPress = this.onBookmarkPress.bind(this)
     // this.onScroll = this.onScroll.bind(this)
@@ -94,6 +138,8 @@ class Bible extends Component {
     this.state = {
       isLoading: false,
       showBottomBar: false,
+      //onFullScreen:false,
+      status:true,
       bookName:getBookNameFromMapping(this.props.bookId,this.props.language),
       // menuHighlightedText: false,
       bookmarksList: [],
@@ -104,7 +150,6 @@ class Bible extends Component {
       verseInLine: this.props.screenProps.verseInLine,
       totalChapters:0,
       bottomHighlightText:false,
-
       colorFile:this.props.screenProps.colorFile,
       sizeFile:this.props.screenProps.sizeFile,
       HightlightedVerseArray:[],
@@ -126,7 +171,7 @@ class Bible extends Component {
 
     this.pinchDiff = 0
     this.pinchTime = new Date().getTime()
-    this.styles = styles(this.state.colorFile, this.state.sizeFile);    
+    this.styles = styles(this.state.colorFile, this.state.sizeFile,this.props.fontFamily);    
     this.modelValue = "modal1"
    
     
@@ -137,11 +182,12 @@ class Bible extends Component {
     this.setState({
       colorFile:props.screenProps.colorFile,
       sizeFile:props.screenProps.sizeFile,
+      fontFamily:props.fontFamily,
     //   bookId:props.screenProps.bookId,
     //   bookName:props.screenProps.bookName,
     //   currentChapter:props.screenProps.currentChapter
     })
-    this.styles = styles(props.screenProps.colorFile, props.screenProps.sizeFile);  
+    this.styles = styles(props.screenProps.colorFile, props.screenProps.sizeFile,props.fontFamily);  
   }
 
   async componentDidMount(){
@@ -203,7 +249,8 @@ class Bible extends Component {
     this.props.navigation.setParams({
       onBookmark: this.onBookmarkPress,
       isBookmark:this.state.isBookmark,
-      
+      ShowHideTextComponentView: this.ShowHideTextComponentView,
+
       bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
       // bookName:this.state.bookName.length > 8 ? this.state.bookName.slice(0,7)+"..." : this.state.bookName,
       currentChapter:this.state.currentVisibleChapter,
@@ -217,6 +264,9 @@ class Bible extends Component {
     this.queryBookFromAPI(null)
   }
   // render data onAPI Call 
+
+
+ 
     queryBookFromAPI = async(val)=>{
       this.state.chapter = []
         this.setState({isLoading:true,currentVisibleChapter: val != null ? this.state.currentVisibleChapter + val : this.props.chapterNumber },async()=>{
@@ -286,7 +336,8 @@ class Bible extends Component {
         })
       this.getHighlights()
       this.getBookMarks(this.props.bookId,this.state.currentVisibleChapter)
-     
+    this.styles = styles(this.props.screenProps.colorFile, this.props.screenProps.sizeFile,this.props.fontFamily);  
+
   }
  
   async getHighlights(){
@@ -490,8 +541,20 @@ class Bible extends Component {
  
   _keyExtractor = (item, index) => item.number;
 
+  ShowHideTextComponentView = () =>{
+ 
+    if(this.state.status == true)
+    {
+      this.setState({status: false})
+    }
+    else
+    {
+      this.setState({status: true})
+    }
+  }
+ 
   render() {
-
+    console.log(" font family using reducer ",this.props.fontFamily)
       return (
         <View style={this.styles.container}>
         <MenuContext style={this.styles.verseWrapperText}>
@@ -510,7 +573,10 @@ class Bible extends Component {
                    style={{padding:10}}
                    data={this.state.chapter }
                    extraData={this.state}
+                   
                    renderItem={({item, index}) => 
+                
+                 
                             <VerseView
                                 ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
                                 verseData = {item}
@@ -524,11 +590,15 @@ class Bible extends Component {
                                 HightlightedVerse = {this.state.HightlightedVerseArray}
                                 chapterNumber ={this.state.currentVisibleChapter}
                                 bookId={this.props.bookId}
-                                showBottomBar={this.state.showBottomBar}
+                               // showBottomBar={this.state.showBottomBar}
+                              //onFullScreen ={this.state.onFullScreen}
+                                //onPress={() => this.onFullScreen()}
                             />
-                        
-                      }
+                           
+                   }
+                      
                    keyExtractor={this._keyExtractor}
+                   
                    />
                 
              </ScrollView>
@@ -582,7 +652,7 @@ class Bible extends Component {
                 changeBookFromSplit={this.changeBookFromSplit}
             />
             } */}
-              {this.state.showBottomBar 
+              {/* {this.state.showBottomBar 
           ? 
           <View style={this.styles.bottomBar}>
   
@@ -613,17 +683,47 @@ class Bible extends Component {
             <View style={this.styles.bottomOptionSeparator} />          
   
             <View style={this.styles.bottomOption}>   
-              <TouchableOpacity onPress={this.addToShare}  
-              >       
+              <TouchableOpacity onPress={this.addToShare}>       
                 <Text style={this.styles.bottomOptionText}>
                   SHARE
                 </Text>
                 <Icon name={'share'} color="white" size={24} style={this.styles.bottomOptionIcon} />
               </TouchableOpacity>
             </View>
+            <View style={this.styles.bottomOptionSeparator} />   
+            <View style={this.styles.bottomOption}>   
+              <TouchableOpacity onPress={this.addToShare}>       
+                <Text onPress={() => this.onFullScreen()}
+                style={this.styles.bottomOptionText}>
+                  Audio
+                </Text>
+                <Icon  
+                name={'share'} color="white" size={24} style={this.styles.bottomOptionIcon} />
+              </TouchableOpacity>
+            </View>
   
           </View>
-          : null }
+          : null } */}
+
+
+           {
+         
+
+        this.state.status ? null:
+        <View style={{ backgroundColor: 'transparent'}} >
+        <TouchableOpacity style={{position: 'absolute', left: 80}}>
+        <Icon name="skip-previous" size={30} />
+      </TouchableOpacity>
+       
+      <TouchableOpacity style={{justiftyContent:"center", alignItems:"center", }}>
+        <Icon name="play-arrow" size={30}/>
+      </TouchableOpacity>
+      <TouchableOpacity style={{position: 'absolute', right: 80}}>
+          <Icon name="skip-next" size={30}  />
+    </TouchableOpacity>
+      </View>
+      }
+ 
       </View>
       )
   }
@@ -655,6 +755,7 @@ headerTextStyle:{
 },
 })
 
+
 const mapStateToProps = state =>{
   return{
     language: state.updateVersion.language,
@@ -665,6 +766,7 @@ const mapStateToProps = state =>{
     chapterNumber:state.updateVersion.chapterNumber,
     bookName:state.updateVersion.bookName,
     bookId:state.updateVersion.bookId,
+    fontFamily:state.updateStyling.fontFamily
 
   }
 }

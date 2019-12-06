@@ -10,7 +10,7 @@ import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants';
 import { styles } from './styles.js';
 import {connect} from 'react-redux';
-import {updateVersion} from '../../store/action/'
+import {updateVersion,updateFontFamily} from '../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
 
 
@@ -24,9 +24,10 @@ class ExpandableItemComponent extends Component {
     this.state = {
       layoutHeight: 0,
       modalVisible:true,
+     
 
     };
-    this.styles = styles(this.props.colorFile, this.props.sizeFile);    
+    this.styles = styles(this.props.colorFile, this.props.sizeFile,this.props.fontfamily);    
   }
   componentWillReceiveProps(nextProps){
     if (nextProps.item.isExpanded) {
@@ -117,6 +118,7 @@ class LanguageList extends Component {
           startDownload:false,
           colorFile:this.props.screenProps.colorFile,
           sizeFile:this.props.screenProps.sizeFile,
+         fontfamily:this.props.screenProps.fontfamily,
           index : -1,
           languageName:'',
 
@@ -266,7 +268,7 @@ class LanguageList extends Component {
     }
     goToBible = (langName,verCode,sourceId,downloaded)=>{
       
-      console.log("downloaded value in language page ",sourceId)
+      console.log("downloaded value in language page ",langName)
       // AsyncStorageUtil.setAllItems([
       //   [AsyncStorageConstants.Keys.SourceId, sourceId.toString()],
       //   [AsyncStorageConstants.Keys.LanguageName, langName],
@@ -274,12 +276,13 @@ class LanguageList extends Component {
       //   [AsyncStorageConstants.Keys.Downloaded, JSON.stringify(downloaded)]
       // ]); 
       this.props.updateVersion(langName,verCode,sourceId,downloaded)
+      this.props.updateFontFamily(langName.toLowerCase())
       this.props.navigation.state.params.callBackForUpdateBook(null)
       this.props.navigation.goBack()
     }
   
     render(){
-
+    console.log("font coming or not"+ this.state.fontfamily.telugu)
       return (
         <View style={this.styles.MainContainer}>
         {this.state.languages.length == 0 ?
@@ -320,6 +323,7 @@ class LanguageList extends Component {
             isLoading = {this.state.isLoading}
             index = {this.state.index}
             languageName = {this.state.languageName}
+            fontfamily ={this.state.fontfamily}
             // setModalVisible={this.setModalVisible}
           />}
 
@@ -343,6 +347,7 @@ const mapStateToProps = state =>{
 const mapDispatchToProps = dispatch =>{
   return {
     updateVersion: (language,version,sourceId,downloaded)=>dispatch(updateVersion(language,version,sourceId,downloaded)),
+    updateFontFamily:(value)=>dispatch(updateFontFamily(value))
   }
 }
 export default connect(mapStateToProps,mapDispatchToProps)(LanguageList)

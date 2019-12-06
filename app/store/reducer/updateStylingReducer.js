@@ -1,5 +1,5 @@
 
-import {UPDATE_COLOR_MODE,UPDATE_FONT_SIZE,UPDATE_VERSE_IN_LINE} from '../action/actionsType'
+import {UPDATE_COLOR_MODE,UPDATE_FONT_SIZE,UPDATE_VERSE_IN_LINE,UPDATE_FONT_FAMILY} from '../action/actionsType'
 
 import {nightColors, dayColors} from '../../utils/colors.js'
 import {extraSmallFont,smallFont,mediumFont,largeFont,extraLargeFont} from '../../utils/dimens.js'
@@ -13,7 +13,8 @@ const initialState = {
     colorFile :dayColors,
     sizeMode:AsyncStorageConstants.Values.SizeModeNormal,
     sizeFile:mediumFont,
-    verseInLine:AsyncStorageConstants.Values.verseInLine
+    verseInLine:AsyncStorageConstants.Values.verseInLine,
+    fontFamily:AsyncStorageConstants.Values.FontFamily["hindi"]
   
 }
 function updateStyling(state=initialState,action){
@@ -88,7 +89,7 @@ function updateStyling(state=initialState,action){
 
             }
         }
-    }
+        }
         return {
             ...state,
             colorValue:colors.switchColor()
@@ -114,9 +115,20 @@ function updateStyling(state=initialState,action){
             ...state,
         verseInLine:switchVerseInLine.switchVerse(),
         }
+
+        case UPDATE_FONT_FAMILY:
+            console.log("font family reducer ",action.fontFamily)
+        return{
+            ...state,
+            fontFamily:AsyncStorageConstants.Values.FontFamily[action.fontFamily]
+
+        }
+        
         default: 
         return state
+    
     }
+    
 }
 
 export default updateStyling

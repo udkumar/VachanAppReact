@@ -16,4 +16,5 @@ export const UPDATE_NOTE_BODY = 'update_note_body'
 export const UPDATE_COLOR_MODE = 'update_color_mode'
 export const UPDATE_FONT_SIZE = 'update_font_size'
 export const UPDATE_VERSE_IN_LINE = 'update_verse_in_line'
+export const UPDATE_FONT_FAMILY = 'update_font_family'
 

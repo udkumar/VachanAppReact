@@ -3,7 +3,8 @@ import { Icon } from 'native-base';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-export const styles =(colorFile, sizeFile) =>{
+export const styles =(colorFile, sizeFile, fontfamily) =>{
+    console.log("fonts in bible page .................................>>>>>   ",fontfamily)
     return StyleSheet.create({
     container:{
         flex:1,
@@ -13,7 +14,8 @@ export const styles =(colorFile, sizeFile) =>{
     verseWrapperText:{
         fontSize:sizeFile.contentText,
         color:colorFile.textColor,
-        justifyContent:'center'
+        justifyContent:'center',
+        
     },
     chapterList:{
         margin:16
@@ -34,11 +36,21 @@ export const styles =(colorFile, sizeFile) =>{
     },
     bottomOption:{
         flexDirection:'row',
-        width:width/3,
+        width:width/4,
         justifyContent:'center',
         alignItems:'center',
        
     },
+    playButton: {
+        height: 72,
+        width: 72,
+        borderWidth: 1,
+        borderColor: '#eee',
+        borderRadius: 72 / 2,
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
+     
     bottomOptionText:{
         textAlign:'center',
         color:'white',   
@@ -56,6 +68,8 @@ export const styles =(colorFile, sizeFile) =>{
         
     },
     VerseText:{
+        fontFamily:fontfamily, 
+        fontWeight:'100'
     },
     bottomBarPrevView:{
         borderRadius: 32, 
@@ -65,6 +79,7 @@ export const styles =(colorFile, sizeFile) =>{
         left:0,
         width: 56, 
         height: 56, 
+       
         // backgroundColor: colorFile.backgroundColor,
         backgroundColor:colorFile.semiTransparentBackground,
         justifyContent:'center'
@@ -88,25 +103,43 @@ export const styles =(colorFile, sizeFile) =>{
         fontSize: sizeFile.chevronIconSize
     },
     verseNumber:{
-        fontSize:sizeFile.contentText
+        fontSize:sizeFile.contentText,
+        fontFamily:fontfamily,
+      
     },
     verseChapterNumber:{
         fontSize:sizeFile.titleText,
-        fontWeight:'bold'
+        
+        //fontFamily:fontfamily,fontSize:22,
     },
     verseTextSelectedHighlighted:{
         backgroundColor:colorFile.highlightColor,
         textDecorationLine: 'underline',
+        fontFamily:fontfamily,
+        fontWeight:'500',
+        fontSize:sizeFile.contentText,
         
     },
     verseTextNotSelectedNotHighlighted:{
+        fontFamily:fontfamily,
+        fontWeight:'500',
+        fontSize:sizeFile.contentText,
+
 
     },
     verseTextNotSelectedHighlighted:{
-        backgroundColor:colorFile.highlightColor
+        backgroundColor:colorFile.highlightColor,
+        fontFamily:fontfamily,
+        fontWeight:'500',
+        fontSize:sizeFile.contentText,
+
     },
     verseTextSelectedNotHighlighted:{
         textDecorationLine: 'underline',
+        fontFamily:fontfamily,
+        fontWeight:'500',
+        fontSize:sizeFile.contentText,
+
     },
     addToSharefooterComponent:{
 

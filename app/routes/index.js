@@ -10,7 +10,7 @@ import EditNote from '../screens/Note/EditNote'
 import NotePage from '../screens/Note/NotePage'
 import Highlights from '../screens/Highlights/'
 import History from '../screens/History/'
-// import Audio from '../screens/Bible/Navigate/Audio/'
+import Audio from '../screens/Bible/Navigate/Audio/'
 // import Video from '../screens/Bible/Navigate/Video/'
 // import StudyHelp from '../screens/Bible/Navigate/StudyHelp/'
 
@@ -25,6 +25,7 @@ import GoogleMaps from  '../screens/GoogleMaps'
 import Images from '../screens/Images'
 import LanguageList from '../screens/LanguageList'
 import More from '../screens/More'
+//import Audio from '../screens/Audio'
 
 import SelectionTab from '../screens/ReferenceSelection/'
 import BookMarks from '../screens/Bookmarks/';
@@ -32,7 +33,7 @@ const StackNavigate = createStackNavigator(
 
   {  
 
-    Settings: { screen: Settings },
+    
       Bible:{screen:Bible,
         navigationOptions: () => ({
           headerStyle: {
@@ -62,6 +63,7 @@ const StackNavigate = createStackNavigator(
       Images:{ screen:Images},
       LanguageList:{screen:LanguageList },
       Account:{ screen:Account},
+      
       More:{ screen:More,
         navigationOptions: { headerTitle:"More" }
       },
@@ -75,13 +77,13 @@ const StackNavigate = createStackNavigator(
       History:{ screen:History},
 
       EditNote:{  screen:EditNote },
-      NotePage:{ screen:NotePage }
+      NotePage:{ screen:NotePage },
       // Video:{
       //   screen:Video
       // },
-      // Audio:{
-      //   screen:Audio
-      // },
+      Audio:{
+        screen:Audio
+      },
      
   },
   

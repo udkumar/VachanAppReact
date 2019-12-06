@@ -1,5 +1,5 @@
 import ApiUtils from './ApiUtils'
-const API_BASE_URL = 'https://stagingapi.autographamt.com/v1/'
+const API_BASE_URL = 'https://api.autographamt.com/v1/'
 
 var APIFetch = {
     async getLanguages() {

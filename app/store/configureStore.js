@@ -9,7 +9,7 @@ import updateStylingReducer from './reducer/updateStylingReducer'
 const rootReducer = combineReducers({
     editNote: editNoteReducer,
     updateVersion:UpdateVersionReducer,
-    updateStyling:updateStylingReducer
+    updateStyling:updateStylingReducer,
 });
 
 export default function configureStore(){

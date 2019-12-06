@@ -71,8 +71,10 @@ const styles = StyleSheet.create({
     borderColor: '#eee',
     borderRadius: 72 / 2,
     alignItems: 'center',
+    flexDirection: 'row',
     justifyContent: 'center',
   },
+  
   secondaryControl: {
     height: 18,
     width: 18,

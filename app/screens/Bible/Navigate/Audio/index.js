@@ -8,8 +8,22 @@ export const TRACKS = [
     title: 'Genesis 1',
     // artist: 'Twenty One Pilots',
     albumArtUrl: "http://36.media.tumblr.com/14e9a12cd4dca7a3c3c4fe178b607d27/tumblr_nlott6SmIh1ta3rfmo1_1280.jpg",
-    audioUrl: "http://russprince.com/hobbies/files/13%20Beethoven%20-%20Fur%20Elise.mp3",
+    audioUrl: "https://file-examples.com/wp-content/uploads/2017/11/file_example_MP3_700KB.mp3",
   },
+  {
+      title: 'Genesis 2',
+  // artist: 'Twenty One Pilots',
+  albumArtUrl: "http://36.media.tumblr.com/14e9a12cd4dca7a3c3c4fe178b607d27/tumblr_nlott6SmIh1ta3rfmo1_1280.jpg",
+  audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  },
+  {
+    title: 'Genesis 3',
+// artist: 'Twenty One Pilots',
+albumArtUrl: "http://36.media.tumblr.com/14e9a12cd4dca7a3c3c4fe178b607d27/tumblr_nlott6SmIh1ta3rfmo1_1280.jpg",
+audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+},
+
+  
 ]
 
 export default class Audio extends Component {

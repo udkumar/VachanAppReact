@@ -19,7 +19,7 @@ export default class App extends Component {
             isDbLoading: true,
             languageCode: AsyncStorageConstants.Values.DefLanguageCode,
             versionCode: AsyncStorageConstants.Values.DefVersionCode,
-    
+            fontfamily:AsyncStorageConstants.Values.FontFamily,
             languageName:AsyncStorageConstants.Values.DefLanguageName,
             versionName:AsyncStorageConstants.Values.DefVersionName,
             colorMode: AsyncStorageConstants.Values.DayMode,
@@ -135,7 +135,8 @@ export default class App extends Component {
           AsyncStorageConstants.Keys.ChapterNumber,
           AsyncStorageConstants.Keys.BookNumber,
           AsyncStorageConstants.Keys.SourceId,
-          AsyncStorageConstants.Keys.Downloaded
+          AsyncStorageConstants.Keys.Downloaded,
+          AsyncStorageConstants.Keys.FontFamily
     
         ])
         // console.log("GET ALL ITEM ",res)
@@ -153,7 +154,8 @@ export default class App extends Component {
           chapterNumber: res[10][1] == null ? AsyncStorageConstants.Values.DefBookChapter:parseInt(res[10][1]),
           bookNumber: res[11][1] == null ? AsyncStorageConstants.Values.DefBookNumber:parseInt(res[11][1]),
           sourceId:res[12][1] == null ? AsyncStorageConstants.Values.DefSourceId:parseInt(res[12][1]),
-          downloaded:res[13][1] == null ? AsyncStorageConstants.Values.DefSourceId:res[13][1].toString()
+          downloaded:res[13][1] == null ? AsyncStorageConstants.Values.DefSourceId:res[13][1].toString(),
+          fontfamily: res[14][1] == null ? AsyncStorageConstants.Values.FontFamily:res[14][1],
         })
     
         await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.LastReadReference, AsyncStorageConstants.Values.LastReadReference
@@ -210,7 +212,7 @@ export default class App extends Component {
           isConnected:this.state.isConnected,
           sourceId:this.state.sourceId,
           downloaded:this.state.downloaded,
-
+          fontfamily:this.state.fontfamily,
           updateColor: this.updateColor,
           updateSize: this.updateSize,
           updateVerseInLine:this.updateVerseInLine,
