@@ -32,10 +32,10 @@ const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 import { styles } from './styles.js';
 
-// import BottomTab from './BottomTab'
+import {SplitScreen} from '../Bible/Navigate/SplitScreen';
 
 import {connect} from 'react-redux'
-import {selectedChapter} from '../../store/action/'
+import {selectedChapter,closeSplitScreen} from '../../store/action/'
 
 
 class Bible extends Component {
@@ -73,7 +73,7 @@ class Bible extends Component {
               /> 
               </TouchableOpacity>
               <TouchableOpacity onPress={() =>{navigation.navigate("More",{languageName:params.languageName,versionCode:params.versionCode,bookId:params.bookId})}} style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
-                <Icon name="more-vert" color="#fff" size={24} />
+                <Icon name="menu" color="#fff" size={24} />
               </TouchableOpacity>
              
           </View>
@@ -133,6 +133,7 @@ class Bible extends Component {
   }
 
   componentWillReceiveProps(props){
+    console.log("close prop in will props ",this.props.close)
     this.setState({
       colorFile:props.colorFile,
       sizeFile:props.sizeFile,
@@ -142,7 +143,7 @@ class Bible extends Component {
     })
     this.styles = styles(props.colorFile, props.sizeFile);  
   }
-
+  
   async componentDidMount(){
     this.gestureResponder = createResponder({
       onStartShouldSetResponder: (evt, gestureState) => true,
@@ -506,7 +507,7 @@ class Bible extends Component {
   _keyExtractor = (item, index) => item.number;
 
   render() {
-    console.log("HightlightedVerseArray  ",this.state.HightlightedVerseArray)
+    console.log("close  ",this.props.close)
       return (
         <View style={this.styles.container}>
         <MenuContext style={this.styles.verseWrapperText}>
@@ -604,29 +605,29 @@ class Bible extends Component {
         } 
     
         </MenuContext>
-        {/* {
-            this.state.close == true ? 
-            <TouchableOpacity style={{ width:width,backgroundColor:"#3F51B5",flexDirection:'row',justifyContent:'flex-end'}} onPress={()=>this.setState({close:!this.state.close})}>
-              <Text style={{color:'#fff',textAlign:'center',fontSize:16}}>See More </Text>
+        {
+            this.props.close ? 
+            <TouchableOpacity style={{ width:width,backgroundColor:"#3F51B5",flexDirection:'row',justifyContent:'flex-end'}} onPress={()=>this.props.closeSplitScreen(false)}>
+              <Text style={{color:'#fff',textAlign:'center',fontSize:16}}>Study Help</Text>
               <Icon name="expand-less" size={24} color="#fff" style={{paddingHorizontal:16}}/>
             </TouchableOpacity>  :
-              <BottomTab
+              <SplitScreen
               style={{flex:1,height:height}}
-                colorFile={this.props.screenProps.colorFile}
-                sizeFile={this.props.screenProps.sizeFile}
-                currentVisibleChapter={this.state.currentVisibleChapter}
-                bookId = {this.state.bookId}
-                versionCode = {this.props.version}
-                languageName = {this.props.language}
-                close={this.state.close}
-                closeSplitScreen ={this.closeSplitScreen}
-                HightlightedVerseArray= {this.state.HightlightedVerseArray}
-                removeHighlight = {this.removeHighlightFromBottom}
-                bookmarksList={this.state.bookmarksList}
-                onBookmarkRemove = {this.onBookmarkRemove}
-                changeBookFromSplit={this.changeBookFromSplit}
+                // colorFile={this.props.screenProps.colorFile}
+                // sizeFile={this.props.screenProps.sizeFile}
+                // currentVisibleChapter={this.state.currentVisibleChapter}
+                // bookId = {this.state.bookId}
+                // versionCode = {this.props.version}
+                // languageName = {this.props.language}
+                close={true}
+                // closeSplitScreen ={this.closeSplitScreen}
+                // HightlightedVerseArray= {this.state.HightlightedVerseArray}
+                // removeHighlight = {this.removeHighlightFromBottom}
+                // bookmarksList={this.state.bookmarksList}
+                // onBookmarkRemove = {this.onBookmarkRemove}
+                // changeBookFromSplit={this.changeBookFromSplit}
             />
-            } */}
+            }
               {this.state.showBottomBar 
           ? 
           <View style={this.styles.bottomBar}>
@@ -715,12 +716,13 @@ const mapStateToProps = state =>{
 
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
-
+    close:state.updateSplitScreen.close
   }
 }
 const mapDispatchToProps = dispatch =>{
   return {
     selectedChapter: (chapterNumber,totalVerses)=>dispatch(selectedChapter(chapterNumber,totalVerses)),
+    closeSplitScreen :(close)=>dispatch(closeSplitScreen(close))
   }
 }
 export  default connect(mapStateToProps,mapDispatchToProps)(Bible)

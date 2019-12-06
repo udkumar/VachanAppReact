@@ -32,7 +32,7 @@ import SelectionTab from '../screens/ReferenceSelection/'
 import BookMarks from '../screens/Bookmarks/';
 const StackNavigate = createStackNavigator(
   {  
-    Commentary:{screen:Commentary},
+    // Commentary:{screen:Commentary},
       Bible:{screen:Bible,
         navigationOptions: () => ({
           headerStyle: {
@@ -88,11 +88,7 @@ const StackNavigate = createStackNavigator(
   },
   
   { 
-    defaultNavigationOptions: {
-      headerTintColor: '#fff',
-      headerStyle:{ backgroundColor:"#3F51B5" },
-      headerTitleStyle: { fontWeight: 'normal',},
-    },
+   
     defaultNavigationOptions: {
       headerStyle: {
           backgroundColor: "#3F51B5",

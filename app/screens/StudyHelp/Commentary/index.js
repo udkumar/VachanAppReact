@@ -51,7 +51,10 @@ class Commentary extends Component {
         let exRegex = /<b>(.*?)<\/b>/g
 
         let content = string.replace(exRegex,'$1').replace(/<br>|<br\/>/g,'\n')
-
+        // const element = React.createElement('Text', { }, capturedContent)
+        let regexMatch = string.match(regex)
+        console.log("regex match ",regexMatch)
+        
         if(id == substr[0]){
           commentaryContent["book"] = substr[0]
           commentaryContent["chapter"] = substr[1]

@@ -17,13 +17,13 @@ export default class Audio extends Component {
         super(props)
         console.log("PROPS ON NOTEPAD "+JSON.stringify(props))
         this.state ={
-            close:this.props.screenProps.close
+            // close:this.props.screenProps.close
         }
     }
     componentDidMount(){
         console.log("DID MOUNT OF NOTEPAD")
         this.props.navigation.setParams({ 
-            closeOnPress: this.props.screenProps.closeSplitScreen,
+            // closeOnPress: this.props.screenProps.closeSplitScreen,
         })
     }
     static navigationOptions = ({navigation}) =>{
