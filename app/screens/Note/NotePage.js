@@ -12,6 +12,8 @@ import { NavigationActions } from 'react-navigation';
 import { noteStyle } from './styles.js';
 import DbQueries from '../../utils/dbQueries'
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {connect} from 'react-redux'
+
 import {
   Menu,
   MenuContext,
@@ -21,7 +23,7 @@ import {
 } from 'react-native-popup-menu';
 
 
-export default class NotePage extends Component {
+class NotePage extends Component {
   static navigationOptions = ({navigation}) =>({
     headerTitle: 'Note',
     // headerLeft:(<HeaderBackButton tintColor='white' onPress={()=>{navigation.state.params.handleBack()}}/>),
@@ -32,12 +34,11 @@ export default class NotePage extends Component {
   constructor(props){
     super(props);
     this.state = {
-      colorFile:this.props.screenProps.colorFile,
       noteData:this.props.navigation.state.params.note,
       createdTime:this.props.navigation.state.params.createdTime,
       bodyText:this.props.navigation.state.params.bodyText
     }
-    this.styles = noteStyle(props.screenProps.colorFile, props.screenProps.sizeFile);   
+    this.styles = noteStyle(props.colorFile, props.sizeFile);   
   }
 
  
@@ -127,6 +128,11 @@ export default class NotePage extends Component {
   }
 }
 
+const mapStateToProps = state =>{
+  return{
+    sizeFile:state.updateStyling.sizeFile,
+    colorFile:state.updateStyling.colorFile,
+  }
+}
 
-
-
+export  default connect(mapStateToProps,null)(NotePage)

@@ -15,7 +15,11 @@ import {Segment,Button,Tab,Tabs} from 'native-base'
 import { HintStyle } from './styles.js';
 const width = Dimensions.get('window').width;
 import FixedSidebar from '../../components/FixedSidebar/FixedSidebar'
-export default class HintsPage extends Component {
+import {connect} from 'react-redux'
+
+
+
+class HintsPage extends Component {
 static navigationOptions = {
     headerTitle: 'Hints',
 };
@@ -34,7 +38,7 @@ constructor(props){
       ],
   }
   this.showHints = this.showHints.bind(this)
-  this.styleFile = HintStyle(this.props.screenProps.colorFile, this.props.screenProps.sizeFile);
+  this.styleFile = HintStyle(this.props.colorFile, this.props.sizeFile);
 }
   showHints(icon, index){
     let visibility = [ ...this.state.iconName ];
@@ -65,5 +69,11 @@ constructor(props){
    }
  }
 
+ const mapStateToProps = state =>{
+  return{
+    sizeFile:state.updateStyling.sizeFile,
+    colorFile:state.updateStyling.colorFile,
+  }
+}
 
-
+export  default connect(mapStateToProps,null)(HintsPage)

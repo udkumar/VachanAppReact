@@ -1,4 +1,4 @@
-import React, { Component, version } from 'react';
+import React, { Component} from 'react';
 import {
   Text,
   View,
@@ -32,9 +32,10 @@ const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 import { styles } from './styles.js';
 
-// import BottomTab from './BottomTab'
+import {SplitScreen} from '../Bible/Navigate/SplitScreen';
 
 import {connect} from 'react-redux'
+import {selectedChapter,closeSplitScreen} from '../../store/action/'
 
 
 class Bible extends Component {
@@ -98,8 +99,8 @@ class Bible extends Component {
               </TouchableOpacity>
              
               <TouchableOpacity onPress={() =>{navigation.navigate("More",{languageName:params.languageName,versionCode:params.versionCode,bookId:params.bookId})}} style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
-              <Icon name="more-vert" color="#fff" size={24} />
-             </TouchableOpacity>
+                <Icon name="menu" color="#fff" size={24} />
+              </TouchableOpacity>
              
           </View>
         )
@@ -141,17 +142,16 @@ class Bible extends Component {
       //onFullScreen:false,
       status:true,
       bookName:getBookNameFromMapping(this.props.bookId,this.props.language),
+      bookId:this.props.bookId,
       // menuHighlightedText: false,
       bookmarksList: [],
       isBookmark: false,
-      currentVisibleChapter:this.props.screenProps.chapterNumber,
-      bookNumber:this.props.screenProps.bookNumber,
+      currentVisibleChapter:this.props.chapterNumber,
+      bookNumber:this.props.bookNumber,
       selectedReferenceSet: [],
-      verseInLine: this.props.screenProps.verseInLine,
-      totalChapters:0,
+      verseInLine: this.props.verseInLine,
+      totalChapters:this.props.totalChapters,
       bottomHighlightText:false,
-      colorFile:this.props.screenProps.colorFile,
-      sizeFile:this.props.screenProps.sizeFile,
       HightlightedVerseArray:[],
       gestureState: {},
       thumbSize: 100,
@@ -171,25 +171,24 @@ class Bible extends Component {
 
     this.pinchDiff = 0
     this.pinchTime = new Date().getTime()
-    this.styles = styles(this.state.colorFile, this.state.sizeFile,this.props.fontFamily);    
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);    
     this.modelValue = "modal1"
    
     
   }
 
-  
   componentWillReceiveProps(props){
+    console.log("close prop in will props ",this.props.close)
     this.setState({
-      colorFile:props.screenProps.colorFile,
-      sizeFile:props.screenProps.sizeFile,
-      fontFamily:props.fontFamily,
-    //   bookId:props.screenProps.bookId,
-    //   bookName:props.screenProps.bookName,
-    //   currentChapter:props.screenProps.currentChapter
+      colorFile:props.colorFile,
+      sizeFile:props.sizeFile,
+      bookId:props.bookId,
+      bookName:props.bookName,
+      currentChapter:props.chapterNumber
     })
-    this.styles = styles(props.screenProps.colorFile, props.screenProps.sizeFile,props.fontFamily);  
+    this.styles = styles(props.colorFile, props.sizeFile);  
   }
-
+  
   async componentDidMount(){
     this.gestureResponder = createResponder({
       onStartShouldSetResponder: (evt, gestureState) => true,
@@ -268,8 +267,8 @@ class Bible extends Component {
 
  
     queryBookFromAPI = async(val)=>{
-      this.state.chapter = []
-        this.setState({isLoading:true,currentVisibleChapter: val != null ? this.state.currentVisibleChapter + val : this.props.chapterNumber },async()=>{
+        this.setState({isLoading:true,chapter:[],currentVisibleChapter: val != null ? this.state.currentVisibleChapter + val : this.props.chapterNumber },async()=>{
+        
           console.log("current visible chapter ",this.state.currentVisibleChapter) 
           if(this.props.downloaded == true ){
               let response = await DbQueries.queryVersions(this.props.language,this.props.version,this.props.bookId,this.state.currentVisibleChapter)
@@ -288,6 +287,7 @@ class Bible extends Component {
                   bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
                   currentChapter:this.state.currentVisibleChapter
                 })
+              this.props.selectedChapter(this.state.currentVisibleChapter,response[0].verses.length)
               }
               else{
                 alert("no book found of ",this.props.bookId)
@@ -318,7 +318,7 @@ class Bible extends Component {
                       bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
                       currentChapter:this.state.currentVisibleChapter
                     })
-
+                  this.props.selectedChapter(this.state.currentVisibleChapter,response.chapterContent.verses.length)
                   }
               }
               else{
@@ -332,27 +332,27 @@ class Bible extends Component {
                
               }
             }
-           
+            this.getHighlights()
+            this.getBookMarks(this.props.bookId,this.state.currentVisibleChapter)
         })
-      this.getHighlights()
-      this.getBookMarks(this.props.bookId,this.state.currentVisibleChapter)
-    this.styles = styles(this.props.screenProps.colorFile, this.props.screenProps.sizeFile,this.props.fontFamily);  
-
+      
+     
   }
  
   async getHighlights(){
+
+    console.log("language props ",this.props.language)
     let model2 = await  DbQueries.queryHighlights(this.props.language,this.props.version,this.props.bookId)
-    if(model2  == null ){
-    }
-    else{
-      if(model2.length > 0){
-        for(var i = 0; i<=model2.length-1;i++){
-          this.setState({
-            HightlightedVerseArray:[{"bookId":model2[i].bookId,"chapterNumber":model2[i].chapterNumber,"verseNumber":model2[i].verseNumber}]
-          })
-        }
+    const HightlightedVerseArray =[]
+    if(Object.keys(model2).length === 0){
+      console.log("get highlight  ",model2)
+      for(var i = 0; i<=model2.length-1;i++){
+        const obj = {"bookId":model2[i].bookId,"chapterNumber":model2[i].chapterNumber,"verseNumber":model2[i].verseNumber}
+        HightlightedVerseArray.push(obj)
       }
-  }
+      this.setState({HightlightedVerseArray})
+      // return
+    }
   }
 
   //get bookmarks from local db
@@ -399,7 +399,7 @@ class Bible extends Component {
 //selected reference for highlighting verse
   getSelectedReferences(vIndex, chapterNum, vNum,text) {
 
-    let obj = chapterNum + '_' + vIndex + '_' + vNum + '_' + text
+    let obj = chapterNum+'_' +vIndex+'_'+vNum+'_'+text
     let selectedReferenceSet = [...this.state.selectedReferenceSet]
     
     var found = false;
@@ -414,18 +414,23 @@ class Bible extends Component {
     if (!found) {
       selectedReferenceSet.push(obj)
     }
-
+    // console.log("HightlightedVerseArray get selected ",this.state.HightlightedVerseArray)
     this.setState({selectedReferenceSet}, () => {
       let selectedCount = this.state.selectedReferenceSet.length, highlightCount = 0;
       for (let item of this.state.selectedReferenceSet) {
           let tempVal = item.split('_')
           for(var i=0; i<=this.state.HightlightedVerseArray.length-1; i++ ){
-              if ( JSON.parse(tempVal[2]) == this.state.HightlightedVerseArray[i].verseNumber && JSON.parse(tempVal[0]) == this.state.HightlightedVerseArray[i].chapterNumber && this.state.HightlightedVerseArray[i].bookId == this.props.bookId  ) {
+
+              if (this.state.HightlightedVerseArray[i].verseNumber == JSON.parse(tempVal[2]) && this.state.HightlightedVerseArray[i].chapterNumber ==JSON.parse(tempVal[0]) && this.state.HightlightedVerseArray[i].bookId == this.state.bookId  ) {
+                console.log("selected highlight",this.state.HightlightedVerseArray[i].verseNumber)
                 highlightCount++
               }
+              
           }
       }
-      this.setState({showBottomBar: this.state.selectedReferenceSet.length > 0 ? true : false, bottomHighlightText: selectedCount == highlightCount ? false : true})
+      console.log("SELECT COUNT ",selectedCount,"HIGHLIGHTED COUNT ",highlightCount)
+
+      this.setState({showBottomBar: this.state.selectedReferenceSet.length > 0 ? true : false, bottomHighlightText: selectedCount == highlightCount ?  false : true})
     })
   }
   
@@ -463,24 +468,33 @@ class Bible extends Component {
   onbackNote=()=>{
     console.log("onback nothing in bible page")
   }
+ 
   //after selected reference do highlight 
   doHighlight = async () => {
     // let HightlightedVerseArray = [...this.state.HightlightedVerseArray]
       console.log("bottom highlight ",this.state.bottomHighlightText )
     if (this.state.bottomHighlightText == true) {
       // do highlight
+      var arr = []
       for (let item of this.state.selectedReferenceSet){
         console.log("selected reference ",this.state.selectedReferenceSet)
         let tempVal = item.split('_')
         await DbQueries.updateHighlightsInVerse( this.props.language, this.props.version,this.props.bookId,this.state.currentVisibleChapter, tempVal[2], true)
-        this.setState({HightlightedVerseArray:[...this.state.HightlightedVerseArray,{"bookId":this.state.bookId,"chapterNumber":this.state.currentVisibleChapter,"verseNumber":tempVal[2]}]})
-      }
+        var highlightArr = this.state.HightlightedVerseArray
+        highlightArr.push({"bookId":this.props.bookId,"chapterNumber":this.state.currentVisibleChapter,"verseNumber":JSON.parse(tempVal[2])})
+        var arr = highlightArr.sort( function( a, b){ return a.verseNumber - b.verseNumber; } );
+        for( var i=0; i<arr.length-1; i++ ) {
+        if ( arr[i].verseNumber == arr[i+1].verseNumber ){
+          arr.splice(i+1,1)
+        }
+        }
+        }
     } else {
       // remove highlight
       for (let item of this.state.selectedReferenceSet){
         let tempVal = item.split('_')
         for(var i=0; i<=this.state.HightlightedVerseArray.length-1; i++){
-          if(this.state.HightlightedVerseArray[i].chapterNumber == JSON.parse(tempVal[0]) && this.state.HightlightedVerseArray[i].verseNumber == JSON.parse(tempVal[2]) &&  this.state.HightlightedVerseArray[i].bookId == this.props.bookId) {
+          if(this.state.HightlightedVerseArray[i].chapterNumber == JSON.parse(tempVal[0]) && this.state.HightlightedVerseArray[i].verseNumber == JSON.parse(tempVal[2]) &&  this.state.HightlightedVerseArray[i].bookId == this.state.bookId) {
             await DbQueries.updateHighlightsInVerse( this.props.language, this.props.version,this.props.bookId,this.state.currentVisibleChapter, tempVal[2],false)
             this.state.HightlightedVerseArray.splice(i, 1)
           }
@@ -489,6 +503,7 @@ class Bible extends Component {
     }
     this.setState({ selectedReferenceSet: [], showBottomBar: false})
   }
+
 
   //share verse
   addToShare = () => {
@@ -514,14 +529,13 @@ class Bible extends Component {
         chapterNumber:this.state.currentVisibleChapter,
     }
     AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.LastReadReference, lastRead);
-    this.props.screenProps.updateLastRead(lastRead);
 
-    if(this.props.navigation.state.params.prevScreen =='bookmark'){
-      this.props.navigation.state.params.updateBookmark()
-    }
-    else if(this.props.navigation.state.params.prevScreen == 'highlights'){
-      this.props.navigation.state.params.updateHighlights()
-    }
+    // if(this.props.navigation.state.params.prevScreen =='bookmark'){
+    //   this.props.navigation.state.params.updateBookmark()
+    // }
+    // else if(this.props.navigation.state.params.prevScreen == 'highlights'){
+    //   this.props.navigation.state.params.updateHighlights()
+    // }
 
   }
 
@@ -554,7 +568,7 @@ class Bible extends Component {
   }
  
   render() {
-    console.log(" font family using reducer ",this.props.fontFamily)
+    console.log("close  ",this.props.close)
       return (
         <View style={this.styles.container}>
         <MenuContext style={this.styles.verseWrapperText}>
@@ -565,91 +579,114 @@ class Bible extends Component {
                 // textStyle={styles.spinnerTextStyle}
             />
               :
-               <View>
-               <ScrollView  
-               ref={(ref) => { this.scrollViewRef = ref; }}
-               >
-                   <FlatList
-                   style={{padding:10}}
-                   data={this.state.chapter }
-                   extraData={this.state}
-                   
-                   renderItem={({item, index}) => 
-                
-                 
-                            <VerseView
-                                ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
-                                verseData = {item}
-                                index = {index}
-                                styles = {this.styles}
-                                selectedReferences = {this.state.selectedReferenceSet}
-                                getSelection = {(verseIndex, chapterNumber, verseNumber,text) => {
-                                this.getSelectedReferences(verseIndex, chapterNumber, verseNumber,text)
-                                }}
-                                
-                                HightlightedVerse = {this.state.HightlightedVerseArray}
-                                chapterNumber ={this.state.currentVisibleChapter}
-                                bookId={this.props.bookId}
-                               // showBottomBar={this.state.showBottomBar}
-                              //onFullScreen ={this.state.onFullScreen}
-                                //onPress={() => this.onFullScreen()}
+              <View>
+              <ScrollView
+              {...this.gestureResponder}
+              style={this.styles.recyclerListView}
+              ref={(ref) => { this.scrollViewRef = ref; }}                    
+          >
+           {    (this.state.verseInLine) ?
+            <View style={this.styles.chapterList}>
+                     <FlatList
+                      style={{padding:10}}
+                      data={this.state.chapter }
+                      extraData={this.state}
+                      renderItem={({item, index}) => 
+                      <VerseView
+                          ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
+                          verseData = {item}
+                          index = {index}
+                          styles = {this.styles}
+                          selectedReferences = {this.state.selectedReferenceSet}
+                          getSelection = {(verseIndex, chapterNumber, verseNumber,text) => {
+                          this.getSelectedReferences(verseIndex, chapterNumber, verseNumber,text)
+                          }}
+                          
+                          HightlightedVerse = {this.state.HightlightedVerseArray}
+                          chapterNumber ={this.state.currentVisibleChapter}
+                          bookId={this.state.bookId}
+                          showBottomBar={this.state.showBottomBar}
+                      />
+                      }
+                      keyExtractor={this._keyExtractor}
+                      ListFooterComponent={<View style={styles.addToSharefooterComponent} />}
+                      />
+                      </View>
+                  :
+                      <View style={this.styles.chapterList}>
+                        {this.state.chapter.map((verse, index) => 
+                        <View>
+                        <Text letterSpacing={24}
+                            style={this.styles.verseWrapperText}>
+                              <VerseView
+                              ref={child => (this[`child_${verse.chapterNumber}_${index}`] = child)}
+                              verseData = {verse}
+                              index = {index}
+                              styles = {this.styles}
+                              selectedReferences = {this.state.selectedReferenceSet}
+                              getSelection = {(verseIndex, chapterNumber, verseNumber,text) => {
+                              this.getSelectedReferences(verseIndex, chapterNumber, verseNumber,text)
+                              }}
+                              
+                              HightlightedVerse = {this.state.HightlightedVerseArray}
+                              chapterNumber ={this.state.currentVisibleChapter}
+                              bookId={this.state.bookId}
+                              showBottomBar={this.state.showBottomBar}
                             />
-                           
-                   }
-                      
-                   keyExtractor={this._keyExtractor}
-                   
-                   />
-                
-             </ScrollView>
-              
-                {
-                  this.state.currentVisibleChapter == 1 
-                  ? null :
-                  <View style={this.styles.bottomBarPrevView}>
-                      <Icon name={'chevron-left'} color="#3F51B5" size={32} 
-                          style={this.styles.bottomBarChevrontIcon} 
-                          onPress={()=>this.queryBookFromAPI(-1)}
-                          />
-                  </View>
+                        </Text>
+                        {index == this.state.chapter.length - 1  ? <View style={{height:64, marginBottom:4}} />: null  }
+                        </View>
+                        )}
+                      </View>
                   }
-                  {
-                    this.state.currentVisibleChapter == this.state.totalChapters 
-                  ? null :
-                  <View style={this.styles.bottomBarNextView}>
-                      <Icon name={'chevron-right'} color="#3F51B5" size={32} 
-                          style={this.styles.bottomBarChevrontIcon} 
-                          onPress={()=>this.queryBookFromAPI(1)}
-                          />
-                  </View>
-                  }
-                  
-              </View>
+          </ScrollView>
+            {
+            this.state.currentVisibleChapter == 1 
+            ? null :
+            <View style={this.styles.bottomBarPrevView}>
+                <Icon name={'chevron-left'} color="#3F51B5" size={32} 
+                    style={this.styles.bottomBarChevrontIcon} 
+                    onPress={()=>this.queryBookFromAPI(-1)}
+                    />
+            </View>
+            }
+            {
+              this.state.currentVisibleChapter == this.state.totalChapters 
+            ? null :
+            <View style={this.styles.bottomBarNextView}>
+                <Icon name={'chevron-right'} color="#3F51B5" size={32} 
+                    style={this.styles.bottomBarChevrontIcon} 
+                    onPress={()=>this.queryBookFromAPI(1)}
+                    />
+            </View>
+            }
+            
+        </View>
 
         } 
     
         </MenuContext>
         {/* {
-            this.state.close == true ? 
-            <TouchableOpacity style={{ width:width,backgroundColor:"#3F51B5",flexDirection:'row',justifyContent:'flex-end'}} onPress={()=>this.setState({close:!this.state.close})}>
-              <Text style={{color:'#fff',textAlign:'center',fontSize:16}}>See More </Text>
+            this.props.close ? 
+            <TouchableOpacity style={{ width:width,backgroundColor:"#3F51B5",flexDirection:'row',justifyContent:'flex-end'}} onPress={()=>this.props.closeSplitScreen(false)}>
+              <Text style={{color:'#fff',textAlign:'center',fontSize:16}}>Study Help</Text>
               <Icon name="expand-less" size={24} color="#fff" style={{paddingHorizontal:16}}/>
             </TouchableOpacity>  :
-              <BottomTab
+              <SplitScreen
               style={{flex:1,height:height}}
-                colorFile={this.props.screenProps.colorFile}
-                sizeFile={this.props.screenProps.sizeFile}
-                currentVisibleChapter={this.state.currentVisibleChapter}
-                bookId = {this.state.bookId}
-                versionCode = {this.props.version}
-                languageName = {this.props.language}
-                close={this.state.close}
-                closeSplitScreen ={this.closeSplitScreen}
-                HightlightedVerseArray= {this.state.HightlightedVerseArray}
-                removeHighlight = {this.removeHighlightFromBottom}
-                bookmarksList={this.state.bookmarksList}
-                onBookmarkRemove = {this.onBookmarkRemove}
-                changeBookFromSplit={this.changeBookFromSplit}
+                // colorFile={this.props.screenProps.colorFile}
+                // sizeFile={this.props.screenProps.sizeFile}
+                // currentVisibleChapter={this.state.currentVisibleChapter}
+                // bookId = {this.state.bookId}
+                // versionCode = {this.props.version}
+                // languageName = {this.props.language}
+                close={true}
+                // closeSplitScreen ={this.closeSplitScreen}
+                // HightlightedVerseArray= {this.state.HightlightedVerseArray}
+                // removeHighlight = {this.removeHighlightFromBottom}
+                // bookmarksList={this.state.bookmarksList}
+                // onBookmarkRemove = {this.onBookmarkRemove}
+                // changeBookFromSplit={this.changeBookFromSplit}
             />
             } */}
               {/* {this.state.showBottomBar 
@@ -764,11 +801,21 @@ const mapStateToProps = state =>{
     downloaded:state.updateVersion.downloaded,
 
     chapterNumber:state.updateVersion.chapterNumber,
+    totalChapters:state.updateVersion.totalChapters,
     bookName:state.updateVersion.bookName,
     bookId:state.updateVersion.bookId,
-    fontFamily:state.updateStyling.fontFamily
+    fontFamily:state.updateStyling.fontFamily,
 
+
+    sizeFile:state.updateStyling.sizeFile,
+    colorFile:state.updateStyling.colorFile,
+    close:state.updateSplitScreen.close
   }
 }
-
-export  default connect(mapStateToProps,null)(Bible)
+const mapDispatchToProps = dispatch =>{
+  return {
+    selectedChapter: (chapterNumber,totalVerses)=>dispatch(selectedChapter(chapterNumber,totalVerses)),
+    closeSplitScreen :(close)=>dispatch(closeSplitScreen(close))
+  }
+}
+export  default connect(mapStateToProps,mapDispatchToProps)(Bible)

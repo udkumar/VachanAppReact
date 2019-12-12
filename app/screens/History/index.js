@@ -16,10 +16,12 @@ import {getBookNameFromMapping} from '../../utils/UtilFunctions';
 import Accordion from 'react-native-collapsible/Accordion';
 import {List,ListItem} from 'native-base'
 import { historyStyle } from './styles.js'
+import {connect} from 'react-redux'
+
 
 var moment = require('moment');
 
-export default class History extends Component{
+ class History extends Component{
   static navigationOptions = {
     headerTitle: 'History',
     // headerRight:(
@@ -52,7 +54,7 @@ export default class History extends Component{
     ],
     isLoading:false
     }
-    this.styles = historyStyle(props.screenProps.colorFile, props.screenProps.sizeFile);       
+    this.styles = historyStyle(props.colorFile, props.sizeFile);       
     this.onClearHistory = this.onClearHistory.bind(this)
 
     this.props.navigation.setParams({
@@ -141,7 +143,7 @@ export default class History extends Component{
             data.list.map((item, index) => 
             <TouchableOpacity onPress={()=>this.props.navigation.navigate("Bible",{bookId: item.bookId, 
               bookName: getBookNameFromMapping(item.bookId), chapterNumber: item.chapterNumber })}>
-              <Text style={this.styles.contentText}>{getBookNameFromMapping(item.bookId,this.props.screenProps.languageName)} : {item.chapterNumber} </Text>
+              <Text style={this.styles.contentText}>{getBookNameFromMapping(item.bookId,this.props.languageName)} : {item.chapterNumber} </Text>
             </TouchableOpacity>
             )
            
@@ -178,3 +180,13 @@ export default class History extends Component{
   }
 }
 
+const mapStateToProps = state =>{
+  return{
+    languageName: state.updateVersion.language,
+
+    sizeFile:state.updateStyling.sizeFile,
+    colorFile:state.updateStyling.colorFile,
+  }
+}
+
+export  default connect(mapStateToProps,null)(History)

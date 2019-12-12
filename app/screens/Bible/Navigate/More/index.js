@@ -14,7 +14,7 @@ export default class More extends Component {
         super(props)
         console.log("PROPS ON NOTEPAD "+JSON.stringify(props))
         this.state ={
-            close:this.props.screenProps.close
+            // close:this.props.screenProps.close
         }
     }
     static navigationOptions = ({navigation}) =>{
@@ -31,7 +31,7 @@ export default class More extends Component {
     componentDidMount(){
         console.log("DID MOUNT OF NOTEPAD")
         this.props.navigation.setParams({ 
-            closeOnPress: this.props.screenProps.closeSplitScreen,
+            // closeOnPress: this.props.screenProps.closeSplitScreen,
             navigateTo:this.props.navigation.navigate('')
         })
     }

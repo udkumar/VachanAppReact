@@ -62,7 +62,7 @@ export const AsyncStorageConstants = {
         DefBookName:getBookNameFromMapping("3jn","Hindi"),
         DefBookChapter:1,
         DefBookNumber:getBookNumberFromMapping("3jn"),
-        DefSourceId:35,
+        DefSourceId:45,
         DefDownloaded:false
        
     }

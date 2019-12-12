@@ -8,7 +8,12 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 const height = Dimensions.get('window').height;
-
+const ListItems = [
+    {key:'SUMMARY',screen:'Summary'},
+    {key:'FOOTNOTES',screen:'Footnotes'},
+    {key:'COMMENTARY',screen:'Commentary'},
+    {key:'DICTIONARY',screen:'Dictionary'},
+]
 export default class StudyHelp extends Component {
     constructor(props){
         super(props)
@@ -21,10 +26,6 @@ export default class StudyHelp extends Component {
         const { params = {} } = navigation.state;
             return{
                 headerTitle:(<Text style={{fontSize:14,color:"white",marginLeft:10}}>Study Help</Text>),
-                headerRight:(
-                    <Icon name="close"  style={{fontSize:20,marginRight:10,color:"#fff"}} onPress={() => {params.closeOnPress()}} />
-                ),
-                tabBarIcon: (<Icon name="list" size={20} style={{color:'#fff'}}/>)
             }
         }
     componentDidMount(){
@@ -38,7 +39,7 @@ export default class StudyHelp extends Component {
     return (
       <View>
             <FlatList
-            data={[{key:'SUMMARY',screen:'Summary'},{key:'FOOTNOTES',screen:'Footnotes'},{key:'COMMENTARY',screen:'Commentary'},{key:'DICTIONARY',screen:'Dictionary'}]}
+            data={ListItems}
             numColumns={2}
             renderItem={({item}) =>
                 <TouchableOpacity
@@ -49,8 +50,7 @@ export default class StudyHelp extends Component {
                     height:height/6, 
                     justifyContent:"center"
                 }}
-                onPress={()=>{this.props.navigation.navigate(item.screen)}}
-                >
+                onPress={()=>{this.props.navigation.navigate(item.screen)}}>
                     <Text style={{textAlign:"center", alignItems:"center"}}>{item.key}</Text>
                 </TouchableOpacity>
             }/>

@@ -70,9 +70,7 @@ export default class VerseView extends Component {
     return false;
   }
   isHighlight(){
-    // var verseNumber =  this.props.HightlightedVerse[0].verseNumber
-    for(var i = 0 ;i<=this.props.HightlightedVerse.length-1;i++ ){
-        console.log("verse highlight ",this.props.HightlightedVerse[i].verseNumber)
+    for(var i = 0 ;i<this.props.HightlightedVerse.length; i++ ){
         if( this.props.HightlightedVerse[i].bookId  == this.props.bookId && this.props.HightlightedVerse[i].verseNumber == this.props.verseData.number && this.props.chapterNumber == this.props.HightlightedVerse[i].chapterNumber){
           return true
         }

@@ -24,16 +24,6 @@ import {updateColorMode,updateFontSize,updateVerseInLine} from '../../store/acti
 import SplashScreen from 'react-native-splash-screen'
  
 
-// const setParamsAction = ({colorFile}) => NavigationActions.setParams({
-//   params: { colorFile },
-//   key: 'SelectBook',
-// });
-
-// const setParamsAction2 = ({sizeFile}) => NavigationActions.setParams({
-//   params: { sizeFile },
-//   key: 'SelectBook',
-// });
-
 class Setting extends Component {
   static navigationOptions = {
     headerTitle: 'Settings',
@@ -42,76 +32,33 @@ class Setting extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      colorMode:this.props.colorMode,
+      colorFile:this.props.colorFile,
       sizeMode:this.props.sizeMode,
       sizeFile:this.props.sizeFile,
-      colorMode: this.props.colorMode,
-      colorFile:this.props.colorFile,
-      verseInLine:this.props.verseInLine
-    };
-    
-    this.styles = settingsPageStyle(this.state.colorFile, this.state.sizeFile);
+      verseInLine:false
+    }
+    this.styles = settingsPageStyle(this.props.colorFile, this.props.sizeFile);
   }
 
-   onSizeFileUpdate(sizeMode, sizeFile){
-    this.setState({sizeFile})
-    this.props.updateFontSize(sizeMode,sizeFile)
-    // this.props.navigation.dispatch(setParamsAction2(sizeFile));
-    this.styles = settingsPageStyle(this.state.colorFile, sizeFile);
-  }
 
-  onChangeSlider(value) {
+
+  async onChangeSlider(value){
+    await this.props.updateFontSize(value)
+    // this.styles = settingsPageStyle(this.props.colorFile, this.props.sizeFile);
     AsyncStorageUtil.setAllItems([
-      [AsyncStorageConstants.Keys.SizeMode,JSON.stringify(value)],
-    ]);
-    console.log("on change slider value "+value)
-    switch(value) {
-      case AsyncStorageConstants.Values.SizeModeXSmall: {
-        this.onSizeFileUpdate(value, extraSmallFont)
-        break;
-      }
-
-      case AsyncStorageConstants.Values.SizeModeSmall: {
-        this.onSizeFileUpdate(value, smallFont)
-        break;
-      }
-
-      case AsyncStorageConstants.Values.SizeModeNormal: {
-        this.onSizeFileUpdate(value, mediumFont)
-        break;
-      }
-
-      case AsyncStorageConstants.Values.SizeModeLarge: {
-        this.onSizeFileUpdate(value, largeFont)
-        break;
-      }
-      
-      case AsyncStorageConstants.Values.SizeModeXLarge: {
-        sizeFile = extraLargeFont;
-        this.onSizeFileUpdate(value, sizeFile)
-        break;
-      }
-    }
+      [AsyncStorageConstants.Keys.SizeMode, JSON.stringify(value)],
+      ]);
+    console.log("size mode ",this.props.sizeMode)
   }
 
-   onColorModeChange(value){
-    if (this.state.colorMode == value) {
-      return;
-    }
-    const changeColorFile = value == AsyncStorageConstants.Values.DayMode
-      ? dayColors
-      : nightColors;
-
-    this.setState({colorMode: value, colorFile: changeColorFile},()=>{
-      this.props.updateColorMode(this.state.colorMode,this.state.colorFile);
-      // this.props.navigation.dispatch(setParamsAction(this.state.colorFile))
-      
+   async onColorModeChange(value){
+    console.log("value ",value,"color mode props ",this.props.colorMode)
+      await this.props.updateColorMode(value)
+      // this.styles = settingsPageStyle(this.props.colorFile, this.props.sizeFile);
       AsyncStorageUtil.setAllItems([
-        [AsyncStorageConstants.Keys.ColorMode, JSON.stringify(this.state.colorMode)],
+      [AsyncStorageConstants.Keys.ColorMode, JSON.stringify(value)],
       ]);
-      
-      this.styles = settingsPageStyle(changeColorFile, this.state.sizeFile)
-    })
-    
   }
 
    onVerseInLineModeChange(){
@@ -122,15 +69,22 @@ class Setting extends Component {
         ]);
       })
   }
-  componentDidMount(){
-    SplashScreen.hide()
+
+  static getDerivedStateFromProps(props, state){
+    return{
+      colorMode:props.colorMode,
+      sizeMode:props.sizeMode,
+      colorFile:props.colorFile,
+      sizeFile:props.sizeFile,
+      verseInLine:props.verseInLine
+    }
   }
-
   render() {
-
+    this.styles = settingsPageStyle(this.props.colorFile,this.props.sizeFile)
+    console.log(" color mode ",this.state.colorMode)
     const dayModeIconColor = this.state.colorMode == AsyncStorageConstants.Values.DayMode  ? dayColors.accentColor : 'grey'
     const nightModeIconColor =  this.state.colorMode == AsyncStorageConstants.Values.NightMode  ? nightColors.accentColor : 'grey'
-    // const modeIconConstColor = constColors.accentColor
+    const modeIconConstColor = constColors.accentColor
 
     return (
       <View style={this.styles.container}>
@@ -158,12 +112,8 @@ class Setting extends Component {
                     <Icon 
                       name="brightness-7" 
                       style={this.styles.modeIconCustom}
-                      color={
-                        nightModeIconColor 
-                      } 
-                      onPress={
-                        this.onColorModeChange.bind(this, 0)
-                      }
+                      color={ nightModeIconColor  } 
+                      onPress={()=>this.onColorModeChange(0)}
                     />
                   </View>
                   <View style={this.styles.cardItemRow}>
@@ -177,9 +127,7 @@ class Setting extends Component {
                       name="brightness-5" 
                       style={this.styles.modeIconCustom}
                       color={dayModeIconColor}
-                      onPress={
-                        this.onColorModeChange.bind(this, 1)
-                      }
+                      onPress={()=>this.onColorModeChange(1)}
                     />
                   </View>
                 </View>
@@ -201,7 +149,7 @@ class Setting extends Component {
                     maximumValue={4}
                     thumbColor={this.state.colorMode == AsyncStorageConstants.Values.DayMode ? dayModeIconColor: nightModeIconColor}
                     minimumTrackTintColor={this.state.colorMode == AsyncStorageConstants.Values.DayMode ? dayModeIconColor: nightModeIconColor}
-                    onValueChange={this.onChangeSlider.bind(this)}
+                    onValueChange={(value)=>{this.onChangeSlider(value)}}
                     value={this.state.sizeMode}
                   />
                 </Right>
@@ -214,7 +162,7 @@ class Setting extends Component {
                 <Switch 
                   size={24} 
                   thumbColor={this.state.colorMode == AsyncStorageConstants.Values.DayMode ? dayModeIconColor: nightModeIconColor}
-                  onValueChange={this.onVerseInLineModeChange.bind(this)}
+                  onValueChange={()=>this.onVerseInLineModeChange}
                   value={this.state.verseInLine}
                   style={this.styles.cardItemIconCustom} 
                 />
@@ -265,19 +213,21 @@ class Setting extends Component {
 
 const mapStateToProps = state =>{
   return{
-    sizeMode:state.updateStyling.fontValue.sizeMode,
-    sizeFile:state.updateStyling.fontValue.sizeFile,
-    colorMode: state.updateStyling.colorValue.colorMode,
-    colorFile:state.updateStyling.colorValue.colorFile,
+    sizeMode:state.updateStyling.sizeMode,
+    sizeFile:state.updateStyling.sizeFile,
+    colorMode: state.updateStyling.colorMode,
+    colorFile:state.updateStyling.colorFile,
     verseInLine:state.updateStyling.verseInLine
   }
 }
 
 const mapDispatchToProps = dispatch =>{
   return {
-    updateColorMode:(mode,file)=>dispatch(updateColorMode(mode,file)),
-    updateFontSize:( mode,file )=>dispatch(updateFontSize(mode,file)),
+    updateColorMode:(colorMode)=>dispatch(updateColorMode(colorMode)),
+    updateFontSize:(sizeMode)=>dispatch(updateFontSize(sizeMode)),
     updateVerseInLine:(val)=>dispatch(updateVerseInLine(val))
   }
 }
 export  default connect(mapStateToProps,mapDispatchToProps)(Setting)
+
+

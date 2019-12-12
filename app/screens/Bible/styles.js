@@ -104,8 +104,7 @@ export const styles =(colorFile, sizeFile, fontfamily) =>{
     },
     verseNumber:{
         fontSize:sizeFile.contentText,
-        fontFamily:fontfamily,
-      
+        color:colorFile.textColor
     },
     verseChapterNumber:{
         fontSize:sizeFile.titleText,
@@ -115,30 +114,22 @@ export const styles =(colorFile, sizeFile, fontfamily) =>{
     verseTextSelectedHighlighted:{
         backgroundColor:colorFile.highlightColor,
         textDecorationLine: 'underline',
-        fontFamily:fontfamily,
-        fontWeight:'500',
-        fontSize:sizeFile.contentText,
+        color:colorFile.textColor
         
     },
     verseTextNotSelectedNotHighlighted:{
-        fontFamily:fontfamily,
-        fontWeight:'500',
-        fontSize:sizeFile.contentText,
+        color:colorFile.textColor
 
 
     },
     verseTextNotSelectedHighlighted:{
         backgroundColor:colorFile.highlightColor,
-        fontFamily:fontfamily,
-        fontWeight:'500',
-        fontSize:sizeFile.contentText,
+        color:colorFile.textColor
 
     },
     verseTextSelectedNotHighlighted:{
         textDecorationLine: 'underline',
-        fontFamily:fontfamily,
-        fontWeight:'500',
-        fontSize:sizeFile.contentText,
+        color:colorFile.textColor
 
     },
     addToSharefooterComponent:{

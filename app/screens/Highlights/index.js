@@ -14,8 +14,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import DbQueries from '../../utils/dbQueries'
 import {getBookNameFromMapping} from '../../utils/UtilFunctions';
 import { highlightstyle } from './styles'
+import {connect} from 'react-redux'
 
-export default class HighLights extends Component {
+class HighLights extends Component {
   static navigationOptions = {
     headerTitle: 'Highlights',
     // headerRight:(
@@ -43,7 +44,7 @@ export default class HighLights extends Component {
       versionCode:this.props.navigation.state.params.versionCode,
       bookId:this.props.navigation.state.params.bookId
     }
-    this.styles = highlightstyle(props.screenProps.colorFile, props.screenProps.sizeFile);  
+    this.styles = highlightstyle(props.colorFile, props.sizeFile);  
     
   }
   async getHighlights(){
@@ -107,3 +108,11 @@ export default class HighLights extends Component {
     );
   }
 }
+const mapStateToProps = state =>{
+  return{
+    sizeFile:state.updateStyling.sizeFile,
+    colorFile:state.updateStyling.colorFile,
+  }
+}
+
+export  default connect(mapStateToProps,null)(HighLights)

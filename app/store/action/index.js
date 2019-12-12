@@ -4,4 +4,5 @@ export {updateBCV,deleteNote} from './editNote'
 export {addBookToNote,addChapterToNote,addVerseToNote,updateNoteBody} from './editNote'
 
 export {updateVersion,selectedBook,selectedChapter,selectedVerse} from './updateVersion'
-export {updateFontSize,updateColorMode,updateVerseInLine,updateFontFamily} from './updateStyling'
+export {updateFontSize,updateColorMode,updateVerseInLine} from './updateStyling'
+export {closeSplitScreen,updateDimensions} from './splitScreenProps'

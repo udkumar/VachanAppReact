@@ -5,11 +5,8 @@ import {nightColors, dayColors} from '../../utils/colors.js'
 import {extraSmallFont,smallFont,mediumFont,largeFont,extraLargeFont} from '../../utils/dimens.js'
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants.js'
 
-
-
-
 const initialState = {
-    colorMode:AsyncStorageConstants.Values.dayColors,
+    colorMode:AsyncStorageConstants.Values.DayMode,
     colorFile :dayColors,
     sizeMode:AsyncStorageConstants.Values.SizeModeNormal,
     sizeFile:mediumFont,
@@ -22,98 +19,87 @@ function updateStyling(state=initialState,action){
         case UPDATE_FONT_SIZE:
             const sizes = { 
             sizeMode:()=>{
-                switch(action.colorMode){
+                switch(action.sizeMode){
                 case AsyncStorageConstants.Values.SizeModeXSmall:
                 return {
-                    sizeMode:AsyncStorageConstants.Values.SizeModeXSmall,
+                    ...state,
+                    sizeMode:action.sizeMode,
                     sizeFile:extraSmallFont
                 }
                 case AsyncStorageConstants.Values.SizeModeSmall:
                 return{
-                    sizeMode:AsyncStorageConstants.Values.SizeModeSmall,
+                    ...state,
+                    sizeMode:action.sizeMode,
                     sizeFile:smallFont
                    
                 }
                 case AsyncStorageConstants.Values.SizeModeNormal:
                 return{
-                    sizeMode:AsyncStorageConstants.Values.SizeModeNormal,
+                    ...state,
+                    sizeMode:action.sizeMode,
                     sizeFile:mediumFont
                     
                 }
                 case AsyncStorageConstants.Values.SizeModeLarge:
                 return {
-                    sizeMode:AsyncStorageConstants.Values.SizeModeLarge,
+                    ...state,
+                    sizeMode:action.sizeMode,
                     sizeFile:largeFont
                   
                 }
                 case AsyncStorageConstants.Values.SizeModeXLarge:
                 return{
-                    sizeMode:AsyncStorageConstants.Values.SizeModeXLarge,
+                    ...state,
+                    sizeMode:action.sizeMode,
                     sizeFile:extraLargeFont
                    
                 }
                 default: 
                 return {
-                  mediumFont
+                    ...state,
+                    // sizeMode:AsyncStorageConstants.Values.SizeModeNormal,
+                    // sizeFile:mediumFont
                 }
                 
             }
         }
-
         }
-        return{
-            ...state,
-            fontValue:sizes.sizeMode()
-        }
+        return sizes.sizeMode()
         
         case UPDATE_COLOR_MODE:
         const colors = {
-            switchColor:()=>{ switch(action.sizeMode){
+            switchColor:()=>{ switch(action.colorMode){
                 case AsyncStorageConstants.Values.DayMode:
+                console.log("color mode ",action.colorMode)
+                console.log("color mode async value ",AsyncStorageConstants.Values.DayMode)
                 return {
-                    colorMode:AsyncStorageConstants.Values.DayMode,
+                    ...state,
+                    colorMode:action.colorMode,
                     colorFile:dayColors,
                   
                 }
                 case AsyncStorageConstants.Values.NightMode:
                 return{
-                    colorMode:AsyncStorageConstants.Values.NightMode,
+                    ...state,
+                    colorMode:action.colorMode,
                     colorFile:nightColors,
                 }  
                 default:
                 return{
-                    colorMode:AsyncStorageConstants.Values.DayMode,
-                    colorFile:dayColors,
+                    ...state,
+                    // colorMode:action.colorMode,
+                    // colorFile:dayColors,
                 }  
                 
 
             }
         }
-        }
-        return {
-            ...state,
-            colorValue:colors.switchColor()
-        }
-       
+    }
+        return colors.switchColor()
         case UPDATE_VERSE_IN_LINE:
-        const switchVerseInLine = {
-            switchVerse : ()=>{
-                switch(action.verseInLine){
-                    case 0:
-                    return {
-                        verseInLine:true
-                    }
-                    case 1:
-                    return{
-                        verseInLine:false
-                    }
-
-            }
-        }
-        }
         return {
             ...state,
-        verseInLine:switchVerseInLine.switchVerse(),
+            verseInLine:action.verseInLine
         }
 
         case UPDATE_FONT_FAMILY:

@@ -14,6 +14,7 @@ import {updateVersion,updateFontFamily} from '../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
 
 
+
 const languageList = async () => { 
   return await DbQueries.getLangaugeList()
 }
@@ -52,10 +53,10 @@ class ExpandableItemComponent extends Component {
       <List>
       <ListItem button={true} onPress={this.props.onClickFunction}>
         <Left>
-        <Text >{this.props.item.languageName }</Text>
+        <Text style={this.styles.text} >{this.props.item.languageName }</Text>
         </Left>
         <Right>
-          <Icon name={this.props.item.isExpanded ? "keyboard-arrow-down" : "keyboard-arrow-up" }  size={24}/>
+          <Icon style={this.styles.iconStyle} name={this.props.item.isExpanded ? "keyboard-arrow-down" : "keyboard-arrow-up" }  size={24}/>
         </Right>
         </ListItem>
         </List>
@@ -70,22 +71,17 @@ class ExpandableItemComponent extends Component {
                 <ListItem button={true} onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId, item.downloaded  )}}>
                 <Left>
                 <View style={{alignSelf:'center',marginLeft:12}}>
-                  <Text  style={{fontWeight:'bold'}}>{item.versionCode} </Text>
-                  <Text style={{marginLeft:8}}> {item.versionName}</Text>
+                  <Text style={[this.styles.text,{fontWeight:'bold'}]} >{item.versionCode} </Text>
+                  <Text style={[this.styles.text,{marginLeft:8}]} > {item.versionName}</Text>
                 </View>
                 </Left>
                 <Right>
                 {
                   item.downloaded == true ? 
-                  <Icon name="check" size={24} style={{marginRight:8}}  onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId,item.downloaded)}}
+                  <Icon style={[this.styles.iconStyle,{marginRight:8}]} name="check" size={24}  onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId,item.downloaded)}}
                   />
                 :
-                  (
-                  (this.props.isLoading &&  index == this.props.index && this.props.item.languageName ==this.props.languageName   ) ?
-                  <ActivityIndicator  size="small"  color="#0000ff"/> 
-                  : 
-                  <Icon name="file-download" size={24} style={{marginRight:12}} onPress={()=>{this.props.DownloadBible(this.props.item.languageName,item.versionCode,index,item.sourceId)}}/>
-                  )
+                  <Icon  style={[this.styles.iconStyle,{marginRight:12}]} name="file-download" size={24} onPress={()=>{this.props.DownloadBible(this.props.item.languageName,item.versionCode,index,item.sourceId)}}/>
                 }
               
               </Right>
@@ -116,14 +112,13 @@ class LanguageList extends Component {
           languages:[],
           searchList:[],
           startDownload:false,
-          colorFile:this.props.screenProps.colorFile,
-          sizeFile:this.props.screenProps.sizeFile,
-         fontfamily:this.props.screenProps.fontfamily,
           index : -1,
           languageName:'',
+          colorFile:this.props.colorFile,
+          sizeFile:this.props.sizeFile
 
       }
-      this.styles = styles(this.state.colorFile, this.state.sizeFile);    
+      this.styles = styles(this.props.colorFile, this.props.sizeFile);    
     }
    
     updateLayout(index){
@@ -206,7 +201,7 @@ class LanguageList extends Component {
 
     DownloadBible = (langName,verCode,index,sourceId)=>{
       console.log("source id ",sourceId)
-      this.setState({isLoading:true,index},async()=>{
+      this.setState({isLoading:true,isdownLoading:true,index},async()=>{
         var bookModels = []
   
         try{
@@ -250,7 +245,7 @@ class LanguageList extends Component {
 
               }
               await DbQueries.addNewVersion(langName,verCode,bookModels,sourceId)
-              this.setState({isLoading:false,})
+              this.setState({isLoading:false,isdownLoading:false})
               languageList().then(async(language) => {
                 this.setState({languages:language})
               })
@@ -267,20 +262,18 @@ class LanguageList extends Component {
       this.setState({modalVisible:!this.state.modalVisible})
     }
     goToBible = (langName,verCode,sourceId,downloaded)=>{
-      
-      console.log("downloaded value in language page ",langName)
-      // AsyncStorageUtil.setAllItems([
-      //   [AsyncStorageConstants.Keys.SourceId, sourceId.toString()],
-      //   [AsyncStorageConstants.Keys.LanguageName, langName],
-      //   [AsyncStorageConstants.Keys.VersionCode, verCode],
-      //   [AsyncStorageConstants.Keys.Downloaded, JSON.stringify(downloaded)]
-      // ]); 
+      console.log("downloaded value in language page ",sourceId)
+      AsyncStorageUtil.setAllItems([
+        [AsyncStorageConstants.Keys.SourceId, JSON.stringify(sourceId)],
+        [AsyncStorageConstants.Keys.LanguageName, langName],
+        [AsyncStorageConstants.Keys.VersionCode, verCode],
+        [AsyncStorageConstants.Keys.Downloaded, JSON.stringify(downloaded)]
+      ]); 
       this.props.updateVersion(langName,verCode,sourceId,downloaded)
       this.props.updateFontFamily(langName.toLowerCase())
       this.props.navigation.state.params.callBackForUpdateBook(null)
       this.props.navigation.goBack()
     }
-  
     render(){
     console.log("font coming or not"+ this.state.fontfamily.telugu)
       return (
@@ -340,7 +333,9 @@ class LanguageList extends Component {
 const mapStateToProps = state =>{
   return{
     bookId:state.updateVersion.bookId,
-    chapterNumber:state.updateVersion.chapterNumber
+    chapterNumber:state.updateVersion.chapterNumber,
+    sizeFile:state.updateStyling.sizeFile,
+    colorFile:state.updateStyling.colorFile,
   }
 }
 
