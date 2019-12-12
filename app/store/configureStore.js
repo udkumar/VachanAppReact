@@ -2,7 +2,10 @@ import {createStore,combineReducers,applyMiddleware} from 'redux'
 import thunkMiddleware from 'redux-thunk'
 import editNoteReducer from "./reducer/editNoteReducer";
 import UpdateVersionReducer from './reducer/updateVersionReducer';
-import updateStylingReducer from './reducer/updateStylingReducer'
+import updateStylingReducer from './reducer/updateStylingReducer';
+import splitScreenReducer from './reducer/splitScreenReducer';
+
+
 
 //use only when having mutiple reducer for single reducer direct import it to index.js of app
 
@@ -10,6 +13,7 @@ const rootReducer = combineReducers({
     editNote: editNoteReducer,
     updateVersion:UpdateVersionReducer,
     updateStyling:updateStylingReducer,
+    updateSplitScreen:splitScreenReducer
 });
 
 export default function configureStore(){

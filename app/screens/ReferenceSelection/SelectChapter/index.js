@@ -24,7 +24,7 @@ class ChapterSelection extends Component {
       isLoading:false,
       chapterData:[]
     }
-    this.styles = numberSelection(this.props.screenProps.colorFile, this.props.screenProps.sizeFile);   
+    this.styles = numberSelection(this.props.colorFile, this.props.sizeFile);   
   }
 
   componentWillReceiveProps(props){
@@ -111,7 +111,7 @@ class ChapterSelection extends Component {
           {backgroundColor:'transparent'}]}
           onPress={()=>{this.onNumPress(item)}}>
             <View>
-                <Text style={[this.styles.chapterNum,{fontWeight: item == this.props.screenProps.chapterNumber ? "bold":"normal"}]}>{item}</Text>
+                <Text style={[this.styles.chapterNum,{fontWeight: item == this.props.chapterNumber ? "bold":"normal"}]}>{item}</Text>
             </View>
             </TouchableOpacity>
         }
@@ -127,10 +127,15 @@ const mapStateToProps = state =>{
     version:state.updateVersion.version,
     sourceId:state.updateVersion.sourceId,
     downloaded:state.updateVersion.downloaded,
+
     
     bookId:state.updateVersion.bookId,
     bookName:state.updateVersion.bookName,
-    totalChapters:state.updateVersion.totalChapters
+    totalChapters:state.updateVersion.totalChapters,
+    chapterNumber:state.updateVersion.chapterNumber,
+    
+    sizeFile:state.updateStyling.sizeFile,
+    colorFile:state.updateStyling.colorFile,
   }
 }
 

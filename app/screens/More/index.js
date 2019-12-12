@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Container, Header, Content, Card,CardItem, ListItem, Left, Body, Right, Switch } from 'native-base';
 import { TouchableOpacity,View,Text } from 'react-native';
-
+import {connect} from 'react-redux'
+import { styles } from './styles.js';
 
 const ListItems = [
     {
@@ -32,8 +33,8 @@ const ListItems = [
     },
     {
         iconName:"more",
-        screenName:"StudyHelp",
-        title:"Study Help",
+        screenName:"Commentary",
+        title:"Commentary ",
     },
     {
         iconName:"video-library",
@@ -45,29 +46,32 @@ const ListItems = [
         screenName:"Audio",
         title:"Audio",
     },
+    
     {
         iconName:"settings",
         screenName:"Settings",
         title:"Settings",
     },
 ]
-export default class More extends Component {
+ class More extends Component {
+
   render() {
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);    
     const params = this.props.navigation.state.params
     return (
-        <Container>
+        <Container style={this.styles.container}>
         <Content>
         {
             ListItems.map((item,index)=>(
-                <ListItem button={true} icon onPress={()=>{this.props.navigation.navigate(item.screenName,{languageName:params.languageName,versionCode:params.versionCode,bookId:params.bookId})}}>
+                <ListItem style = {this.styles.cardItemStyle} button={true} icon onPress={()=>{this.props.navigation.navigate(item.screenName,{languageName:params.languageName,versionCode:params.versionCode,bookId:params.bookId})}}>
                 <Left>
-                    <Icon  size={24} name={item.iconName} />
+                    <Icon style ={this.styles.cardItemIconCustom}  size={24} name={item.iconName} />
                 </Left>
                 <Body>
-                  <Text>{item.title} </Text>
+                  <Text style={this.styles.textStyle}>{item.title} </Text>
                 </Body>
                 <Right>
-                    <Icon size={24}  name="chevron-right" />
+                    <Icon size={24}  style ={this.styles.cardItemIconCustom} name="chevron-right" />
                 </Right>
               </ListItem>
             ))
@@ -77,3 +81,12 @@ export default class More extends Component {
     );
   }
 }
+
+const mapStateToProps = state =>{
+    return{
+      sizeFile:state.updateStyling.sizeFile,
+      colorFile:state.updateStyling.colorFile,
+    }
+  }
+  
+  export  default connect(mapStateToProps,null)(More)

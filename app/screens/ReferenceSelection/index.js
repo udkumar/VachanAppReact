@@ -11,12 +11,8 @@ export default class ReferenceSelection extends Component {
         return(
             <SelectionTab
                 screenProps={{
-                    colorFile:this.props.screenProps.colorFile,
-                    sizeFile:this.props.screenProps.sizeFile,
-                    colorMode:this.props.screenProps.colorMode,
                     navigateBack:this.navigateBack
                 }}
-            
             />
         )
     }

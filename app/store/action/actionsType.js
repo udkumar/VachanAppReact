@@ -18,3 +18,7 @@ export const UPDATE_FONT_SIZE = 'update_font_size'
 export const UPDATE_VERSE_IN_LINE = 'update_verse_in_line'
 export const UPDATE_FONT_FAMILY = 'update_font_family'
 
+export const CLOSE_SPLIT_SCREEN = 'close_split_screen'
+export const UPDATE_DIMENSIONS = 'update_dimensions'
+
+

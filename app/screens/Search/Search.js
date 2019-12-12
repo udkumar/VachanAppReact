@@ -17,6 +17,7 @@ const width = Dimensions.get('window').width-20;
 import SearchTab from '../../components/SearchTab/SearchTab'
 import { Segment } from 'native-base';
 import {searchStyle} from './styles'
+import {connect} from 'react-redux'
  
 const SearchResultTypes = {
   ALL: 0,
@@ -24,7 +25,7 @@ const SearchResultTypes = {
   NT: 2
 };
 
-export default class Search extends Component {
+class Search extends Component {
   
   static navigationOptions = ({navigation}) =>{
       const { params = {} } = navigation.state;
@@ -57,15 +58,15 @@ export default class Search extends Component {
       isLoading:false,
       text:'',
       tabsData:[],
-      languageName:this.props.screenProps.languageName,
-      versionCode:this.props.screenProps.versionCode,
+      languageName:this.props.languageName,
+      versionCode:this.props.versionCode,
     }
 
     this.onSearchText = this.onSearchText.bind(this)
     this.toggleButton = this.toggleButton.bind(this)
     this.clearData = this.clearData.bind(this)
 
-    this.styles = searchStyle(props.screenProps.colorFile, props.screenProps.sizeFile);  
+    this.styles = searchStyle(props.colorFile, props.sizeFile);  
   }
   
   onSearchText(){
@@ -219,10 +220,10 @@ export default class Search extends Component {
     return (
       <TouchableOpacity style={this.styles.searchedDataContainer} 
         onPress={()=>this.props.navigation.navigate('Book', {bookId: item.bookId, 
-          bookName: getBookNameFromMapping(item.bookId,this.props.screenProps.languageName), 
+          bookName: getBookNameFromMapping(item.bookId,this.props.languageName), 
           chapterNumber: item.chapterNumber, verseNumber: item.verseNumber})}>
         <Text style={this.styles.searchedData}> 
-          {getBookNameFromMapping(item.bookId,this.props.screenProps.languageName)} {item.chapterNumber} : {item.verseNumber} 
+          {getBookNameFromMapping(item.bookId,this.props.languageName)} {item.chapterNumber} : {item.verseNumber} 
         </Text>
         <Text style={this.styles.textStyle}>{getResultText(item.text)}</Text>
       </TouchableOpacity>
@@ -249,3 +250,14 @@ export default class Search extends Component {
     )
   }
 }
+
+const mapStateToProps = state =>{
+  return{
+    languageName: state.updateVersion.language,
+    version:state.updateVersion.version,
+    sizeFile:state.updateStyling.sizeFile,
+    colorFile:state.updateStyling.colorFile,
+  }
+}
+
+export  default connect(mapStateToProps,null)(Search)

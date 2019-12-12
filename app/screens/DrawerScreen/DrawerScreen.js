@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import {ScrollView, Text, View, StyleSheet,ImageBackground,TouchableOpacity,Image} from 'react-native';
 import { DrawerActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import {connect} from 'react-redux'
+
 class DrawerScreen extends Component {
   
   render () {
@@ -71,4 +73,12 @@ const styles = StyleSheet.create({
 }
 })
 
-export default DrawerScreen;
+const mapStateToProps = state =>{
+  return{
+    sizeFile:state.updateStyling.sizeFile,
+    colorFile:state.updateStyling.colorFile,
+  }
+}
+
+
+export  default connect(mapStateToProps,null)(DrawerScreen)
