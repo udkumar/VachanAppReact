@@ -18,7 +18,7 @@ import DbQueries from '../../utils/dbQueries'
 import VerseView from './VerseView'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
-
+import Player from '../../screens/Bible/Navigate/Audio/Player';
 // import {getResultText} from '../../utils/UtilFunctions';
 import {getBookNameFromMapping,getBookChaptersFromMapping} from '../../utils/UtilFunctions';
 import APIFetch from '../../utils/APIFetch'
@@ -35,7 +35,28 @@ import { styles } from './styles.js';
 // import BottomTab from './BottomTab'
 
 import {connect} from 'react-redux'
+export const TRACKS = [
+  {
+    title: 'Genesis 1',
+    // artist: 'Twenty One Pilots',
+    albumArtUrl: "http://36.media.tumblr.com/14e9a12cd4dca7a3c3c4fe178b607d27/tumblr_nlott6SmIh1ta3rfmo1_1280.jpg",
+    audioUrl: "https://file-examples.com/wp-content/uploads/2017/11/file_example_MP3_700KB.mp3",
+  },
+  {
+      title: 'Genesis 2',
+  // artist: 'Twenty One Pilots',
+  albumArtUrl: "http://36.media.tumblr.com/14e9a12cd4dca7a3c3c4fe178b607d27/tumblr_nlott6SmIh1ta3rfmo1_1280.jpg",
+  audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  },
+  {
+    title: 'Genesis 3',
+// artist: 'Twenty One Pilots',
+albumArtUrl: "http://36.media.tumblr.com/14e9a12cd4dca7a3c3c4fe178b607d27/tumblr_nlott6SmIh1ta3rfmo1_1280.jpg",
+audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+},
 
+  
+]
 
 class Bible extends Component {
   // constructor(props) {
@@ -710,8 +731,12 @@ class Bible extends Component {
          
 
         this.state.status ? null:
-        <View style={{ backgroundColor: 'transparent'}} >
-        <TouchableOpacity style={{position: 'absolute', left: 80}}>
+        <View style={{justiftyContent:"center", 
+        height: 200,
+          width: 400,backgroundColor:'rgba(255,255,255,0.5)',
+          }} >
+          <Player tracks={TRACKS} />
+        {/* <TouchableOpacity style={{position: 'absolute', left: 80}}>
         <Icon name="skip-previous" size={30} />
       </TouchableOpacity>
        
@@ -720,7 +745,7 @@ class Bible extends Component {
       </TouchableOpacity>
       <TouchableOpacity style={{position: 'absolute', right: 80}}>
           <Icon name="skip-next" size={30}  />
-    </TouchableOpacity>
+    </TouchableOpacity> */}
       </View>
       }
  
