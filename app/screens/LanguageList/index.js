@@ -275,7 +275,7 @@ class LanguageList extends Component {
       this.props.navigation.goBack()
     }
     render(){
-    console.log("font coming or not"+ this.state.fontfamily.telugu)
+  //  console.log("font coming or not"+ this.state.fontfamily.telugu)
       return (
         <View style={this.styles.MainContainer}>
         {this.state.languages.length == 0 ?
@@ -336,6 +336,7 @@ const mapStateToProps = state =>{
     chapterNumber:state.updateVersion.chapterNumber,
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
+    fontFamily:state.updateStyling.fontFamily
   }
 }
 
