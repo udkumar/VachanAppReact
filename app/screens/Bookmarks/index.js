@@ -56,9 +56,9 @@ class BookMarks extends Component {
     this.state = {
       bookmarksList: [],
       isLoading:false,
-      languageName:this.props.navigation.state.params.languageName,
-      versionCode:this.props.navigation.state.params.versionCode,
-      bookId:this.props.navigation.state.params.bookId
+      languageName:this.props.languageName,
+      versionCode:this.props.versionCode,
+      bookId:this.props.bookId
     }
     
     this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);   
@@ -69,7 +69,6 @@ class BookMarks extends Component {
     this.getBookMarks()  
   } 
   async getBookMarks(){
-    const params = this.props.navigation.state.params
     let model = await  DbQueries.queryBookmark(this.state.languageName,this.state.versionCode,null,null)
     if (model == null) {
       
@@ -145,6 +144,8 @@ class BookMarks extends Component {
 const mapStateToProps = state =>{
   return{
     languageName: state.updateVersion.language,
+    versionCode: state.updateVersion.version,
+    bookId:state.updateVersion.version,
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
   }

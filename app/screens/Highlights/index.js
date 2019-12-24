@@ -40,9 +40,9 @@ class HighLights extends Component {
     super(props)
     this.state = {
       HightlightedVerseArray:[],
-      languageName:this.props.navigation.state.params.languageName,
-      versionCode:this.props.navigation.state.params.versionCode,
-      bookId:this.props.navigation.state.params.bookId
+      languageName:this.props.languageName,
+      versionCode:this.props.versionCode,
+      bookId:this.props.bookId
     }
     this.styles = highlightstyle(props.colorFile, props.sizeFile);  
     

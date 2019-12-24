@@ -9,10 +9,7 @@ import {AsyncStorageConstants} from './app/utils/AsyncStorageConstants'
 import {getBookChaptersFromMapping} from './app/utils/UtilFunctions'
 import SplashScreen from 'react-native-splash-screen'
 import {connect} from 'react-redux'
-
-
 import {updateColorMode,updateFontSize,updateVerseInLine,updateVersion,selectedBook,selectedChapter} from './app/store/action/'
-
 
 class App extends Component {
     constructor(props){
@@ -124,7 +121,9 @@ class App extends Component {
       //       this.setState({lastRead})
       // })
     }
- 
+    componentDidUpdate(prevProps){
+      console.log("prevProps",prevProps)
+    }
     render() {
 
         return (<AppNavigator 

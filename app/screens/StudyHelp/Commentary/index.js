@@ -11,6 +11,7 @@ var RNFS = require('react-native-fs');
 import SplashScreen from 'react-native-splash-screen'
 import Spinner from 'react-native-loading-spinner-overlay';
 import {connect} from 'react-redux'
+import {Card,CardItem,Content,Body} from 'native-base'
 
 
 const DATA = [
@@ -37,7 +38,7 @@ class Commentary extends Component {
       headerTitle:(
         <View style={styles.headerLeftStyle}>
           <View style={{marginRight:10}}>
-              <Text  style={styles.headerTextStyle}>{params.bookName}  {params.currentChapter }</Text>
+              <Text style={styles.headerTextStyle}>{params.bookName}  {params.currentChapter }</Text>
           </View>
           
         </View>
@@ -63,16 +64,17 @@ class Commentary extends Component {
       for(var i=0; i<=lines.length-1; i++){
           commentaryContent = {}
           const substr =  lines[i].split("\t")
-          if(substr[0] == id){
           let string = substr.slice(3).toString()
-          let content = string.replace(/\<br>|\<br\/>/g,"\n").replace(/^\"|\"$/g,"")
+          let content = string.replace(/\<br>|\<br\/>/,"").replace(/\<br>|\<br\/>/g,"\n").replace(/^\"|\"$/g,"")
+          if(substr[0] == id ){
+            if(isNaN(parseInt(substr[1])) && isNaN(parseInt(substr[2])) || parseInt(substr[1]) === this.props.chapterNumber){
             commentaryContent["book"] = substr[0]
             commentaryContent["chapter"] = substr[1]
             commentaryContent["verse"] = substr[2]
             commentaryContent["content"] = content
             commentary.push(commentaryContent)
+            }
         }
-      
       }
 
       this.setState({commentary})
@@ -82,9 +84,11 @@ class Commentary extends Component {
     })
     .catch(error=>{console.log("erorr ",error)})
   }
+
   componentDidUpdate(prevProps) {
     // Typical usage (don't forget to compare props):
-    if (this.props.bookId !== prevProps.bookId) {
+    console.log("props ",this.props,this.prevProps)
+    if (this.props.bookId !== prevProps.bookId || this.props.chapterNumber !== prevProps.chapterNumber) {
       this.getCommmentary()
     }
   }
@@ -94,6 +98,7 @@ class Commentary extends Component {
     SplashScreen.hide();
   }
   render(){
+    console.log(" content ",this.state.commentary)
     var convertToText = (response) => {
       let exRegex = /<b>(.*?)<\/b>/g
     //replaced string with bld because on spliting with '<b>' tag ,all text get mixed not able to identify where to apply the bold style 
@@ -105,7 +110,7 @@ class Commentary extends Component {
       for(var i=0;i<=str.length-1;i++){
         let matchBold = exRegex.exec(str[i])
         if(matchBold != null ){
-        temp.push(<Text style={{fontWeight:'bold',fontSizess:18}}>{matchBold[1]}</Text>)
+        temp.push(<Text style={{fontWeight:'bold',fontSize:16}}>{matchBold[1]} : </Text>)
         }
         else{
           temp.push(<Text >{str[i]}</Text>)
@@ -113,9 +118,8 @@ class Commentary extends Component {
       }
       return (<Text>{temp}</Text>)
     }
-    console.log(" content ",this.state.content)
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
       {
         this.state.commentary.length == 0 ? 
          <Spinner
@@ -124,23 +128,39 @@ class Commentary extends Component {
          // textStyle={styles.spinnerTextStyle}
      />
       :
-      <View>
-        {/* <Text style={{alignSelf:'center',fontWeight:'bold',fontSize:20,marginHorizontal:10}}>{this.props.bookName}</Text>  */}
+      <Card>
+      <CardItem header bordered>
+        <Text>{this.props.bookName} {this.props.chapterNumber}</Text>
+      </CardItem>
         <FlatList
           data={this.state.commentary}
           renderItem={({ item }) => (
             <View>
-              {(isNaN(parseInt(item.chapter)) && isNaN(parseInt(item.verse))) ? <Text  style={{alignSelf:'center',fontWeight:'300',marginTop:8,fontSize:16}}>Book Intro</Text>:null}
-              {(!isNaN(parseInt(item.chapter)) && isNaN(parseInt(item.verse))) ? <Text  style={{alignSelf:'center',fontWeight:'300',marginTop:8,fontSize:16}}>Chapter Intro</Text>:null}
-              {!isNaN(parseInt(item.verse)) && <Text  style={{alignSelf:'center',marginTop:10,fontSize:16}}>Verse Number : {item.verse}</Text>}
-              <Text  style={{alignSelf:'center',fontSize:14,}}>{item.content.match(/<b>(.*?)<\/b>/g) ? convertToText(item.content):item.content}</Text>
+             {(isNaN(parseInt(item.chapter)) && isNaN(parseInt(item.verse))) ? <CardItem >
+            <Text>Book Intro</Text>
+            </CardItem>:null}
+            {(!isNaN(parseInt(item.chapter)) && isNaN(parseInt(item.verse))) ? 
+            <CardItem>
+            <Text>Chapter Intro</Text>
+            </CardItem>:null}
+            {!isNaN(parseInt(item.verse)) &&  <CardItem>
+             <Text>Verse Number : {item.verse}</Text>
+            </CardItem>}
+            <CardItem bordered>
+            <Body >
+            <Text>{item.content.match(/<b>(.*?)<\/b>/g) ? convertToText(item.content):item.content}</Text>
+            </Body>
+            </CardItem>
             </View>
           )}
           keyExtractor={item => item.bookId}
+          ListFooterComponent={<View style={styles.addToSharefooterComponent} />}
         />
-        </View>
+        </Card>
         }
-      </View>
+        {/* <View style={{height:60, marginBottom:4}} /> */}
+      </SafeAreaView>
+
     );
   }
 
@@ -151,7 +171,7 @@ const styles = StyleSheet.create({
   
   container: {
     flex: 1,
-    marginHorizontal:10
+    marginBottom:40
   },
   item: {
     backgroundColor: '#f9c2ff',
@@ -164,8 +184,7 @@ const styles = StyleSheet.create({
   },
   headerTextStyle:{
     fontSize:16,
-    color:"#fff",
-    textAlign:'center'
+    color:"#fff"
 },
 headerLeftStyle:{
   flex:1,

@@ -18,7 +18,7 @@ import DbQueries from '../../utils/dbQueries'
 import VerseView from './VerseView'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
-
+import Player from '../../screens/Bible/Navigate/Audio/Player';
 // import {getResultText} from '../../utils/UtilFunctions';
 import {getBookNameFromMapping,getBookChaptersFromMapping} from '../../utils/UtilFunctions';
 import APIFetch from '../../utils/APIFetch'
@@ -37,34 +37,30 @@ import {SplitScreen} from '../Bible/Navigate/SplitScreen';
 import {connect} from 'react-redux'
 import {selectedChapter,closeSplitScreen} from '../../store/action/'
 
+const TRACKS = [{
+    title: 'Genesis 1',
+    // artist: 'Twenty One Pilots',
+    albumArtUrl: "http://36.media.tumblr.com/14e9a12cd4dca7a3c3c4fe178b607d27/tumblr_nlott6SmIh1ta3rfmo1_1280.jpg",
+    audioUrl: "https://raw.githubusercontent.com/RevantCI/Vachan2-Prototype/master/hi_ulb_40_mat_01.mp3",
+  },
+  {
+    title: 'Genesis 2',
+    // artist: 'Twenty One Pilots',
+    albumArtUrl: "http://36.media.tumblr.com/14e9a12cd4dca7a3c3c4fe178b607d27/tumblr_nlott6SmIh1ta3rfmo1_1280.jpg",
+    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  },
+  {
+    title: 'Genesis 3',
+    // artist: 'Twenty One Pilots',
+    albumArtUrl: "http://36.media.tumblr.com/14e9a12cd4dca7a3c3c4fe178b607d27/tumblr_nlott6SmIh1ta3rfmo1_1280.jpg",
+    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+}]
+
 
 class Bible extends Component {
-  // constructor(props) {
-  //   super(props);
-  //   //Default visible isVisible
-  //   this.isVisible = true;
-  // }
-
- // this.state.onFullScreen 
-  // onFullScreen() {
-  //   // Set the params to pass in fullscreen isVisible to navigationOptions
-  //   this.props.navigation.setParams({
-  //     fullscreen: !this.isVisible,
-  //   });
-  //   this.isVisible = !this.isVisible;
-  //   this.setState({onFullScreen: this.state.onFullScreen ? true : false})
-
-  // }
   
   static navigationOptions = ({navigation}) =>{
     const { params={} } = navigation.state 
-    // if (navigation.state.params && !navigation.state.params.fullscreen) {
-    //   //Hide Header by returning null
-    //   return { header: null };
-    // } else 
-  
-    
-
     return{
         headerTitle:(
           <View style={navStyles.headerLeftStyle}>
@@ -91,36 +87,21 @@ class Bible extends Component {
               <TouchableOpacity  onPress={params.ShowHideTextComponentView}
                style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
               <Icon 
-                  
                   name='volume-up'
+                  size={24} 
+                  color="#fff"
+              /> 
+              </TouchableOpacity>
+              <TouchableOpacity  style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
+                <Icon 
+                  onPress={()=> {params.onBookmark(params.bookId,params.currentChapter,params.isBookmark)}} 
+                  name='bookmark'
                   color={params.isBookmark ? "red" : "white"} 
                   size={24} 
               /> 
-              </TouchableOpacity>
-             
-              <TouchableOpacity onPress={() =>{navigation.navigate("More",{languageName:params.languageName,versionCode:params.versionCode,bookId:params.bookId})}} style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
-                <Icon name="menu" color="#fff" size={24} />
-              </TouchableOpacity>
-             
+             </TouchableOpacity>
           </View>
         )
-        // headerRight:(
-        //   <View style={navStyles.headerRightStyle}>
-        //       <TouchableOpacity  style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
-        //       <Icon 
-        //           onPress={()=> {params.onBookmark(params.bookId,params.currentChapter,params.isBookmark)}} 
-        //           name='volume-up'
-        //           color={params.isBookmark ? "red" : "white"} 
-        //           size={24} 
-        //       /> 
-        //       </TouchableOpacity>
-        //       <TouchableOpacity onPress={() =>{navigation.navigate("More",{languageName:params.languageName,versionCode:params.versionCode,bookId:params.bookId})}} style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
-        //         <Icon name="more-vert" color="#fff" size={24} />
-        //       </TouchableOpacity>
-             
-        //   </View>
-        // )
-        
     }
   }
          
@@ -132,7 +113,6 @@ class Bible extends Component {
     this.isVisible = true;
     this.getSelectedReferences = this.getSelectedReferences.bind(this)
     this.onBookmarkPress = this.onBookmarkPress.bind(this)
-    // this.onScroll = this.onScroll.bind(this)
     console.log("book  id ",this.props.bookId)
 
     // this.updateCurrentChapter = this.updateCurrentChapter.bind(this)
@@ -178,16 +158,17 @@ class Bible extends Component {
   }
 
   componentWillReceiveProps(props){
-    console.log("close prop in will props ",this.props.close)
     this.setState({
       colorFile:props.colorFile,
       sizeFile:props.sizeFile,
       bookId:props.bookId,
       bookName:props.bookName,
-      currentChapter:props.chapterNumber
+      currentChapter:props.chapterNumber,
+      sourceId:props.sourceId
     })
     this.styles = styles(props.colorFile, props.sizeFile);  
   }
+  
   
   async componentDidMount(){
     this.gestureResponder = createResponder({
@@ -245,27 +226,29 @@ class Bible extends Component {
       moveThreshold: 2,
       debug: false
     });
-    this.props.navigation.setParams({
-      onBookmark: this.onBookmarkPress,
-      isBookmark:this.state.isBookmark,
-      ShowHideTextComponentView: this.ShowHideTextComponentView,
+  }
 
-      bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
-      // bookName:this.state.bookName.length > 8 ? this.state.bookName.slice(0,7)+"..." : this.state.bookName,
-      currentChapter:this.state.currentVisibleChapter,
-      languageName: this.props.language, 
-      versionCode: this.props.version,
-      bookId:this.props.bookId,
-      callBackForUpdateBook:this.queryBookFromAPI,
-      totalVerses:this.state.totalVerses
-    })   
-    SplashScreen.hide();
-    this.queryBookFromAPI(null)
+  componentDidUpdate(prevProps) {
+    // Typical usage (don't forget to compare props):
+    console.log("props ",this.props,this.prevProps)
+    if (this.props.sourceId !== prevProps.sourceId) {
+      this.props.navigation.setParams({
+        onBookmark: this.onBookmarkPress,
+        isBookmark:this.state.isBookmark,
+        ShowHideTextComponentView: this.ShowHideTextComponentView,
+        bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
+        currentChapter:this.state.currentVisibleChapter,
+        languageName: this.props.language, 
+        versionCode: this.props.version,
+        bookId:this.props.bookId,
+        callBackForUpdateBook:this.queryBookFromAPI,
+        totalVerses:this.state.totalVerses
+      })
+      this.queryBookFromAPI(null)
+    }
   }
   // render data onAPI Call 
-
-
- 
+  
     queryBookFromAPI = async(val)=>{
         this.setState({isLoading:true,chapter:[],currentVisibleChapter: val != null ? this.state.currentVisibleChapter + val : this.props.chapterNumber },async()=>{
         
@@ -556,19 +539,16 @@ class Bible extends Component {
   _keyExtractor = (item, index) => item.number;
 
   ShowHideTextComponentView = () =>{
- 
-    if(this.state.status == true)
-    {
+    if(this.state.status == true){
       this.setState({status: false})
     }
-    else
-    {
+    else{
       this.setState({status: true})
     }
   }
  
   render() {
-    console.log("close  ",this.props.close)
+    console.log("source id   ",this.props.sourceId)
       return (
         <View style={this.styles.container}>
         <MenuContext style={this.styles.verseWrapperText}>
@@ -741,25 +721,14 @@ class Bible extends Component {
   
           </View>
           : null } */}
-
-
-           {
-         
-
-        this.state.status ? null:
-        <View style={{ backgroundColor: 'transparent'}} >
-        <TouchableOpacity style={{position: 'absolute', left: 80}}>
-        <Icon name="skip-previous" size={30} />
-      </TouchableOpacity>
-       
-      <TouchableOpacity style={{justiftyContent:"center", alignItems:"center", }}>
-        <Icon name="play-arrow" size={30}/>
-      </TouchableOpacity>
-      <TouchableOpacity style={{position: 'absolute', right: 80}}>
-          <Icon name="skip-next" size={30}  />
-    </TouchableOpacity>
-      </View>
-      }
+          
+          {
+         this.state.status ? null:
+         <View style={{justiftyContent:"center",height: 200,width: 400,backgroundColor:'rgba(255,255,255,0.5)'}}>
+           <Player tracks={TRACKS}/>
+          </View>
+       }
+  
  
       </View>
       )

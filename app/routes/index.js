@@ -11,6 +11,11 @@ import NotePage from '../screens/Note/NotePage'
 import Highlights from '../screens/Highlights/'
 import History from '../screens/History/'
 import Commentary from '../screens/StudyHelp/Commentary/'
+import InfoGraphics from '../screens/StudyHelp/InfoGraphics/'
+import More from '../screens/StudyHelp/More/'
+
+
+
 
 // import Audio from '../screens/Bible/Navigate/Audio/'
 // import Video from '../screens/Bible/Navigate/Video/'
@@ -26,11 +31,12 @@ import Bible from '../screens/Bible'
 import GoogleMaps from  '../screens/GoogleMaps'
 import Images from '../screens/Images'
 import LanguageList from '../screens/LanguageList'
-import More from '../screens/More'
+// import More from '../screens/More'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import SelectionTab from '../screens/ReferenceSelection/'
 import BookMarks from '../screens/Bookmarks/';
+import Infographics from '../screens/StudyHelp/InfoGraphics/';
 
 
 const BibleStack = createStackNavigator(
@@ -56,9 +62,7 @@ const BibleStack = createStackNavigator(
         })
       },
   
-      About: { screen: About },
-      Settings: { screen: Settings },
-      Hints: { screen: Hints },
+     
       Search: { screen: Search },
       BackupRestore: {screen: BackupRestore },
       GoogleMaps:{ screen:GoogleMaps },
@@ -66,17 +70,16 @@ const BibleStack = createStackNavigator(
       LanguageList:{screen:LanguageList },
       Account:{ screen:Account},
       
-      More:{ screen:More,
-        navigationOptions: { headerTitle:"More" }
-      },
+      // More:{ screen:More,
+      //   navigationOptions: { headerTitle:"More" }
+      // },
       SelectionTab:{screen:SelectionTab,
         navigationOptions: { headerTitle:"Select Chapter" }
       },
-      BookMarks:{  screen:BookMarks },
-      Highlights:{screen:Highlights  },
+      
       Notes:{ screen:Notes
       },
-      History:{ screen:History},
+      
 
       EditNote:{  screen:EditNote },
       NotePage:{ screen:NotePage },
@@ -150,13 +153,15 @@ const CommentaryStack = createStackNavigator(
       navigationOptions: {
           tabBarLabel: 'Commentary',
           tabBarIcon: () => <Icon name="comment-text" size={20} style={{color:'#fff'}}/>,
-          
+      },
+  }
+);
 
-      },
-  }
-);
-const ParallelBible = createStackNavigator(
-  { screen:Commentary,
+
+
+const MoreStack = createStackNavigator(
+ { 
+  More:{ screen:More,
       navigationOptions: () => ({
           headerStyle: {
             backgroundColor:"#3F51B5",
@@ -168,16 +173,35 @@ const ParallelBible = createStackNavigator(
            
         })
   },
-  {
-      navigationOptions:{
-          tabBarLabel: 'Parallel',
-      tabBarIcon: () => <Icon name="view-parallel" size={20} style={{color:'#fff'}}/>,
-      },
-  }
- 
+  About: { screen: About },
+  Settings: { screen: Settings },
+  Hints: { screen: Hints },
+  History:{ screen:History},
+  BookMarks:{  screen:BookMarks },
+  Highlights:{screen:Highlights  },
+  NotePage:{ screen:NotePage },
+},
+{
+  defaultNavigationOptions: {
+    headerStyle: {
+        backgroundColor: "#3F51B5",
+        elevation: 0,
+        shadowOpacity: 0
+    },
+    headerTintColor: '#fff',
+    headerTitleStyle: {
+        fontWeight: 'bold',
+        color: '#ffffff'
+    }
+},
+  navigationOptions:{
+      tabBarLabel: 'More',
+  tabBarIcon: () => <Icon name="menu" size={20} style={{color:'#fff'}}/>,
+  },
+}
 );
-const InfoGraphics = createStackNavigator(
-  { screen:Commentary,
+const InfoGraphicsStack = createStackNavigator(
+  {Infographics:{ screen:Infographics,
       navigationOptions: () => ({
           headerStyle: {
             backgroundColor:"#3F51B5",
@@ -189,21 +213,23 @@ const InfoGraphics = createStackNavigator(
           },
            
         })
-  },
-  {
-      navigationOptions:{
-          tabBarLabel: 'InfoGraphics',
-          tabBarIcon: () => <Icon name="chart-line" size={20} style={{color:'#fff'}}/>,
-      },
   }
+},
+{
+  navigationOptions:{
+      tabBarLabel: 'InfoGraphics',
+      tabBarIcon: () => <Icon name="chart-line" size={20} style={{color:'#fff'}}/>,
+  },
+}
+  
 );
 
 const AppTabNavigator = createBottomTabNavigator(
   {
   BibleStack,
   CommentaryStack,
-  ParallelBible,
-  InfoGraphics
+  InfoGraphicsStack,
+  MoreStack
   },
   {   
     tabBarPosition: 'bottom',

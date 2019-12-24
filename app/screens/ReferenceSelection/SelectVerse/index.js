@@ -31,14 +31,15 @@ class SelectVerse extends Component {
     this.styles = numberSelection(this.props.colorFile, this.props.sizeFile);   
     
   }
-async componentWillReceiveProps(props){
-    var bookData = []
-    for(var i=1;i<=props.totalVerses;i++){
-      bookData.push(i)
-  }
-  this.setState({bookData})
-
-  // this.fetchChapters()
+  componentDidUpdate(prevProps) {
+    console.log("props ",this.props,this.prevProps)
+    if (this.props.totalVerses !== prevProps.totalVerses) {
+      var bookData = []
+      for(var i=1;i<=this.props.totalVerses;i++){
+        bookData.push(i)
+    }
+    this.setState({bookData})
+    }
   }
   componentDidMount() {
       this.queryBook()

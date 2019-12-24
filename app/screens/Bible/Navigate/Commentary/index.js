@@ -1,148 +1,165 @@
 import React,{Component} from 'react';
 import {
   SafeAreaView,
-  NativeModules,
   TouchableOpacity,
-  LayoutAnimation,
   FlatList,
   StyleSheet,
-  TextInput,
   Text,
-  Dimensions,
   View
 } from 'react-native';
 var RNFS = require('react-native-fs');
+import SplashScreen from 'react-native-splash-screen'
+import Spinner from 'react-native-loading-spinner-overlay';
 import {connect} from 'react-redux'
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import {updateDimensions,closeSplitScreen} from '../../../../store/action/'
+import {Card,CardItem,Content,Body} from 'native-base'
 
- const { UIManager } = NativeModules;
-
-UIManager.setLayoutAnimationEnabledExperimental &&
-UIManager.setLayoutAnimationEnabledExperimental(true);
 
 const DATA = [
   {
-    id: 'bd7acbeac1b146c2aed53ad53abb28ba',
+    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
     title: 'First Item',
   },
   {
-    id: '3ac68afcc60548d3a4f8fbd91aa97f63',
+    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
     title: 'Second Item',
   },
   {
-    id: '58694a0f3da1471fbd96145571e29d72',
+    id: '58694a0f-3da1-471f-bd96-145571e29d72',
     title: 'Third Item',
   },
 ];
 
 
 class Commentary extends Component {
-  constructor(){
-    super()
-    this.state ={
-      w: 100,
-      h: 100,
+  static navigationOptions = ({navigation}) =>{
+    const { params={} } = navigation.state 
+
+    return{
+      headerTitle:(
+        <View style={styles.headerLeftStyle}>
+          <View style={{marginRight:10}}>
+              <Text style={styles.headerTextStyle}>{params.bookName}  {params.currentChapter }</Text>
+          </View>
+          
+        </View>
+     
+    ), 
     }
   }
-  _onPress = () => {
-        LayoutAnimation.spring();
-        this.setState({w: this.state.w + 10, h: this.state.h + 10})
-      }
-  static navigationOptions =  ({navigation}) => {
-    const { params={} } = navigation.state 
-    return{
-      headerTintColor: '#3F51B5',
-      headerStyle: {
-        backgroundColor: '#3F51B5'
-      },
-     
-      headerRight:(
-        <TouchableOpacity  onPress={params.close}>
-          <Icon name='close' color="#fff" size={28} style={{marginHorizontal:8}} />
-        </TouchableOpacity>
-      ),
-      headerLeft:(
-        <Text>Commentary</Text>
-        // <Icon name='close' color="#fff" size={28} style={{marginHorizontal:8}} />
-      )}
-  };
-    
-  componentDidUpdate(){
-    console.log("update close ",this.props.close)
-  }
+    constructor(props){
+       console.log("commentry props ",props)
+      super(props)
+        this.state = {
+          commentary: []
+        }
+    }
   getCommmentary(){
     RNFS.readFileAssets('mhcc_commentary.csv').then((res) => {
       var lines = res.split("\n");
-      // const id = this.props.bookId.toUpperCase()
-      const id ='GEN'
+      const id = this.props.bookId.toUpperCase()
+      // const id ='GEN'
+      console.log("book id ",id)
 
       let commentary = []
       for(var i=0; i<=lines.length-1; i++){
-        commentaryContent = {}
-        const substr =  lines[i].split("\t")
-        let string = substr.slice(3).toString()
-        let exRegex = /<b>(.*?)<\/b>/g
-
-        let content = string.replace(exRegex,'$1').replace(/<br>|<br\/>/g,'\n')
-        // const element = React.createElement('Text', { }, capturedContent)
-        // let regexMatch = string.match(regex)
-        // console.log("regex match ",regexMatch)
-        
-        if(id == substr[0]){
-          commentaryContent["book"] = substr[0]
-          commentaryContent["chapter"] = substr[1]
-          commentaryContent["verse"] = substr[2]
-          commentaryContent["content"] = content
-          commentary.push(commentaryContent)
+          commentaryContent = {}
+          const substr =  lines[i].split("\t")
+          if(substr[0] == id){
+          let string = substr.slice(3).toString()
+          let content = string.replace(/\<br>|\<br\/>/g,"\n").replace(/^\"|\"$/g,"")
+            commentaryContent["book"] = substr[0]
+            commentaryContent["chapter"] = substr[1]
+            commentaryContent["verse"] = substr[2]
+            commentaryContent["content"] = content
+            commentary.push(commentaryContent)
         }
+      
       }
 
       this.setState({commentary})
+      this.props.navigation.setParams({
+        bookName:this.props.bookName
+      })
     })
+    .catch(error=>{console.log("erorr ",error)})
   }
-
+  componentDidUpdate(prevProps) {
+    // Typical usage (don't forget to compare props):
+    if (this.props.bookId !== prevProps.bookId) {
+      this.getCommmentary()
+    }
+  }
+  
   componentDidMount(){
-    this.props.navigation.setParams({
-      close:this.closeOnPress
-    })
     this.getCommmentary()
-  }
-  closeOnPress=()=>{
-    this.props.closeSplitScreen(true)
+    SplashScreen.hide();
   }
   render(){
-    console.log("close ",this.props.close)
-    var textElem = React.createElement(Text, [], ['Hello world']);
-
+    var convertToText = (response) => {
+      let exRegex = /<b>(.*?)<\/b>/g
+    //replaced string with bld because on spliting with '<b>' tag ,all text get mixed not able to identify where to apply the bold style 
+      let splitstr = response.replace(exRegex,'BLD<b>$1</b>BLD')
+    //splited with bld will remove the bld text and will be left with b tag and ext can easily get bold
+      let str = splitstr.split('BLD')
+      console.log(str)
+      let temp =[]
+      for(var i=0;i<=str.length-1;i++){
+        let matchBold = exRegex.exec(str[i])
+        if(matchBold != null ){
+        temp.push(<Text style={{fontWeight:'bold',fontSizess:18}}>{matchBold[1]}</Text>)
+        }
+        else{
+          temp.push(<Text >{str[i]}</Text>)
+        }
+      }
+      return (<Text>{temp}</Text>)
+    }
+    console.log(" content ",this.state.content)
     return (
-      <SafeAreaView style={styles.container}>
-       <View>
-         <View style={[styles.box, {width: this.state.w, height: this.state.h}]} />
-        <TouchableOpacity onPress={this._onPress}>
-           <View style={styles.button}>
-             <Text style={styles.buttonText}>Press me!</Text>
-           </View>
-         </TouchableOpacity>
-       </View>
-      {/* {
+      <View style={styles.container}>
+      {
         this.state.commentary.length == 0 ? 
          <Spinner
          visible={true}
          textContent={'Loading...'}
+         // textStyle={styles.spinnerTextStyle}
      />
       :
+      <View>
+      <Card>
+      <CardItem header bordered>
+        <Text>{this.props.bookName}</Text>
+      </CardItem>
         <FlatList
           data={this.state.commentary}
           renderItem={({ item }) => (
-            <View>
-              <Text  style={{alignSelf:'center'}}>{item.content}</Text>
+            <View style={{flex:1}}>
+             {(isNaN(parseInt(item.chapter)) && isNaN(parseInt(item.verse))) ? <CardItem >
+            <Text>Book Intro</Text>
+            </CardItem>:null}
+            {(!isNaN(parseInt(item.chapter)) && isNaN(parseInt(item.verse))) ? <CardItem style={{paddingHorizontal:4}}>
+            <Text >Chapter Number : {parseInt(item.chapter)} </Text>
+            </CardItem>:null}
+            {(!isNaN(parseInt(item.chapter)) && isNaN(parseInt(item.verse))) ? 
+            <CardItem style={{paddingHorizontal:4}}>
+            <Text >Chapter Intro</Text>
+            </CardItem>:null}
+            {!isNaN(parseInt(item.verse)) &&  <CardItem style={{paddingHorizontal:4}}>
+             <Text>Verse Number : {item.verse}</Text>
+            </CardItem>}
+            <CardItem bordered style={{paddingHorizontal:4}}>
+            <Body >
+            <Text>{item.content.match(/<b>(.*?)<\/b>/g) ? convertToText(item.content):item.content}</Text>
+            </Body>
+            </CardItem>
             </View>
           )}
           keyExtractor={item => item.bookId}
         />
-        } */}
-      </SafeAreaView>
+        </Card>
+        </View>
+        }
+      </View>
     );
   }
 
@@ -153,7 +170,7 @@ const styles = StyleSheet.create({
   
   container: {
     flex: 1,
-    margin:4
+    marginHorizontal:10
   },
   item: {
     backgroundColor: '#f9c2ff',
@@ -164,26 +181,18 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
   },
-  box: {
-        width: 100,
-        height: 100,
-        backgroundColor: 'red',
-      },
-  button: {
-    backgroundColor: 'black',
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    marginTop: 15,
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
+  headerTextStyle:{
+    fontSize:16,
+    color:"#fff"
+},
+headerLeftStyle:{
+  flex:1,
+  marginHorizontal:10
+},
 });
 
 
 const mapStateToProps = state =>{
-
   return{
     chapterNumber:state.updateVersion.chapterNumber,
     totalChapters:state.updateVersion.totalChapters,
@@ -191,81 +200,8 @@ const mapStateToProps = state =>{
     bookId:state.updateVersion.bookId,
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
-    close: state.updateSplitScreen.close,
-    heightOfSplitScreen:state.updateSplitScreen.height,
-    widthOfSplitScreen:state.updateSplitScreen.width
-  }
-}
-const mapDispatchToProps = dispatch =>{
-  return {
-    closeSplitScreen: (close)=>dispatch(closeSplitScreen(close)),
-    updateDimensions: (h,w)=>dispatch(updateDimensions(close)),
 
   }
 }
-export  default connect(mapStateToProps,mapDispatchToProps)(Commentary)
 
-
-// import React from 'react';
-// import {
-//   NativeModules,
-//   LayoutAnimation,
-//   Text,
-//   TouchableOpacity,
-//   StyleSheet,
-//   View,
-// } from 'react-native';
-
-// const { UIManager } = NativeModules;
-
-// UIManager.setLayoutAnimationEnabledExperimental &&
-//   UIManager.setLayoutAnimationEnabledExperimental(true);
-
-// export default class Commentary extends React.Component {
-//   state = {
-//     w: 100,
-//     h: 100,
-//   };
-
-//   _onPress = () => {
-//     // Animate the update
-//     LayoutAnimation.spring();
-//     this.setState({w: this.state.w + 15, h: this.state.h + 15})
-//   }
-
-//   render() {
-//     return (
-//       <View style={styles.container}>
-//         <View style={[styles.box, {width: this.state.w, height: this.state.h}]} />
-//         <TouchableOpacity onPress={this._onPress}>
-//           <View style={styles.button}>
-//             <Text style={styles.buttonText}>Press me!</Text>
-//           </View>
-//         </TouchableOpacity>
-//       </View>
-//     );
-//   }
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-//   box: {
-//     width: 200,
-//     height: 200,
-//     backgroundColor: 'red',
-//   },
-//   button: {
-//     backgroundColor: 'black',
-//     paddingHorizontal: 20,
-//     paddingVertical: 15,
-//     marginTop: 15,
-//   },
-//   buttonText: {
-//     color: '#fff',
-//     fontWeight: 'bold',
-//   },
-// });
+export  default connect(mapStateToProps,null)(Commentary)

@@ -10,7 +10,7 @@ import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants';
 import { styles } from './styles.js';
 import {connect} from 'react-redux';
-import {updateVersion,updateFontFamily} from '../../store/action/'
+import {updateVersion} from '../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
 
 
@@ -270,12 +270,10 @@ class LanguageList extends Component {
         [AsyncStorageConstants.Keys.Downloaded, JSON.stringify(downloaded)]
       ]); 
       this.props.updateVersion(langName,verCode,sourceId,downloaded)
-      this.props.updateFontFamily(langName.toLowerCase())
       this.props.navigation.state.params.callBackForUpdateBook(null)
       this.props.navigation.goBack()
     }
     render(){
-    console.log("font coming or not"+ this.state.fontfamily.telugu)
       return (
         <View style={this.styles.MainContainer}>
         {this.state.languages.length == 0 ?
@@ -342,7 +340,6 @@ const mapStateToProps = state =>{
 const mapDispatchToProps = dispatch =>{
   return {
     updateVersion: (language,version,sourceId,downloaded)=>dispatch(updateVersion(language,version,sourceId,downloaded)),
-    updateFontFamily:(value)=>dispatch(updateFontFamily(value))
   }
 }
 export default connect(mapStateToProps,mapDispatchToProps)(LanguageList)

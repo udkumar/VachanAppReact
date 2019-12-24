@@ -27,13 +27,15 @@ class ChapterSelection extends Component {
     this.styles = numberSelection(this.props.colorFile, this.props.sizeFile);   
   }
 
-  componentWillReceiveProps(props){
-    var chapterData = []
-    for(var i=1;i<=props.totalChapters;i++){
+componentDidUpdate(prevProps) {
+    console.log("props ",this.props,this.prevProps)
+    if (this.props.totalChapters !== prevProps.totalChapters) {
+      var chapterData = []
+    for(var i=1;i<=this.props.totalChapters;i++){
       chapterData.push(i)
-  }
-  this.setState({chapterData})
-
+      }
+      this.setState({chapterData})
+    }
   }
   componentDidMount(){
     var chapterData = []
