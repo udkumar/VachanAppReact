@@ -32,12 +32,13 @@ export default class Player extends Component {
   }
 
   setTime(data) {
-    console.log("data from video lib"+JSON.stringify(data)+ "current position "+this.state.currentPosition);
-    this.state.currentPosition
+    //console.log("data from video lib"+JSON.stringify(data)+ "current position "+this.state.currentPosition);
+    //this.state.currentPosition
     this.setState({currentPosition: Math.floor(data.currentTime)});
   }
 
   seek(time) {
+    console.log ("checking time......."+time)
     time = Math.round(time);
     this.refs.audioElement && this.refs.audioElement.seek(time);
     this.setState({
@@ -47,36 +48,40 @@ export default class Player extends Component {
   }
 
   onBack() {
-    if (this.state.currentPosition < 10 && this.state.selectedTrack > 0) {
-      this.refs.audioElement && this.refs.audioElement.seek(0)
-      this.setState({ isChanging: true });
-      setTimeout(() => this.setState({
-        currentPosition: 0,
-        paused: false,
-        totalLength: 1,
-        isChanging: false,
-        selectedTrack: this.state.selectedTrack - 1,
-      }), 0);
-    } else {
-      this.refs.audioElement.seek(0);
-      this.setState({
-        currentPosition: 0,
-      });
-    }
+    this.refs.audioElement.seek(this.state.currentPosition-5);
+    // if (this.state.currentPosition < 10 && this.state.selectedTrack > 0) {
+    //   this.refs.audioElement && this.refs.audioElement.seek( 0)
+    //   this.setState({ isChanging: true });
+    //   setTimeout(() => this.setState({
+    //     currentPosition: 0,
+    //     paused: false,
+    //     totalLength: 1,
+    //     isChanging: false,
+    //     selectedTrack: this.state.selectedTrack - 1,
+    //   }), 0);
+    // } else {
+    //   this.refs.audioElement.seek(0);
+    //   this.setState({
+    //     currentPosition: 0,
+    //   });
+    // }
   }
 
   onForward() {
-    if (this.state.selectedTrack < this.props.tracks.length - 1) {
+    
+    this.refs.audioElement.seek(this.state.currentPosition+5);
+
+    /* if (this.state.selectedTrack < this.props.tracks.length - 1) {
       this.refs.audioElement && this.refs.audioElement.seek(0);
       this.setState({ isChanging: true });
       setTimeout(() => this.setState({
-        currentPosition: 0,
+        currentPosition: 0.5,
         totalLength: 1,
         paused: false,
         isChanging: false,
         selectedTrack: this.state.selectedTrack + 1,
       }), 0);
-    }
+    } */
   }
 
 
@@ -88,7 +93,7 @@ export default class Player extends Component {
         ref="audioElement"
         paused={this.state.paused}               // Pauses playback entirely.
         resizeMode="cover"           // Fill the whole screen at aspect ratio.
-        repeat={true}                // Repeat forever.
+        repeat={false}                // Repeat forever.
         onLoadStart={this.loadStart} // Callback when video starts to load
         onLoad={this.setDuration.bind(this)}    // Callback when video loads
         onProgress={this.setTime.bind(this)}    // Callback every ~250ms with currentTime

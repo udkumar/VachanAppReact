@@ -334,6 +334,7 @@ const mapStateToProps = state =>{
     chapterNumber:state.updateVersion.chapterNumber,
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
+    fontFamily:state.updateStyling.fontFamily
   }
 }
 

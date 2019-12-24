@@ -23,6 +23,8 @@ import Player from '../../screens/Bible/Navigate/Audio/Player';
 import {getBookNameFromMapping,getBookChaptersFromMapping} from '../../utils/UtilFunctions';
 import APIFetch from '../../utils/APIFetch'
 import SplashScreen from 'react-native-splash-screen'
+import {selectedChapter,closeSplitScreen} from '../../store/action/'
+
 
 import Spinner from 'react-native-loading-spinner-overlay';
 import {
@@ -35,7 +37,6 @@ import { styles } from './styles.js';
 import {SplitScreen} from '../Bible/Navigate/SplitScreen';
 
 import {connect} from 'react-redux'
-import {selectedChapter,closeSplitScreen} from '../../store/action/'
 
 const TRACKS = [{
     title: 'Genesis 1',
