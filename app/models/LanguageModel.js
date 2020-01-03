@@ -9,6 +9,7 @@ LanguageModel.schema = {
     properties: {
         // languageCode: 'string',
         languageName: 'string',
+        languageCode:'string',
         versionModels: 'VersionModel[]'
     }
 };

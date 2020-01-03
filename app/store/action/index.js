@@ -6,3 +6,4 @@ export {addBookToNote,addChapterToNote,addVerseToNote,updateNoteBody} from './ed
 export {updateVersion,selectedBook,selectedChapter,selectedVerse} from './updateVersion'
 export {updateFontSize,updateColorMode,updateVerseInLine} from './updateStyling'
 export {closeSplitScreen,updateDimensions} from './splitScreenProps'
+export {updateAudio} from './updateAudio'

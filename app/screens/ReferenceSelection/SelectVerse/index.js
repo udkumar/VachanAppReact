@@ -13,6 +13,8 @@ const width = Dimensions.get('window').width;
 import {nightColors, dayColors} from '../../../utils/colors.js'
 import {connect} from 'react-redux'
 import {selectedVerse,addVerseToNote} from '../../../store/action/'
+import SelectionGrid from '../../../components/SelectionGrid/';
+
 
 
 
@@ -25,36 +27,41 @@ class SelectVerse extends Component {
 
     this.state = {
       isLoading: false,      
-      bookData: [], 
+      verseArray: [], 
+      totalChapters:this.props.totalChapters,
+      totalVerses:this.props.totalVerses
       // selectedIndex: 0,
     }
     this.styles = numberSelection(this.props.colorFile, this.props.sizeFile);   
     
   }
-  componentDidUpdate(prevProps) {
-    console.log("props ",this.props,this.prevProps)
-    if (this.props.totalVerses !== prevProps.totalVerses) {
-      var bookData = []
-      for(var i=1;i<=this.props.totalVerses;i++){
-        bookData.push(i)
-    }
-    this.setState({bookData})
-    }
+  static getDerivedStateFromProps(nextProps, prevState){
+    console.log("verses ",nextProps.totalVerses, prevState.totalVerses)
+    console.log("verses ",nextProps.totalChapters, prevState.totalChapters)
+
+
+    var verses = []
+    for(var i = 1; i<=nextProps.totalVerses; i++ ){
+      verses.push(i)
   }
-  componentDidMount() {
+    if(nextProps.totalChapters !== prevState.totalChapters && nextProps.totalVerses !== prevState.totalVerses){
+      return {verseArray:verses,totalVerses:nextProps.totalVerses};
+   }
+   else return null;
+ }
+  queryBook() {
+    console.log("total verse ",this.props.totalVerses)
+    const verseArray = []
+      for(var i = 1; i<=this.props.totalVerses; i++ ){
+        verseArray.push(i)
+      }
+        this.setState({verseArray})
+    }
+
+  componentDidMount(){
       this.queryBook()
   }
-
-  queryBook() {
-    const bookData = []
-      for(var i = 1; i<=this.props.totalVerses; i++ ){
-          bookData.push(i)
-      }
-        this.setState({bookData})
-    }
-
-  onVerseSelected(item, index) {
-    console.log("on select" + item)
+  onVerseSelected=(item)=> {
     this.props.selectedVerse(item)
     this.props.addVerseToNote(item)
     this.props.screenProps.navigateBack()
@@ -63,20 +70,12 @@ class SelectVerse extends Component {
   render() {
 
     return (
-      <View style={this.styles.tabContainer}>
-        <FlatList
-        numColumns={4}
-        data={this.state.bookData}
-        renderItem={({item, index}) => 
-        <TouchableOpacity style={[this.styles.selectGridNum,
-          {backgroundColor:'transparent'}]}
-          onPress={()=>this.onVerseSelected(item, index)}
-          >
-                <Text style={this.styles.selectText}>{item}</Text>
-            </TouchableOpacity>
-        }
+      <SelectionGrid
+      styles={this.styles}
+      onNumPress={(item)=>{this.onVerseSelected(item)}}
+      numbers={this.state.verseArray}
+      loader={this.state.isLoading}
       />
-      </View>
     );
   }
 };
@@ -88,11 +87,12 @@ const mapStateToProps = state =>{
     sourceId:state.updateVersion.sourceId,
     downloaded:state.updateVersion.downloaded,
     
+    totalChapters:state.updateVersion.totalChapters,
     totalVerses:state.updateVersion.totalVerses,
+    
 
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
-    // chapterNumber:state.selectReference.chapterNumber,
   }
 }
 

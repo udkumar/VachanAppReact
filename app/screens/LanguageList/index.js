@@ -68,7 +68,7 @@ class ExpandableItemComponent extends Component {
           {/*Content under the header of the Expandable List Item*/}
           {this.props.item.versionModels.map((item, index, key) => (
               <List>
-                <ListItem button={true} onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId, item.downloaded  )}}>
+                <ListItem button={true} onPress={()=>{this.props.goToBible(this.props.item.languageName,this.props.item.languageCode,item.versionCode,item.sourceId, item.downloaded  )}}>
                 <Left>
                 <View style={{alignSelf:'center',marginLeft:12}}>
                   <Text style={[this.styles.text,{fontWeight:'bold'}]} >{item.versionCode} </Text>
@@ -142,7 +142,7 @@ class LanguageList extends Component {
       var d = new Date('1-feb-2000')
       var ud = new Date(timestamp.languageUpdate)
       var diffDays = Math.round(Math.abs((d.getTime() - ud.getTime())/(oneDay)))
-        if(diffDays <= 20 ){
+        // if(diffDays <= 20 ){
           var languageList =  await DbQueries.getLangaugeList()
             for(var i =0 ; i<languageList.length;i++){
               lanVer.push(languageList[i])
@@ -152,30 +152,35 @@ class LanguageList extends Component {
               for(var i = 0; i<languageRes.length;i++){
                 var versions = []
                 const language = languageRes[i].language.charAt(0).toUpperCase() + languageRes[i].language.slice(1)
+                let languageCode=''
                 for(var j= 0; j<languageRes[i].languageVersions.length;j++){
+                console.log(" LANGUAGE list",languageRes[i].languageVersions[j].language.code)
+                  languageCode = languageRes[i].languageVersions[j].language.code
                   const  {version} = languageRes[i].languageVersions[j]
                   versions.push({sourceId:languageRes[i].languageVersions[j].sourceId,versionName:version.name,versionCode:version.code,license:"license",year:2019,downloaded:false})
                 }
-                lanVer.push({languageName:language,versionModels:versions})
+                lanVer.push({languageName:language,languageCode:languageCode,versionModels:versions})
               }
-
               DbQueries.addLangaugeList(lanVer)
             }
-         }
-         else{
-          const languageRes = await APIFetch.getVersions()
-          for(var i = 0; i<languageRes.length;i++){
-            var versions = []
-            const language = languageRes[i].language.charAt(0).toUpperCase() + languageRes[i].language.slice(1)
-            for(var j= 0; j<languageRes[i].languageVersions.length;j++){
-              const  {version} = languageRes[i].languageVersions[j]
-              versions.push({sourceId:languageRes[i].languageVersions[j].sourceId,versionName:version.name,versionCode:version.code,license:"license",year:2019,downloaded:false})
-            }
-            lanVer.push({languageName:language,versionModels:versions})
-          }
-          DbQueries.addLangaugeList(lanVer)
+        //  }
+        //  else{
+        //   const languageRes = await APIFetch.getVersions()
+        //   for(var i = 0; i<languageRes.length;i++){
+        //     var versions = []
+        //     const language = languageRes[i].language.charAt(0).toUpperCase() + languageRes[i].language.slice(1)
+        //     let languageCode = ''
+            
+        //     for(var j= 0; j<languageRes[i].languageVersions.length;j++){
+        //       const  {version} = languageRes[i].languageVersions[j]
+        //       versions.push({sourceId:languageRes[i].languageVersions[j].sourceId,versionName:version.name,versionCode:version.code,license:"license",year:2019,downloaded:false})
+        //       languageCode = languageRes[i].languageVersions[j].language.code
+        //     }
+        //     lanVer.push({languageName:language,languageCode:languageCode,versionModels:versions})
+        //   }
+        //   DbQueries.addLangaugeList(lanVer)
          
-        }
+        // }
     
       this.setState({
         languages: lanVer,
@@ -206,6 +211,7 @@ class LanguageList extends Component {
   
         try{
           var mainContent = await APIFetch.getAllBooks(sourceId,"json")
+          console.log("MAIN CONTENT LANGUAGE ",mainContent)
           this.setState({languageName:langName})
           if(mainContent.length != 0){
             var content = mainContent.bibleContent
@@ -261,15 +267,17 @@ class LanguageList extends Component {
     setModalVisible=()=>{
       this.setState({modalVisible:!this.state.modalVisible})
     }
-    goToBible = (langName,verCode,sourceId,downloaded)=>{
-      console.log("downloaded value in language page ",sourceId)
+    goToBible = (langName,langCode,verCode,sourceId,downloaded)=>{
+      console.log("downloaded value in language page ",langName,langCode,verCode,sourceId,downloaded)
       AsyncStorageUtil.setAllItems([
         [AsyncStorageConstants.Keys.SourceId, JSON.stringify(sourceId)],
         [AsyncStorageConstants.Keys.LanguageName, langName],
+        [AsyncStorageConstants.Keys.LanguageCode, langCode],
+
         [AsyncStorageConstants.Keys.VersionCode, verCode],
         [AsyncStorageConstants.Keys.Downloaded, JSON.stringify(downloaded)]
       ]); 
-      this.props.updateVersion(langName,verCode,sourceId,downloaded)
+      this.props.updateVersion(langName,langCode,verCode,sourceId,downloaded)
       this.props.navigation.state.params.callBackForUpdateBook(null)
       this.props.navigation.goBack()
     }
@@ -340,7 +348,7 @@ const mapStateToProps = state =>{
 
 const mapDispatchToProps = dispatch =>{
   return {
-    updateVersion: (language,version,sourceId,downloaded)=>dispatch(updateVersion(language,version,sourceId,downloaded)),
+    updateVersion: (language,langaugeCode,version,sourceId,downloaded)=>dispatch(updateVersion(language,langaugeCode,version,sourceId,downloaded)),
   }
 }
 export default connect(mapStateToProps,mapDispatchToProps)(LanguageList)

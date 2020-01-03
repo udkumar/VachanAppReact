@@ -95,6 +95,19 @@ export const styles =(colorFile, sizeFile, fontfamily) =>{
         backgroundColor:colorFile.semiTransparentBackground,
         justifyContent:'center'
     },
+    bottomBarAudioCenter:{
+        borderRadius: 32, 
+        margin:8, 
+        position:'absolute', 
+        bottom:20, 
+        // left:0,
+        // width: 56, 
+        // height: 56, 
+       
+        // backgroundColor: colorFile.backgroundColor,
+        backgroundColor:colorFile.semiTransparentBackground,
+        justifyContent:'center'
+    },
     bottomBarChevrontIcon:{ 
         alignItems:'center',
         zIndex:2, 

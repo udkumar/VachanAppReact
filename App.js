@@ -89,12 +89,11 @@ class App extends Component {
           AsyncStorageConstants.Keys.SourceId,
           AsyncStorageConstants.Keys.Downloaded
         ])
-        console.log("res ......",res)
         
         const  colorMode= res[0][1]== null ? AsyncStorageConstants.Values.DayMode : parseInt(res[0][1])
         const  sizeMode= res[1][1] == null ? AsyncStorageConstants.Values.SizeModeNormal : parseInt(res[1][1])
         const  verseInLine=  res[3][1] == null ? AsyncStorageConstants.Values.VerseInLine : res[3][1]
-        // const  languageCode= res[4][1] == null ? AsyncStorageConstants.Values.DefLanguageCode : res[4][1]
+        const  languageCode= res[4][1] == null ? AsyncStorageConstants.Values.DefLanguageCode : res[4][1]
         const  versionCode= res[5][1] == null ? AsyncStorageConstants.Values.DefVersionCode : res[5][1]
         const  languageName= res[6][1] == null ? AsyncStorageConstants.Values.DefLanguageName : res[6][1]
         // const  versionName= res[7][1] == null ? AsyncStorageConstants.Values.DefVersionName : res[7][1]
@@ -106,9 +105,8 @@ class App extends Component {
         const  downloaded= res[13][1] == null ? AsyncStorageConstants.Values.DefSourceId:res[13][1].toString()
         const  totalChapters= getBookChaptersFromMapping(bookId)
 
-          console.log("source id in app page ",sourceId)
 
-          this.props.updateVersion(languageName,versionCode,sourceId,downloaded)
+          this.props.updateVersion(languageName,languageCode,versionCode,sourceId,downloaded)
           this.props.selectedBook(bookId,bookName,totalChapters)
           this.props.selectedChapter(chapterNumber,null)
           this.props.updateColorMode(colorMode)

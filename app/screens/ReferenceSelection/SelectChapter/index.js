@@ -13,66 +13,52 @@ import DbQueries from '../../../utils/dbQueries'
 import {connect} from 'react-redux'
 import {selectedChapter,addChapterToNote} from '../../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
+import SelectionGrid from '../../../components/SelectionGrid/';
+import { Item } from 'native-base';
 
 
 class ChapterSelection extends Component {
 
   constructor(props){
     super(props)
-
+    console.log("props in chapter selection ",props)
     this.state = {
       isLoading:false,
-      chapterData:[]
+      chapterData:[],
+      bookId:this.props.bookId,
+      totalChapters:this.props.totalChapters
     }
     this.styles = numberSelection(this.props.colorFile, this.props.sizeFile);   
+    // this.onNumPress = this.onNumPress.bind(this)
   }
-
-componentDidUpdate(prevProps) {
-    console.log("props ",this.props,this.prevProps)
-    if (this.props.totalChapters !== prevProps.totalChapters) {
-      var chapterData = []
-    for(var i=1;i<=this.props.totalChapters;i++){
-      chapterData.push(i)
+  static getDerivedStateFromProps(nextProps, prevState){
+    var chapters = []
+    if(nextProps.bookId !== prevState.bookId && nextProps.totalChapters !== prevState.totalChapters){
+      for(var i=0;i<=nextProps.totalChapters.length-1;i++){
+        chapters.push(i+1)
       }
-      this.setState({chapterData})
-    }
-  }
-  componentDidMount(){
-    var chapterData = []
-    for(var i=1;i<=this.props.totalChapters;i++){
-      chapterData.push(i)
+      return { bookId: nextProps.bookId, totalChapters: nextProps.totalChapters,chapterData:chapters};
+   }
+   else return null;
+ }
+  getChapters(){
+  var chapterData = []
+  for(var i=0;i<=this.props.totalChapters.length-1;i++){
+    chapterData.push(i+1)
   }
   this.setState({chapterData})
   }
 
-   onNumPress(item){
-
+  componentDidMount(){
+    this.getChapters()
+  }
+  
+   onNumPress=(item,index)=>{
     var time =  new Date()
-    DbQueries.addHistory(this.props.language, this.props.version, 
-    this.props.bookId, item, time)
+    DbQueries.addHistory(this.props.language, this.props.version, this.props.bookId, item, time)
     this.setState({isLoading:true},async()=>{
     try{
-      if(this.props.downloaded == true ){
-        let response = await DbQueries.queryVersions(this.props.language,this.props.version,this.props.bookId,item)
-        if(response.length != 0){
-          this.props.selectedChapter(item,response[0].verses.length)
-        }
-        else{
-          alert("no book found of ",this.props.bookId)
-        }
-      }
-      else{
-        let response =  await APIFetch.getChapterContent(this.props.sourceId,this.props.bookId,item)
-        if(response.length != 0){
-          if(response.success == false){
-            alert("response success false")
-          }else{
-            console.log("item length  ",response.chapterContent.verses.length)
-            this.props.selectedChapter(item,response.chapterContent.verses.length)
-  
-          }
-        }
-      }
+      this.props.selectedChapter(item,this.props.totalChapters[index])
       this.setState({isLoading:false})
       this.props.navigation.navigate('Verses')
 
@@ -95,30 +81,15 @@ componentDidUpdate(prevProps) {
 
   
   render() {
+    console.log("chapters ",this.state.chapterData)
     return (
-      <View style={this.styles.chapterSelectionContainer}>
-      {this.state.isLoading && 
-         <Spinner
-         visible={true}
-         textContent={'Loading...'}
-        //  textStyle={styles.spinnerTextStyle}
-      />}
-        <FlatList
-
-        numColumns={4}
-        data={this.state.chapterData}
-        renderItem={({item}) => 
-        <TouchableOpacity 
-        style={[this.styles.selectGridNum,
-          {backgroundColor:'transparent'}]}
-          onPress={()=>{this.onNumPress(item)}}>
-            <View>
-                <Text style={[this.styles.chapterNum,{fontWeight: item == this.props.chapterNumber ? "bold":"normal"}]}>{item}</Text>
-            </View>
-            </TouchableOpacity>
-        }
+      <SelectionGrid
+      styles={this.styles}
+      onNumPress={(item,index)=>{this.onNumPress(item,index)}}
+      numbers={this.state.chapterData}
+      loader={this.state.isLoading}
+      heighlightedNumber={this.props.chapterNumber}
       />
-      </View>
     );
   }
 };

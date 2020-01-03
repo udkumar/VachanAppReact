@@ -26,13 +26,7 @@ import {connect} from 'react-redux'
 import {selectedBook,addBookToNote} from '../../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
 
-
-
-
-// import { changeBook } from '../../../store/action/referenceUpdate.js';
-
- class SelectBook extends Component {
-
+class SelectBook extends Component {
   constructor(props){
     super(props)
     this.state = {
@@ -94,27 +88,18 @@ import Spinner from 'react-native-loading-spinner-overlay';
       this.flatlistRef.scrollToIndex({index:0,viewPosition:0,animated: false,viewOffset:0})
     }
   }
-   componentWillReceiveProps(props){
-     this.setState({
-        colorFile:props.colorFile,
-        colorMode: props.colorMode,
-        sizeFile:props.sizeFile,
-        lastRead: props.screenProps.lastRead,
-        // booksList: props.screenProps.booksList,
-        // OTSize:this.getOTSize(),
-        // NTSize:this.getNTSize(props.screenProps.booksList)
-      })
-   
-    this.styles = SelectBookPageStyle(props.colorFile, props.sizeFile);   
-  }
+  static getDerivedStateFromProps(nextProps, prevState){
+    if(nextProps.sourceId!==prevState.sourceId){
+      return { sourceId: nextProps.sourceId};
+   }
+   else return null;
+ }
  
   getItemLayout = (data, index) => (
     { length: 48, offset: 48 * index, index }
   )
-
-  async componentDidMount(){
+  async  fetchbookList(){
     var bookListData=[]
-    // this.setState({isLoading:bookListData.length == 0 ? true : false})
     try{
     if(this.props.downloaded == true){
         this.setState({isLoading:true})
@@ -129,7 +114,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
                 bookNumber:getBookNumberFromMapping(bookId),
                 languageName: this.props.language, 
                 versionCode:this.props.version, 
-                numOfChapters:getBookChaptersFromMapping(bookId)
+                // numOfChapters:getBookChaptersFromMapping(bookId)
             }
                 bookListData.push(books)
           }
@@ -137,13 +122,13 @@ import Spinner from 'react-native-loading-spinner-overlay';
     else{
       this.setState({isLoading:true})
       var booksid = await APIFetch.availableBooks(this.props.sourceId)
-        console.log("books id ",booksid)
+        console.log("books id ",booksid,this.props.sourceId)
         if(booksid.length !=0){
           if(booksid.status == 500){
-            alert("sorry are unavailable ")
+            alert("sorry books are unavailable ")
           }
           else{
-            for(var i =0;i<=booksid[0].books.length-1;i++){
+            for(var i =0; i<=booksid[0].books.length-1; i++){
               var bookId = booksid[0].books[i].abbreviation
               var books= {
                     bookId:bookId,
@@ -152,7 +137,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
                     bookNumber:getBookNumberFromMapping(bookId),
                     languageName: this.props.language, 
                     versionCode:this.props.version, 
-                    numOfChapters:getBookChaptersFromMapping(bookId)
+                    // numOfChapters:getBookChaptersFromMapping(bookId)
               }
                     bookListData.push(books)
           }
@@ -171,10 +156,20 @@ import Spinner from 'react-native-loading-spinner-overlay';
     console.log("response data ",res)
     this.setState({bookList:res,isLoading:false})
   }
+  componentDidMount(){
+    this.fetchbookList()
+    this.setState({
+      colorFile:this.props.colorFile,
+      colorMode: this.props.colorMode,
+      sizeFile:this.props.sizeFile,
+      lastRead:this.props.screenProps.lastRead,
+    })
+  this.styles = SelectBookPageStyle(this.props.colorFile, this.props.sizeFile);   
+  }
 
   navigateToChapter(item){
-    this.props.selectedBook(item.bookId,item.bookName,item.numOfChapters)
-    this.props.addBookToNote(item.bookId,item.bookName,item.numOfChapters)
+    this.props.selectedBook(item.bookId,item.bookName,getBookChaptersFromMapping(item.bookId))
+    this.props.addBookToNote(item.bookId,item.bookName,getBookChaptersFromMapping(item.bookId))
     this.props.navigation.navigate('Chapters')
   }
 renderItem = ({item, index})=> {

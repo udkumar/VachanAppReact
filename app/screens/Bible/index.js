@@ -9,6 +9,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Share,
+  ToastAndroid,
   Button
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -23,7 +24,7 @@ import Player from '../../screens/Bible/Navigate/Audio/Player';
 import {getBookNameFromMapping,getBookChaptersFromMapping} from '../../utils/UtilFunctions';
 import APIFetch from '../../utils/APIFetch'
 import SplashScreen from 'react-native-splash-screen'
-import {selectedChapter,closeSplitScreen} from '../../store/action/'
+import {selectedChapter,updateAudio} from '../../store/action/'
 
 
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -37,25 +38,7 @@ import { styles } from './styles.js';
 import {SplitScreen} from '../Bible/Navigate/SplitScreen';
 
 import {connect} from 'react-redux'
-
-const TRACKS = [{
-    title: 'Genesis 1',
-    // artist: 'Twenty One Pilots',
-    albumArtUrl: "http://36.media.tumblr.com/14e9a12cd4dca7a3c3c4fe178b607d27/tumblr_nlott6SmIh1ta3rfmo1_1280.jpg",
-    audioUrl: "https://raw.githubusercontent.com/RevantCI/Vachan2-Prototype/master/hi_ulb_40_mat_01.mp3",
-  },
-  {
-    title: 'Genesis 2',
-    // artist: 'Twenty One Pilots',
-    albumArtUrl: "http://36.media.tumblr.com/14e9a12cd4dca7a3c3c4fe178b607d27/tumblr_nlott6SmIh1ta3rfmo1_1280.jpg",
-    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-  },
-  {
-    title: 'Genesis 3',
-    // artist: 'Twenty One Pilots',
-    albumArtUrl: "http://36.media.tumblr.com/14e9a12cd4dca7a3c3c4fe178b607d27/tumblr_nlott6SmIh1ta3rfmo1_1280.jpg",
-    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-}]
+import { Toast } from 'native-base';
 
 
 class Bible extends Component {
@@ -85,14 +68,14 @@ class Bible extends Component {
         headerTintColor:"#fff",
         headerRight:(
           <View style={navStyles.headerRightStyle}>
-              <TouchableOpacity  onPress={params.ShowHideTextComponentView}
-               style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
-              <Icon 
-                  name='volume-up'
-                  size={24} 
-                  color="#fff"
-              /> 
-              </TouchableOpacity>
+          <TouchableOpacity  onPress={params.ShowHideTextComponentView}
+            style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
+           <Icon 
+               name='volume-up'
+               size={24} 
+               color={params.audio ? "#fff" : "#eee"}
+           /> 
+           </TouchableOpacity>
               <TouchableOpacity  style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
                 <Icon 
                   onPress={()=> {params.onBookmark(params.bookId,params.currentChapter,params.isBookmark)}} 
@@ -114,14 +97,12 @@ class Bible extends Component {
     this.isVisible = true;
     this.getSelectedReferences = this.getSelectedReferences.bind(this)
     this.onBookmarkPress = this.onBookmarkPress.bind(this)
-    console.log("book  id ",this.props.bookId)
 
     // this.updateCurrentChapter = this.updateCurrentChapter.bind(this)
     this.state = {
       isLoading: false,
       showBottomBar: false,
       //onFullScreen:false,
-      status:true,
       bookName:getBookNameFromMapping(this.props.bookId,this.props.language),
       bookId:this.props.bookId,
       // menuHighlightedText: false,
@@ -145,7 +126,6 @@ class Bible extends Component {
       // chaptersArray:[],
       message:'',
       totalVerses:0,
-
 
       //modal value for showing chapter grid 
     }
@@ -231,8 +211,7 @@ class Bible extends Component {
 
   componentDidUpdate(prevProps) {
     // Typical usage (don't forget to compare props):
-    console.log("props ",this.props,this.prevProps)
-    if (this.props.sourceId !== prevProps.sourceId) {
+    if (this.props.sourceId !== prevProps.sourceId || this.props.audio !==prevProps.audio ) {
       this.props.navigation.setParams({
         onBookmark: this.onBookmarkPress,
         isBookmark:this.state.isBookmark,
@@ -243,7 +222,8 @@ class Bible extends Component {
         versionCode: this.props.version,
         bookId:this.props.bookId,
         callBackForUpdateBook:this.queryBookFromAPI,
-        totalVerses:this.state.totalVerses
+        totalVerses:this.state.totalVerses,
+        audio:this.props.audio
       })
       this.queryBookFromAPI(null)
     }
@@ -252,8 +232,6 @@ class Bible extends Component {
   
     queryBookFromAPI = async(val)=>{
         this.setState({isLoading:true,chapter:[],currentVisibleChapter: val != null ? this.state.currentVisibleChapter + val : this.props.chapterNumber },async()=>{
-        
-          console.log("current visible chapter ",this.state.currentVisibleChapter) 
           if(this.props.downloaded == true ){
               let response = await DbQueries.queryVersions(this.props.language,this.props.version,this.props.bookId,this.state.currentVisibleChapter)
               if(response.length != 0){
@@ -279,57 +257,66 @@ class Bible extends Component {
               
             }
             else{
-              try{
-                //check sourceid 
-                console.log("SOURCE ID   ",this.props.sourceId)
-              let response =  await APIFetch.getChapterContent(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter)
-              console.log("response ",response)  
-              if(response.length !=0){
-                  if(response.ok == false && response.status == 500){
-                    this.setState({isLoading:false,currentVisibleChapter:this.props.chapterNumber})
-                    alert(" please check internet connected or slow  OR book is not available ")
-                  }else{
-                    this.setState({chapter:response.chapterContent.verses,
-                      totalChapters: getBookChaptersFromMapping(this.props.bookId),
-                      totalVerses:response.chapterContent.verses.length,
-                      isLoading:false,
-                      currentVisibleChapter:this.state.currentVisibleChapter
-                    })
-                    this.props.navigation.setParams({
-                      totalVerses:response.chapterContent.verses.length,
-                      languageName:this.props.language,
-                      versionCode:this.props.version,
-                      bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
-                      currentChapter:this.state.currentVisibleChapter
-                    })
-                  this.props.selectedChapter(this.state.currentVisibleChapter,response.chapterContent.verses.length)
-                  }
-              }
-              else{
-                alert("check internet connection")
-              }
-              }
-              catch(error) {
-                console.log("error on fetching content ",error)
+              APIFetch.getChapterContent(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter)
+              .then(response => {
+                this.setState({chapter:response.chapterContent.verses,
+                  totalChapters: getBookChaptersFromMapping(this.props.bookId),
+                  totalVerses:response.chapterContent.verses.length,
+                  isLoading:false,
+                  currentVisibleChapter:this.state.currentVisibleChapter
+                })
+                this.props.navigation.setParams({
+                  totalVerses:response.chapterContent.verses.length,
+                  languageName:this.props.language,
+                  versionCode:this.props.version,
+                  bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
+                  currentChapter:this.state.currentVisibleChapter
+                })
+              this.props.selectedChapter(this.state.currentVisibleChapter,response.chapterContent.verses.length)
 
-                alert("It seems no version available or check your internet connection ",error)
-               
-              }
+              })
+              .catch(error => {
+                this.setState({isLoading:false,currentVisibleChapter:this.props.chapterNumber})
+                alert(" please check internet connected or slow  OR book is not available ")
+              });
             }
+            this.availableAudio(this.props.languageCode,this.props.version)
             this.getHighlights()
             this.getBookMarks(this.props.bookId,this.state.currentVisibleChapter)
         })
       
      
   }
- 
+availableAudio(lang_code,ver_code){
+  APIFetch.availableAudioBook(lang_code,ver_code)
+  .then(res => {
+    console.log("response ",res)
+    var found = false
+    for (var key in res.books) {
+      if(key == this.props.bookId){
+        found = true
+      }
+    }
+    console.log("found ",found)
+    if(found){
+    console.log("not found ",!found)
+      this.props.updateAudio(true)
+    }
+    else{
+      this.props.updateAudio(false)
+    }
+  })
+  .catch(error => {
+    this.props.updateAudio(false)
+    alert("audio file not found ")
+  });
+
+ }
   async getHighlights(){
 
-    console.log("language props ",this.props.language)
     let model2 = await  DbQueries.queryHighlights(this.props.language,this.props.version,this.props.bookId)
     const HightlightedVerseArray =[]
     if(Object.keys(model2).length === 0){
-      console.log("get highlight  ",model2)
       for(var i = 0; i<=model2.length-1;i++){
         const obj = {"bookId":model2[i].bookId,"chapterNumber":model2[i].chapterNumber,"verseNumber":model2[i].verseNumber}
         HightlightedVerseArray.push(obj)
@@ -341,7 +328,6 @@ class Bible extends Component {
 
   //get bookmarks from local db
   async getBookMarks(bookId,chapter){
-    console.log("book id",bookId,chapter)
     let model = await  DbQueries.queryBookmark(this.props.language,this.props.version,bookId,chapter)
       if(model.length > 0){
           if(model[0].bookId == bookId && model[0].chapterNumber == chapter){
@@ -398,7 +384,6 @@ class Bible extends Component {
     if (!found) {
       selectedReferenceSet.push(obj)
     }
-    // console.log("HightlightedVerseArray get selected ",this.state.HightlightedVerseArray)
     this.setState({selectedReferenceSet}, () => {
       let selectedCount = this.state.selectedReferenceSet.length, highlightCount = 0;
       for (let item of this.state.selectedReferenceSet) {
@@ -406,13 +391,11 @@ class Bible extends Component {
           for(var i=0; i<=this.state.HightlightedVerseArray.length-1; i++ ){
 
               if (this.state.HightlightedVerseArray[i].verseNumber == JSON.parse(tempVal[2]) && this.state.HightlightedVerseArray[i].chapterNumber ==JSON.parse(tempVal[0]) && this.state.HightlightedVerseArray[i].bookId == this.state.bookId  ) {
-                console.log("selected highlight",this.state.HightlightedVerseArray[i].verseNumber)
                 highlightCount++
               }
               
           }
       }
-      console.log("SELECT COUNT ",selectedCount,"HIGHLIGHTED COUNT ",highlightCount)
 
       this.setState({showBottomBar: this.state.selectedReferenceSet.length > 0 ? true : false, bottomHighlightText: selectedCount == highlightCount ?  false : true})
     })
@@ -423,7 +406,6 @@ class Bible extends Component {
     let id = this.props.bookId
     let name = getBookNameFromMapping(this.props.bookId,this.props.language)
     for (let item of this.state.selectedReferenceSet) {
-    console.log(this.state.selectedReferenceSet)
 
       let tempVal = item.split('_')
       const verseNumber =  tempVal[2].toString()
@@ -456,12 +438,10 @@ class Bible extends Component {
   //after selected reference do highlight 
   doHighlight = async () => {
     // let HightlightedVerseArray = [...this.state.HightlightedVerseArray]
-      console.log("bottom highlight ",this.state.bottomHighlightText )
     if (this.state.bottomHighlightText == true) {
       // do highlight
       var arr = []
       for (let item of this.state.selectedReferenceSet){
-        console.log("selected reference ",this.state.selectedReferenceSet)
         let tempVal = item.split('_')
         await DbQueries.updateHighlightsInVerse( this.props.language, this.props.version,this.props.bookId,this.state.currentVisibleChapter, tempVal[2], true)
         var highlightArr = this.state.HightlightedVerseArray
@@ -540,19 +520,29 @@ class Bible extends Component {
   _keyExtractor = (item, index) => item.number;
 
   ShowHideTextComponentView = () =>{
-    if(this.state.status == true){
-      this.setState({status: false})
+    if(this.props.audio==false){
+      ToastAndroid.showWithGravityAndOffset(
+        'sorry audio not available for this book ',
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50,
+      );
     }
-    else{
-      this.setState({status: true})
-    }
+    this.availableAudio(this.props.languageCode,this.props.version)
+  }
+  onScroll=(event)=> {
+    var currentOffset = event.nativeEvent.contentOffset.y;
+    var direction = currentOffset > this.state.offset ? 'down' : 'up';
+    this.setState({offset:currentOffset,direction:direction})
+    console.log(direction)
   }
  
   render() {
-    console.log("source id   ",this.props.sourceId)
+    console.log("AUDIO  ",this.props.audio)
       return (
         <View style={this.styles.container}>
-        <MenuContext style={this.styles.verseWrapperText}>
+       
           {this.state.chapter.length  == 0 ?
             <Spinner
                 visible={true}
@@ -562,6 +552,7 @@ class Bible extends Component {
               :
               <View>
               <ScrollView
+              onScroll={this.onScroll}
               {...this.gestureResponder}
               style={this.styles.recyclerListView}
               ref={(ref) => { this.scrollViewRef = ref; }}                    
@@ -621,6 +612,7 @@ class Bible extends Component {
                       </View>
                   }
           </ScrollView>
+          <View style={{justifyContent:(this.state.currentVisibleChapter != 1 &&  this.state.currentVisibleChapter == this.state.currentVisibleChapter != this.state.totalChapters) ? 'center' : 'space-around',alignItems:'center'}}>
             {
             this.state.currentVisibleChapter == 1 
             ? null :
@@ -631,8 +623,18 @@ class Bible extends Component {
                     />
             </View>
             }
+          <View style={this.styles.bottomBarAudioCenter}>
+            {this.props.audio && 
+              <Player 
+                languageCode={this.props.languageCode}
+                version={this.props.version} bookId={this.props.bookId} 
+                currentChapter={this.state.currentVisibleChapter}
+                audio={this.props.audio}
+              />
+           }
+          </View>
             {
-              this.state.currentVisibleChapter == this.state.totalChapters 
+              this.state.currentVisibleChapter == this.state.totalChapters.length
             ? null :
             <View style={this.styles.bottomBarNextView}>
                 <Icon name={'chevron-right'} color="#3F51B5" size={32} 
@@ -641,36 +643,11 @@ class Bible extends Component {
                     />
             </View>
             }
-            
+            </View>
         </View>
 
         } 
-    
-        </MenuContext>
-        {/* {
-            this.props.close ? 
-            <TouchableOpacity style={{ width:width,backgroundColor:"#3F51B5",flexDirection:'row',justifyContent:'flex-end'}} onPress={()=>this.props.closeSplitScreen(false)}>
-              <Text style={{color:'#fff',textAlign:'center',fontSize:16}}>Study Help</Text>
-              <Icon name="expand-less" size={24} color="#fff" style={{paddingHorizontal:16}}/>
-            </TouchableOpacity>  :
-              <SplitScreen
-              style={{flex:1,height:height}}
-                // colorFile={this.props.screenProps.colorFile}
-                // sizeFile={this.props.screenProps.sizeFile}
-                // currentVisibleChapter={this.state.currentVisibleChapter}
-                // bookId = {this.state.bookId}
-                // versionCode = {this.props.version}
-                // languageName = {this.props.language}
-                close={true}
-                // closeSplitScreen ={this.closeSplitScreen}
-                // HightlightedVerseArray= {this.state.HightlightedVerseArray}
-                // removeHighlight = {this.removeHighlightFromBottom}
-                // bookmarksList={this.state.bookmarksList}
-                // onBookmarkRemove = {this.onBookmarkRemove}
-                // changeBookFromSplit={this.changeBookFromSplit}
-            />
-            } */}
-              {/* {this.state.showBottomBar 
+              {this.state.showBottomBar 
           ? 
           <View style={this.styles.bottomBar}>
   
@@ -709,28 +686,9 @@ class Bible extends Component {
               </TouchableOpacity>
             </View>
             <View style={this.styles.bottomOptionSeparator} />   
-            <View style={this.styles.bottomOption}>   
-              <TouchableOpacity onPress={this.addToShare}>       
-                <Text onPress={() => this.onFullScreen()}
-                style={this.styles.bottomOptionText}>
-                  Audio
-                </Text>
-                <Icon  
-                name={'share'} color="white" size={24} style={this.styles.bottomOptionIcon} />
-              </TouchableOpacity>
-            </View>
-  
           </View>
-          : null } */}
-          
-          {
-         this.state.status ? null:
-         <View style={{justiftyContent:"center",height: 200,width: 400,backgroundColor:'rgba(255,255,255,0.5)'}}>
-           <Player tracks={TRACKS}/>
-          </View>
-       }
-  
- 
+          : null }
+       
       </View>
       )
   }
@@ -766,9 +724,11 @@ headerTextStyle:{
 const mapStateToProps = state =>{
   return{
     language: state.updateVersion.language,
+    languageCode:state.updateVersion.languageCode,
     version:state.updateVersion.version,
     sourceId:state.updateVersion.sourceId,
     downloaded:state.updateVersion.downloaded,
+
 
     chapterNumber:state.updateVersion.chapterNumber,
     totalChapters:state.updateVersion.totalChapters,
@@ -776,16 +736,18 @@ const mapStateToProps = state =>{
     bookId:state.updateVersion.bookId,
     fontFamily:state.updateStyling.fontFamily,
 
-
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
-    close:state.updateSplitScreen.close
+    close:state.updateSplitScreen.close,
+
+    audio:state.updateAudio.visible
   }
 }
 const mapDispatchToProps = dispatch =>{
   return {
     selectedChapter: (chapterNumber,totalVerses)=>dispatch(selectedChapter(chapterNumber,totalVerses)),
-    closeSplitScreen :(close)=>dispatch(closeSplitScreen(close))
+    closeSplitScreen :(close)=>dispatch(closeSplitScreen(close)),
+    updateAudio :(audio)=>dispatch(updateAudio(audio))
   }
 }
 export  default connect(mapStateToProps,mapDispatchToProps)(Bible)

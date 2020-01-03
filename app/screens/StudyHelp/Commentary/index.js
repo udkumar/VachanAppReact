@@ -12,6 +12,9 @@ import SplashScreen from 'react-native-splash-screen'
 import Spinner from 'react-native-loading-spinner-overlay';
 import {connect} from 'react-redux'
 import {Card,CardItem,Content,Body} from 'native-base'
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import startEndIndex from '../../../assets/commentary_mapping'
+
 
 
 const DATA = [
@@ -33,17 +36,27 @@ const DATA = [
 class Commentary extends Component {
   static navigationOptions = ({navigation}) =>{
     const { params={} } = navigation.state 
-
     return{
-      headerTitle:(
-        <View style={styles.headerLeftStyle}>
-          <View style={{marginRight:10}}>
-              <Text style={styles.headerTextStyle}>{params.bookName}  {params.currentChapter }</Text>
+        headerTitle:(
+          <View style={styles.headerLeftStyle}>
+            <View style={{marginRight:10}}>
+              <TouchableOpacity style={styles.touchableStyleLeft}  
+              onPress={() =>{navigation.navigate("SelectionTab", {bookId:params.bookId,chapterNumber:params.currentChapter,totalVerses:params.totalVerses,getReference:params.callBackForUpdateBook})}}>
+                <Text  style={styles.headerTextStyle}>{params.bookName}  {params.currentChapter }</Text>
+              <Icon name="arrow-drop-down" color="#fff" size={24}/>
+              </TouchableOpacity>
+            </View>
+            <View style={{marginRight:10}}>
+              <TouchableOpacity onPress={() =>{navigation.navigate("LanguageList", {callBackForUpdateBook:params.callBackForUpdateBook})}} style={styles.headerLeftStyle}>
+                <Text style={styles.headerTextStyle}>{params.languageName}  {params.versionCode}</Text>
+                <Icon name="arrow-drop-down" color="#fff" size={24}/>
+              </TouchableOpacity>
+           
+            </View>
           </View>
-          
-        </View>
-     
-    ), 
+       
+      )
+        
     }
   }
     constructor(props){
@@ -55,15 +68,15 @@ class Commentary extends Component {
     }
   getCommmentary(){
     RNFS.readFileAssets('mhcc_commentary.csv').then((res) => {
-      var lines = res.split("\n");
+      var lines = res.split("\n")
       const id = this.props.bookId.toUpperCase()
-      // const id ='GEN'
-      console.log("book id ",id)
-
+      var obj = startEndIndex
+      console.log("book id ",obj[id].start,obj[id].end)
       let commentary = []
-      for(var i=0; i<=lines.length-1; i++){
+      for(var i=obj[id].start; i<=obj[id].end; i++){
           commentaryContent = {}
           const substr =  lines[i].split("\t")
+          console.log("lines ",lines[i])
           let string = substr.slice(3).toString()
           let content = string.replace(/\<br>|\<br\/>/,"").replace(/\<br>|\<br\/>/g,"\n").replace(/^\"|\"$/g,"")
           if(substr[0] == id ){
@@ -85,17 +98,22 @@ class Commentary extends Component {
     .catch(error=>{console.log("erorr ",error)})
   }
 
-  componentDidUpdate(prevProps) {
-    // Typical usage (don't forget to compare props):
-    console.log("props ",this.props,this.prevProps)
-    if (this.props.bookId !== prevProps.bookId || this.props.chapterNumber !== prevProps.chapterNumber) {
-      this.getCommmentary()
-    }
-  }
+  // componentDidUpdate(prevProps) {
+  //   // Typical usage (don't forget to compare props):
+  //   console.log("props ",this.props,this.prevProps)
+  //   if (this.props.bookId !== prevProps.bookId || this.props.chapterNumber !== prevProps.chapterNumber) {
+  //     this.getCommmentary()
+  //   }
+  // }
   
   componentDidMount(){
+    this.props.navigation.setParams({
+      bookName:this.props.bookName,
+      currentChapter: this.props.chapterNumber,
+      languageName:this.props.language,
+      versionCode:this.props.version
+    })
     this.getCommmentary()
-    SplashScreen.hide();
   }
   render(){
     console.log(" content ",this.state.commentary)
@@ -190,11 +208,34 @@ headerLeftStyle:{
   flex:1,
   marginHorizontal:10
 },
+headerLeftStyle:{
+  flexDirection:'row',
+  flex:1,
+},
+headerRightStyle:{
+  flexDirection:'row',
+  flex:1,
+},
+touchableStyleRight:{
+    flexDirection:"row",
+    marginRight:10
+},
+touchableStyleLeft:{
+  flexDirection:"row",
+    marginLeft:10,
+},
+headerTextStyle:{
+    fontSize:16,
+    color:"#fff",
+    textAlign:'center'
+},
 });
 
 
 const mapStateToProps = state =>{
   return{
+    language: state.updateVersion.language,
+    version:state.updateVersion.version,
     chapterNumber:state.updateVersion.chapterNumber,
     totalChapters:state.updateVersion.totalChapters,
     bookName:state.updateVersion.bookName,

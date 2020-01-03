@@ -22,15 +22,11 @@ const Controls = ({
   forwardDisabled,
 }) => (
   <View style={styles.container}>
-    {/* <TouchableOpacity activeOpacity={0.0} onPress={onPressShuffle}>
-      <Icon style={[styles.secondaryControl, shuffleOn ? [] : styles.off]}
-       name="shuffle" size={30} color="#fff"/>
-    </TouchableOpacity> */}
-    <View style={{width: 40}} />
-    <TouchableOpacity onPress={onBack}>
-      <Icon name="skip-previous" size={30} />
-    </TouchableOpacity>
     <View style={{width: 20}} />
+    <TouchableOpacity onPress={onBack}>
+      <Icon name="fast-rewind" size={30} />
+    </TouchableOpacity>
+    <View style={{width: 10}} />
     {!paused ?
       <TouchableOpacity onPress={onPressPause}>
         <View style={styles.playButton}>
@@ -43,15 +39,13 @@ const Controls = ({
         </View>
       </TouchableOpacity>
     }
-    <View style={{width: 20}} />
+    <View style={{width: 10}} />
     <TouchableOpacity onPress={onForward}
       disabled={forwardDisabled}>
-      <Icon name="skip-next" size={30}  />
+      <Icon name="fast-forward" size={30}  />
     </TouchableOpacity>
-    <View style={{width: 40}} />
-    {/* <TouchableOpacity activeOpacity={0.0} onPress={onPressRepeat}>
-    <Icon name="repeat" size={30} color="#fff"  style={[styles.secondaryControl, repeatOn ? [] : styles.off]}/>
-    </TouchableOpacity> */}
+    <View style={{width: 20}} />
+    
   </View>
 );
 
@@ -65,19 +59,19 @@ const styles = StyleSheet.create({
     // paddingTop: 8,
   },
   playButton: {
-    height: 72,
-    width: 72,
+    height:56,
+    width: 56,
     borderWidth: 1,
-    borderColor: '#eee',
-    borderRadius: 72 / 2,
+    borderColor: '#fff',
+    borderRadius: 58 / 2,
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
   },
   
   secondaryControl: {
-    height: 18,
-    width: 18,
+    // height: 18,
+    // width: 18,
   },
   off: {
     opacity: 0.30,

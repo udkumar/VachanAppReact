@@ -4,6 +4,7 @@ import editNoteReducer from "./reducer/editNoteReducer";
 import UpdateVersionReducer from './reducer/updateVersionReducer';
 import updateStylingReducer from './reducer/updateStylingReducer';
 import splitScreenReducer from './reducer/splitScreenReducer';
+import updateAudioReducer from './reducer/updateAudioReducer'
 
 
 
@@ -13,7 +14,8 @@ const rootReducer = combineReducers({
     editNote: editNoteReducer,
     updateVersion:UpdateVersionReducer,
     updateStyling:updateStylingReducer,
-    updateSplitScreen:splitScreenReducer
+    updateSplitScreen:splitScreenReducer,
+    updateAudio:updateAudioReducer
 });
 
 export default function configureStore(){

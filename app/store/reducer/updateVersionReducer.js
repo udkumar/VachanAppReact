@@ -2,6 +2,7 @@ import { UPDATE_VERSION, SELECTED_BOOK,SELECTED_CHAPTER,SELECTED_VERSE, UPDATE_N
 
 const initialState = {
    language:'Hindi',
+   languageCode:'hin',
    version:'IRV',
    sourceId:'45',
    downloaded:false,
@@ -19,6 +20,7 @@ function UpdateVersionReducer(state=initialState,action){
         return {
             ...state,
         language:action.language,
+        languageCode:action.languageCode,
         version:action.version,
         sourceId:action.sourceId,
         downloaded:action.downloaded

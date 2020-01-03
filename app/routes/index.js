@@ -108,35 +108,15 @@ const BibleStack = createStackNavigator(
           color: '#ffffff'
       }
   },
-  navigationOptions: {
-    tabBarLabel: 'Bible',
-    tabBarIcon: () => <Icon name="book-open-page-variant" size={20} style={{color:'#fff'}}/>
-  },
-  // transitionConfig:() => ({
-  // 	transitionSpec: {
-  // 		duration: 200,
-  // 		timing: Animated.timing,
-  // 		easing: Easing.step0,
-  // 	},
-  // }),
-  }
   
-
+  navigationOptions:{
+    
+  },
+  }
 )
 
 const CommentaryStack = createStackNavigator(
-  { screen:Commentary,
-      // navigationOptions: () => ({
-      //     headerStyle: {
-      //       backgroundColor:"#3F51B5",
-      //     },
-      //     headerTintColor: '#3F51B5',
-      //     headerTitleStyle: {
-      //       fontWeight: 'bold',
-      //     },
-           
-        // })
-  },
+  { screen:Commentary},
   {
   defaultNavigationOptions: {
       headerStyle: {
@@ -150,10 +130,7 @@ const CommentaryStack = createStackNavigator(
           color: '#ffffff'
       }
   },
-      navigationOptions: {
-          tabBarLabel: 'Commentary',
-          tabBarIcon: () => <Icon name="comment-text" size={20} style={{color:'#fff'}}/>,
-      },
+     
   }
 );
 
@@ -194,10 +171,7 @@ const MoreStack = createStackNavigator(
         color: '#ffffff'
     }
 },
-  navigationOptions:{
-      tabBarLabel: 'More',
-  tabBarIcon: () => <Icon name="menu" size={20} style={{color:'#fff'}}/>,
-  },
+ 
 }
 );
 const InfoGraphicsStack = createStackNavigator(
@@ -223,6 +197,83 @@ const InfoGraphicsStack = createStackNavigator(
 }
   
 );
+
+
+BibleStack.navigationOptions = ({ navigation }) => {
+  console.log(" navigation in  stack  ",navigation.state.routes.length)
+  let tabBarVisible;
+  if (navigation.state.routes.length > 1) {
+    navigation.state.routes.map(route => {
+      if (route.routeName === "Bible") {
+        tabBarVisible = true;
+      } else {
+        tabBarVisible = false;
+      }
+    });
+  console.log(" navigation in  stack  ",tabBarVisible)
+
+  }
+
+  return {
+    tabBarVisible:tabBarVisible,
+    tabBarLabel: 'Bible',
+    tabBarIcon: () => <Icon name="book-open-page-variant" size={20} style={{color:'#fff'}}/>,
+  }  
+}
+
+CommentaryStack.navigationOptions = ({ navigation }) => {
+  let tabBarVisible;
+  if (navigation.state.routes.length > 1) {
+    navigation.state.routes.map(route => {
+      if (route.routeName === "Commentary") {
+        tabBarVisible = true;
+      } else {
+        tabBarVisible = false;
+      }
+    });
+  }
+  return {
+    tabBarVisible:tabBarVisible,
+    tabBarLabel: 'Commentary',
+    tabBarIcon: () => <Icon name="comment-text" size={20} style={{color:'#fff'}}/>,
+  };
+};
+// InfoGraphicsStack.navigationOptions = ({ navigation }) => {
+//   let tabBarVisible;
+//   if (navigation.state.routes.length > 1) {
+//     navigation.state.routes.map(route => {
+//       if (route.routeName === "Bible") {
+//         tabBarVisible = false;
+//       } else {
+//         tabBarVisible = true;
+//       }
+//     });
+//   }
+
+//   return {
+//     tabBarVisible
+//   };
+// };
+
+MoreStack.navigationOptions = ({ navigation }) => {
+  let tabBarVisible;
+  if (navigation.state.routes.length > 1) {
+    navigation.state.routes.map(route => {
+      if (route.routeName === "More") {
+        tabBarVisible = true;
+      } else {
+        tabBarVisible = false;
+      }
+    });
+  }
+  return {
+    tabBarVisible:tabBarVisible,
+    tabBarLabel: 'More',
+    tabBarIcon: () => <Icon name="menu" size={20} style={{color:'#fff'}}/>,
+  };
+};
+
+
 
 const AppTabNavigator = createBottomTabNavigator(
   {

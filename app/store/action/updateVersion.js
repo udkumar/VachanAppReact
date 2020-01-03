@@ -1,9 +1,10 @@
 import { UPDATE_VERSION , SELECTED_BOOK,SELECTED_CHAPTER,SELECTED_VERSE} from "./actionsType";
 
-export const updateVersion = (language,version,sourceId,downloaded)=>{
+export const updateVersion = (language,languageCode,version,sourceId,downloaded)=>{
     return {
         type:UPDATE_VERSION,
         language:language,
+        languageCode:languageCode,
         version:version,
         sourceId:sourceId,
         downloaded:downloaded
