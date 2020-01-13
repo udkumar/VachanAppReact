@@ -4,7 +4,8 @@ import editNoteReducer from "./reducer/editNoteReducer";
 import UpdateVersionReducer from './reducer/updateVersionReducer';
 import updateStylingReducer from './reducer/updateStylingReducer';
 import splitScreenReducer from './reducer/splitScreenReducer';
-import updateAudioReducer from './reducer/updateAudioReducer'
+import updateAudioReducer from './reducer/updateAudioReducer';
+import APIReducer from './reducer/fetchAPI';
 
 
 
@@ -15,13 +16,11 @@ const rootReducer = combineReducers({
     updateVersion:UpdateVersionReducer,
     updateStyling:updateStylingReducer,
     updateSplitScreen:splitScreenReducer,
-    updateAudio:updateAudioReducer
+    updateAudio:updateAudioReducer,
+    APIFetch:APIReducer
 });
 
 export default function configureStore(){
-    return createStore(rootReducer,applyMiddleware(
-    thunkMiddleware, // lets us dispatch() functions
-    // loggerMiddleware // neat middleware that logs actions
-  ))
+    return createStore(rootReducer,applyMiddleware(thunkMiddleware))
 }
 

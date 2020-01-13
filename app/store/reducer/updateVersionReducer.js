@@ -1,4 +1,4 @@
-import { UPDATE_VERSION, SELECTED_BOOK,SELECTED_CHAPTER,SELECTED_VERSE, UPDATE_NOTE_BODY  } from '../action/actionsType';
+import { UPDATE_VERSION, SELECTED_BOOK,SELECTED_CHAPTER,SELECTED_VERSE, UPDATE_CONTENT_TYPE  } from '../action/actionsType';
 
 const initialState = {
    language:'Hindi',
@@ -13,6 +13,7 @@ const initialState = {
    verseNumber: 1,
    totalVerses:15,
    verseText:'',
+   contentType:'bible'
 }
 function UpdateVersionReducer(state=initialState,action){
     switch(action.type) {
@@ -43,8 +44,11 @@ function UpdateVersionReducer(state=initialState,action){
             ...state,
             verseNumber:action.verseNumber,
         }
-        
-       
+        case UPDATE_CONTENT_TYPE:
+        return {
+            ...state,
+            contentType:action.contentType,
+        }
         default: 
         return state
     }

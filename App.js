@@ -6,7 +6,6 @@ import {nightColors, dayColors} from './app/utils/colors.js'
 import {extraSmallFont,smallFont,mediumFont,largeFont,extraLargeFont} from './app/utils/dimens.js'
 import { styleFile } from './app/utils/styles.js'
 import {AsyncStorageConstants} from './app/utils/AsyncStorageConstants'
-import {getBookChaptersFromMapping} from './app/utils/UtilFunctions'
 import SplashScreen from 'react-native-splash-screen'
 import {connect} from 'react-redux'
 import {updateColorMode,updateFontSize,updateVerseInLine,updateVersion,selectedBook,selectedChapter} from './app/store/action/'
@@ -14,6 +13,7 @@ import {updateColorMode,updateFontSize,updateVerseInLine,updateVersion,selectedB
 class App extends Component {
     constructor(props){
         super(props)
+        console.log("props value APP PAGE ",props)
         this.state = {
           isloading:false
         }
@@ -93,19 +93,19 @@ class App extends Component {
         const  colorMode= res[0][1]== null ? AsyncStorageConstants.Values.DayMode : parseInt(res[0][1])
         const  sizeMode= res[1][1] == null ? AsyncStorageConstants.Values.SizeModeNormal : parseInt(res[1][1])
         const  verseInLine=  res[3][1] == null ? AsyncStorageConstants.Values.VerseInLine : res[3][1]
-        const  languageCode= res[4][1] == null ? AsyncStorageConstants.Values.DefLanguageCode : res[4][1]
-        const  versionCode= res[5][1] == null ? AsyncStorageConstants.Values.DefVersionCode : res[5][1]
-        const  languageName= res[6][1] == null ? AsyncStorageConstants.Values.DefLanguageName : res[6][1]
+        const  languageCode= res[4][1] == null ? this.props.languageCode : res[4][1]
+        const  versionCode= res[5][1] == null ? this.props.version : res[5][1]
+        const  languageName= res[6][1] == null ? this.props.language : res[6][1]
         // const  versionName= res[7][1] == null ? AsyncStorageConstants.Values.DefVersionName : res[7][1]
-        const  bookId= res[8][1] == null ? AsyncStorageConstants.Values.DefBookId:res[8][1]
-        const  bookName= res[9][1] == null ? AsyncStorageConstants.Values.DefBookName:res[9][1]
-        const  chapterNumber= res[10][1] == null ? AsyncStorageConstants.Values.DefBookChapter:parseInt(res[10][1])
+        const  bookId= res[8][1] == null ? this.props.bookId:res[8][1]
+        const  bookName= res[9][1] == null ? this.props.bookName:res[9][1]
+        const  chapterNumber= res[10][1] == null ? this.props.chapterNumber:parseInt(res[10][1])
         // const  bookNumber= res[11][1] == null ? AsyncStorageConstants.Values.DefBookNumber:parseInt(res[11][1])
-        const  sourceId= res[12][1] == null ? AsyncStorageConstants.Values.DefSourceId:parseInt(res[12][1])
-        const  downloaded= res[13][1] == null ? AsyncStorageConstants.Values.DefSourceId:res[13][1].toString()
-        const  totalChapters= getBookChaptersFromMapping(bookId)
+        const  sourceId= res[12][1] == null ? this.props.sourceId:parseInt(res[12][1])
+        const  downloaded= res[13][1] == null ? this.props.downloaded:res[13][1].toString()
+        const  totalChapters= this.props.totalChapters
 
-
+          console.log("PROPS VALUE IN APP DID MOUNT ",languageName,languageCode,versionCode,sourceId,downloaded)
           this.props.updateVersion(languageName,languageCode,versionCode,sourceId,downloaded)
           this.props.selectedBook(bookId,bookName,totalChapters)
           this.props.selectedChapter(chapterNumber,null)
@@ -118,17 +118,43 @@ class App extends Component {
       //   ).then((lastRead) => {
       //       this.setState({lastRead})
       // })
+      console.log("ASYNC VALUE ",res)
     }
-    componentDidUpdate(prevProps){
-      console.log("prevProps",prevProps)
-    }
+    // componentDidUpdate(prevProps){
+    //   console.log("prevProps",prevProps)
+    // }
     render() {
-
         return (<AppNavigator 
         />);
     }
 }
+const mapStateToProps = state =>{
+  return{
+    language: state.updateVersion.language,
+    languageCode:state.updateVersion.languageCode,
+    version:state.updateVersion.version,
+    sourceId:state.updateVersion.sourceId,
+    downloaded:state.updateVersion.downloaded,
+    contentType:state.updateVersion.contentType,
 
+
+    chapterNumber:state.updateVersion.chapterNumber,
+    totalChapters:state.updateVersion.totalChapters,
+    bookName:state.updateVersion.bookName,
+    bookId:state.updateVersion.bookId,
+    fontFamily:state.updateStyling.fontFamily,
+
+    sizeFile:state.updateStyling.sizeFile,
+    colorFile:state.updateStyling.colorFile,
+    close:state.updateSplitScreen.close,
+
+    audio:state.updateAudio.visible,
+    apiData:state.APIFetch.data,
+    isFetching:state.APIFetch.isFetching,
+
+    error:state.APIFetch.error
+  }
+}
 const mapDispatchToProps = dispatch =>{
   return {
     updateVersion: (language,version,sourceId,downloaded)=>dispatch(updateVersion(language,version,sourceId,downloaded)),
@@ -141,4 +167,4 @@ const mapDispatchToProps = dispatch =>{
   }
 }
 
-export  default connect(null,mapDispatchToProps)(App)
+export  default connect(mapStateToProps,mapDispatchToProps)(App)

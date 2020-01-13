@@ -3,99 +3,22 @@ import { Text, StyleSheet,ScrollView,Dimensions, Modal,View,ActivityIndicator,Te
 import {Card,ListItem,Left,Right,List} from 'native-base'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import DbQueries from '../../utils/dbQueries'
-import APIFetch from '../../utils/APIFetch'
+// import APIFetch from '../../utils/APIFetch'
 import timestamp from '../../assets/timestamp.json'
 import { getBookNameFromMapping, getBookSectionFromMapping, getBookNumberFromMapping } from '../../utils/UtilFunctions';
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants';
+import ExpandableItemComponent from './Expandable';
 import { styles } from './styles.js';
 import {connect} from 'react-redux';
 import {updateVersion} from '../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
-
-
+import {API_BASE_URL} from '../../utils/APIConstant'
+import {fetchAPI} from '../../store/action/'
 
 const languageList = async () => { 
   return await DbQueries.getLangaugeList()
 }
-
-class ExpandableItemComponent extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      layoutHeight: 0,
-      modalVisible:true,
-     
-
-    };
-    this.styles = styles(this.props.colorFile, this.props.sizeFile,this.props.fontfamily);    
-  }
-  componentWillReceiveProps(nextProps){
-    if (nextProps.item.isExpanded) {
-      this.setState(() => {
-        return {
-          layoutHeight: null,
-        };
-      });
-    } else {
-      this.setState(() => {
-        return {
-          layoutHeight: 0,
-        };
-      });
-    }
-  }
- 
-  render() {
-    return (
-      <View style={this.styles.container}>
-      {/* <Card> */}
-      <List>
-      <ListItem button={true} onPress={this.props.onClickFunction}>
-        <Left>
-        <Text style={this.styles.text} >{this.props.item.languageName }</Text>
-        </Left>
-        <Right>
-          <Icon style={this.styles.iconStyle} name={this.props.item.isExpanded ? "keyboard-arrow-down" : "keyboard-arrow-up" }  size={24}/>
-        </Right>
-        </ListItem>
-        </List>
-        <View
-          style={{
-            height: this.state.layoutHeight,
-            overflow: 'hidden',
-          }}>
-          {/*Content under the header of the Expandable List Item*/}
-          {this.props.item.versionModels.map((item, index, key) => (
-              <List>
-                <ListItem button={true} onPress={()=>{this.props.goToBible(this.props.item.languageName,this.props.item.languageCode,item.versionCode,item.sourceId, item.downloaded  )}}>
-                <Left>
-                <View style={{alignSelf:'center',marginLeft:12}}>
-                  <Text style={[this.styles.text,{fontWeight:'bold'}]} >{item.versionCode} </Text>
-                  <Text style={[this.styles.text,{marginLeft:8}]} > {item.versionName}</Text>
-                </View>
-                </Left>
-                <Right>
-                {
-                  item.downloaded == true ? 
-                  <Icon style={[this.styles.iconStyle,{marginRight:8}]} name="check" size={24}  onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId,item.downloaded)}}
-                  />
-                :
-                  <Icon  style={[this.styles.iconStyle,{marginRight:12}]} name="file-download" size={24} onPress={()=>{this.props.DownloadBible(this.props.item.languageName,item.versionCode,index,item.sourceId)}}/>
-                }
-              
-              </Right>
-              </ListItem>
-              </List>
-          ))}
-        </View>
-      {/* </Card> */}
-
-      </View>
-    );
-  }
-}
-
 
 class LanguageList extends Component {
     static navigationOptions = ({navigation}) => ({
@@ -115,7 +38,7 @@ class LanguageList extends Component {
           index : -1,
           languageName:'',
           colorFile:this.props.colorFile,
-          sizeFile:this.props.sizeFile
+          sizeFile:this.props.sizeFile,
 
       }
       this.styles = styles(this.props.colorFile, this.props.sizeFile);    
@@ -130,10 +53,11 @@ class LanguageList extends Component {
           languages: responseay,
         }
       })
+      
     }
 
     async componentDidMount(){
-      this.fetchLanguages()
+      this.fetchLanguages()      
     }
   
     async fetchLanguages(){
@@ -143,77 +67,78 @@ class LanguageList extends Component {
       var ud = new Date(timestamp.languageUpdate)
       var diffDays = Math.round(Math.abs((d.getTime() - ud.getTime())/(oneDay)))
         // if(diffDays <= 20 ){
-          var languageList =  await DbQueries.getLangaugeList()
+          switch(this.props.contentType){
+            case 'bible' :{
+            var languageList =  await DbQueries.getLangaugeList()
             for(var i =0 ; i<languageList.length;i++){
               lanVer.push(languageList[i])
             }
             if(languageList.length == 0){
-              const languageRes = await APIFetch.getVersions()
-              for(var i = 0; i<languageRes.length;i++){
-                var versions = []
-                const language = languageRes[i].language.charAt(0).toUpperCase() + languageRes[i].language.slice(1)
-                let languageCode=''
-                for(var j= 0; j<languageRes[i].languageVersions.length;j++){
-                console.log(" LANGUAGE list",languageRes[i].languageVersions[j].language.code)
-                  languageCode = languageRes[i].languageVersions[j].language.code
-                  const  {version} = languageRes[i].languageVersions[j]
-                  versions.push({sourceId:languageRes[i].languageVersions[j].sourceId,versionName:version.name,versionCode:version.code,license:"license",year:2019,downloaded:false})
+              const apiURL = API_BASE_URL + "bibles"
+              await this.props.fetchAPI(apiURL)
+              var languageRes = this.props.apiData
+
+              // APIFetch.getVersions().then(languageRes=>{
+                for(var i = 0; i<languageRes.length;i++){
+                  var versions = []
+                  const language = languageRes[i].language.charAt(0).toUpperCase() + languageRes[i].language.slice(1)
+                  let languageCode=''
+                  for(var j= 0; j<languageRes[i].languageVersions.length;j++){
+                  console.log(" LANGUAGE list",languageRes[i].languageVersions[j].language.code)
+                    languageCode = languageRes[i].languageVersions[j].language.code
+                    const  {version} = languageRes[i].languageVersions[j]
+                    versions.push({sourceId:languageRes[i].languageVersions[j].sourceId,versionName:version.name,versionCode:version.code,license:"license",year:2019,downloaded:false})
+                  }
+                  lanVer.push({languageName:language,languageCode:languageCode,versionModels:versions})
                 }
-                lanVer.push({languageName:language,languageCode:languageCode,versionModels:versions})
-              }
-              DbQueries.addLangaugeList(lanVer)
+                DbQueries.addLangaugeList(lanVer)
+              // })
+              // .catch(error => {
+              //   this.setState({isLoading:false})
+              //   alert(" please check internet connected or slow  OR book is not available ")
+              // });
+              
             }
-        //  }
-        //  else{
-        //   const languageRes = await APIFetch.getVersions()
-        //   for(var i = 0; i<languageRes.length;i++){
-        //     var versions = []
-        //     const language = languageRes[i].language.charAt(0).toUpperCase() + languageRes[i].language.slice(1)
-        //     let languageCode = ''
-            
-        //     for(var j= 0; j<languageRes[i].languageVersions.length;j++){
-        //       const  {version} = languageRes[i].languageVersions[j]
-        //       versions.push({sourceId:languageRes[i].languageVersions[j].sourceId,versionName:version.name,versionCode:version.code,license:"license",year:2019,downloaded:false})
-        //       languageCode = languageRes[i].languageVersions[j].language.code
-        //     }
-        //     lanVer.push({languageName:language,languageCode:languageCode,versionModels:versions})
-        //   }
-        //   DbQueries.addLangaugeList(lanVer)
-         
-        // }
-    
-      this.setState({
-        languages: lanVer,
-        searchList: lanVer
-      })
+            this.setState({
+              languages: lanVer,
+              searchList: lanVer
+            })
+          }
+          break;
+            case 'commentary':{
+              alert("commentary language list ")
+            }
+            break;
+            case 'infographics':{
+              alert("infographics language list ")
+            }
+            break;
+            default: {
+              alert("default")
+            }
+          }
+        
     }
 
-    goToVersionScreen(value){
-    //  this.props.navigation.navigate('VersionList',  {versions: value });
-    }
-
-    SearchFilterFunction = (text)=>{
-        const newData = this.state.searchList.filter(function(item){
-          const itemData = item.languageName
-          const textData = text.toLowerCase()
-          return itemData.indexOf(textData) > -1
-        })
-        this.setState({
-          text: text,
-          languages:newData
-        })
-    }
+    // SearchFilterFunction = (text)=>{
+    //     const newData = this.state.searchList.filter(function(item){
+    //       const itemData = item.languageName
+    //       const textData = text.toLowerCase()
+    //       return itemData.indexOf(textData) > -1
+    //     })
+    //     this.setState({
+    //       text: text,
+    //       languages:newData
+    //     })
+    // }
 
     DownloadBible = (langName,verCode,index,sourceId)=>{
       console.log("source id ",sourceId)
       this.setState({isLoading:true,isdownLoading:true,index},async()=>{
         var bookModels = []
-  
-        try{
-          var mainContent = await APIFetch.getAllBooks(sourceId,"json")
-          console.log("MAIN CONTENT LANGUAGE ",mainContent)
-          this.setState({languageName:langName})
-          if(mainContent.length != 0){
+          var apiURL = API_BASE_URL + "bibles" + "/" + sourceId + "/" + "json"
+          this.props.fetchAPI(apiURL)
+          var mainContent = this.props.apiData
             var content = mainContent.bibleContent
             for(var id in content){
               if(content != null){
@@ -255,19 +180,12 @@ class LanguageList extends Component {
               languageList().then(async(language) => {
                 this.setState({languages:language})
               })
-          }
-
-        }catch(error){
-          console.log("error ",error)
-        }
+          
 
       })
 
     }
-    setModalVisible=()=>{
-      this.setState({modalVisible:!this.state.modalVisible})
-    }
-    goToBible = (langName,langCode,verCode,sourceId,downloaded)=>{
+    navigateTo = (langName,langCode,verCode,sourceId,downloaded)=>{
       console.log("downloaded value in language page ",langName,langCode,verCode,sourceId,downloaded)
       AsyncStorageUtil.setAllItems([
         [AsyncStorageConstants.Keys.SourceId, JSON.stringify(sourceId)],
@@ -281,16 +199,12 @@ class LanguageList extends Component {
       this.props.navigation.state.params.callBackForUpdateBook(null)
       this.props.navigation.goBack()
     }
+
     render(){
       return (
         <View style={this.styles.MainContainer}>
-        {this.state.languages.length == 0 ?
-        <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>   
-          <ActivityIndicator 
-            size="large" 
-            color="#0000ff"/>
-        </View> 
-          :
+        {this.props.isFetching &&  <Spinner visible={true} textContent={'Loading...'}/>}
+        
         <View style={{flex:1}}>
         {/* <TextInput 
           style={this.styles.TextInputStyleClass}
@@ -299,38 +213,22 @@ class LanguageList extends Component {
           underlineColorAndroid='transparent'
           placeholder="Search Here"
         />   */}
-        {this.state.isLoading ?
-        <Spinner
-        visible={this.state.isLoading}
-        textContent={'Loading...'}
-        // textStyle={styles.spinnerTextStyle}
-        />
-         :
         <ScrollView>
         <FlatList
           data={this.state.languages}
           extraData={this.state}
           renderItem={({item, index, separators}) =><ExpandableItemComponent
-            // key={item}
             onClickFunction={this.updateLayout.bind(this, index)}
             item={item}
             DownloadBible = {this.DownloadBible}
-            goToBible = {this.goToBible}
-            startDownload ={this.state.startDownload}
-            colorFile={this.state.colorFile}
-            sizeFile={this.state.sizeFile}
-            isLoading = {this.state.isLoading}
-            index = {this.state.index}
-            languageName = {this.state.languageName}
-            fontfamily ={this.state.fontfamily}
-            // setModalVisible={this.setModalVisible}
+            navigateTo = {this.navigateTo}
+            contentType = {this.props.contentType}
+            styles={this.styles}
           />}
 
         />
       </ScrollView>
-        }
       </View>
-        }
       </View>
       )
     }
@@ -342,13 +240,21 @@ const mapStateToProps = state =>{
     chapterNumber:state.updateVersion.chapterNumber,
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
-    fontFamily:state.updateStyling.fontFamily
+    fontFamily:state.updateStyling.fontFamily,
+
+    contentType:state.updateVersion.contentType,
+
+    apiData:state.APIFetch.data,
+    isFetching:state.APIFetch.isFetching,
+
+    error:state.APIFetch.error
   }
 }
 
 const mapDispatchToProps = dispatch =>{
   return {
     updateVersion: (language,langaugeCode,version,sourceId,downloaded)=>dispatch(updateVersion(language,langaugeCode,version,sourceId,downloaded)),
+    fetchAPI:(api)=>dispatch(fetchAPI(api))
   }
 }
 export default connect(mapStateToProps,mapDispatchToProps)(LanguageList)

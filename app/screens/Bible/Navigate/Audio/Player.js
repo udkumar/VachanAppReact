@@ -8,11 +8,10 @@ import {
 import SeekBar from './SeekBar';
 import Controls from './Controls';
 import Video from 'react-native-video';
-import APIFetch from '../../../../utils/APIFetch'
-
-
-
-export default class Player extends Component {
+import {GIT_BASE_API} from '../../../../utils/APIConstant/'
+import {fetchAPI} from '../../../../store/action/'
+import {connect} from 'react-redux'
+class Player extends Component {
   constructor(props) {
     super(props);
 
@@ -82,20 +81,29 @@ export default class Player extends Component {
     } */
   }
 
-  async fetchMP3(){
+ async  fetchMP3(){
+    this.props.apiData = []
+    const version_code = this.props.version.toLowerCase() 
     // console.log("MP3 RESPONSE ",response,this.props.languageCode,this.props.version,this.props.bookId,this.props.currentChapter)
-      APIFetch.getAudioBible(this.props.languageCode,this.props.version,this.props.bookId,this.props.currentChapter)
-            .then(res => {
-              console.log("reponse file ",res.url)
-                this.setState({audioFile:res.url})
-            })
-            .catch(error => {
-              this.setState({audioFile:null})
-
-                console.log("error in fetch " + error);
-            }) 
-          }
-
+    var apiURL =   GIT_BASE_API + this.props.languageCode + "/" + version_code + "/" + this.props.bookId + "/" + this.props.currentChapter + ".mp3"
+     await this.props.fetchAPI(apiURL,'mp3')
+     var res = await this.props.apiData
+    console.log("response url audio ",res.url)
+    if(res.length !==0){
+    console.log("response url audio ",res.url)
+      this.setState({audioFile:res.url})
+      if(this.props.error){
+        this.setState({audioFile:null})
+      }
+    }
+    }
+    static getDerivedStateFromProps(nextProps, prevState){
+      console.log("nextProps..........",nextProps,"prevState|||||||||||||||",prevState)
+      // if(nextProps.audioFile !== prevState.audioFile){
+        return { audioFile: nextProps.apiData.url};
+    //  }
+    //  else return null;
+   }
     componentDidUpdate(prevProps, prevState) {
       // only update chart if the data has changed
       if (prevProps.language !== this.props.language || prevProps.version !==this.props.version || prevProps.bookId !==this.props.bookId || prevProps.currentChapter !==this.props.currentChapter ) {
@@ -126,7 +134,7 @@ export default class Player extends Component {
           onBack={this.onBack.bind(this)}
           onForward={this.onForward.bind(this)}
           paused={this.state.paused}/>
-        {this.state.audioFile && <Video source={{uri: track}} // Can be a URL or a local file.
+        <Video source={{uri: track}} // Can be a URL or a local file.
           ref="audioElement"
           paused={this.state.paused}               // Pauses playback entirely.
           resizeMode="cover"           // Fill the whole screen at aspect ratio.
@@ -136,7 +144,7 @@ export default class Player extends Component {
           onProgress={this.setTime.bind(this)}    // Callback every ~250ms with currentTime
           onEnd={this.onEnd}           // Callback when playback finishes
           onError={this.videoError}    // Callback when video cannot be loaded
-          style={styles.audioElement} />} 
+          style={styles.audioElement} />
       </View>
     );
   }
@@ -153,3 +161,17 @@ const styles = {
 };
 
 
+const mapStateToProps = state =>{
+  return{
+    apiData:state.APIFetch.data,
+    isFetching:state.APIFetch.isFetching,
+    error:state.APIFetch.error,
+  }
+}
+
+const mapDispatchToProps = dispatch =>{
+  return {
+    fetchAPI:(api) =>dispatch(fetchAPI(api))
+  }
+}
+export  default connect(mapStateToProps,mapDispatchToProps)(Player)

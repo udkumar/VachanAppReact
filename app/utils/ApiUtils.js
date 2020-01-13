@@ -3,7 +3,7 @@ var ApiUtils = {
       // console.log("response data "+JSON.stringify(response))
       if (response.ok && response.status == 200) {
         // console.log("response ok "+response)
-        return response
+        return response.json().then(data => data)
       } else {
         let error = new Error(response.statusText);
         // console.log("response ok "+error)

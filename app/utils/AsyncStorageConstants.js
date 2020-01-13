@@ -54,7 +54,7 @@ export const AsyncStorageConstants = {
             chapterNumber:1,
         },
 
-        DefLanguageCode:'Hin',
+        DefLanguageCode:'hin',
         DefLanguageName:'Hindi',
         DefVersionCode:'IRV',
         DefVersionName:'Indian Revised Version',
