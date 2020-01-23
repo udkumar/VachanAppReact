@@ -19,14 +19,20 @@ const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 import {AsyncStorageConstants} from '../../../utils/AsyncStorageConstants'
 
+import APIFetch from '../../../utils/APIFetch'
 import {getBookNameFromMapping,getBookSectionFromMapping,getBookNumberFromMapping,getBookChaptersFromMapping} from '../../../utils/UtilFunctions';
 import DbQueries from '../../../utils/dbQueries.js';
 import {connect} from 'react-redux'
-import {selectedBook,addBookToNote,fetchAPI} from '../../../store/action/'
+import {selectedBook,addBookToNote} from '../../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
-import {API_BASE_URL} from '../../../utils/APIConstant'
 
-class SelectBook extends Component {
+
+
+
+// import { changeBook } from '../../../store/action/referenceUpdate.js';
+
+ class SelectBook extends Component {
+
   constructor(props){
     super(props)
     this.state = {
@@ -88,22 +94,34 @@ class SelectBook extends Component {
       this.flatlistRef.scrollToIndex({index:0,viewPosition:0,animated: false,viewOffset:0})
     }
   }
-  static getDerivedStateFromProps(nextProps, prevState){
-    if(nextProps.sourceId!==prevState.sourceId){
-      return { sourceId: nextProps.sourceId};
-   }
-   else return null;
- }
+   componentWillReceiveProps(props){
+     this.setState({
+        colorFile:props.colorFile,
+        colorMode: props.colorMode,
+        sizeFile:props.sizeFile,
+        lastRead: props.screenProps.lastRead,
+        // booksList: props.screenProps.booksList,
+        // OTSize:this.getOTSize(),
+        // NTSize:this.getNTSize(props.screenProps.booksList)
+      })
+   
+    this.styles = SelectBookPageStyle(props.colorFile, props.sizeFile);   
+  }
  
   getItemLayout = (data, index) => (
     { length: 48, offset: 48 * index, index }
   )
-  async  fetchbookList(){
+
+  componentDidMount(){
+  this.getBooks()  
+  }
+  async getBooks(){
+    switch(this.props.screenProps.contentType){
+      case 'Bible' :{
+       
     var bookListData=[]
-    switch(this.props.contentType){
-      case 'bible' :
-      {
-      if(this.props.downloaded == true){
+    // this.setState({isLoading:bookListData.length == 0 ? true : false})
+    if(this.props.downloaded == true){
         this.setState({isLoading:true})
         var booksid = await DbQueries.getDownloadedBook(this.props.language,this.props.version)
         // console.log("res ",booksid)
@@ -116,68 +134,64 @@ class SelectBook extends Component {
                 bookNumber:getBookNumberFromMapping(bookId),
                 languageName: this.props.language, 
                 versionCode:this.props.version, 
-                // numOfChapters:getBookChaptersFromMapping(bookId)
+                numOfChapters:getBookChaptersFromMapping(bookId)
             }
                 bookListData.push(books)
           }
       }
-      else{
+    else{
       this.setState({isLoading:true})
-      var apiURL = API_BASE_URL + "bibles" + "/" + this.props.sourceId + "/" + "books"
-      await this.props.fetchAPI(apiURL)
-      var booksid = await this.props.apiData.json()
-      console.log("BOOKS ID BOOKS ",booksid)
-      if(booksid.length !==null){
-        for(var i =0; i<=booksid[0].books.length-1; i++){
-          var bookId = booksid[0].books[i].abbreviation
-          var books= {
-              bookId:bookId,
-              bookName: getBookNameFromMapping(bookId,this.props.language),
-              section:getBookSectionFromMapping(bookId),bookNumber:getBookNumberFromMapping(bookId),
-              bookNumber:getBookNumberFromMapping(bookId),
-              languageName: this.props.language, 
-              versionCode:this.props.version, 
-              // numOfChapters:getBookChaptersFromMapping(bookId)
+      try{
+        var booksid = await APIFetch.availableBooks(this.props.sourceId)
+        console.log("books id ",booksid)
+        if(booksid.length !=0){
+          if(booksid.status == 500){
+            alert("sorry are unavailable ")
           }
-          bookListData.push(books)
+          else{
+            for(var i =0;i<=booksid[0].books.length-1;i++){
+              var bookId = booksid[0].books[i].abbreviation
+              var books= {
+                    bookId:bookId,
+                    bookName: getBookNameFromMapping(bookId,this.props.language),
+                    section:getBookSectionFromMapping(bookId),bookNumber:getBookNumberFromMapping(bookId),
+                    bookNumber:getBookNumberFromMapping(bookId),
+                    languageName: this.props.language, 
+                    versionCode:this.props.version, 
+                    numOfChapters:getBookChaptersFromMapping(bookId)
+              }
+                    bookListData.push(books)
+          }
+          }
+        }
+        else{
+          alert("check internet connection")
         }
       }
-      }
-      var res = bookListData.length == 0 ? [] : bookListData.sort(function(a, b){return a.bookNumber - b.bookNumber})
-      console.log("response data ",res)
-      this.setState({bookList:res,isLoading:false}) 
-      }
-      break;
-      case 'commentary' :{
-        alert("sorry commentary for english available")
-      }
-      break;
-      case 'infographics' :
-      {
-        alert("sorry infographics not available")
-      }
-      break;
-      default: 
-      {
-        alert("default ")
+      catch(error){
+        alert("ERROR ",error)
       }
     }
-    
-}
-  componentDidMount(){
-    this.fetchbookList()
-    this.setState({
-      colorFile:this.props.colorFile,
-      colorMode: this.props.colorMode,
-      sizeFile:this.props.sizeFile,
-      lastRead:this.props.screenProps.lastRead,
-    })
-  this.styles = SelectBookPageStyle(this.props.colorFile, this.props.sizeFile);   
+  
+    var res = bookListData.length == 0 ? [] : bookListData.sort(function(a, b){return a.bookNumber - b.bookNumber})
+    console.log("response data ",res)
+    this.setState({bookList:res,isLoading:false})
+        break;
+      }
+      case 'Commentary':{
+        alert("not books defined ")
+      }
+      case 'Infographics':{
+        alert("not books defined ")
+
+      }
+    }
+
   }
 
   navigateToChapter(item){
-    this.props.selectedBook(item.bookId,item.bookName,getBookChaptersFromMapping(item.bookId))
-    this.props.addBookToNote(item.bookId,item.bookName,getBookChaptersFromMapping(item.bookId))
+    this.props.selectedBook(item.bookId,item.bookName,item.numOfChapters)
+    this.props.addBookToNote(item.bookId,item.bookName,item.numOfChapters)
     this.props.navigation.navigate('Chapters')
   }
 renderItem = ({item, index})=> {
@@ -255,18 +269,17 @@ renderItem = ({item, index})=> {
 
 
   render(){
-    console.log(" this.props.contentType " ,this.props.apiData)
     let activeBgColor = this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#3F51B5' : '#fff'
     let inactiveBgColor =  this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#fff' : '#3F51B5'
     return (
       <View style={this.styles.container}>
-      { this.props.isFetching && 
+      {this.state.isLoading ? 
          <Spinner
          visible={true}
          textContent={'Loading...'}
         //  textStyle={styles.spinnerTextStyle}
           />
-      }
+        :
         <View style={this.styles.bookNameContainer}>
         <Segment>
               {
@@ -323,7 +336,7 @@ renderItem = ({item, index})=> {
               viewabilityConfig={this.viewabilityConfig}
             />
         </View> 
-      
+      }
       </View>
     );
   }
@@ -337,28 +350,21 @@ const mapStateToProps = state =>{
     version:state.updateVersion.version,
     sourceId:state.updateVersion.sourceId,
     downloaded:state.updateVersion.downloaded,
-    contentType:state.updateVersion.contentType,
     
     bookId:state.updateVersion.bookId,
     bookName:state.updateVersion.bookName,
+    contentType:state.updateVersion.contentType,
 
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
-    colorMode:state.updateStyling.colorMode,
-
-    apiData:state.APIFetch.data,
-    isFetching:state.APIFetch.isFetching,
-
-    error:state.APIFetch.error
+    colorMode:state.updateStyling.colorMode
   }
 }
 
 const mapDispatchToProps = dispatch =>{
   return {
     selectedBook:(bookId,bookName,totalChapters) =>dispatch(selectedBook(bookId,bookName,totalChapters)),
-    addBookToNote:(bookId,bookName,totalChapters)=>dispatch(addBookToNote(bookId,bookName,totalChapters)),
-    fetchAPI:(api) =>dispatch(fetchAPI(api))
-  
+    addBookToNote:(bookId,bookName,totalChapters)=>dispatch(addBookToNote(bookId,bookName,totalChapters))
   }
 }
 export  default connect(mapStateToProps,mapDispatchToProps)(SelectBook)

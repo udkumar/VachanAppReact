@@ -8,7 +8,7 @@ import { styleFile } from './app/utils/styles.js'
 import {AsyncStorageConstants} from './app/utils/AsyncStorageConstants'
 import SplashScreen from 'react-native-splash-screen'
 import {connect} from 'react-redux'
-import {updateColorMode,updateFontSize,updateVerseInLine,updateVersion,selectedBook,selectedChapter} from './app/store/action/'
+import {updateColorMode,updateFontSize,updateContentType,updateVerseInLine,updateVersion,selectedBook,selectedChapter} from './app/store/action/'
 
 class App extends Component {
     constructor(props){
@@ -17,6 +17,7 @@ class App extends Component {
         this.state = {
           isloading:false
         }
+        // this.AppNavigator = AppNavigator(this.props)
       }
     
       changeSizeByOne = (value) => {
@@ -105,27 +106,34 @@ class App extends Component {
         const  downloaded= res[13][1] == null ? this.props.downloaded:res[13][1].toString()
         const  totalChapters= this.props.totalChapters
 
-          console.log("PROPS VALUE IN APP DID MOUNT ",languageName,languageCode,versionCode,sourceId,downloaded)
           this.props.updateVersion(languageName,languageCode,versionCode,sourceId,downloaded)
           this.props.selectedBook(bookId,bookName,totalChapters)
           this.props.selectedChapter(chapterNumber,null)
           this.props.updateColorMode(colorMode)
           this.props.updateVerseInLine(verseInLine)
           this.props.updateFontSize(sizeMode)
+   
+          
           SplashScreen.hide()
 
       //   await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.LastReadReference, AsyncStorageConstants.Values.LastReadReference
       //   ).then((lastRead) => {
       //       this.setState({lastRead})
       // })
-      console.log("ASYNC VALUE ",res)
+
     }
     // componentDidUpdate(prevProps){
     //   console.log("prevProps",prevProps)
     // }
     render() {
-        return (<AppNavigator 
-        />);
+        return <AppNavigator
+          // onNavigationStateChange={(prevState, currentState, action) => {
+
+          //   console.log("onNavigationStateChange prevState ", currentState)
+          //   console.log("onNavigationStateChange currentState", prevState)
+
+          // }}
+           />
     }
 }
 const mapStateToProps = state =>{
@@ -147,12 +155,7 @@ const mapStateToProps = state =>{
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
     close:state.updateSplitScreen.close,
-
-    audio:state.updateAudio.visible,
-    apiData:state.APIFetch.data,
-    isFetching:state.APIFetch.isFetching,
-
-    error:state.APIFetch.error
+    
   }
 }
 const mapDispatchToProps = dispatch =>{
@@ -160,10 +163,10 @@ const mapDispatchToProps = dispatch =>{
     updateVersion: (language,version,sourceId,downloaded)=>dispatch(updateVersion(language,version,sourceId,downloaded)),
     selectedBook:(bookId,bookName,totalChapters) =>dispatch(selectedBook(bookId,bookName,totalChapters)),
     selectedChapter: (chapterNumber,totalVerses)=>dispatch(selectedChapter(chapterNumber,totalVerses)),
-    
     updateColorMode:(colorMode)=>dispatch(updateColorMode(colorMode)),
     updateFontSize:(sizeMode)=>dispatch(updateFontSize(sizeMode)),
-    updateVerseInLine:(val)=>dispatch(updateVerseInLine(val))
+    updateVerseInLine:(val)=>dispatch(updateVerseInLine(val)),
+    updateContentType:(val)=>dispatch(updateContentType(val))
   }
 }
 

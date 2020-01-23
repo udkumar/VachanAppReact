@@ -22,10 +22,9 @@ import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
 import Player from '../../screens/Bible/Navigate/Audio/Player';
 // import {getResultText} from '../../utils/UtilFunctions';
 import {getBookNameFromMapping,getBookChaptersFromMapping} from '../../utils/UtilFunctions';
-// import APIFetch from '../../utils/APIFetch'
+import APIFetch from '../../utils/APIFetch'
 import SplashScreen from 'react-native-splash-screen'
-import {selectedChapter,updateAudio,updateContentType,fetchAPI} from '../../store/action/'
-import {API_BASE_URL,GIT_BASE_API} from '../../utils/APIConstant'
+import {selectedChapter,updateAudio,updateContentType} from '../../store/action/'
 import ErrorMessage from '../../components/ErrorMessage/'
 
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -41,56 +40,53 @@ import {SplitScreen} from '../Bible/Navigate/SplitScreen';
 import {connect} from 'react-redux'
 import { Toast } from 'native-base';
 import { constColors } from '../../utils/colors';
-
+import Header from '../../components/Header'
 
 class Bible extends Component {
-  
   static navigationOptions = ({navigation}) =>{
-    const { params={} } = navigation.state 
-    return{
-        headerTitle:(
-          <View style={navStyles.headerLeftStyle}>
-            <View style={{marginRight:10}}>
-              <TouchableOpacity style={navStyles.touchableStyleLeft}  
-              onPress={() =>{navigation.navigate("SelectionTab", {bookId:params.bookId,chapterNumber:params.currentChapter,totalVerses:params.totalVerses,getReference:params.callBackForUpdateBook})}}>
-                <Text  style={navStyles.headerTextStyle}>{params.bookName}  {params.currentChapter }</Text>
-              <Icon name="arrow-drop-down" color="#fff" size={24}/>
-              </TouchableOpacity>
-            </View>
-            <View style={{marginRight:10}}>
-              <TouchableOpacity onPress={() =>{navigation.navigate("LanguageList", {callBackForUpdateBook:params.callBackForUpdateBook})}} style={navStyles.headerLeftStyle}>
-                <Text style={navStyles.headerTextStyle}>{params.languageName}  {params.versionCode}</Text>
-                <Icon name="arrow-drop-down" color="#fff" size={24}/>
-              </TouchableOpacity>
-           
-            </View>
-          </View>
-       
-      ), 
-        headerTintColor:"#fff",
-        headerRight:(
-          <View style={navStyles.headerRightStyle}>
-          <TouchableOpacity  onPress={params.ShowHideTextComponentView}
-            style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
-           <Icon 
-               name='volume-up'
-               size={24} 
-               color={params.audio ? "#fff" : "#eee"}
-           /> 
-           </TouchableOpacity>
-              <TouchableOpacity  style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
-                <Icon 
-                  onPress={()=> {params.onBookmark(params.bookId,params.currentChapter,params.isBookmark)}} 
-                  name='bookmark'
-                  color={params.isBookmark ? "red" : "white"} 
-                  size={24} 
-              /> 
-             </TouchableOpacity>
-          </View>
-        )
+        const { params={} } = navigation.state 
+        return{
+            headerTitle:(
+              <View style={navStyles.headerLeftStyle}>
+                <View style={{marginRight:10}}>
+                  <TouchableOpacity style={navStyles.touchableStyleLeft}  
+                   onPress={() =>{navigation.navigate("SelectionTab", {bookId:params.bookId,chapterNumber:params.currentChapter,totalVerses:params.totalVerses,getReference:params.callBackForUpdateBook,contentType:'bible'})}}>
+                    <Text  style={navStyles.headerTextStyle}>{params.bookName}  {params.currentChapter }</Text>
+                  <Icon name="arrow-drop-down" color="#fff" size={24}/>
+                  </TouchableOpacity>
+                </View>
+                <View style={{marginRight:10}}>
+                  <TouchableOpacity onPress={() =>{navigation.navigate("LanguageList", {callBackForUpdateBook:params.callBackForUpdateBook,contentType:'bible'})}} style={navStyles.headerLeftStyle}>
+                    <Text style={navStyles.headerTextStyle}>{params.languageName}  {params.versionCode}</Text>
+                    <Icon name="arrow-drop-down" color="#fff" size={24}/>
+                  </TouchableOpacity>
+                </View>
+              </View>
+          ), 
+            headerTintColor:"#fff",
+            headerRight:(
+              <View style={navStyles.headerRightStyle}>
+              <TouchableOpacity  onPress={params.ShowHideTextComponentView}
+                style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
+               <Icon 
+                   name='volume-up'
+                   size={24} 
+                   color={params.audio ? "#fff" : "#eee"}
+               /> 
+               </TouchableOpacity>
+                  <TouchableOpacity  style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
+                    <Icon 
+                      onPress={()=> {params.onBookmark(params.bookId,params.currentChapter,params.isBookmark)}} 
+                      name='bookmark'
+                      color={params.isBookmark ? "red" : "white"} 
+                      size={24} 
+                  /> 
+                 </TouchableOpacity>
+              </View>
+            )
+        }
     }
-  }
-         
+    
 
   constructor(props) {
     super(props);
@@ -150,10 +146,7 @@ class Bible extends Component {
     })
     this.styles = styles(nextProps.colorFile, nextProps.sizeFile);  
  
-    // console.log("WILL RECIEVE PROPS ",this.props.apiData)
   }
-
-  
   async componentDidMount(){
     this.gestureResponder = createResponder({
       onStartShouldSetResponder: (evt, gestureState) => true,
@@ -221,9 +214,10 @@ class Bible extends Component {
       bookId:this.props.bookId,
       callBackForUpdateBook:this.queryBookFromAPI,
       totalVerses:this.state.totalVerses,
-      audio:this.props.audio
+      audio:this.props.audio,
+      updateContentType:this.props.updateContentType('Bible')
     })
-   
+
     this.queryBookFromAPI(null)
   }
 
@@ -235,69 +229,83 @@ class Bible extends Component {
     
   }
   // render data onAPI Call 
-    queryBookFromAPI = async(val)=>{
-        this.setState({isLoading:true,chapter:[],currentVisibleChapter: val != null ? this.state.currentVisibleChapter + val : this.props.chapterNumber },async()=>{
-          if(this.props.downloaded == true ){
-              let response = await DbQueries.queryVersions(this.props.language,this.props.version,this.props.bookId,this.state.currentVisibleChapter)
-              if(response.length != 0){
-                this.setState({
-                  chapter:response[0].verses,
-                  totalVerses:response[0].verses.length,
-                  currentVisibleChapter:this.state.currentVisibleChapter,
+  queryBookFromAPI = async(val)=>{
+    this.setState({isLoading:true,chapter:[],currentVisibleChapter: val != null ? this.state.currentVisibleChapter + val : this.props.chapterNumber },async()=>{
+    
+      console.log("current visible chapter ",this.state.currentVisibleChapter) 
+      if(this.props.downloaded == true ){
+          let response = await DbQueries.queryVersions(this.props.language,this.props.version,this.props.bookId,this.state.currentVisibleChapter)
+          if(response.length != 0){
+            this.setState({
+              chapter:response[0].verses,
+              totalVerses:response[0].verses.length,
+              currentVisibleChapter:this.state.currentVisibleChapter,
+              totalChapters: getBookChaptersFromMapping(this.props.bookId),
+              isLoading:false
+            })
+            this.props.navigation.setParams({
+              totalVerses:response[0].verses.length,
+              languageName:this.props.language,
+              versionCode:this.props.version,
+              bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
+              currentChapter:this.state.currentVisibleChapter
+            })
+          this.props.selectedChapter(this.state.currentVisibleChapter,response[0].verses.length)
+          }
+          else{
+            alert("no book found of ",this.props.bookId)
+          }
+          
+        }
+        else{
+          try{
+            //check sourceid 
+            console.log("SOURCE ID   ",this.props.sourceId)
+          let response =  await APIFetch.getChapterContent(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter)
+          console.log("response ",response)  
+          if(response.length !=0){
+              if(response.ok == false && response.status == 500){
+                this.setState({isLoading:false,currentVisibleChapter:this.props.chapterNumber})
+                alert(" please check internet connected or slow  OR book is not available ")
+              }else{
+                this.setState({chapter:response.chapterContent.verses,
                   totalChapters: getBookChaptersFromMapping(this.props.bookId),
-                  isLoading:false
-                })
-              this.props.navigation.setParams({totalVerses:response[0].verses.length})
-              this.props.selectedChapter(this.state.currentVisibleChapter,response[0].verses.length)
-              }
-              else{
-                alert("no book found of ",this.props.bookId)
-              }
-              
-            }
-            else{
-              var apiURL = API_BASE_URL + "bibles" + "/" + this.props.sourceId + "/" + "books" + "/" + this.props.bookId + "/" + "chapter" + "/" + this.state.currentVisibleChapter
-              await this.props.fetchAPI(apiURL)
-                this.setState({
-                  totalChapters: getBookChaptersFromMapping(this.props.bookId),
+                  totalVerses:response.chapterContent.verses.length,
                   isLoading:false,
                   currentVisibleChapter:this.state.currentVisibleChapter
-                },async()=>{
-                  let response = await this.props.apiData.json()
-                  if(response.length !== 0 ){
-                    this.setState({
-                      chapter:response.chapterContent.verses,
-                      totalVerses:response.chapterContent.verses.length,
-                    })
-                    this.props.navigation.setParams({totalVerses:response.chapterContent.verses.length})
-                    this.props.selectedChapter(this.state.currentVisibleChapter,response.chapterContent.verses.length)
-                  }
-
                 })
-                
-                }
                 this.props.navigation.setParams({
+                  totalVerses:response.chapterContent.verses.length,
                   languageName:this.props.language,
                   versionCode:this.props.version,
                   bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
                   currentChapter:this.state.currentVisibleChapter
                 })
-            // this.availableAudio(this.props.languageCode,this.props.version)
-            this.getHighlights()
-            this.getBookMarks(this.props.bookId,this.state.currentVisibleChapter)
-        })
-  }
+              this.props.selectedChapter(this.state.currentVisibleChapter,response.chapterContent.verses.length)
+              }
+          }
+          else{
+            alert("check internet connection")
+          }
+          }
+          catch(error) {
+            console.log("error on fetching content ",error)
+            alert("It seems no version available or check your internet connection ",error)
+           
+          }
+        }
+        this.ShowHideTextComponentView()
+        this.getHighlights()
+        this.getBookMarks(this.props.bookId,this.state.currentVisibleChapter)
+    })
+}
+
 
 
  ShowHideTextComponentView = async() =>{
-   this.props.apiData =[]
-  const version_code = this.props.version.toLowerCase()
-  var apiURL = GIT_BASE_API + this.props.languageCode + "/" + version_code + "/" + "manifest.json"
-  await this.props.fetchAPI(apiURL)
-  var res = await this.props.apiData.json()
   var found =false
-  console.log("reponse of audio ",await this.props.apiData)
-
+  let res =  await APIFetch.availableAudioBook(this.props.languageCode,this.props.version)
+  try{
   if(res.length !==0){
   console.log("reponse of audio ",res)
     for (var key in res.books){
@@ -313,20 +321,17 @@ class Bible extends Component {
     }
     console.log("found TRUE",found)
       if(!found){
-        console.log("found FALSE",found)
-        ToastAndroid.showWithGravityAndOffset(
-          'sorry audio not available for this book ',
-          ToastAndroid.LONG,
-          ToastAndroid.BOTTOM,
-          25,
-          50,
-        )
         this.props.updateAudio(false)
         this.props.navigation.setParams({  audio:false })
         this.setState({status:false,audio:false})
       }
   }
   this.setState({status:!this.state.status})
+  }
+  catch(error){
+    alert("error in audio")
+  }
+  
 }
 
   async getHighlights(){
@@ -508,7 +513,6 @@ class Bible extends Component {
         chapterNumber:this.state.currentVisibleChapter,
     }
     AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.LastReadReference, lastRead);
-    // this.props.apiData 
     // if(this.props.navigation.state.params.prevScreen =='bookmark'){
     //   this.props.navigation.state.params.updateBookmark()
     // }
@@ -543,7 +547,6 @@ class Bible extends Component {
   }
  
   render() {
-    console.log("is fetching ",this.props.isFetching,"error ",this.props.error)
       return (
         <View style={this.styles.container}>
        
@@ -751,10 +754,6 @@ const mapStateToProps = state =>{
     close:state.updateSplitScreen.close,
 
     audio:state.updateAudio.visible,
-    apiData:state.APIFetch.data,
-    isFetching:state.APIFetch.isFetching,
-
-    error:state.APIFetch.error
   }
 }
 const mapDispatchToProps = dispatch =>{
@@ -763,7 +762,6 @@ const mapDispatchToProps = dispatch =>{
     closeSplitScreen :(close)=>dispatch(closeSplitScreen(close)),
     updateAudio :(audio)=>dispatch(updateAudio(audio)),
     updateContentType:(content) =>dispatch(updateContentType(content)),
-    fetchAPI: (api) =>dispatch( fetchAPI(api))
   }
 }
 export  default connect(mapStateToProps,mapDispatchToProps)(Bible)

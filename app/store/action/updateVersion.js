@@ -1,4 +1,5 @@
 import { UPDATE_VERSION , SELECTED_BOOK,SELECTED_CHAPTER,SELECTED_VERSE,UPDATE_CONTENT_TYPE} from "./actionsType";
+import Commentary from "../../screens/Bible/Navigate/Commentary";
 
 export const updateVersion = (language,languageCode,version,sourceId,downloaded)=>{
     return {
@@ -17,6 +18,10 @@ export const selectedBook = (bookId,bookName,totalChapters)=>{
         bookId:bookId,
         bookName:bookName,
         totalChapters:totalChapters,
+        // audio:
+        // Commentary:
+        // infographics:
+
     }
 }
 export const selectedChapter = (chapterNumber,totalVerses)=>{
@@ -39,3 +44,10 @@ export const updateContentType = (contentType)=>{
         contentType:contentType
     }
 }
+
+// export const availableContent =() =>{
+//    return{
+//     type: AVAILABLE_CONTENT,
+//     contentType:contentType
+//    } 
+// }

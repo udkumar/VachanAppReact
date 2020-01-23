@@ -44,7 +44,7 @@ class SelectVerse extends Component {
     for(var i = 1; i<=nextProps.totalVerses; i++ ){
       verses.push(i)
   }
-    if(nextProps.totalChapters !== prevState.totalChapters && nextProps.totalVerses !== prevState.totalVerses){
+    if(nextProps.totalChapters !== prevState.totalChapters || nextProps.totalVerses !== prevState.totalVerses){
       return {verseArray:verses,totalVerses:nextProps.totalVerses};
    }
    else return null;

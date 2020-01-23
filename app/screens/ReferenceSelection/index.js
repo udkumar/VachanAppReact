@@ -3,6 +3,11 @@ import { getBookChaptersFromMapping, getBookNameFromMapping } from '../../utils/
 import {SelectionTab} from './routes/';
 
 export default class ReferenceSelection extends Component {
+    constructor(props){
+        super(props)
+        console.log(" current Content Type",this.props.navigation.state.params.contentType)
+
+    }
     navigateBack = ()=>{
         this.props.navigation.state.params.getReference()
         this.props.navigation.goBack()
@@ -11,7 +16,9 @@ export default class ReferenceSelection extends Component {
         return(
             <SelectionTab
                 screenProps={{
-                    navigateBack:this.navigateBack
+                    navigateBack:this.navigateBack,
+                    contentType:this.props.navigation.state.params.contentType
+
                 }}
             />
         )

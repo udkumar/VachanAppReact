@@ -18,6 +18,7 @@ import {updateContentType} from '../../../store/action/'
 
 
 class Commentary extends Component {
+
   static navigationOptions = ({navigation}) =>{
     const { params={} } = navigation.state 
     return{
@@ -25,13 +26,13 @@ class Commentary extends Component {
           <View style={styles.headerLeftStyle}>
             <View style={{marginRight:10}}>
               <TouchableOpacity style={styles.touchableStyleLeft}  
-              onPress={() =>{navigation.navigate("SelectionTab", {bookId:params.bookId,chapterNumber:params.currentChapter,totalVerses:params.totalVerses,getReference:params.callBackForUpdateBook})}}>
+              onPress={() =>{navigation.navigate("SelectionTab", {bookId:params.bookId,chapterNumber:params.currentChapter,totalVerses:params.totalVerses,getReference:params.callBackForUpdateBook,contentType:'commentary'})}}>
                 <Text  style={styles.headerTextStyle}>{params.bookName}  {params.currentChapter }</Text>
               <Icon name="arrow-drop-down" color="#fff" size={24}/>
               </TouchableOpacity>
             </View>
             <View style={{marginRight:10}}>
-              <TouchableOpacity onPress={() =>{navigation.navigate("LanguageList", {callBackForUpdateBook:params.callBackForUpdateBook})}} style={styles.headerLeftStyle}>
+              <TouchableOpacity onPress={() =>{navigation.navigate("LanguageList", {callBackForUpdateBook:params.callBackForUpdateBook,contentType:'commentary'})}} style={styles.headerLeftStyle}>
                 <Text style={styles.headerTextStyle}>{params.languageName}  {params.versionCode}</Text>
                 <Icon name="arrow-drop-down" color="#fff" size={24}/>
               </TouchableOpacity>
@@ -39,13 +40,14 @@ class Commentary extends Component {
             </View>
           </View>
        
-      )
-        
+      ), 
+        headerTintColor:"#fff",
     }
-  }
+}
     constructor(props){
-       console.log("commentry props ",props)
       super(props)
+      console.log("COMMENTARY PROPS ",this.props.navigation.state.routeName)
+
         this.state = {
           commentary: []
         }
@@ -73,10 +75,10 @@ class Commentary extends Component {
             }
         }
       }
-
       this.setState({commentary})
       this.props.navigation.setParams({
-        bookName:this.props.bookName
+        bookName:this.props.bookName,
+
       })
     })
     .catch(error=>{console.log("erorr ",error)})
@@ -95,12 +97,13 @@ class Commentary extends Component {
       bookName:this.props.bookName,
       currentChapter: this.props.chapterNumber,
       languageName:this.props.language,
-      versionCode:this.props.version
+      versionCode:this.props.version,
+      updateContentType:this.props.updateContentType('Commentary')
+
     })
     this.getCommmentary()
   }
   render(){
-    console.log(" content ",this.state.commentary)
     var convertToText = (response) => {
       let exRegex = /<b>(.*?)<\/b>/g
     //replaced string with bld because on spliting with '<b>' tag ,all text get mixed not able to identify where to apply the bold style 
@@ -191,6 +194,27 @@ const styles = StyleSheet.create({
 headerLeftStyle:{
   flex:1,
   marginHorizontal:10
+},
+headerLeftStyle:{
+  flexDirection:'row',
+  flex:1,
+},
+headerRightStyle:{
+  flexDirection:'row',
+  flex:1,
+},
+touchableStyleRight:{
+    flexDirection:"row",
+    marginRight:10
+},
+touchableStyleLeft:{
+  flexDirection:"row",
+    marginLeft:10,
+},
+headerTextStyle:{
+    fontSize:16,
+    color:"#fff",
+    textAlign:'center'
 },
 headerLeftStyle:{
   flexDirection:'row',

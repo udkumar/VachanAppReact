@@ -8,9 +8,9 @@ import {
 import SeekBar from './SeekBar';
 import Controls from './Controls';
 import Video from 'react-native-video';
-import {GIT_BASE_API} from '../../../../utils/APIConstant/'
-import {fetchAPI} from '../../../../store/action/'
 import {connect} from 'react-redux'
+import APIFetch from '../../../../utils/APIFetch'
+
 class Player extends Component {
   constructor(props) {
     super(props);
@@ -82,28 +82,23 @@ class Player extends Component {
   }
 
  async  fetchMP3(){
-    this.props.apiData = []
-    const version_code = this.props.version.toLowerCase() 
-    // console.log("MP3 RESPONSE ",response,this.props.languageCode,this.props.version,this.props.bookId,this.props.currentChapter)
-    var apiURL =   GIT_BASE_API + this.props.languageCode + "/" + version_code + "/" + this.props.bookId + "/" + this.props.currentChapter + ".mp3"
-     await this.props.fetchAPI(apiURL,'mp3')
-     var res = await this.props.apiData
+    try{
+    let res =  await APIFetch.getAudioBible( this.props.languageCode,this.props.version,this.props.bookId,this.props.chapterNumber)
     console.log("response url audio ",res.url)
-    if(res.length !==0){
-    console.log("response url audio ",res.url)
-      this.setState({audioFile:res.url})
-      if(this.props.error){
-        this.setState({audioFile:null})
-      }
+      if(res.length !==0){
+        console.log("response url audio ",res.url)
+          this.setState({audioFile:res.url})
+          if(this.props.error){
+            this.setState({audioFile:null})
+          }
+        }
     }
+    catch(error){
+
     }
-    static getDerivedStateFromProps(nextProps, prevState){
-      console.log("nextProps..........",nextProps,"prevState|||||||||||||||",prevState)
-      // if(nextProps.audioFile !== prevState.audioFile){
-        return { audioFile: nextProps.apiData.url};
-    //  }
-    //  else return null;
-   }
+   
+    }
+   
     componentDidUpdate(prevProps, prevState) {
       // only update chart if the data has changed
       if (prevProps.language !== this.props.language || prevProps.version !==this.props.version || prevProps.bookId !==this.props.bookId || prevProps.currentChapter !==this.props.currentChapter ) {
@@ -163,15 +158,22 @@ const styles = {
 
 const mapStateToProps = state =>{
   return{
-    apiData:state.APIFetch.data,
-    isFetching:state.APIFetch.isFetching,
-    error:state.APIFetch.error,
+    language: state.updateVersion.language,
+    languageCode:state.updateVersion.languageCode,
+    version:state.updateVersion.version,
+    sourceId:state.updateVersion.sourceId,
+    downloaded:state.updateVersion.downloaded,
+    contentType:state.updateVersion.contentType,
+
+
+    chapterNumber:state.updateVersion.chapterNumber,
+    totalChapters:state.updateVersion.totalChapters,
+    bookName:state.updateVersion.bookName,
+    bookId:state.updateVersion.bookId,
+
+    audio:state.updateAudio.visible,
   }
 }
 
-const mapDispatchToProps = dispatch =>{
-  return {
-    fetchAPI:(api) =>dispatch(fetchAPI(api))
-  }
-}
-export  default connect(mapStateToProps,mapDispatchToProps)(Player)
+export  default connect(mapStateToProps,null)(Player)
+

@@ -13,6 +13,9 @@ import History from '../screens/History/'
 import Commentary from '../screens/StudyHelp/Commentary/'
 import InfoGraphics from '../screens/StudyHelp/InfoGraphics/'
 import More from '../screens/StudyHelp/More/'
+import {connect} from 'react-redux'
+import {updateContentType} from '../store/action/'
+
 
 
 
@@ -37,29 +40,53 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import SelectionTab from '../screens/ReferenceSelection/'
 import BookMarks from '../screens/Bookmarks/';
 import Infographics from '../screens/StudyHelp/InfoGraphics/';
+import Header from '../components/Header';
+
+
+// header: ({ scene, previous, navigation }) => {
+//   const { options } = scene.descriptor;
+//   const title =
+//     options.headerTitle !== undefined
+//       ? options.headerTitle
+//       : options.title !== undefined
+//       ? options.title
+//       : scene.route.routeName;
+
+//   return (
+//     <MyHeader
+//       title={title}
+//       leftButton={
+//         previous ? <MyBackButton onPress={navigation.goBack} /> : undefined
+//       }
+//     />
+//   );
+// };
 
 
 const BibleStack = createStackNavigator(
   {  
     // Commentary:{screen:Commentary},
-      Bible:{screen:Bible,
-        navigationOptions: () => ({
-          headerStyle: {
-            backgroundColor:"#3F51B5",
-            shadowColor: 'black',
-            shadowRadius: 5,
-            shadowOpacity: 0.1,
-            shadowOffset: {
-              height: 3,
-              width: 0,
-            },
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
+      Bible:{
+        screen:Bible,
+        // navigationOptions:Header,
+        
+        // ({
+        //   headerStyle: {
+        //     backgroundColor:"#3F51B5",
+        //     shadowColor: 'black',
+        //     shadowRadius: 5,
+        //     shadowOpacity: 0.1,
+        //     shadowOffset: {
+        //       height: 3,
+        //       width: 0,
+        //     },
+        //   },
+        //   headerTintColor: '#fff',
+        //   headerTitleStyle: {
+        //     fontWeight: 'bold',
+        //   },
            
-        })
+        // })
       },
   
      
@@ -67,7 +94,6 @@ const BibleStack = createStackNavigator(
       BackupRestore: {screen: BackupRestore },
       GoogleMaps:{ screen:GoogleMaps },
       Images:{ screen:Images},
-      LanguageList:{screen:LanguageList },
       Account:{ screen:Account},
       
       // More:{ screen:More,
@@ -80,6 +106,7 @@ const BibleStack = createStackNavigator(
       Notes:{ screen:Notes
       },
       
+      LanguageList:{screen:LanguageList },
 
       EditNote:{  screen:EditNote },
       NotePage:{ screen:NotePage },
@@ -109,14 +136,18 @@ const BibleStack = createStackNavigator(
       }
   },
   
-  navigationOptions:{
-    
-  },
+ 
   }
 )
 
-const CommentaryStack = createStackNavigator(
-  { screen:Commentary},
+const CommentaryStack = createStackNavigator({ 
+    Commentary:{screen:Commentary,
+      
+    // navigationOptions:Header
+  },
+  LanguageList:{screen:LanguageList },
+
+  },
   {
   defaultNavigationOptions: {
       headerStyle: {
@@ -175,32 +206,33 @@ const MoreStack = createStackNavigator(
 }
 );
 const InfoGraphicsStack = createStackNavigator(
-  {Infographics:{ screen:Infographics,
-      navigationOptions: () => ({
-          headerStyle: {
-            backgroundColor:"#3F51B5",
-          
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-           
-        })
-  }
+  {Infographics:{ 
+    screen:Infographics,
+    // navigationOptions:Header
+  },
+  LanguageList:{screen:LanguageList },
+
 },
 {
-  navigationOptions:{
-      tabBarLabel: 'InfoGraphics',
-      tabBarIcon: () => <Icon name="chart-line" size={20} style={{color:'#fff'}}/>,
-  },
+
+  defaultNavigationOptions: {
+    headerStyle: {
+        backgroundColor: "#3F51B5",
+        elevation: 0,
+        shadowOpacity: 0
+    },
+    headerTintColor: '#fff',
+    headerTitleStyle: {
+        fontWeight: 'bold',
+        color: '#ffffff'
+    }
+},
 }
-  
 );
 
 
 BibleStack.navigationOptions = ({ navigation }) => {
-  console.log(" navigation in  stack  ",navigation.state.routes.length)
+  // console.log(" navigation in  stack bible  ",navigation)
   let tabBarVisible;
   if (navigation.state.routes.length > 1) {
     navigation.state.routes.map(route => {
@@ -210,7 +242,6 @@ BibleStack.navigationOptions = ({ navigation }) => {
         tabBarVisible = false;
       }
     });
-  console.log(" navigation in  stack  ",tabBarVisible)
 
   }
 
@@ -218,11 +249,21 @@ BibleStack.navigationOptions = ({ navigation }) => {
     tabBarVisible:tabBarVisible,
     tabBarLabel: 'Bible',
     tabBarIcon: () => <Icon name="book-open-page-variant" size={20} style={{color:'#fff'}}/>,
+  //   tabBarOnPress:(nav,defaultNavigation)=>{
+  //     console.log("BibleStack ",navigation)
+  //     console.log("Tab Bar ON Press  dangerouslyGetParent ",navigation.dangerouslyGetParent())
+  //     console.log("Tab Bar ON Press  ",nav)
+  //     // nav.setParams(navigation.state.routes.routeName)
+  //     // navigation.dangerouslyGetParent()
+  //     defaultNavigation()
+  // }
   }  
 }
 
 CommentaryStack.navigationOptions = ({ navigation }) => {
+  // console.log("navigation stack commentary ", navigation.state)
   let tabBarVisible;
+
   if (navigation.state.routes.length > 1) {
     navigation.state.routes.map(route => {
       if (route.routeName === "Commentary") {
@@ -236,24 +277,44 @@ CommentaryStack.navigationOptions = ({ navigation }) => {
     tabBarVisible:tabBarVisible,
     tabBarLabel: 'Commentary',
     tabBarIcon: () => <Icon name="comment-text" size={20} style={{color:'#fff'}}/>,
+    // tabBarOnPress:(nav,defaultNavigation)=>{
+    //     console.log("CommentaryStack ",navigation)
+    //     console.log("Tab Bar ON Press  ",nav)
+    //     // nav.setParams(navigation.state.routes.routeName)
+    //   console.log("Tab Bar ON Press  dangerouslyGetParent ",navigation.dangerouslyGetParent())
+
+    //     // navigation.dangerouslyGetParent()
+    //     defaultNavigation()
+    // }
+    
   };
 };
-// InfoGraphicsStack.navigationOptions = ({ navigation }) => {
-//   let tabBarVisible;
-//   if (navigation.state.routes.length > 1) {
-//     navigation.state.routes.map(route => {
-//       if (route.routeName === "Bible") {
-//         tabBarVisible = false;
-//       } else {
-//         tabBarVisible = true;
-//       }
-//     });
-//   }
+InfoGraphicsStack.navigationOptions = ({ navigation }) => {
+  let tabBarVisible;
+  if (navigation.state.routes.length > 1) {
+    navigation.state.routes.map(route => {
+      if (route.routeName === "Bible") {
+        tabBarVisible = false;
+      } else {
+        tabBarVisible = true;
+      }
+    });
+  }
 
-//   return {
-//     tabBarVisible
-//   };
-// };
+  return {
+    tabBarVisible:tabBarVisible,
+    tabBarLabel: 'InfoGraphics',
+    tabBarIcon: () => <Icon name="chart-line" size={20} style={{color:'#fff'}}/>,
+  //   tabBarOnPress:(nav,defaultNavigation)=>{
+  //     // nav.setParams(navigation.state.routes.routeName)
+  //     console.log("InfoGraphicsStack ",navigation)
+  //     console.log("Tab Bar ON Press  ",nav)
+  //     console.log("Tab Bar ON Press  dangerouslyGetParent ",navigation.dangerouslyGetParent())
+  //     navigation.dangerouslyGetParent()
+  //     defaultNavigation()
+  // }
+  };
+};
 
 MoreStack.navigationOptions = ({ navigation }) => {
   let tabBarVisible;
@@ -280,7 +341,7 @@ const AppTabNavigator = createBottomTabNavigator(
   BibleStack,
   CommentaryStack,
   InfoGraphicsStack,
-  MoreStack
+  MoreStack,
   },
   {   
     tabBarPosition: 'bottom',
@@ -304,10 +365,10 @@ const AppTabNavigator = createBottomTabNavigator(
 },
 );
 
-
 const SwitchNavigator = createSwitchNavigator({
   AppTabNavigator: { screen: AppTabNavigator },
   });
   
-export const AppNavigator = createAppContainer(SwitchNavigator);
+ export const AppNavigator = createAppContainer(SwitchNavigator);
+
 

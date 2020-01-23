@@ -6,6 +6,9 @@ export {addBookToNote,addChapterToNote,addVerseToNote,updateNoteBody} from './ed
 export {updateVersion,selectedBook,selectedChapter,selectedVerse,updateContentType} from './updateVersion'
 export {updateFontSize,updateColorMode,updateVerseInLine} from './updateStyling'
 export {closeSplitScreen,updateDimensions} from './splitScreenProps'
-export {updateAudio} from './updateAudio'
+export {updateAudio,individualAudio,audioForBooks} from './updateAudio'
+export {updateInfographics} from './updateInfographics'
+
+
 
 export {fetchAPI} from './fetchAPI'

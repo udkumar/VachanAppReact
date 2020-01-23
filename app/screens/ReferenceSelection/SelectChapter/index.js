@@ -33,7 +33,7 @@ class ChapterSelection extends Component {
   }
   static getDerivedStateFromProps(nextProps, prevState){
     var chapters = []
-    if(nextProps.bookId !== prevState.bookId && nextProps.totalChapters !== prevState.totalChapters){
+    if(nextProps.bookId !== prevState.bookId || nextProps.totalChapters !== prevState.totalChapters){
       for(var i=0;i<=nextProps.totalChapters.length-1;i++){
         chapters.push(i+1)
       }
@@ -106,6 +106,7 @@ const mapStateToProps = state =>{
     bookName:state.updateVersion.bookName,
     totalChapters:state.updateVersion.totalChapters,
     chapterNumber:state.updateVersion.chapterNumber,
+    contentType:state.updateVersion.contentType,
     
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,

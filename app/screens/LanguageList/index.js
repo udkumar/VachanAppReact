@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { Text, StyleSheet,ScrollView,Dimensions, Modal,View,ActivityIndicator,TextInput,FlatList,LayoutAnimation,UIManager,Platform,TouchableOpacity} from 'react-native';
 import {Card,ListItem,Left,Right,List} from 'native-base'
+import { NavigationActions,StackActions } from 'react-navigation'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import DbQueries from '../../utils/dbQueries'
-// import APIFetch from '../../utils/APIFetch'
+import APIFetch from '../../utils/APIFetch'
 import timestamp from '../../assets/timestamp.json'
 import { getBookNameFromMapping, getBookSectionFromMapping, getBookNumberFromMapping } from '../../utils/UtilFunctions';
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
@@ -11,11 +12,9 @@ import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants';
 import ExpandableItemComponent from './Expandable';
 import { styles } from './styles.js';
 import {connect} from 'react-redux';
-import {updateVersion} from '../../store/action/'
+import {updateVersion,updateInfographics} from '../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
 import {API_BASE_URL} from '../../utils/APIConstant'
-import {fetchAPI} from '../../store/action/'
-
 const languageList = async () => { 
   return await DbQueries.getLangaugeList()
 }
@@ -26,6 +25,7 @@ class LanguageList extends Component {
     });
     constructor(props){
       super(props)
+      console.log("LANGUAGELIST PROPS ",this.props.navigation.state.routeName)
       if (Platform.OS === 'android') {
         UIManager.setLayoutAnimationEnabledExperimental(true);
       }
@@ -67,18 +67,14 @@ class LanguageList extends Component {
       var ud = new Date(timestamp.languageUpdate)
       var diffDays = Math.round(Math.abs((d.getTime() - ud.getTime())/(oneDay)))
         // if(diffDays <= 20 ){
-          switch(this.props.contentType){
-            case 'bible' :{
+          switch(this.props.navigation.state.params.contentType){
+           case 'bible' :{
             var languageList =  await DbQueries.getLangaugeList()
             for(var i =0 ; i<languageList.length;i++){
               lanVer.push(languageList[i])
             }
             if(languageList.length == 0){
-              const apiURL = API_BASE_URL + "bibles"
-              await this.props.fetchAPI(apiURL)
-              var languageRes = this.props.apiData
-
-              // APIFetch.getVersions().then(languageRes=>{
+              APIFetch.getVersions().then(languageRes=>{
                 for(var i = 0; i<languageRes.length;i++){
                   var versions = []
                   const language = languageRes[i].language.charAt(0).toUpperCase() + languageRes[i].language.slice(1)
@@ -91,33 +87,42 @@ class LanguageList extends Component {
                   }
                   lanVer.push({languageName:language,languageCode:languageCode,versionModels:versions})
                 }
-                DbQueries.addLangaugeList(lanVer)
-              // })
-              // .catch(error => {
-              //   this.setState({isLoading:false})
-              //   alert(" please check internet connected or slow  OR book is not available ")
-              // });
+                // DbQueries.addLangaugeList(lanVer)
+              })
+              .catch(error => {
+                this.setState({isLoading:false})
+                alert(" please check internet connected or slow  OR book is not available ")
+              });
               
             }
+          }
+          break;
+          case 'commentary':{
+            alert("commentary language list ")
+          }
+          break;
+          case 'infographics':{
+            try{
+              const value = await APIFetch.getAvailableInfographics()
+              // alert("commentary language list ")
+              console.log(" commentary language list ",value)
+                  lanVer.push({languageName:"Hindi",languageCode:"HIN",infographics:value.available_infographics})
+            }
+           
+            catch(error){
+              console.log(" commentary language list error ",error)
+
+            }
+          }
+          break;
+          default: {
+             alert("default")
+          }
+        }
             this.setState({
               languages: lanVer,
               searchList: lanVer
             })
-          }
-          break;
-            case 'commentary':{
-              alert("commentary language list ")
-            }
-            break;
-            case 'infographics':{
-              alert("infographics language list ")
-            }
-            break;
-            default: {
-              alert("default")
-            }
-          }
-        
     }
 
     // SearchFilterFunction = (text)=>{
@@ -132,75 +137,82 @@ class LanguageList extends Component {
     //     })
     // }
 
-    DownloadBible = (langName,verCode,index,sourceId)=>{
-      console.log("source id ",sourceId)
-      this.setState({isLoading:true,isdownLoading:true,index},async()=>{
-        var bookModels = []
-          var apiURL = API_BASE_URL + "bibles" + "/" + sourceId + "/" + "json"
-          this.props.fetchAPI(apiURL)
-          var mainContent = this.props.apiData
-            var content = mainContent.bibleContent
-            for(var id in content){
-              if(content != null){
-                var  chapterModels = []
-                for(var i=0; i< content[id].chapters.length; i++){
-                  var  verseModels = []
-                  for(var j=0; j< content[id].chapters[i].verses.length; j++){
-                    verseModels.push({
-                      text: content[id].chapters[i].verses[j].text,
-                      number: content[id].chapters[i].verses[j].number,
-                    })
-                  }
-                  var chapterModel = { 
-                    chapterNumber:  parseInt(content[id].chapters[i].header.title),
-                    numberOfVerses: parseInt(content[id].chapters[i].verses.length),
-                    verses:verseModels,
-                  }
-                  chapterModels.push(chapterModel)
-                }
-                
-              }
-              else{
-                alert("Sorry Version is not Available for now")
-                return 
-              }
-              bookModels.push({
-                languageName: langName,
-                versionCode: verCode,
-                bookId: id,
-                bookName:getBookNameFromMapping(id,langName),
-                chapters: chapterModels,
-                section: getBookSectionFromMapping(id),
-                bookNumber: getBookNumberFromMapping(id)
-              })
+   
+    DownloadBible = async(langName,verCode,index,sourceId)=>{
+      console.log("language name"+langName+" ver code  "+verCode+" source id "+sourceId)
 
+      var bookModels = []
+      try{
+        var content = await APIFetch.getAllBooks(sourceId,"json")
+        var content = content.bibleContent
+        for(var id in content){
+          var  chapterModels = []
+          if(content != null){
+            for(var i=0; i< content[id].chapters.length; i++){
+              var  verseModels = []
+              for(var j=0; j< content[id].chapters[i].verses.length; j++){
+                verseModels.push(content[id].chapters[i].verses[j])
               }
-              await DbQueries.addNewVersion(langName,verCode,bookModels,sourceId)
-              this.setState({isLoading:false,isdownLoading:false})
-              languageList().then(async(language) => {
-                this.setState({languages:language})
-              })
-          
-
+              var chapterModel = { 
+                chapterNumber:  parseInt(content[id].chapters[i].header.title),
+                numberOfVerses: parseInt(content[id].chapters[i].verses.length),
+                verses:verseModels,
+              }
+              chapterModels.push(chapterModel)
+            }
+          }
+          bookModels.push({
+            languageName: langName,
+            versionCode: verCode,
+            bookId: id,
+            bookName:getBookNameFromMapping(id,langName),
+            chapters: chapterModels,
+            section: getBookSectionFromMapping(id),
+            bookNumber: getBookNumberFromMapping(id)
+          })
+        }
+      var result = bookModels.sort(function(a, b){
+        return parseFloat(a.bookId) - parseFloat(b.bookId);  
       })
-
+      const booksid = await APIFetch.availableBooks(sourceId)
+      var bookListData=[]
+      for(var key in booksid[0].books){
+        var bookId = booksid[0].books[key].abbreviation
+        bookListData.push(bookId)
+      }
+      await DbQueries.addNewVersion(langName,verCode,result,sourceId,bookListData)
+      languageList().then(async(language) => {
+        this.setState({languages:language})
+      })
+      }catch(error){
+        alert("There is some error on downloading this version please select another version")
+      }
     }
-    navigateTo = (langName,langCode,verCode,sourceId,downloaded)=>{
-      console.log("downloaded value in language page ",langName,langCode,verCode,sourceId,downloaded)
-      AsyncStorageUtil.setAllItems([
-        [AsyncStorageConstants.Keys.SourceId, JSON.stringify(sourceId)],
-        [AsyncStorageConstants.Keys.LanguageName, langName],
-        [AsyncStorageConstants.Keys.LanguageCode, langCode],
-
-        [AsyncStorageConstants.Keys.VersionCode, verCode],
-        [AsyncStorageConstants.Keys.Downloaded, JSON.stringify(downloaded)]
-      ]); 
-      this.props.updateVersion(langName,langCode,verCode,sourceId,downloaded)
-      this.props.navigation.state.params.callBackForUpdateBook(null)
+ 
+    navigateTo = (langName,langCode,verCode,sourceId,downloaded,file)=>{
+      // const url = BASE_URL+
+      
+      if(this.props.navigation.state.params.contentType == 'bible'){
+        AsyncStorageUtil.setAllItems([
+          [AsyncStorageConstants.Keys.SourceId, JSON.stringify(sourceId)],
+          [AsyncStorageConstants.Keys.LanguageName, langName],
+          [AsyncStorageConstants.Keys.LanguageCode, langCode],
+  
+          [AsyncStorageConstants.Keys.VersionCode, verCode],
+          [AsyncStorageConstants.Keys.Downloaded, JSON.stringify(downloaded)]
+        ]); 
+        this.props.updateVersion(langName,langCode,verCode,sourceId,downloaded)
+      }
       this.props.navigation.goBack()
+      this.props.updateInfographics(file ? file : null)
+      // this.props.navigation.state.params.callBackForUpdateBook(file ? file : null)
+
+      // this.props.navigation.state.params.getInfoFileName(null)
+
     }
 
     render(){
+      console.log("LANGUAGE LIST  ",this.state.languages)
       return (
         <View style={this.styles.MainContainer}>
         {this.props.isFetching &&  <Spinner visible={true} textContent={'Loading...'}/>}
@@ -222,7 +234,7 @@ class LanguageList extends Component {
             item={item}
             DownloadBible = {this.DownloadBible}
             navigateTo = {this.navigateTo}
-            contentType = {this.props.contentType}
+            contentType = {this.props.navigation.state.params.contentType}
             styles={this.styles}
           />}
 
@@ -244,17 +256,14 @@ const mapStateToProps = state =>{
 
     contentType:state.updateVersion.contentType,
 
-    apiData:state.APIFetch.data,
-    isFetching:state.APIFetch.isFetching,
-
-    error:state.APIFetch.error
   }
 }
 
 const mapDispatchToProps = dispatch =>{
   return {
     updateVersion: (language,langaugeCode,version,sourceId,downloaded)=>dispatch(updateVersion(language,langaugeCode,version,sourceId,downloaded)),
-    fetchAPI:(api)=>dispatch(fetchAPI(api))
+    updateInfographics:(fileName)=>dispatch(updateInfographics(fileName))
+    
   }
 }
 export default connect(mapStateToProps,mapDispatchToProps)(LanguageList)

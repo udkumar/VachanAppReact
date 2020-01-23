@@ -28,10 +28,12 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
               height:item.isExpanded ? null : 0,
               overflow: 'hidden',
             }}>
-            {/*Content under the header of the Expandable List Item*/}
-            {item.versionModels.map((item, index, key) => (
+            {
+              contentType  =='bible' ? 
+              <View style={{flex:1}}>
+              { item.versionModels.map((item, index, key) => (
                 <List>
-                  <ListItem button={true} onPress={()=>{navigateTo(item.languageName,item.languageCode,item.versionCode,item.sourceId, item.downloaded  )}}>
+                  <ListItem button={true} onPress={()=>{navigateTo(item.languageName,item.languageCode,item.versionCode,item.sourceId, item.downloaded,null  )}}>
                   <Left>
                   <View style={{alignSelf:'center',marginLeft:12}}>
                     <Text style={[styles.text,{fontWeight:'bold'}]} >{item.versionCode} </Text>
@@ -42,7 +44,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
                   {
                     contentType  == 'bible' && 
                     item.downloaded == true ? 
-                    <Icon style={[styles.iconStyle,{marginRight:8}]} name="check" size={24}  onPress={()=>{navigateTo(item.languageName,item.versionCode,item.sourceId,item.downloaded)}}
+                    <Icon style={[styles.iconStyle,{marginRight:8}]} name="check" size={24}  onPress={()=>{navigateTo(item.languageName,item.versionCode,item.sourceId,item.downloaded,null)}}
                     />
                   :
                   <Icon  style={[styles.iconStyle,{marginRight:12}]} name="file-download" size={24} onPress={()=>{DownloadBible(item.languageName,item.versionCode,index,item.sourceId)}}/>
@@ -50,9 +52,26 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
                 </Right>
                 </ListItem>
                 </List>
-            ))}
+            )) }</View>
+            :(
+                contentType  == 'infographics' ? 
+                <View style={{flex:1}}>
+                { item.infographics.map((val, index, key) => (
+                  <List>
+                    <ListItem button={true} 
+                    onPress={()=>{navigateTo(item.languageName,item.languageCode,null,null, null, val )}}
+                    >
+                    <Left>
+                    <View style={{alignSelf:'center',marginLeft:12}}>
+                      <Text style={[styles.text,{fontWeight:'bold'}]}>{val} </Text>
+                    </View>
+                    </Left>
+                  </ListItem>
+                  </List>
+              )) }</View>:null
+            )
+            }
           </View>
-  
         </View>
 )
 export default ExpandableItemComponent
