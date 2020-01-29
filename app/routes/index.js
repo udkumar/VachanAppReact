@@ -4,7 +4,6 @@ import React,{Component} from 'react';
 import About from '../screens/About/About'
 import Search from '../screens/Search/Search'
 import Settings from '../screens/settings/Settings'
-import Account from '../screens/Account'
 import Notes from '../screens/Note/index'
 import EditNote from '../screens/Note/EditNote'
 import NotePage from '../screens/Note/NotePage'
@@ -31,8 +30,6 @@ import BackupRestore from '../screens/backup/BackupRestore'
 // import DrawerScreen from '../screens/DrawerScreen/DrawerScreen'
 import Bible from '../screens/Bible'
 // import BottomTab from '../screens/Bible/BottomTab'
-import GoogleMaps from  '../screens/GoogleMaps'
-import Images from '../screens/Images'
 import LanguageList from '../screens/LanguageList'
 // import More from '../screens/More'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -92,9 +89,6 @@ const BibleStack = createStackNavigator(
      
       Search: { screen: Search },
       BackupRestore: {screen: BackupRestore },
-      GoogleMaps:{ screen:GoogleMaps },
-      Images:{ screen:Images},
-      Account:{ screen:Account},
       
       // More:{ screen:More,
       //   navigationOptions: { headerTitle:"More" }
@@ -219,12 +213,14 @@ const InfoGraphicsStack = createStackNavigator(
     headerStyle: {
         backgroundColor: "#3F51B5",
         elevation: 0,
-        shadowOpacity: 0
+        shadowOpacity: 0,
+        justifyContent:'center'
     },
     headerTintColor: '#fff',
     headerTitleStyle: {
         fontWeight: 'bold',
-        color: '#ffffff'
+        color: '#ffffff',
+        textAlign: 'center' 
     }
 },
 }

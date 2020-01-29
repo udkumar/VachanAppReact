@@ -91,6 +91,7 @@ class App extends Component {
           AsyncStorageConstants.Keys.Downloaded
         ])
         
+        console.log(" RES OF ASYNC VALUE",res)
         const  colorMode= res[0][1]== null ? AsyncStorageConstants.Values.DayMode : parseInt(res[0][1])
         const  sizeMode= res[1][1] == null ? AsyncStorageConstants.Values.SizeModeNormal : parseInt(res[1][1])
         const  verseInLine=  res[3][1] == null ? AsyncStorageConstants.Values.VerseInLine : res[3][1]

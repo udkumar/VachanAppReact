@@ -66,14 +66,15 @@ class Bible extends Component {
             headerTintColor:"#fff",
             headerRight:(
               <View style={navStyles.headerRightStyle}>
-              <TouchableOpacity  onPress={params.ShowHideTextComponentView}
+              <TouchableOpacity  onPress={params.toggleAudio}
                 style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
                <Icon 
                    name='volume-up'
                    size={24} 
-                   color={params.audio ? "#fff" : "#eee"}
+                   color={ "#fff" }
                /> 
                </TouchableOpacity>
+
                   <TouchableOpacity  style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
                     <Icon 
                       onPress={()=> {params.onBookmark(params.bookId,params.currentChapter,params.isBookmark)}} 
@@ -206,7 +207,7 @@ class Bible extends Component {
     this.props.navigation.setParams({
       onBookmark: this.onBookmarkPress,
       isBookmark:this.state.isBookmark,
-      ShowHideTextComponentView: this.ShowHideTextComponentView,
+      toggleAudio:this.toggleAudio,
       bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
       currentChapter:this.state.currentVisibleChapter,
       languageName: this.props.language, 
@@ -232,7 +233,9 @@ class Bible extends Component {
   queryBookFromAPI = async(val)=>{
     this.setState({isLoading:true,chapter:[],currentVisibleChapter: val != null ? this.state.currentVisibleChapter + val : this.props.chapterNumber },async()=>{
     
-      console.log("current visible chapter ",this.state.currentVisibleChapter) 
+      console.log("PROPS QUERY BOOK FROM API ",this.props.language,this.props.languageCode,this.props.sourceId) 
+      // console.log("state QUERY BOOK FROM API ",this.state.language,this.state.languageCode,this.props.sourceId) 
+
       if(this.props.downloaded == true ){
           let response = await DbQueries.queryVersions(this.props.language,this.props.version,this.props.bookId,this.state.currentVisibleChapter)
           if(response.length != 0){
@@ -289,21 +292,41 @@ class Bible extends Component {
           }
           }
           catch(error) {
-            console.log("error on fetching content ",error)
             alert("It seems no version available or check your internet connection ",error)
            
           }
         }
-        this.ShowHideTextComponentView()
+         this.audioComponentUpdate()
         this.getHighlights()
         this.getBookMarks(this.props.bookId,this.state.currentVisibleChapter)
     })
 }
 
+toggleAudio = ()=>{
+  if(this.state.audio == false){
+    ToastAndroid.showWithGravityAndOffset(
+     "Sorry Audio is not there for this book",
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50,
+    );
+  }
+  else{
+    this.setState({status:!this.state.status})
+  }
+}
 
-
- ShowHideTextComponentView = async() =>{
-  var found =false
+ audioComponentUpdate = async(value) =>{
+      console.log("language ",this.props.languageCode)
+   if(this.props.languageCode !== 'hin'){
+    this.props.updateAudio(false)
+    this.props.navigation.setParams({  audio:false })
+    this.setState({audio:false})
+     //this return is only for now because we have only hindi audio available
+     return
+   }
+  var found = false
   let res =  await APIFetch.availableAudioBook(this.props.languageCode,this.props.version)
   try{
   if(res.length !==0){
@@ -317,19 +340,22 @@ class Bible extends Component {
         this.setState({audio:true})
         break;
       }
-
     }
     console.log("found TRUE",found)
-      if(!found){
+      if(found==false){
         this.props.updateAudio(false)
         this.props.navigation.setParams({  audio:false })
-        this.setState({status:false,audio:false})
+        this.setState({audio:false})
+        
       }
   }
-  this.setState({status:!this.state.status})
   }
   catch(error){
-    alert("error in audio")
+    this.props.updateAudio(false)
+    this.props.navigation.setParams({  audio:false })
+    this.setState({audio:false})
+    // alert("error in audio")
+
   }
   
 }
@@ -549,7 +575,9 @@ class Bible extends Component {
   render() {
       return (
         <View style={this.styles.container}>
-       
+        {/* <NavigationEvents
+          onWillFocus={() => {this.queryBookFromAPI}}
+        /> */}
           { this.props.isFetching  &&
             <Spinner
                 visible={true}
@@ -634,15 +662,16 @@ class Bible extends Component {
             }
           <View style={this.styles.bottomBarAudioCenter}>
           {
-            this.state.audio && 
-            // (this.state.status &&
+            this.state.audio ?
+            (this.state.status ?
               <Player 
                 languageCode={this.props.languageCode}
                 version={this.props.version} bookId={this.props.bookId} 
                 currentChapter={this.state.currentVisibleChapter}
                 audio={this.props.audio}
               />
-            // )
+              :null
+            ):null
           }
            
           </View>

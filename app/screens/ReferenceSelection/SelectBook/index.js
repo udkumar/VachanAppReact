@@ -117,8 +117,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
   }
   async getBooks(){
     switch(this.props.screenProps.contentType){
-      case 'Bible' :{
-       
+      case 'bible' :{
     var bookListData=[]
     // this.setState({isLoading:bookListData.length == 0 ? true : false})
     if(this.props.downloaded == true){
@@ -178,10 +177,10 @@ import Spinner from 'react-native-loading-spinner-overlay';
     this.setState({bookList:res,isLoading:false})
         break;
       }
-      case 'Commentary':{
+      case 'commentary':{
         alert("not books defined ")
       }
-      case 'Infographics':{
+      case 'infographics':{
         alert("not books defined ")
 
       }

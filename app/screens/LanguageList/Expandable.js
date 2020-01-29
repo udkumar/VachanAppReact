@@ -29,25 +29,25 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
               overflow: 'hidden',
             }}>
             {
-              contentType  =='bible' ? 
+              contentType  == 'bible' ? 
               <View style={{flex:1}}>
-              { item.versionModels.map((item, index, key) => (
+              { item.versionModels.map((ele, index, key) => (
                 <List>
-                  <ListItem button={true} onPress={()=>{navigateTo(item.languageName,item.languageCode,item.versionCode,item.sourceId, item.downloaded,null  )}}>
+                  <ListItem button={true} onPress={()=>{navigateTo(item.languageName,item.languageCode,ele.versionCode,ele.sourceId, ele.downloaded,null  )}}>
                   <Left>
                   <View style={{alignSelf:'center',marginLeft:12}}>
-                    <Text style={[styles.text,{fontWeight:'bold'}]} >{item.versionCode} </Text>
-                    <Text style={[styles.text,{marginLeft:8}]} > {item.versionName}</Text>
+                    <Text style={[styles.text,{fontWeight:'bold'}]} >{ele.versionCode} </Text>
+                    <Text style={[styles.text,{marginLeft:8}]} > {ele.versionName}</Text>
                   </View>
                   </Left>
                   <Right>
                   {
                     contentType  == 'bible' && 
-                    item.downloaded == true ? 
-                    <Icon style={[styles.iconStyle,{marginRight:8}]} name="check" size={24}  onPress={()=>{navigateTo(item.languageName,item.versionCode,item.sourceId,item.downloaded,null)}}
+                    ele.downloaded == true ? 
+                    <Icon style={[styles.iconStyle,{marginRight:8}]} name="check" size={24}  onPress={()=>{navigateTo(item.languageName,ele.versionCode,ele.sourceId,ele.downloaded,null)}}
                     />
                   :
-                  <Icon  style={[styles.iconStyle,{marginRight:12}]} name="file-download" size={24} onPress={()=>{DownloadBible(item.languageName,item.versionCode,index,item.sourceId)}}/>
+                  <Icon  style={[styles.iconStyle,{marginRight:12}]} name="file-download" size={24} onPress={()=>{DownloadBible(item.languageName,ele.versionCode,index,ele.sourceId)}}/>
                   }
                 </Right>
                 </ListItem>
@@ -68,7 +68,20 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
                     </Left>
                   </ListItem>
                   </List>
-              )) }</View>:null
+              )) }</View>:
+              <View style={{flex:1}}>
+              { item.versionModels.map((ele, index, key) => (
+                <List>
+                  <ListItem button={true} onPress={()=>{navigateTo(item.languageName,item.languageCode,ele.versionCode,ele.sourceId, ele.downloaded,null  )}}>
+                  <Left>
+                  <View style={{alignSelf:'center',marginLeft:12}}>
+                    <Text style={[styles.text,{fontWeight:'bold'}]} >{ele.versionCode} </Text>
+                    <Text style={[styles.text,{marginLeft:8}]} > {ele.versionName}</Text>
+                  </View>
+                  </Left>
+                </ListItem>
+                </List>
+            )) }</View>
             )
             }
           </View>

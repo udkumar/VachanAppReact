@@ -15,6 +15,7 @@ import {connect} from 'react-redux';
 import {updateVersion,updateInfographics} from '../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
 import {API_BASE_URL} from '../../utils/APIConstant'
+import { State } from 'react-native-gesture-handler';
 const languageList = async () => { 
   return await DbQueries.getLangaugeList()
 }
@@ -59,7 +60,6 @@ class LanguageList extends Component {
     async componentDidMount(){
       this.fetchLanguages()      
     }
-  
     async fetchLanguages(){
       var lanVer = []
       var oneDay = 24*60*60*1000; 
@@ -74,6 +74,7 @@ class LanguageList extends Component {
               lanVer.push(languageList[i])
             }
             if(languageList.length == 0){
+              // consoel.log("LANGUAGE LIST ",)
               APIFetch.getVersions().then(languageRes=>{
                 for(var i = 0; i<languageRes.length;i++){
                   var versions = []
@@ -87,7 +88,7 @@ class LanguageList extends Component {
                   }
                   lanVer.push({languageName:language,languageCode:languageCode,versionModels:versions})
                 }
-                // DbQueries.addLangaugeList(lanVer)
+                DbQueries.addLangaugeList(lanVer)
               })
               .catch(error => {
                 this.setState({isLoading:false})
@@ -98,7 +99,26 @@ class LanguageList extends Component {
           }
           break;
           case 'commentary':{
-            alert("commentary language list ")
+            try{
+            const value = await APIFetch.getAvailableCommentary()
+            console.log("language name ",value[0])
+            for(var i=0; i<value.length; i++){
+              var languageName = value[i].language
+              var version = []
+              console.log("language name ",value[i].language)
+              for(var j=0; j<value[i].languageVersions.length; j++){
+                version.push({
+                  sourceId:value[i].languageVersions[j].sourceId,
+                  versionName:value[i].languageVersions[j].name,
+                  versionCode:value[i].languageVersions[j].code
+                }) 
+              }
+              lanVer.push({languageName:languageName,versionModels:version})
+            }
+            }
+            catch(error){
+              console.log("error ",error)
+            }
           }
           break;
           case 'infographics':{
@@ -191,21 +211,19 @@ class LanguageList extends Component {
  
     navigateTo = (langName,langCode,verCode,sourceId,downloaded,file)=>{
       // const url = BASE_URL+
-      
       if(this.props.navigation.state.params.contentType == 'bible'){
+        console.log("navigate back ",langName,langCode,verCode,sourceId,downloaded,file)
         AsyncStorageUtil.setAllItems([
           [AsyncStorageConstants.Keys.SourceId, JSON.stringify(sourceId)],
           [AsyncStorageConstants.Keys.LanguageName, langName],
-          [AsyncStorageConstants.Keys.LanguageCode, langCode],
-  
           [AsyncStorageConstants.Keys.VersionCode, verCode],
           [AsyncStorageConstants.Keys.Downloaded, JSON.stringify(downloaded)]
         ]); 
         this.props.updateVersion(langName,langCode,verCode,sourceId,downloaded)
+        this.props.navigation.state.params.callBackForUpdateBook(null)
       }
       this.props.navigation.goBack()
-      this.props.updateInfographics(file ? file : null)
-      // this.props.navigation.state.params.callBackForUpdateBook(file ? file : null)
+      this.props.updateInfographics(file ? file : this.props.fileName)
 
       // this.props.navigation.state.params.getInfoFileName(null)
 
@@ -253,7 +271,7 @@ const mapStateToProps = state =>{
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
     fontFamily:state.updateStyling.fontFamily,
-
+    fileName:state.infographics.fileName,
     contentType:state.updateVersion.contentType,
 
   }

@@ -88,15 +88,12 @@ class Player extends Component {
       if(res.length !==0){
         console.log("response url audio ",res.url)
           this.setState({audioFile:res.url})
-          if(this.props.error){
             this.setState({audioFile:null})
-          }
         }
     }
     catch(error){
-
+      console.log(" error AUDIO ",error)
     }
-   
     }
    
     componentDidUpdate(prevProps, prevState) {
