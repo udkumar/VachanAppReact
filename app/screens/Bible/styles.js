@@ -36,7 +36,7 @@ export const styles =(colorFile, sizeFile, fontfamily) =>{
     },
     bottomOption:{
         flexDirection:'row',
-        width:width/4,
+        width:width/3,
         justifyContent:'center',
         alignItems:'center',
        
@@ -105,7 +105,9 @@ export const styles =(colorFile, sizeFile, fontfamily) =>{
         // height: 56, 
        
         // backgroundColor: colorFile.backgroundColor,
-        backgroundColor:colorFile.semiTransparentBackground,
+        // backgroundColor:colorFile.semiTransparentBackground,
+        backgroundColor:'rgba(63, 81, 181,0.5)',
+
         justifyContent:'center'
     },
     bottomBarChevrontIcon:{ 
@@ -148,6 +150,15 @@ export const styles =(colorFile, sizeFile, fontfamily) =>{
     addToSharefooterComponent:{
 
     },
-
+    IconFloatingStyle:{
+        position: 'absolute',
+        width: 36,
+        height: 36,
+        alignItems: 'center',
+        justifyContent: 'center',
+        right: 0,
+        padding:8,
+        top: 10,
+      },
     })
 }

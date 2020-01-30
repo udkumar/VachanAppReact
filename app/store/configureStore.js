@@ -7,6 +7,7 @@ import splitScreenReducer from './reducer/splitScreenReducer';
 import updateAudioReducer from './reducer/updateAudioReducer';
 import APIReducer from './reducer/fetchAPI';
 import updateInfographicsReducer from './reducer/updateInfographicsReducer'
+import updateCommentaryReducer from './reducer/updateCommentaryReducer'
 
 
 //use only when having mutiple reducer for single reducer direct import it to index.js of app
@@ -18,7 +19,8 @@ const rootReducer = combineReducers({
     updateSplitScreen:splitScreenReducer,
     updateAudio:updateAudioReducer,
     // APIFetch:APIReducer,
-    infographics:updateInfographicsReducer
+    infographics:updateInfographicsReducer,
+    commentary:updateCommentaryReducer
 });
 
 export default function configureStore(){

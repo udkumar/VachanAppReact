@@ -4,6 +4,7 @@ import com.facebook.react.ReactApplication;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.swmansion.reanimated.ReanimatedPackage;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
+import com.github.yamill.orientation.OrientationPackage; 
 // import com.reactnativecommunity.netinfo.NetInfoPackage;
 // import com.facebook.reactnative.androidsdk.FBSDKPackage;
 // import co.apptailor.googlesignin.RNGoogleSigninPackage;
@@ -47,6 +48,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+          new OrientationPackage(),
             new RNGestureHandlerPackage(),
             new ReanimatedPackage(),
             new SplashScreenReactPackage(),

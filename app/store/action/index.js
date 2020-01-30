@@ -8,7 +8,7 @@ export {updateFontSize,updateColorMode,updateVerseInLine} from './updateStyling'
 export {closeSplitScreen,updateDimensions} from './splitScreenProps'
 export {updateAudio,individualAudio,audioForBooks} from './updateAudio'
 export {updateInfographics} from './updateInfographics'
-
+export {updateCommentary} from './updateCommentary'
 
 
 export {fetchAPI} from './fetchAPI'

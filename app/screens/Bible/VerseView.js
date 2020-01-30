@@ -87,13 +87,13 @@ export default class VerseView extends Component {
             <Text style={this.props.styles.verseNumber} >
               {this.props.verseData.number}{" "}
             </Text>
-            <Text style={isSelect && isHighlight 
+            <Text style={ [isSelect && isHighlight 
                     ? this.props.styles.verseTextSelectedHighlighted 
                     : !isSelect && !isHighlight 
                     ? this.props.styles.verseTextNotSelectedNotHighlighted
                     : !isSelect && isHighlight
                     ? this.props.styles.verseTextNotSelectedHighlighted
-                    : this.props.styles.verseTextSelectedNotHighlighted}
+                    : this.props.styles.verseTextSelectedNotHighlighted,{fontFamily:'NotoSans-Regular'}]}
                     >
               {/* {this.getResultText(this.props.verseData.text)} */}
               {this.props.verseData.text}

@@ -54,7 +54,6 @@ class LanguageList extends Component {
           languages: responseay,
         }
       })
-      
     }
 
     async componentDidMount(){
@@ -67,8 +66,6 @@ class LanguageList extends Component {
       var ud = new Date(timestamp.languageUpdate)
       var diffDays = Math.round(Math.abs((d.getTime() - ud.getTime())/(oneDay)))
         // if(diffDays <= 20 ){
-          switch(this.props.navigation.state.params.contentType){
-           case 'bible' :{
             var languageList =  await DbQueries.getLangaugeList()
             for(var i =0 ; i<languageList.length;i++){
               lanVer.push(languageList[i])
@@ -96,49 +93,7 @@ class LanguageList extends Component {
               });
               
             }
-          }
-          break;
-          case 'commentary':{
-            try{
-            const value = await APIFetch.getAvailableCommentary()
-            console.log("language name ",value[0])
-            for(var i=0; i<value.length; i++){
-              var languageName = value[i].language
-              var version = []
-              console.log("language name ",value[i].language)
-              for(var j=0; j<value[i].languageVersions.length; j++){
-                version.push({
-                  sourceId:value[i].languageVersions[j].sourceId,
-                  versionName:value[i].languageVersions[j].name,
-                  versionCode:value[i].languageVersions[j].code
-                }) 
-              }
-              lanVer.push({languageName:languageName,versionModels:version})
-            }
-            }
-            catch(error){
-              console.log("error ",error)
-            }
-          }
-          break;
-          case 'infographics':{
-            try{
-              const value = await APIFetch.getAvailableInfographics()
-              // alert("commentary language list ")
-              console.log(" commentary language list ",value)
-                  lanVer.push({languageName:"Hindi",languageCode:"HIN",infographics:value.available_infographics})
-            }
-           
-            catch(error){
-              console.log(" commentary language list error ",error)
-
-            }
-          }
-          break;
-          default: {
-             alert("default")
-          }
-        }
+          
             this.setState({
               languages: lanVer,
               searchList: lanVer
@@ -211,7 +166,7 @@ class LanguageList extends Component {
  
     navigateTo = (langName,langCode,verCode,sourceId,downloaded,file)=>{
       // const url = BASE_URL+
-      if(this.props.navigation.state.params.contentType == 'bible'){
+      // if(this.props.navigation.state.params.contentType == 'bible'){
         console.log("navigate back ",langName,langCode,verCode,sourceId,downloaded,file)
         AsyncStorageUtil.setAllItems([
           [AsyncStorageConstants.Keys.SourceId, JSON.stringify(sourceId)],
@@ -221,12 +176,10 @@ class LanguageList extends Component {
         ]); 
         this.props.updateVersion(langName,langCode,verCode,sourceId,downloaded)
         this.props.navigation.state.params.callBackForUpdateBook(null)
-      }
+      // }
       this.props.navigation.goBack()
-      this.props.updateInfographics(file ? file : this.props.fileName)
-
+      // this.props.updateInfographics(file ? file : this.props.fileName)
       // this.props.navigation.state.params.getInfoFileName(null)
-
     }
 
     render(){
@@ -252,7 +205,7 @@ class LanguageList extends Component {
             item={item}
             DownloadBible = {this.DownloadBible}
             navigateTo = {this.navigateTo}
-            contentType = {this.props.navigation.state.params.contentType}
+            // contentType = {this.props.navigation.state.params.contentType}
             styles={this.styles}
           />}
 

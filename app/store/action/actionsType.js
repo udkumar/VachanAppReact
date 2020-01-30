@@ -29,5 +29,7 @@ export const AUDIO_FOR_BOOKS='audio_for_books'
 export const FETCH_TODOS_SUCCESS = 'fetch_todos_success'; 
 export const FETCH_TODOS_FAILURE = 'fetch_todos_failure'; 
 export const FETCHING_TODOS = 'fetching_todos';
-export const UPDATE_INFOGRAPHICS = 'update_infographics'
+export const UPDATE_INFOGRAPHICS = 'update_infographics';
+
+export const UPDATE_COMMENTARY_ID = 'update_commentary_id'
 

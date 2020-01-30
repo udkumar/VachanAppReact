@@ -6,15 +6,17 @@ import {
   FlatList,
   ActivityIndicator,
   Dimensions,
+  TouchableHighlight,
   StyleSheet,
   TouchableOpacity,
   Share,
   ToastAndroid,
+  Modal,
+  LayoutAnimation,
   Button
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {createResponder } from 'react-native-gesture-responder';
-
 import DbQueries from '../../utils/dbQueries'
 import VerseView from './VerseView'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
@@ -23,24 +25,18 @@ import Player from '../../screens/Bible/Navigate/Audio/Player';
 // import {getResultText} from '../../utils/UtilFunctions';
 import {getBookNameFromMapping,getBookChaptersFromMapping} from '../../utils/UtilFunctions';
 import APIFetch from '../../utils/APIFetch'
-import SplashScreen from 'react-native-splash-screen'
 import {selectedChapter,updateAudio,updateContentType} from '../../store/action/'
-import ErrorMessage from '../../components/ErrorMessage/'
-
+import SelectContent from '../Bible/component/SelectContent'
+import SelectBottomTabBar from '../Bible/component/SelectBottomTabBar'
 import Spinner from 'react-native-loading-spinner-overlay';
-import {
-  MenuContext
-} from 'react-native-popup-menu';
+import Orientation from 'react-native-orientation';
+import { styles } from './styles.js';
+import {connect} from 'react-redux'
+import Commentary from './Navigate/Commentary/';
+
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
-import { styles } from './styles.js';
 
-import {SplitScreen} from '../Bible/Navigate/SplitScreen';
-
-import {connect} from 'react-redux'
-import { Toast } from 'native-base';
-import { constColors } from '../../utils/colors';
-import Header from '../../components/Header'
 
 class Bible extends Component {
   static navigationOptions = ({navigation}) =>{
@@ -52,37 +48,44 @@ class Bible extends Component {
                   <TouchableOpacity style={navStyles.touchableStyleLeft}  
                    onPress={() =>{navigation.navigate("SelectionTab", {bookId:params.bookId,chapterNumber:params.currentChapter,totalVerses:params.totalVerses,getReference:params.callBackForUpdateBook,contentType:'bible'})}}>
                     <Text  style={navStyles.headerTextStyle}>{params.bookName}  {params.currentChapter }</Text>
-                  <Icon name="arrow-drop-down" color="#fff" size={24}/>
+                  <Icon name="arrow-drop-down" color="#fff" size={20}/>
                   </TouchableOpacity>
                 </View>
                 <View style={{marginRight:10}}>
                   <TouchableOpacity onPress={() =>{navigation.navigate("LanguageList", {callBackForUpdateBook:params.callBackForUpdateBook,contentType:'bible'})}} style={navStyles.headerLeftStyle}>
                     <Text style={navStyles.headerTextStyle}>{params.languageName}  {params.versionCode}</Text>
-                    <Icon name="arrow-drop-down" color="#fff" size={24}/>
+                    <Icon name="arrow-drop-down" color="#fff" size={20}/>
                   </TouchableOpacity>
                 </View>
               </View>
           ), 
             headerTintColor:"#fff",
+            headerStyle: {
+              backgroundColor: "#3F51B5",
+              elevation: 0,
+              shadowOpacity: 0,
+              height:40,
+              width:params.visibleContentView ? '50%' :'100%'
+          },
             headerRight:(
               <View style={navStyles.headerRightStyle}>
               <TouchableOpacity  onPress={params.toggleAudio}
                 style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
                <Icon 
                    name='volume-up'
-                   size={24} 
+                   size={20} 
                    color={ "#fff" }
                /> 
                </TouchableOpacity>
-
                   <TouchableOpacity  style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
                     <Icon 
                       onPress={()=> {params.onBookmark(params.bookId,params.currentChapter,params.isBookmark)}} 
                       name='bookmark'
-                      color={params.isBookmark ? "red" : "white"} 
-                      size={24} 
+                      color={params.isBookmark ? "red" : "#fff"} 
+                      size={20} 
                   /> 
                  </TouchableOpacity>
+                 <SelectContent visible={params.modalVisible}  navigation={navigation} navStyles={navStyles}/>
               </View>
             )
         }
@@ -91,13 +94,7 @@ class Bible extends Component {
 
   constructor(props) {
     super(props);
-    this.leftIsScrolling = false;
-    this.rigthIsScrolling = false;
-    this.isVisible = true;
-    this.getSelectedReferences = this.getSelectedReferences.bind(this)
-    this.onBookmarkPress = this.onBookmarkPress.bind(this)
 
-    // this.updateCurrentChapter = this.updateCurrentChapter.bind(this)
     this.state = {
       isLoading: false,
       showBottomBar: false,
@@ -125,15 +122,20 @@ class Bible extends Component {
       // chaptersArray:[],
       message:'',
       totalVerses:0,
-      status:false
-
+      status:false,
+      modalVisible: false,
+      visibleContentView:false
       //modal value for showing chapter grid 
     }
+    this.getSelectedReferences = this.getSelectedReferences.bind(this)
+    this.onBookmarkPress = this.onBookmarkPress.bind(this)
 
     this.pinchDiff = 0
     this.pinchTime = new Date().getTime()
     this.styles = styles(this.props.colorFile, this.props.sizeFile);    
-    this.modelValue = "modal1"
+    
+  
+    
   }
 
   componentWillReceiveProps(nextProps){
@@ -146,9 +148,17 @@ class Bible extends Component {
       sourceId:nextProps.sourceId
     })
     this.styles = styles(nextProps.colorFile, nextProps.sizeFile);  
- 
   }
+
+  componentWillMount(){
+    const initial = Orientation.getInitialOrientation();
+    console.log("initial orientation ",initial)
+    Orientation.unlockAllOrientations()
+  }
+
   async componentDidMount(){
+    Orientation.addOrientationListener(this._orientationDidChange);
+
     this.gestureResponder = createResponder({
       onStartShouldSetResponder: (evt, gestureState) => true,
       onStartShouldSetResponderCapture: (evt, gestureState) => true,
@@ -216,9 +226,11 @@ class Bible extends Component {
       callBackForUpdateBook:this.queryBookFromAPI,
       totalVerses:this.state.totalVerses,
       audio:this.props.audio,
-      updateContentType:this.props.updateContentType('Bible')
+      modalVisible:false,
+      updateContentType:this.props.updateContentType('Bible'),
+      toggleModal:this.setState({modalVisible:!this.state.modalVisible}),
+      visibleContentView:false
     })
-
     this.queryBookFromAPI(null)
   }
 
@@ -539,6 +551,11 @@ toggleAudio = ()=>{
         chapterNumber:this.state.currentVisibleChapter,
     }
     AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.LastReadReference, lastRead);
+
+    Orientation.getOrientation((err, orientation) => {
+      console.log(`Current Device Orientation: ${orientation}`);
+    })
+    Orientation.removeOrientationListener(this._orientationDidChange);
     // if(this.props.navigation.state.params.prevScreen =='bookmark'){
     //   this.props.navigation.state.params.updateBookmark()
     // }
@@ -571,30 +588,36 @@ toggleAudio = ()=>{
     this.setState({offset:currentOffset,direction:direction})
     console.log(direction)
   }
- 
+
+  _orientationDidChange = (orientation) => {
+    console.log("ORIENTATION CHANGE ",orientation)
+    if(orientation == 'LANDSCAPE'){
+      this.setState({visibleContentView:true})
+      this.props.navigation.setParams({visibleContentView:true})
+    }
+    }
+
   render() {
+    console.log(this.state.visibleContentView ,"content visible view")
       return (
-        <View style={this.styles.container}>
-        {/* <NavigationEvents
-          onWillFocus={() => {this.queryBookFromAPI}}
-        /> */}
-          { this.props.isFetching  &&
-            <Spinner
-                visible={true}
-                textContent={'Loading...'}
-                // textStyle={styles.spinnerTextStyle}
-            />}
-            {/* {
-              this.props.error &&  <ErrorMessage message={'Some error , please check your internet connection'}/>
-            } */}
-              <View>
-              <ScrollView
-              onScroll={this.onScroll}
-              {...this.gestureResponder}
-              style={this.styles.recyclerListView}
-              ref={(ref) => { this.scrollViewRef = ref; }}                    
-          >
-           {    (this.state.verseInLine) ?
+          <View style={{flexDirection:'row'}}>
+            <View style={{width:this.state.visibleContentView ? '50%' : '100%'}}>
+
+            <ScrollView  
+                   ref={(ref) => { this.scrollViewRef = ref; }}
+                  //  onScroll={e => {
+                  //     if (!this.leftIsScrolling) {
+                  //       this.rigthIsScrolling = true;
+                  //       var scrollY = e.nativeEvent.contentOffset.y;
+                  //       this.scrollViewRef.scrollTo({ y: scrollY });
+                  //     }
+                  //     this.leftIsScrolling = false;
+                  //   }}
+                
+                    // style={this.styles.recyclerListView}
+                  >
+             
+            { (this.state.verseInLine) ?
             <View style={this.styles.chapterList}>
                      <FlatList
                       style={{padding:10}}
@@ -643,13 +666,14 @@ toggleAudio = ()=>{
                               showBottomBar={this.state.showBottomBar}
                             />
                         </Text>
-                        {index == this.state.chapter.length - 1  ? <View style={{height:64, marginBottom:4}} />: null  }
+                        {index == this.state.chapter.length - 1  && ( this.state.showBottomBar ? <View style={{height:64, marginBottom:4}} />: null ) }
                         </View>
                         )}
                       </View>
                   }
-          </ScrollView>
-          <View style={{justifyContent:(this.state.currentVisibleChapter != 1 &&  this.state.currentVisibleChapter == this.state.currentVisibleChapter != this.state.totalChapters) ? 'center' : 'space-around',alignItems:'center'}}>
+              </ScrollView>
+              <View style={{justifyContent:(this.state.currentVisibleChapter != 1 &&  this.state.currentVisibleChapter == this.state.currentVisibleChapter != this.state.totalChapters) ? 'center' : 'space-around',alignItems:'center'}}>
+            
             {
             this.state.currentVisibleChapter == 1 
             ? null :
@@ -673,7 +697,6 @@ toggleAudio = ()=>{
               :null
             ):null
           }
-           
           </View>
             {
               this.state.currentVisibleChapter == this.state.totalChapters.length
@@ -685,52 +708,28 @@ toggleAudio = ()=>{
                     />
             </View>
             }
-            </View>
+            {/* </View> */}
         </View>
-
-              {this.state.showBottomBar 
-          ? 
-          <View style={this.styles.bottomBar}>
-  
-            <View style={this.styles.bottomOption}>
-            <TouchableOpacity onPress={this.doHighlight}  
-            >
-              <Text style={this.styles.bottomOptionText}>
-                {this.state.bottomHighlightText == true ? 'HIGHLIGHT' : 'REMOVE HIGHLIGHT' }
-              </Text>
-              <Icon name={'border-color'} color="white" size={24} style={this.styles.bottomOptionIcon} />
-              </TouchableOpacity>
-            </View>
-            
-            <View style={this.styles.bottomOptionSeparator} />
-            
-            <View style={this.styles.bottomOption}>  
-              <TouchableOpacity onPress={this.addToNotes} 
-              >        
-                <Text style={this.styles.bottomOptionText}>
-                  NOTES
-                </Text>
-                <Icon name={'note'} color="white" size={24} 
-                style={this.styles.bottomOptionIcon} 
-                />
-              </TouchableOpacity>
-            </View>
-            
-            <View style={this.styles.bottomOptionSeparator} />          
-  
-            <View style={this.styles.bottomOption}>   
-              <TouchableOpacity onPress={this.addToShare}>       
-                <Text style={this.styles.bottomOptionText}>
-                  SHARE
-                </Text>
-                <Icon name={'share'} color="white" size={24} style={this.styles.bottomOptionIcon} />
-              </TouchableOpacity>
-            </View>
-            <View style={this.styles.bottomOptionSeparator} />   
-          </View>
+          {this.state.showBottomBar ?
+             <SelectBottomTabBar 
+             styles={this.styles} 
+             doHighlight = {this.doHighlight} 
+             addToNotes = {this.addToNotes} 
+             addToShare ={this.addToShare} 
+             bottomHighlightText={this.state.bottomHighlightText}/>
           : null }
-       
-      </View>
+
+
+            </View>
+
+
+            {/**parallelView**/}
+            {this.state.visibleContentView ? <View style={{width:'50%'}}>
+            <Commentary/>
+            </View> : null}
+
+          </View>
+   
       )
   }
 }

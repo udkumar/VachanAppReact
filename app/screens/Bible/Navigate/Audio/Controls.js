@@ -24,25 +24,25 @@ const Controls = ({
   <View style={styles.container}>
     <View style={{width: 20}} />
     <TouchableOpacity onPress={onBack}>
-      <Icon name="fast-rewind" size={30} />
+      <Icon name="fast-rewind"  color={"#fff"} size={24} />
     </TouchableOpacity>
     <View style={{width: 10}} />
     {!paused ?
       <TouchableOpacity onPress={onPressPause}>
         <View style={styles.playButton}>
-        <Icon name="pause" size={30}  style={[forwardDisabled && {opacity: 0.3}]}/>
+        <Icon name="pause" color={"#fff"}size={24}  style={[forwardDisabled && {opacity: 0.3}]}/>
         </View>
       </TouchableOpacity> :
       <TouchableOpacity onPress={onPressPlay}>
         <View style={styles.playButton}>
-        <Icon name="play-arrow" size={30}/>
+        <Icon  color={"#fff"} name="play-arrow" size={30}/>
         </View>
       </TouchableOpacity>
     }
     <View style={{width: 10}} />
     <TouchableOpacity onPress={onForward}
       disabled={forwardDisabled}>
-      <Icon name="fast-forward" size={30}  />
+      <Icon  color={"#fff"} name="fast-forward" size={24}  />
     </TouchableOpacity>
     <View style={{width: 20}} />
     
@@ -56,14 +56,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    // backgroundColor:'#3F51B5'
     // paddingTop: 8,
   },
   playButton: {
-    height:56,
-    width: 56,
+    height:36,
+    width: 36,
     borderWidth: 1,
     borderColor: '#fff',
-    borderRadius: 58 / 2,
+    borderRadius: 36 / 2,
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
