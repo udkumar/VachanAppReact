@@ -127,14 +127,9 @@ class App extends Component {
     //   console.log("prevProps",prevProps)
     // }
     render() {
-        return <AppNavigator
-          // onNavigationStateChange={(prevState, currentState, action) => {
-
-          //   console.log("onNavigationStateChange prevState ", currentState)
-          //   console.log("onNavigationStateChange currentState", prevState)
-
-          // }}
-           />
+        return <AppNavigator 
+        
+        />
     }
 }
 const mapStateToProps = state =>{
@@ -171,4 +166,4 @@ const mapDispatchToProps = dispatch =>{
   }
 }
 
-export  default connect(mapStateToProps,mapDispatchToProps)(App)
+export default connect(mapStateToProps,mapDispatchToProps)(App)

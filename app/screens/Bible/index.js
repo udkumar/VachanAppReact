@@ -85,7 +85,7 @@ class Bible extends Component {
                       size={20} 
                   /> 
                  </TouchableOpacity>
-                 <SelectContent visible={params.modalVisible}  navigation={navigation} navStyles={navStyles}/>
+                 <SelectContent visible={params.modalVisible}  navigation={navigation} navStyles={navStyles} />
               </View>
             )
         }
@@ -157,12 +157,9 @@ class Bible extends Component {
   }
 
   async componentDidMount(){
-    console.log("VALUES ...............",this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter)
-    this.props.fetchVersionContent({sourceId:this.props.sourceId,bookId:this.props.bookId,chapter:this.state.currentVisibleChapter})
-    this.props.fetchAudioUrl({languageCode:this.props.languageCode,versionCode:this.props.version,bookId:this.props.bookId,chapter:this.state.currentVisibleChapter})
     // this.props.fetchCommentaryContent({languageCode:this.props.languageCode,versionCode:this.props.version,bookId:this.props.bookId,chapter:this.state.currentVisibleChapter})
     this.props.fetchCommentaryLanguage({languageCode:this.props.languageCode})
-    Orientation.addOrientationListener(this._orientationDidChange);
+    // Orientation.addOrientationListener(this._orientationDidChange);
 
     this.gestureResponder = createResponder({
       onStartShouldSetResponder: (evt, gestureState) => true,
@@ -233,14 +230,14 @@ class Bible extends Component {
       modalVisible:false,
       updateContentType:this.props.updateContentType('Bible'),
       toggleModal:this.setState({modalVisible:!this.state.modalVisible}),
-      visibleParallelView:false
+      visibleParallelView:false,
     })
     this.queryBookFromAPI(null)
   }
 
   componentDidUpdate(prevProps,prevState) {
     // Typical usage (don't forget to compare props):
-    if (this.props.sourceId !== prevProps.sourceId) {
+    if (this.props.sourceId !== prevProps.sourceId ) {
       this.queryBookFromAPI(null)
     }
   }
@@ -623,7 +620,6 @@ toggleAudio = ()=>{
                     />
             </View>
             }
-            {/* </View> */}
         </View>
           {this.state.showBottomBar ?
              <SelectBottomTabBar 
@@ -638,7 +634,6 @@ toggleAudio = ()=>{
             {this.state.visibleParallelView ? <View style={{width:'50%'}}>
             <Commentary visibleParallelView={this.state.visibleParallelView}/>
             </View> : null}
-
           </View>
    
       )
@@ -697,7 +692,9 @@ const mapStateToProps = state =>{
     totalVerses:state.versionFetch.totalVerses,
 
     audioURL:state.audioFetch.url,
-    commentaryFetch:state.commentaryFetch
+    availableCommentaries:state.commentaryFetch.availableCommentaries,
+
+    // commentaryFetch:state.commentaryFetch
 
   }
 }
@@ -709,7 +706,7 @@ const mapDispatchToProps = dispatch =>{
     fetchVersionLanguage:()=>dispatch(fetchVersionLanguage()),
     fetchVersionContent:(payload)=>dispatch(fetchVersionContent(payload)),
     fetchAudioUrl:(payload)=>dispatch(fetchAudioUrl(payload)),
-    fetchCommentaryContent:(payload)=>dispatch(fetchCommentaryContent(payload)),
+    // fetchCommentaryContent:(payload)=>dispatch(fetchCommentaryContent(payload)),
     fetchCommentaryLanguage:(payload)=>dispatch(fetchCommentaryLanguage(payload))
 
   }

@@ -5,7 +5,7 @@ import { put, takeLatest, call,fork } from 'redux-saga/effects'
 import fetchApi from '../../api';
 const GIT_BASE_API = 'https://github.com/Bridgeconn/vachancontentrepository/raw/master/'
 
-    function* fetchAudioUrl(params) {
+    function* fetchAudioUrl(params){
         try {
             var found = false
             const payload = params.payload

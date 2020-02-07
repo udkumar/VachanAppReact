@@ -1,18 +1,60 @@
 import React, { useState,useEffect} from 'react';
-import {Modal, Text,TouchableOpacity,Dimensions,LayoutAnimation,FlatList, View, Alert,TouchableWithoutFeedback} from 'react-native';
+import {Modal, Text,TouchableOpacity,Dimensions,StyleSheet,Animated,LayoutAnimation,FlatList, View, Alert,TouchableWithoutFeedback} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {Card,CardItem,Content,Body,List,ListItem,Left,Right,} from 'native-base'
 import Orientation from 'react-native-orientation';
+import Accordion from 'react-native-collapsible/Accordion';
 import {styles} from '../../LanguageList/styles'
-import APIFetch from '../../../utils/APIFetch'
-import {connect} from 'react-redux';
-import {fetchCommentaryLanguage} from '../../../store/action/'
+import {connect} from 'react-redux'
 
-var contentList = [
-  {content:"Commentary",contentVersion:[]},
-  {content:"Infographics",contentVersion:[]},
-  {content:"Dictionary",contentVersion:[]}
-]
+
+renderHeader = (section,index, _, isActive) => {
+  return (
+    <Animated.View
+      duration={400}
+      style={[stylesSelection.header, isActive ? stylesSelection.active : stylesSelection.inactive]}
+      transition="backgroundColor"
+    >
+      <Text style={stylesSelection.headerText}>{section.content}</Text>
+    </Animated.View>
+  );
+};
+
+renderContent = (section,index, _, isActive)=> {
+  return (
+    <Animated.View
+      duration={400}
+      style={[stylesSelection.content, isActive ? stylesSelection.active : stylesSelection.inactive]}
+      transition="backgroundColor">
+        {section.contentVersion ?  section.contentVersion.map((ele, i, key) => (
+          <List>
+            <ListItem button={true}>
+            <TouchableOpacity 
+              onPress={()=>{navigation.setParams({modalVisible:!visible});Orientation.lockToLandscape()}} 
+              >
+            <Left>
+            <Animated.View
+              duration={400}
+              style={{padding:10}}
+              transition="backgroundColor"
+            >
+            <Text>{ele.language}</Text>
+            
+            {
+              ele.commentaries.map((com)=>(
+                <Text>{com.code}</Text>
+              ))
+            }
+            </Animated.View>
+            </Left>
+          </TouchableOpacity>
+          </ListItem>
+          </List>
+      )) :  null}
+      {/* </Animated.View> */}
+    </Animated.View>
+  );
+}
 
 const ExpandableItemComponent = ({
   visible,
@@ -21,63 +63,44 @@ const ExpandableItemComponent = ({
   navigation,
   updateLayout,
 })=>(
-<View style={styles.container}>
-      <List>
-      <ListItem button={true} onPress={()=>updateLayout(index)} >
-        <Left>
-        <Text style={styles.text} >{item.content }</Text>
-        </Left>
-        <Right>
-          <Icon style={styles.iconStyle} name={item.isExpanded ? "keyboard-arrow-down" : "keyboard-arrow-up" }  size={24}/>
-        </Right>
-        </ListItem>
-        </List>
-        <View
-          style={{
-            height:item.isExpanded ? null : 0,
-            overflow: 'hidden',
-          }}>
-            <View style={{flex:1}}>
-            { item.contentVersion.map((ele, index, key) => (
-              <List>
-                <ListItem button={true}>
-                <TouchableOpacity 
-                  onPress={()=>{navigation.setParams({modalVisible:!visible});Orientation.lockToLandscape()}} 
-                  >
-                <Left>
-                <View style={{alignSelf:'center',marginLeft:12}}>
-                  <Text style={[styles.text,{marginLeft:8}]} > {ele.name}</Text>
-                </View>
-                </Left>
-              </TouchableOpacity>
-              </ListItem>
-              </List>
-          )) }</View>
-      
-        </View>
-      </View>
+  <View>
+    {item.length == 0 ? null :
+    <Accordion
+    // activeSections={activeSections}
+    sections={item}
+    // touchableComponent={TouchableOpacity}
+    renderHeader={renderHeader}
+    renderContent={renderContent}
+    duration={400}
+    // onChange={navigation}
+    />
+    }
+  </View>
+
   )
+
+
+
 const SelectContent = ({
   visible,
   navStyles,
   navigation,
-  fetchCommentaryLanguage,
-  languageCode,
   availableCommentaries
 })=>{
-
-  const [list, updateList] = useState(availableCommentaries);
+  const [list, updateList] = useState(availableCommentaries)
   const updateLayout = (index)=>{
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     let responseay = [...list]
     responseay[index]['isExpanded'] = !responseay[index]['isExpanded']
     updateList(responseay)
+    // console.log("AVAILABLE COMMENTARY ......",list)
   }
-  useEffect(()=>{
-    fetchCommentaryLanguage({languageCode:languageCode})
-    console.log("Available commentary ",availableCommentaries)
-    },[])
+ useEffect(()=>{
+  updateLayout
+  updateList(availableCommentaries)
   
+ },[])
+
   return(
   <View>
         <Modal
@@ -93,49 +116,96 @@ const SelectContent = ({
               justifyContent: 'center',
               alignItems: 'center',
               }} 
-          // activeOpacity={1} 
           onPressOut={()=>{navigation.setParams({modalVisible:false})}} 
           >
           <View style={{height:'80%',width:'70%',alignSelf:'flex-end',top:40}}>
           <Card>
-          <FlatList
-          data={availableCommentaries}
-          renderItem={({item, index, separators}) =>
+          
           <ExpandableItemComponent 
           visible={visible}
-          index={index} 
-          item={item} 
+          item={[availableCommentaries]} 
           navigation={navigation} 
           updateLayout={updateLayout}
           />
-        }
-          />
+
           </Card>
           </View>
           </TouchableWithoutFeedback>
         </Modal>
         <TouchableOpacity  style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
-                    <Icon 
-                     onPress={()=>{navigation.setParams({modalVisible:!visible})}} 
-                      name='add-circle'
-                      color={"#fff"} 
-                      size={20} 
-                  /> 
-            </TouchableOpacity>
+            <Icon 
+              onPress={()=>{navigation.setParams({modalVisible:!visible})}} 
+              name='add-circle'
+              color={"#fff"} 
+              size={20} 
+          /> 
+        </TouchableOpacity>
       </View>
   )
 }
-
 const mapStateToProps = state =>{
   return{
     availableCommentaries:state.commentaryFetch.availableCommentaries,
-    language: state.updateVersion.language,
-    languageCode:state.updateVersion.languageCode,
   }
 }
-const mapDispatchToProps = dispatch =>{
-  return {
-    fetchCommentaryLanguage:(payload)=>dispatch(fetchCommentaryLanguage(payload))
-  }
-}
-export  default connect(mapStateToProps,mapDispatchToProps) (SelectContent) 
+
+const stylesSelection = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F5FCFF',
+    paddingTop: 50,
+  },
+  title: {
+    textAlign: 'center',
+    fontSize: 22,
+    fontWeight: '300',
+    marginBottom: 20,
+  },
+  header: {
+    backgroundColor: '#F5FCFF',
+    padding: 10,
+  },
+  headerText: {
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  content: {
+    padding: 20,
+    backgroundColor: '#fff',
+  },
+  active: {
+    backgroundColor: 'rgba(255,255,255,1)',
+  },
+  inactive: {
+    backgroundColor: 'rgba(245,252,255,1)',
+  },
+  selectors: {
+    marginBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  selector: {
+    backgroundColor: '#F5FCFF',
+    padding: 10,
+  },
+  activeSelector: {
+    fontWeight: 'bold',
+  },
+  selectTitle: {
+    fontSize: 14,
+    fontWeight: '500',
+    padding: 10,
+  },
+  multipleToggle: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginVertical: 30,
+    alignItems: 'center',
+  },
+  multipleToggle__title: {
+    fontSize: 16,
+    marginRight: 8,
+  },
+});
+export default connect(mapStateToProps,null)(SelectContent)

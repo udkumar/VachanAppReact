@@ -19,7 +19,7 @@ import APIFetch from '../../../../utils/APIFetch'
 import { ScrollView } from 'react-native-gesture-handler';
 import Orientation from 'react-native-orientation';
 
-const Commentary =({visibleContentView}) =>{
+const Commentary =() =>{
   const [commentary, updateCommentary] = useState([]);
   
   useEffect(async()=>{
@@ -153,7 +153,6 @@ headerTextStyle:{
     textAlign:'center'
 },
 });
-
 
 const mapStateToProps = state =>{
   return{

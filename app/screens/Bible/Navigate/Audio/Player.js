@@ -14,7 +14,7 @@ import APIFetch from '../../../../utils/APIFetch'
 class Player extends Component {
   constructor(props) {
     super(props);
-
+    console.log("PLAYER ",props)
     this.state = {
       paused: true,
       totalLength: 1,

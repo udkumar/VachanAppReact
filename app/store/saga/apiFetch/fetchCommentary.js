@@ -8,13 +8,14 @@
       try {
         const payload = params.payload 
         const languages = API_BASE_URL 
-        const contentCommentry = {content:"Commentary",contentVersion:[]}
         const response = yield call(fetchApi,languages)
-        for(var i=0; i<response.length; i++){
-          if(response[i].languageCode==payload.languageCode){
-            contentCommentry.contentCommentry.push(response[i].commentaries)
-          }
-        }
+        const contentCommentry = {content:"Commentary",contentVersion:response}
+        // for(var i=0; i<response.length; i++){
+        //   if(response[i].languageCode==payload.languageCode){
+        //     contentCommentry.contentCommentry.push(response[i].commentaries)
+        //   }
+        // }
+        // console.log("AVAILABLE COMMENTARIES ",contentCommentry)
         yield put(commentaryLanguageSuccess(contentCommentry))
       } catch (e) {
       yield put(commentaryLanguageFailure(e))
