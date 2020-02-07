@@ -1,17 +1,17 @@
 import React, { useState,useEffect} from 'react';
-import {Modal, Text,TouchableOpacity,Dimensions,LayoutAnimation,FlatList, View, Alert} from 'react-native';
+import {Modal, Text,TouchableOpacity,Dimensions,LayoutAnimation,FlatList, View, Alert,TouchableWithoutFeedback} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {Card,CardItem,Content,Body,List,ListItem,Left,Right,} from 'native-base'
 import Orientation from 'react-native-orientation';
 import {styles} from '../../LanguageList/styles'
 import APIFetch from '../../../utils/APIFetch'
-import {updateCommentary} from '../../../store/action/'
 import {connect} from 'react-redux';
+import {fetchCommentaryLanguage} from '../../../store/action/'
 
 var contentList = [
-  {content:"Commentary",contentVersion:[1,2,3,4,5]},
-  {content:"Infographics",contentVersion:[1,2,3,4,5]},
-  {content:"Dictionary",contentVersion:[1,2,3,4,5]}
+  {content:"Commentary",contentVersion:[]},
+  {content:"Infographics",contentVersion:[]},
+  {content:"Dictionary",contentVersion:[]}
 ]
 
 const ExpandableItemComponent = ({
@@ -19,7 +19,7 @@ const ExpandableItemComponent = ({
   index,
   item,
   navigation,
-  updateLayout
+  updateLayout,
 })=>(
 <View style={styles.container}>
       <List>
@@ -46,7 +46,7 @@ const ExpandableItemComponent = ({
                   >
                 <Left>
                 <View style={{alignSelf:'center',marginLeft:12}}>
-                  <Text style={[styles.text,{marginLeft:8}]} > {ele}</Text>
+                  <Text style={[styles.text,{marginLeft:8}]} > {ele.name}</Text>
                 </View>
                 </Left>
               </TouchableOpacity>
@@ -56,59 +56,63 @@ const ExpandableItemComponent = ({
       
         </View>
       </View>
-)
-const SelectContent = ({visible,navStyles,navigation,updateCommentary})=>{
+  )
+const SelectContent = ({
+  visible,
+  navStyles,
+  navigation,
+  fetchCommentaryLanguage,
+  languageCode,
+  availableCommentaries
+})=>{
 
-  const [list, updateList] = useState(contentList);
-
+  const [list, updateList] = useState(availableCommentaries);
   const updateLayout = (index)=>{
-      console.log("index ",list[index]["content"])
-      console.log("index value ",list["content"])
-
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    let responseay = [...list];
-    responseay[index]['isExpanded'] = !responseay[index]['isExpanded'];
-    console.log("response array  ",responseay )
+    let responseay = [...list]
+    responseay[index]['isExpanded'] = !responseay[index]['isExpanded']
     updateList(responseay)
   }
-
-    useEffect(async()=>{
-      updateLayout
-      try{
-        const value = await APIFetch.getAvailableCommentary()
-        console.log("value ",value.commentaries.name)
-        updateList({content:"Commentary",contentVersion:value.commentaries.name})
-        updateCommentary(value.commentaries.sourceId)
-      }
-      catch(error ){
-        console.log('erorr commentary ',error)
-      }
-    
+  useEffect(()=>{
+    fetchCommentaryLanguage({languageCode:languageCode})
+    console.log("Available commentary ",availableCommentaries)
     },[])
+  
   return(
   <View>
         <Modal
           animationType="fade"
           transparent={true}
           visible={visible}
-          onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
-          }}>
-          <View  style={{
-          flex: 1,
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          }}>
-          <View style={{height:'80%',width:'70%'}}>
+          onPress={()=>{navigation.setParams({modalVisible:false})}} 
+          >
+          <TouchableWithoutFeedback
+            style={{
+              flex: 1,
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              }} 
+          // activeOpacity={1} 
+          onPressOut={()=>{navigation.setParams({modalVisible:false})}} 
+          >
+          <View style={{height:'80%',width:'70%',alignSelf:'flex-end',top:40}}>
           <Card>
           <FlatList
-          data={list}
-          renderItem={({item, index, separators}) =><ExpandableItemComponent visible={visible}index={index} item={item} navigation={navigation} updateLayout={updateLayout}/>}
+          data={availableCommentaries}
+          renderItem={({item, index, separators}) =>
+          <ExpandableItemComponent 
+          visible={visible}
+          index={index} 
+          item={item} 
+          navigation={navigation} 
+          updateLayout={updateLayout}
+          />
+        }
           />
           </Card>
           </View>
-          </View>
+          </TouchableWithoutFeedback>
         </Modal>
         <TouchableOpacity  style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
                     <Icon 
@@ -122,13 +126,16 @@ const SelectContent = ({visible,navStyles,navigation,updateCommentary})=>{
   )
 }
 
-
-const mapDispatchToProps = dispatch =>{
-  return {
-    updateCommentary:(id) =>dispatch(updateCommentary(content)),
+const mapStateToProps = state =>{
+  return{
+    availableCommentaries:state.commentaryFetch.availableCommentaries,
+    language: state.updateVersion.language,
+    languageCode:state.updateVersion.languageCode,
   }
 }
-
-export  default connect(null,mapDispatchToProps) (SelectContent) 
-
-// export default SelectContent
+const mapDispatchToProps = dispatch =>{
+  return {
+    fetchCommentaryLanguage:(payload)=>dispatch(fetchCommentaryLanguage(payload))
+  }
+}
+export  default connect(mapStateToProps,mapDispatchToProps) (SelectContent) 

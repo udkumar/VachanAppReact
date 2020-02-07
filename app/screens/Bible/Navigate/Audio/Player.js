@@ -81,32 +81,8 @@ class Player extends Component {
     } */
   }
 
- async  fetchMP3(){
-    try{
-    let res =  await APIFetch.getAudioBible( this.props.languageCode,this.props.version,this.props.bookId,this.props.chapterNumber)
-    console.log("response url audio ",res.url)
-      if(res.length !==0){
-        console.log("response url audio ",res.url)
-          this.setState({audioFile:res.url})
-            this.setState({audioFile:null})
-        }
-    }
-    catch(error){
-      console.log(" error AUDIO ",error)
-    }
-    }
-   
-    componentDidUpdate(prevProps, prevState) {
-      // only update chart if the data has changed
-      if (prevProps.language !== this.props.language || prevProps.version !==this.props.version || prevProps.bookId !==this.props.bookId || prevProps.currentChapter !==this.props.currentChapter ) {
-       this.fetchMP3()
-      }
-    }
-    componentDidMount(){
-      this.fetchMP3()
-    }
-
   render() {
+    console.log("PORP   URL .....",this.props.url)
     const track = this.state.audioFile;
     return (
       <View style={styles.container}>
@@ -126,7 +102,7 @@ class Player extends Component {
           onBack={this.onBack.bind(this)}
           onForward={this.onForward.bind(this)}
           paused={this.state.paused}/>
-        <Video source={{uri: track}} // Can be a URL or a local file.
+        <Video source={{uri: this.props.url}} // Can be a URL or a local file.
           ref="audioElement"
           paused={this.state.paused}               // Pauses playback entirely.
           resizeMode="cover"           // Fill the whole screen at aspect ratio.
@@ -153,24 +129,6 @@ const styles = {
 };
 
 
-const mapStateToProps = state =>{
-  return{
-    language: state.updateVersion.language,
-    languageCode:state.updateVersion.languageCode,
-    version:state.updateVersion.version,
-    sourceId:state.updateVersion.sourceId,
-    downloaded:state.updateVersion.downloaded,
-    contentType:state.updateVersion.contentType,
 
-
-    chapterNumber:state.updateVersion.chapterNumber,
-    totalChapters:state.updateVersion.totalChapters,
-    bookName:state.updateVersion.bookName,
-    bookId:state.updateVersion.bookId,
-
-    audio:state.updateAudio.visible,
-  }
-}
-
-export  default connect(mapStateToProps,null)(Player)
+export  default Player
 

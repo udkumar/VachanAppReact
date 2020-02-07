@@ -4,7 +4,7 @@ const initialState = {
    language:'Hindi',
    languageCode:'hin',
    version:'IRV',
-   sourceId:'45',
+   sourceId:45,
    downloaded:false,
    bookId:'3jn',
    bookName:'3 यूहन्ना',

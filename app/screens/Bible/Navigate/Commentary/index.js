@@ -11,26 +11,28 @@ var RNFS = require('react-native-fs');
 import SplashScreen from 'react-native-splash-screen'
 import Spinner from 'react-native-loading-spinner-overlay';
 import {connect} from 'react-redux'
-import {Card,CardItem,Content,Body,Header} from 'native-base'
+import {Card,CardItem,Content,Body,Header, Right,Left,Title} from 'native-base'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {updateContentType} from '../../../../store/action/'
 import { NavigationEvents } from 'react-navigation';
 import APIFetch from '../../../../utils/APIFetch'
 import { ScrollView } from 'react-native-gesture-handler';
+import Orientation from 'react-native-orientation';
 
-const Commentary =({bookId,chapterNumber}) =>{
+const Commentary =({visibleContentView}) =>{
   const [commentary, updateCommentary] = useState([]);
   
   useEffect(async()=>{
+    // console.log("bookId,chapterNumber commentary ",bookId,chapterNumber)
     try{
       const value = await APIFetch.commentaryContent()
       console.log("value ",value)
       updateCommentary(value)
     }
     catch(error ){
+      updateCommentary([])
       console.log('erorr commentary ',error)
     }
-  
   },[])
   var convertToText = (response) => {
     let exRegex = /<b>(.*?)<\/b>/g
@@ -53,9 +55,20 @@ const Commentary =({bookId,chapterNumber}) =>{
   }
   return (
     <SafeAreaView>
-      <Header
-      style={{position:'absolute',top:-40,height:40}}
-    />
+      <Header style={{position:'absolute',top:-40,height:40,borderLeftWidth:0.5,borderLeftColor:'#fff'}} >
+      <Left/>
+          <Body>
+            <Title>Header</Title>
+          </Body>
+      <Left />
+      <Right>
+        <TouchableOpacity onPress={()=>{console.log("ON PRESS WORKING ");Orientation.lockToPortrait()}}>
+        {/* <Body> */}
+          <Icon name="close" color={"#fff"} size={20} />
+        {/* </Body> */}
+        </TouchableOpacity >
+      </Right>
+    </Header>
 
     <ScrollView>
     {/* <NavigationEvents

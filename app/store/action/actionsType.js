@@ -22,14 +22,26 @@ export const UPDATE_FONT_FAMILY = 'update_font_family';
 export const CLOSE_SPLIT_SCREEN = 'close_split_screen';
 export const UPDATE_DIMENSIONS = 'update_dimensions';
 
-export const UPDATE_AUDIO = 'audio_update';
-export const INDIVIDUAL_AUDIO ='individual_audio' ;
-export const AUDIO_FOR_BOOKS='audio_for_books'
 
-export const FETCH_TODOS_SUCCESS = 'fetch_todos_success'; 
-export const FETCH_TODOS_FAILURE = 'fetch_todos_failure'; 
-export const FETCHING_TODOS = 'fetching_todos';
-export const UPDATE_INFOGRAPHICS = 'update_infographics';
+export const FETCH_VERSION_LANGUAGE = 'fetch_version_language';
+export const VERSION_LANGUAGE_SUCCESS = 'version_language_success';
+export const VERSION_LANGUAGE_FAILURE  ='version_language_failure';
+export const FETCH_VERSION_BOOKS = 'fetch_version_books';
+export const VERSION_BOOKS_SUCCESS = 'version_books_success';
+export const VERSION_BOOKS_FAILURE  ='version_books_failure';
+export const FETCH_VERSION_CONTENT = 'fetch_version_content';
+export const VERSION_CONTENT_SUCCESS = 'version_content_success';
+export const VERSION_CONTENT_FAILURE  ='version_content_failure';
 
-export const UPDATE_COMMENTARY_ID = 'update_commentary_id'
 
+export const FETCH_AUDIO_URL = 'fetch_audio_url';
+export const AUDIO_URL_SUCCESS = 'audio_url_success';
+export const AUDIO_URL_FAILURE ='audio_url_failure';
+
+
+export const FETCH_COMMENTARY_LANGUAGE = 'fetch_commentary_language';
+export const COMMENTARY_LANGUAGE_SUCCESS = 'commentary_language_success';
+export const COMMENTARY_LANGUAGE_FAILURE ='commentary_language_failure';
+export const FETCH_COMMENTARY_CONTENT = 'fetch_commentary_content';
+export const COMMENTARY_CONTENT_SUCCESS = 'commentary_content_success';
+export const COMMENTARY_CONTENT_FAILURE ='commentary_content_failure'

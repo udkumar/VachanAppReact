@@ -25,7 +25,7 @@ import Player from '../../screens/Bible/Navigate/Audio/Player';
 // import {getResultText} from '../../utils/UtilFunctions';
 import {getBookNameFromMapping,getBookChaptersFromMapping} from '../../utils/UtilFunctions';
 import APIFetch from '../../utils/APIFetch'
-import {selectedChapter,updateAudio,updateContentType} from '../../store/action/'
+import {selectedChapter,updateAudio,updateContentType,fetchVersionLanguage,fetchVersionContent,fetchCommentaryContent,fetchCommentaryLanguage,fetchAudioUrl} from '../../store/action/'
 import SelectContent from '../Bible/component/SelectContent'
 import SelectBottomTabBar from '../Bible/component/SelectBottomTabBar'
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -65,7 +65,7 @@ class Bible extends Component {
               elevation: 0,
               shadowOpacity: 0,
               height:40,
-              width:params.visibleContentView ? '50%' :'100%'
+              width:params.visibleParallelView ? '50%' :'100%'
           },
             headerRight:(
               <View style={navStyles.headerRightStyle}>
@@ -105,6 +105,7 @@ class Bible extends Component {
       bookmarksList: [],
       isBookmark: false,
       currentVisibleChapter:this.props.chapterNumber,
+      sourceId:this.props.sourceId,
       bookNumber:this.props.bookNumber,
       selectedReferenceSet: [],
       verseInLine: this.props.verseInLine,
@@ -118,13 +119,12 @@ class Bible extends Component {
 
       scrollDirection:'up',
       close:true,
-      chapter:[],
       // chaptersArray:[],
       message:'',
       totalVerses:0,
       status:false,
       modalVisible: false,
-      visibleContentView:false
+      visibleParallelView:false
       //modal value for showing chapter grid 
     }
     this.getSelectedReferences = this.getSelectedReferences.bind(this)
@@ -157,6 +157,11 @@ class Bible extends Component {
   }
 
   async componentDidMount(){
+    console.log("VALUES ...............",this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter)
+    this.props.fetchVersionContent({sourceId:this.props.sourceId,bookId:this.props.bookId,chapter:this.state.currentVisibleChapter})
+    this.props.fetchAudioUrl({languageCode:this.props.languageCode,versionCode:this.props.version,bookId:this.props.bookId,chapter:this.state.currentVisibleChapter})
+    // this.props.fetchCommentaryContent({languageCode:this.props.languageCode,versionCode:this.props.version,bookId:this.props.bookId,chapter:this.state.currentVisibleChapter})
+    this.props.fetchCommentaryLanguage({languageCode:this.props.languageCode})
     Orientation.addOrientationListener(this._orientationDidChange);
 
     this.gestureResponder = createResponder({
@@ -225,11 +230,10 @@ class Bible extends Component {
       bookId:this.props.bookId,
       callBackForUpdateBook:this.queryBookFromAPI,
       totalVerses:this.state.totalVerses,
-      audio:this.props.audio,
       modalVisible:false,
       updateContentType:this.props.updateContentType('Bible'),
       toggleModal:this.setState({modalVisible:!this.state.modalVisible}),
-      visibleContentView:false
+      visibleParallelView:false
     })
     this.queryBookFromAPI(null)
   }
@@ -239,83 +243,38 @@ class Bible extends Component {
     if (this.props.sourceId !== prevProps.sourceId) {
       this.queryBookFromAPI(null)
     }
-    
   }
   // render data onAPI Call 
   queryBookFromAPI = async(val)=>{
-    this.setState({isLoading:true,chapter:[],currentVisibleChapter: val != null ? this.state.currentVisibleChapter + val : this.props.chapterNumber },async()=>{
-    
-      console.log("PROPS QUERY BOOK FROM API ",this.props.language,this.props.languageCode,this.props.sourceId) 
-      // console.log("state QUERY BOOK FROM API ",this.state.language,this.state.languageCode,this.props.sourceId) 
-
-      if(this.props.downloaded == true ){
-          let response = await DbQueries.queryVersions(this.props.language,this.props.version,this.props.bookId,this.state.currentVisibleChapter)
-          if(response.length != 0){
-            this.setState({
-              chapter:response[0].verses,
-              totalVerses:response[0].verses.length,
-              currentVisibleChapter:this.state.currentVisibleChapter,
-              totalChapters: getBookChaptersFromMapping(this.props.bookId),
-              isLoading:false
-            })
-            this.props.navigation.setParams({
-              totalVerses:response[0].verses.length,
-              languageName:this.props.language,
-              versionCode:this.props.version,
-              bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
-              currentChapter:this.state.currentVisibleChapter
-            })
-          this.props.selectedChapter(this.state.currentVisibleChapter,response[0].verses.length)
-          }
-          else{
-            alert("no book found of ",this.props.bookId)
-          }
-          
-        }
-        else{
+    this.setState({isLoading:true,chapterContent:[],currentVisibleChapter: val != null ? this.state.currentVisibleChapter + val : this.props.chapterNumber },async()=>{
           try{
-            //check sourceid 
-            console.log("SOURCE ID   ",this.props.sourceId)
-          let response =  await APIFetch.getChapterContent(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter)
-          console.log("response ",response)  
-          if(response.length !=0){
-              if(response.ok == false && response.status == 500){
-                this.setState({isLoading:false,currentVisibleChapter:this.props.chapterNumber})
-                alert(" please check internet connected or slow  OR book is not available ")
-              }else{
-                this.setState({chapter:response.chapterContent.verses,
-                  totalChapters: getBookChaptersFromMapping(this.props.bookId),
-                  totalVerses:response.chapterContent.verses.length,
-                  isLoading:false,
-                  currentVisibleChapter:this.state.currentVisibleChapter
-                })
-                this.props.navigation.setParams({
-                  totalVerses:response.chapterContent.verses.length,
-                  languageName:this.props.language,
-                  versionCode:this.props.version,
-                  bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
-                  currentChapter:this.state.currentVisibleChapter
-                })
-              this.props.selectedChapter(this.state.currentVisibleChapter,response.chapterContent.verses.length)
-              }
-          }
-          else{
-            alert("check internet connection")
-          }
+            this.props.fetchVersionContent({isDownloaded:this.props.downloaded,sourceId:this.props.sourceId,language:this.props.language,version:this.props.version,bookId:this.props.bookId,chapter:this.state.currentVisibleChapter})
+            this.setState({
+                    totalChapters: getBookChaptersFromMapping(this.props.bookId),
+                    totalVerses:this.props.totalVerses,
+                    isLoading:false,
+                    currentVisibleChapter:this.state.currentVisibleChapter
+                  })
+                  this.props.navigation.setParams({
+                    totalVerses:this.props.totalVerses,
+                    languageName:this.props.language,
+                    versionCode:this.props.version,
+                    bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
+                    currentChapter:this.state.currentVisibleChapter
+                  })
+                this.props.selectedChapter(this.state.currentVisibleChapter,this.props.totalVerses)
           }
           catch(error) {
             alert("It seems no version available or check your internet connection ",error)
-           
           }
-        }
-         this.audioComponentUpdate()
+        this.audioComponentUpdate()
         this.getHighlights()
         this.getBookMarks(this.props.bookId,this.state.currentVisibleChapter)
     })
 }
 
 toggleAudio = ()=>{
-  if(this.state.audio == false){
+  if(this.props.audioURL == null){
     ToastAndroid.showWithGravityAndOffset(
      "Sorry Audio is not there for this book",
       ToastAndroid.LONG,
@@ -329,47 +288,14 @@ toggleAudio = ()=>{
   }
 }
 
- audioComponentUpdate = async(value) =>{
-      console.log("language ",this.props.languageCode)
+ audioComponentUpdate = () =>{
    if(this.props.languageCode !== 'hin'){
     this.props.updateAudio(false)
-    this.props.navigation.setParams({  audio:false })
-    this.setState({audio:false})
-     //this return is only for now because we have only hindi audio available
      return
    }
-  var found = false
-  let res =  await APIFetch.availableAudioBook(this.props.languageCode,this.props.version)
-  try{
-  if(res.length !==0){
-  console.log("reponse of audio ",res)
-    for (var key in res.books){
-      if(key == this.props.bookId){
-        found = true
-        console.log("KEY ",key,"VALUE",this.props.bookId)
-        this.props.updateAudio(true)
-        this.props.navigation.setParams({  audio:true  })
-        this.setState({audio:true})
-        break;
-      }
-    }
-    console.log("found TRUE",found)
-      if(found==false){
-        this.props.updateAudio(false)
-        this.props.navigation.setParams({  audio:false })
-        this.setState({audio:false})
-        
-      }
-  }
-  }
-  catch(error){
-    this.props.updateAudio(false)
-    this.props.navigation.setParams({  audio:false })
-    this.setState({audio:false})
-    // alert("error in audio")
+  this.props.fetchAudioUrl({languageCode:this.props.languageCode,versionCode:this.props.version,bookId:this.props.bookId,chapter:this.state.currentVisibleChapter})
+  console.log("PROPS FETCH in funtion",this.props.audioURL)
 
-  }
-  
 }
 
   async getHighlights(){
@@ -385,10 +311,10 @@ toggleAudio = ()=>{
     }
   }
   //get bookmarks from local db
-  async getBookMarks(bookId,chapter){
-    let model = await  DbQueries.queryBookmark(this.props.language,this.props.version,bookId,chapter)
+  async getBookMarks(bookId,chapterNum){
+    let model = await  DbQueries.queryBookmark(this.props.language,this.props.version,bookId,chapterNum)
       if(model.length > 0){
-          if(model[0].bookId == bookId && model[0].chapterNumber == chapter){
+          if(model[0].bookId == bookId && model[0].chapterNumber == chapterNum){
             this.setState({isBookmark:true},
               ()=>{
                 this.props.navigation.setParams({
@@ -417,8 +343,8 @@ toggleAudio = ()=>{
   }
 
   //add book mark from header icon 
-  onBookmarkPress(bookId,chapter,isbookmark){
-    DbQueries.updateBookmarkInBook(this.props.language,this.props.version,bookId,chapter, isbookmark  ? false : true);
+  onBookmarkPress(bookId,chapterNum,isbookmark){
+    DbQueries.updateBookmarkInBook(this.props.language,this.props.version,bookId,chapterNum, isbookmark  ? false : true);
       this.setState({isBookmark: isbookmark ? false : true}, () => {
       this.props.navigation.setParams({isBookmark: this.state.isBookmark}) 
     })
@@ -556,13 +482,6 @@ toggleAudio = ()=>{
       console.log(`Current Device Orientation: ${orientation}`);
     })
     Orientation.removeOrientationListener(this._orientationDidChange);
-    // if(this.props.navigation.state.params.prevScreen =='bookmark'){
-    //   this.props.navigation.state.params.updateBookmark()
-    // }
-    // else if(this.props.navigation.state.params.prevScreen == 'highlights'){
-    //   this.props.navigation.state.params.updateHighlights()
-    // }
-
   }
 
   //close split screen 
@@ -592,16 +511,15 @@ toggleAudio = ()=>{
   _orientationDidChange = (orientation) => {
     console.log("ORIENTATION CHANGE ",orientation)
     if(orientation == 'LANDSCAPE'){
-      this.setState({visibleContentView:true})
-      this.props.navigation.setParams({visibleContentView:true})
+      this.setState({visibleParallelView:true})
+      this.props.navigation.setParams({visibleParallelView:true})
     }
     }
 
   render() {
-    console.log(this.state.visibleContentView ,"content visible view")
       return (
           <View style={{flexDirection:'row'}}>
-            <View style={{width:this.state.visibleContentView ? '50%' : '100%'}}>
+            <View style={{width:this.state.visibleParallelView ? '50%' : '100%'}}>
 
             <ScrollView  
                    ref={(ref) => { this.scrollViewRef = ref; }}
@@ -621,7 +539,7 @@ toggleAudio = ()=>{
             <View style={this.styles.chapterList}>
                      <FlatList
                       style={{padding:10}}
-                      data={this.state.chapter }
+                      data={this.props.chapterContent }
                       extraData={this.state}
                       renderItem={({item, index}) => 
                       <VerseView
@@ -646,7 +564,7 @@ toggleAudio = ()=>{
                       </View>
                   :
                       <View style={this.styles.chapterList}>
-                        {this.state.chapter.map((verse, index) => 
+                        {this.props.chapterContent.map((verse, index) => 
                         <View>
                         <Text letterSpacing={24}
                             style={this.styles.verseWrapperText}>
@@ -666,7 +584,7 @@ toggleAudio = ()=>{
                               showBottomBar={this.state.showBottomBar}
                             />
                         </Text>
-                        {index == this.state.chapter.length - 1  && ( this.state.showBottomBar ? <View style={{height:64, marginBottom:4}} />: null ) }
+                        {index == this.props.chapterContent.length - 1  && ( this.state.showBottomBar ? <View style={{height:64, marginBottom:4}} />: null ) }
                         </View>
                         )}
                       </View>
@@ -686,13 +604,10 @@ toggleAudio = ()=>{
             }
           <View style={this.styles.bottomBarAudioCenter}>
           {
-            this.state.audio ?
+            this.props.audioURL !== null ?
             (this.state.status ?
               <Player 
-                languageCode={this.props.languageCode}
-                version={this.props.version} bookId={this.props.bookId} 
-                currentChapter={this.state.currentVisibleChapter}
-                audio={this.props.audio}
+                url={this.props.audioURL}
               />
               :null
             ):null
@@ -718,14 +633,10 @@ toggleAudio = ()=>{
              addToShare ={this.addToShare} 
              bottomHighlightText={this.state.bottomHighlightText}/>
           : null }
-
-
             </View>
-
-
             {/**parallelView**/}
-            {this.state.visibleContentView ? <View style={{width:'50%'}}>
-            <Commentary/>
+            {this.state.visibleParallelView ? <View style={{width:'50%'}}>
+            <Commentary visibleParallelView={this.state.visibleParallelView}/>
             </View> : null}
 
           </View>
@@ -781,15 +692,26 @@ const mapStateToProps = state =>{
     colorFile:state.updateStyling.colorFile,
     close:state.updateSplitScreen.close,
 
-    audio:state.updateAudio.visible,
+    fetchedData:state.versionFetch,
+    chapterContent:state.versionFetch.chapterContent,
+    totalVerses:state.versionFetch.totalVerses,
+
+    audioURL:state.audioFetch.url,
+    commentaryFetch:state.commentaryFetch
+
   }
 }
 const mapDispatchToProps = dispatch =>{
   return {
     selectedChapter: (chapterNumber,totalVerses)=>dispatch(selectedChapter(chapterNumber,totalVerses)),
     closeSplitScreen :(close)=>dispatch(closeSplitScreen(close)),
-    updateAudio :(audio)=>dispatch(updateAudio(audio)),
     updateContentType:(content) =>dispatch(updateContentType(content)),
+    fetchVersionLanguage:()=>dispatch(fetchVersionLanguage()),
+    fetchVersionContent:(payload)=>dispatch(fetchVersionContent(payload)),
+    fetchAudioUrl:(payload)=>dispatch(fetchAudioUrl(payload)),
+    fetchCommentaryContent:(payload)=>dispatch(fetchCommentaryContent(payload)),
+    fetchCommentaryLanguage:(payload)=>dispatch(fetchCommentaryLanguage(payload))
+
   }
 }
 export  default connect(mapStateToProps,mapDispatchToProps)(Bible)

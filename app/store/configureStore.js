@@ -1,29 +1,18 @@
-import {createStore,combineReducers,applyMiddleware} from 'redux'
-import thunkMiddleware from 'redux-thunk'
-import editNoteReducer from "./reducer/editNoteReducer";
-import UpdateVersionReducer from './reducer/updateVersionReducer';
-import updateStylingReducer from './reducer/updateStylingReducer';
-import splitScreenReducer from './reducer/splitScreenReducer';
-import updateAudioReducer from './reducer/updateAudioReducer';
-import APIReducer from './reducer/fetchAPI';
-import updateInfographicsReducer from './reducer/updateInfographicsReducer'
-import updateCommentaryReducer from './reducer/updateCommentaryReducer'
 
 
-//use only when having mutiple reducer for single reducer direct import it to index.js of app
+// import {createStore,combineReducers,applyMiddleware} from 'redux'
+// import createSagaMiddleware from 'redux-saga'
+// import rootReducer from './reducer/'
 
-const rootReducer = combineReducers({
-    editNote: editNoteReducer,
-    updateVersion:UpdateVersionReducer,
-    updateStyling:updateStylingReducer,
-    updateSplitScreen:splitScreenReducer,
-    updateAudio:updateAudioReducer,
-    // APIFetch:APIReducer,
-    infographics:updateInfographicsReducer,
-    commentary:updateCommentaryReducer
-});
+// const store = createStore(
+//     reducer,
+//     applyMiddleware(sagaMiddleware)
+//   )
+// export default function configureStore(initialState){
 
-export default function configureStore(){
-    return createStore(rootReducer,applyMiddleware(thunkMiddleware))
-}
-
+//     const sagaMiddleware = createSagaMiddleware()
+//     return {
+//         ...createStore(rootReducer, initialState, applyMiddleware(sagaMiddleware)),
+//         runSaga: sagaMiddleware.run
+//     }
+// }
