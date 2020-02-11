@@ -12,7 +12,7 @@ import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants';
 import ExpandableItemComponent from './Expandable';
 import { styles } from './styles.js';
 import {connect} from 'react-redux';
-import {updateVersion,updateInfographics} from '../../store/action/'
+import {updateVersion,updateInfographics,} from '../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
 import {API_BASE_URL} from '../../utils/APIConstant'
 import { State } from 'react-native-gesture-handler';
@@ -26,7 +26,7 @@ class LanguageList extends Component {
     });
     constructor(props){
       super(props)
-      console.log("LANGUAGELIST PROPS ",this.props.navigation.state.routeName)
+      // console.log("LANGUAGELIST PROPS ",this.props.navigation.state.routeName)
       if (Platform.OS === 'android') {
         UIManager.setLayoutAnimationEnabledExperimental(true);
       }
@@ -57,7 +57,7 @@ class LanguageList extends Component {
     }
 
     async componentDidMount(){
-      this.fetchLanguages()      
+      this.fetchLanguages()  
     }
     async fetchLanguages(){
       var lanVer = []
@@ -65,41 +65,11 @@ class LanguageList extends Component {
       var d = new Date('1-feb-2000')
       var ud = new Date(timestamp.languageUpdate)
       var diffDays = Math.round(Math.abs((d.getTime() - ud.getTime())/(oneDay)))
-        // if(diffDays <= 20 ){
-            var languageList =  await DbQueries.getLangaugeList()
-            for(var i =0 ; i<languageList.length;i++){
-              lanVer.push(languageList[i])
-            }
-            if(languageList.length == 0){
-              // consoel.log("LANGUAGE LIST ",)
-              APIFetch.getVersions().then(languageRes=>{
-                for(var i = 0; i<languageRes.length;i++){
-                  var versions = []
-                  const language = languageRes[i].language.charAt(0).toUpperCase() + languageRes[i].language.slice(1)
-                  let languageCode=''
-                  for(var j= 0; j<languageRes[i].languageVersions.length;j++){
-                  console.log(" LANGUAGE list",languageRes[i].languageVersions[j].language.code)
-                    languageCode = languageRes[i].languageVersions[j].language.code
-                    const  {version} = languageRes[i].languageVersions[j]
-                    versions.push({sourceId:languageRes[i].languageVersions[j].sourceId,versionName:version.name,versionCode:version.code,license:"license",year:2019,downloaded:false})
-                  }
-                  lanVer.push({languageName:language,languageCode:languageCode,versionModels:versions})
-                }
-                DbQueries.addLangaugeList(lanVer)
-              })
-              .catch(error => {
-                this.setState({isLoading:false})
-                alert(" please check internet connected or slow  OR book is not available ")
-              });
-              
-            }
-          
             this.setState({
-              languages: lanVer,
+              languages: this.props.bibleLanguages[0].content,
               searchList: lanVer
             })
     }
-
     // SearchFilterFunction = (text)=>{
     //     const newData = this.state.searchList.filter(function(item){
     //       const itemData = item.languageName
@@ -183,7 +153,6 @@ class LanguageList extends Component {
     }
 
     render(){
-      console.log("LANGUAGE LIST  ",this.state.languages)
       return (
         <View style={this.styles.MainContainer}>
         {this.props.isFetching &&  <Spinner visible={true} textContent={'Loading...'}/>}
@@ -226,15 +195,16 @@ const mapStateToProps = state =>{
     fontFamily:state.updateStyling.fontFamily,
     fileName:state.infographics.fileName,
     contentType:state.updateVersion.contentType,
-
+    bibleLanguages:state.contents.contentLanguages,
+    commentaryLanguages:state.contents.commentaryLanguages,
+    // allLanguage:state.contents.allLanguages
   }
 }
 
 const mapDispatchToProps = dispatch =>{
   return {
     updateVersion: (language,langaugeCode,version,sourceId,downloaded)=>dispatch(updateVersion(language,langaugeCode,version,sourceId,downloaded)),
-    updateInfographics:(fileName)=>dispatch(updateInfographics(fileName))
-    
+    updateInfographics:(fileName)=>dispatch(updateInfographics(fileName)),
   }
 }
 export default connect(mapStateToProps,mapDispatchToProps)(LanguageList)

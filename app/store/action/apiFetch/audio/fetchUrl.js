@@ -1,7 +1,7 @@
 
 import { FETCH_AUDIO_URL,AUDIO_URL_FAILURE, AUDIO_URL_SUCCESS } from '../../actionsType';
 
-export const fetchAudioUrl = payload=>({
+export const fetchAudioUrl = payload => ({
 type: FETCH_AUDIO_URL,
 payload
 })

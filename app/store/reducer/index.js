@@ -9,6 +9,8 @@ import updateInfographicsReducer from './updateInfographicsReducer'
 import fetchVersionReducer from './apiFetchReducer/fetchVersionReducer'
 import fetchCommentaryReducer from './apiFetchReducer/fetchCommentaryReducer'
 import fetchAudioReducer from './apiFetchReducer/fetchAudioReducer'
+import  fetchContentReducer from './apiFetchReducer/fetchContentReducer'
+
 
 
  const rootReducer = combineReducers({
@@ -19,6 +21,7 @@ import fetchAudioReducer from './apiFetchReducer/fetchAudioReducer'
     infographics:updateInfographicsReducer,
     versionFetch:fetchVersionReducer,
     commentaryFetch:fetchCommentaryReducer,
-    audioFetch:fetchAudioReducer
+    audioFetch:fetchAudioReducer,
+    contents:fetchContentReducer
 });
 export default  rootReducer

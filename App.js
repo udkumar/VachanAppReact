@@ -8,7 +8,7 @@ import { styleFile } from './app/utils/styles.js'
 import {AsyncStorageConstants} from './app/utils/AsyncStorageConstants'
 import SplashScreen from 'react-native-splash-screen'
 import {connect} from 'react-redux'
-import {updateColorMode,updateFontSize,updateContentType,updateVerseInLine,updateVersion,selectedBook,selectedChapter} from './app/store/action/'
+import {updateColorMode,updateFontSize,updateContentType,updateVerseInLine,updateVersion,selectedBook,selectedChapter,fetchAllContent, fetchAllLanguage} from './app/store/action/'
 
 class App extends Component {
     constructor(props){
@@ -113,8 +113,8 @@ class App extends Component {
           this.props.updateColorMode(colorMode)
           this.props.updateVerseInLine(verseInLine)
           this.props.updateFontSize(sizeMode)
-   
-          
+          this.props.fetchAllContent()
+          // this.props.fetchAllLanguage()
           SplashScreen.hide()
 
       //   await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.LastReadReference, AsyncStorageConstants.Values.LastReadReference
@@ -162,7 +162,9 @@ const mapDispatchToProps = dispatch =>{
     updateColorMode:(colorMode)=>dispatch(updateColorMode(colorMode)),
     updateFontSize:(sizeMode)=>dispatch(updateFontSize(sizeMode)),
     updateVerseInLine:(val)=>dispatch(updateVerseInLine(val)),
-    updateContentType:(val)=>dispatch(updateContentType(val))
+    updateContentType:(val)=>dispatch(updateContentType(val)),
+    fetchAllContent:()=>dispatch(fetchAllContent()),
+    // fetchAllLanguage:()=>dispatch(fetchAllLanguage())
   }
 }
 

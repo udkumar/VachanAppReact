@@ -5,26 +5,9 @@ const GITRAW = 'https://github.com/Bridgeconn/vachancontentrepository/tree/maste
 const OWN_BASE_URL = 'https://raw.githubusercontent.com/neetuy/BibleContent/master/jpg_files/'
 
 var APIFetch = {
-    async getLanguages() {
-        try {
-            return await fetch(API_BASE_URL + "languages", {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(ApiUtils.checkStatus)
-                .then((response) => response.json())
-                .catch(e => e)
-        } catch (error) {
-            return error;
-        }
-    },
-
-    // async getVersions() {
+    // async getLanguages() {
     //     try {
-    //         return await fetch(API_BASE_URL + "bibles", {
+    //         return await fetch(API_BASE_URL + "languages", {
     //             method: 'GET',
     //             headers: {
     //                 'Accept': 'application/json',
@@ -38,6 +21,23 @@ var APIFetch = {
     //         return error;
     //     }
     // },
+
+    async getVersions() {
+        try {
+            return await fetch(API_BASE_URL + "bibles", {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(ApiUtils.checkStatus)
+                .then((response) => response.json())
+                .catch(e => e)
+        } catch (error) {
+            return error;
+        }
+    },
     // async getContent(sourceId, type, bookId) {
     //     try {
     //         // console.log("source id  "+sourceId+" type "+type+"book num "+bookNum)

@@ -25,7 +25,7 @@ import Player from '../../screens/Bible/Navigate/Audio/Player';
 // import {getResultText} from '../../utils/UtilFunctions';
 import {getBookNameFromMapping,getBookChaptersFromMapping} from '../../utils/UtilFunctions';
 import APIFetch from '../../utils/APIFetch'
-import {selectedChapter,updateAudio,updateContentType,fetchVersionLanguage,fetchVersionContent,fetchCommentaryContent,fetchCommentaryLanguage,fetchAudioUrl} from '../../store/action/'
+import {selectedChapter,updateContentType,fetchVersionLanguage,fetchVersionContent,fetchAudioUrl,} from '../../store/action/'
 import SelectContent from '../Bible/component/SelectContent'
 import SelectBottomTabBar from '../Bible/component/SelectBottomTabBar'
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -158,9 +158,8 @@ class Bible extends Component {
 
   async componentDidMount(){
     // this.props.fetchCommentaryContent({languageCode:this.props.languageCode,versionCode:this.props.version,bookId:this.props.bookId,chapter:this.state.currentVisibleChapter})
-    this.props.fetchCommentaryLanguage({languageCode:this.props.languageCode})
+    // this.props.fetchCommentaryLanguage({languageCode:this.props.languageCode})
     // Orientation.addOrientationListener(this._orientationDidChange);
-
     this.gestureResponder = createResponder({
       onStartShouldSetResponder: (evt, gestureState) => true,
       onStartShouldSetResponderCapture: (evt, gestureState) => true,
@@ -287,7 +286,6 @@ toggleAudio = ()=>{
 
  audioComponentUpdate = () =>{
    if(this.props.languageCode !== 'hin'){
-    this.props.updateAudio(false)
      return
    }
   this.props.fetchAudioUrl({languageCode:this.props.languageCode,versionCode:this.props.version,bookId:this.props.bookId,chapter:this.state.currentVisibleChapter})
@@ -693,9 +691,6 @@ const mapStateToProps = state =>{
 
     audioURL:state.audioFetch.url,
     availableCommentaries:state.commentaryFetch.availableCommentaries,
-
-    // commentaryFetch:state.commentaryFetch
-
   }
 }
 const mapDispatchToProps = dispatch =>{
@@ -707,8 +702,6 @@ const mapDispatchToProps = dispatch =>{
     fetchVersionContent:(payload)=>dispatch(fetchVersionContent(payload)),
     fetchAudioUrl:(payload)=>dispatch(fetchAudioUrl(payload)),
     // fetchCommentaryContent:(payload)=>dispatch(fetchCommentaryContent(payload)),
-    fetchCommentaryLanguage:(payload)=>dispatch(fetchCommentaryLanguage(payload))
-
   }
 }
 export  default connect(mapStateToProps,mapDispatchToProps)(Bible)

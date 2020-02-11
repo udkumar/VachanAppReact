@@ -19,5 +19,6 @@ export {fetchVersionLanguage,versionLanguageSuccess,versionLanguageFailure} from
 export {fetchVersionBooks,versionBooksSuccess,versionBooksFailure} from './apiFetch/version/availableBook'
 export {fetchVersionContent,versionContentSuccess,versionContentFailure} from './apiFetch/version/content'
 
-
+export {fetchAllContent,allContentSuccess,allContentFailure} from './apiFetch/fetchAllContentType/fetchAllContent'
+export {fetchAllLanguage,allLanguageSuccess,allLanguageFailure} from './apiFetch/fetchAllContentType/allLanguages'
 

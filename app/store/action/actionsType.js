@@ -45,3 +45,12 @@ export const COMMENTARY_LANGUAGE_FAILURE ='commentary_language_failure';
 export const FETCH_COMMENTARY_CONTENT = 'fetch_commentary_content';
 export const COMMENTARY_CONTENT_SUCCESS = 'commentary_content_success';
 export const COMMENTARY_CONTENT_FAILURE ='commentary_content_failure'
+
+export const FETCH_ALL_CONTENT = 'fetch_all_content'; 
+export const ALL_CONTENT_SUCCESS = 'all_content_success';
+export const ALL_CONTENT_FAILURE = 'all_content_failure';
+
+
+export const FECTH_ALL_LANGUAGE = 'fetch_all_laguages';
+export const ALL_LANGUAGE_SUCCESS = 'all_language_success'; 
+export const ALL_LANGUAGE_FAILURE = 'all_language_failure'
