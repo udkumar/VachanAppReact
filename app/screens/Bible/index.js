@@ -13,7 +13,6 @@ import {
   ToastAndroid,
   Modal,
   LayoutAnimation,
-  Button
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {createResponder } from 'react-native-gesture-responder';
@@ -25,14 +24,16 @@ import Player from '../../screens/Bible/Navigate/Audio/Player';
 // import {getResultText} from '../../utils/UtilFunctions';
 import {getBookNameFromMapping,getBookChaptersFromMapping} from '../../utils/UtilFunctions';
 import APIFetch from '../../utils/APIFetch'
-import {selectedChapter,updateContentType,fetchVersionLanguage,fetchVersionContent,fetchAudioUrl,} from '../../store/action/'
+import {selectedChapter,fetchVersionLanguage,fetchVersionContent,fetchAudioUrl,} from '../../store/action/'
 import SelectContent from '../Bible/component/SelectContent'
 import SelectBottomTabBar from '../Bible/component/SelectBottomTabBar'
 import Spinner from 'react-native-loading-spinner-overlay';
 import Orientation from 'react-native-orientation';
 import { styles } from './styles.js';
 import {connect} from 'react-redux'
-import Commentary from './Navigate/Commentary/';
+import Commentary from '../StudyHelp/Commentary/'
+import MainHeader from '../../components/MainHeader'
+import {Card,CardItem,Content,Body,Header,Container, Button,Right,Left,Title} from 'native-base'
 
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
@@ -42,17 +43,18 @@ class Bible extends Component {
   static navigationOptions = ({navigation}) =>{
         const { params={} } = navigation.state 
         return{
+          header: params.visibleParallelView && null,
             headerTitle:(
               <View style={navStyles.headerLeftStyle}>
                 <View style={{marginRight:10}}>
                   <TouchableOpacity style={navStyles.touchableStyleLeft}  
-                   onPress={() =>{navigation.navigate("SelectionTab", {bookId:params.bookId,chapterNumber:params.currentChapter,totalVerses:params.totalVerses,getReference:params.callBackForUpdateBook,contentType:'bible'})}}>
+                   onPress={() =>{navigation.navigate("SelectionTab", {bookId:params.bookId,chapterNumber:params.currentChapter,totalVerses:params.totalVerses,getReference:params.callBackForUpdateBook})}}>
                     <Text  style={navStyles.headerTextStyle}>{params.bookName}  {params.currentChapter }</Text>
                   <Icon name="arrow-drop-down" color="#fff" size={20}/>
                   </TouchableOpacity>
                 </View>
                 <View style={{marginRight:10}}>
-                  <TouchableOpacity onPress={() =>{navigation.navigate("LanguageList", {callBackForUpdateBook:params.callBackForUpdateBook,contentType:'bible'})}} style={navStyles.headerLeftStyle}>
+                  <TouchableOpacity onPress={() =>{navigation.navigate("LanguageList", {callBackForUpdateBook:params.callBackForUpdateBook})}} style={navStyles.headerLeftStyle}>
                     <Text style={navStyles.headerTextStyle}>{params.languageName}  {params.versionCode}</Text>
                     <Icon name="arrow-drop-down" color="#fff" size={20}/>
                   </TouchableOpacity>
@@ -85,7 +87,7 @@ class Bible extends Component {
                       size={20} 
                   /> 
                  </TouchableOpacity>
-                 <SelectContent visible={params.modalVisible}  navigation={navigation} navStyles={navStyles} />
+                 <SelectContent visible={params.modalVisible} visibleParallelView={params.visibleParallelView} navigation={navigation} navStyles={navStyles} />
               </View>
             )
         }
@@ -124,7 +126,7 @@ class Bible extends Component {
       totalVerses:0,
       status:false,
       modalVisible: false,
-      visibleParallelView:false
+
       //modal value for showing chapter grid 
     }
     this.getSelectedReferences = this.getSelectedReferences.bind(this)
@@ -227,7 +229,6 @@ class Bible extends Component {
       callBackForUpdateBook:this.queryBookFromAPI,
       totalVerses:this.state.totalVerses,
       modalVisible:false,
-      updateContentType:this.props.updateContentType('Bible'),
       toggleModal:this.setState({modalVisible:!this.state.modalVisible}),
       visibleParallelView:false,
     })
@@ -269,7 +270,7 @@ class Bible extends Component {
     })
 }
 
-toggleAudio = ()=>{
+toggleAudio(){
   if(this.props.audioURL == null){
     ToastAndroid.showWithGravityAndOffset(
      "Sorry Audio is not there for this book",
@@ -504,18 +505,50 @@ toggleAudio = ()=>{
   }
 
   _orientationDidChange = (orientation) => {
+    console.log("ORIENTATION ")
     console.log("ORIENTATION CHANGE ",orientation)
-    if(orientation == 'LANDSCAPE'){
-      this.setState({visibleParallelView:true})
-      this.props.navigation.setParams({visibleParallelView:true})
+    // console.log("ORIENTATION CHANGE visibleParallelView",this.props.navigation.getParam("visibleParallelView"))
+    // if(this.props.navigation.getParam("visibleParallelView") ==true){
+    //   this.props.navigation.setParams({visibleParallelView:false})
+    // }
+    // else{
+    //   this.props.navigation.setParams({visibleParallelView:true})
+    // }
     }
+    toggleParallelView(value){
+      this.props.navigation.setParams({visibleParallelView:value})
     }
-
   render() {
+    console.log("UPDATE VERSION ",this.props.contentType )
       return (
+        <View>
+          
           <View style={{flexDirection:'row'}}>
-            <View style={{width:this.state.visibleParallelView ? '50%' : '100%'}}>
-
+            {/* <MainHeader 
+              navStyles={navStyles}
+              languageName={this.props.language}
+              languageCode={this.props.languageCode}
+              versionCode={this.props.version}
+              bookName={this.props.bookName}
+              chapterNumber={this.state.currentVisibleChapter}
+              navigation={this.props.navigation}
+              toggleAudio={this.toggleAudio}
+              onBookmark={this.onBookmark}
+              modalVisible={false}
+            /> */}
+            <View style={{width:this.props.navigation.getParam("visibleParallelView") ? '50%' : '100%'}}>
+            {this.props.navigation.getParam("visibleParallelView") &&
+              <Header style={{height:40,borderLeftWidth:0.5,borderLeftColor:'#fff'}}>
+              <Body>
+                <Title style={{fontSize:16}}>{getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language)} {this.state.currentVisibleChapter}</Title>
+              </Body>
+              <Right>
+              <Button transparent onPress={()=>{this.props.navigation.navigate("SelectionTab")}}>
+                  <Icon name="arrow-drop-down" color="#fff" size={20}/>
+              </Button>
+              </Right>
+              </Header>
+            }
             <ScrollView  
                    ref={(ref) => { this.scrollViewRef = ref; }}
                   //  onScroll={e => {
@@ -529,7 +562,7 @@ toggleAudio = ()=>{
                 
                     // style={this.styles.recyclerListView}
                   >
-             
+         
             { (this.state.verseInLine) ?
             <View style={this.styles.chapterList}>
                      <FlatList
@@ -629,11 +662,11 @@ toggleAudio = ()=>{
           : null }
             </View>
             {/**parallelView**/}
-            {this.state.visibleParallelView ? <View style={{width:'50%'}}>
-            <Commentary visibleParallelView={this.state.visibleParallelView}/>
+            {this.props.navigation.getParam("visibleParallelView")== true ? <View style={{width:'50%'}}>
+            <Commentary toggleParallelView={(value)=>this.toggleParallelView(value)} />
             </View> : null}
-          </View>
-   
+        </View>
+        </View>
       )
   }
 }
@@ -691,17 +724,16 @@ const mapStateToProps = state =>{
 
     audioURL:state.audioFetch.url,
     availableCommentaries:state.commentaryFetch.availableCommentaries,
+    commentary:state.commentaryFetch.commentaryContent
   }
 }
 const mapDispatchToProps = dispatch =>{
   return {
     selectedChapter: (chapterNumber,totalVerses)=>dispatch(selectedChapter(chapterNumber,totalVerses)),
     closeSplitScreen :(close)=>dispatch(closeSplitScreen(close)),
-    updateContentType:(content) =>dispatch(updateContentType(content)),
     fetchVersionLanguage:()=>dispatch(fetchVersionLanguage()),
     fetchVersionContent:(payload)=>dispatch(fetchVersionContent(payload)),
     fetchAudioUrl:(payload)=>dispatch(fetchAudioUrl(payload)),
-    // fetchCommentaryContent:(payload)=>dispatch(fetchCommentaryContent(payload)),
   }
 }
 export  default connect(mapStateToProps,mapDispatchToProps)(Bible)

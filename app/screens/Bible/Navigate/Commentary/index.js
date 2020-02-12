@@ -19,7 +19,7 @@ import APIFetch from '../../../../utils/APIFetch'
 import { ScrollView } from 'react-native-gesture-handler';
 import Orientation from 'react-native-orientation';
 
-const Commentary =() =>{
+const Commentary =({_orientationDidChange}) =>{
   const [commentary, updateCommentary] = useState([]);
   
   useEffect(async()=>{
@@ -62,10 +62,8 @@ const Commentary =() =>{
           </Body>
       <Left />
       <Right>
-        <TouchableOpacity onPress={()=>{console.log("ON PRESS WORKING ");Orientation.lockToPortrait()}}>
-        {/* <Body> */}
-          <Icon name="close" color={"#fff"} size={20} />
-        {/* </Body> */}
+        <TouchableOpacity  onPress={()=>{_orientationDidChange}}>
+          <Icon name="close" color={"#fff"} size={20}/>
         </TouchableOpacity >
       </Right>
     </Header>

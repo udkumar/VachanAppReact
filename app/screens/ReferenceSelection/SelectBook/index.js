@@ -116,8 +116,6 @@ import Spinner from 'react-native-loading-spinner-overlay';
   this.getBooks()  
   }
   async getBooks(){
-    switch(this.props.screenProps.contentType){
-      case 'bible' :{
     var bookListData=[]
     // this.setState({isLoading:bookListData.length == 0 ? true : false})
     if(this.props.downloaded == true){
@@ -175,16 +173,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
     var res = bookListData.length == 0 ? [] : bookListData.sort(function(a, b){return a.bookNumber - b.bookNumber})
     console.log("response data ",res)
     this.setState({bookList:res,isLoading:false})
-        break;
-      }
-      case 'commentary':{
-        alert("not books defined ")
-      }
-      case 'infographics':{
-        alert("not books defined ")
-
-      }
-    }
+    
 
   }
 
@@ -352,7 +341,6 @@ const mapStateToProps = state =>{
     
     bookId:state.updateVersion.bookId,
     bookName:state.updateVersion.bookName,
-    contentType:state.updateVersion.contentType,
 
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,

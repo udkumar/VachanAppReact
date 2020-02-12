@@ -38,10 +38,10 @@ export const selectedVerse = (verseNumber)=>{
         verseNumber:verseNumber,
     }
 }
-export const updateContentType = (contentType)=>{
+export const updateContentType = (payload)=>{
     return{
         type: UPDATE_CONTENT_TYPE,
-        contentType:contentType
+        payload
     }
 }
 

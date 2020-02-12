@@ -2,63 +2,99 @@ import React, {Component} from 'react';
 import {Modal, Text,TouchableOpacity,Dimensions,StyleSheet,Animated,LayoutAnimation,FlatList, View, Alert,TouchableWithoutFeedback} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {Card,CardItem,Content,Body,List,ListItem,Left,Right,Accordion} from 'native-base'
+import {updateContentType} from '../../../store/action/'
 import Orientation from 'react-native-orientation';
 import {styles} from '../../LanguageList/styles'
 import {connect} from 'react-redux'
 
+var contentType = ''
 
   class SelectContent extends Component {
      constructor(props){
          super(props)
          this.state = {
-            isExpanded :false
+            isExpanded :false,
+            // contentType:this.props.contentType
          }
+      //  this.updateContent = this.props.updateContentType({contentType:expanded == true ? item.contentType : this.props.contentType})
+
      }
-     _renderHeader = (item, expanded) =>(
+  
+     _renderHeader = (item, expanded) =>{
+      var value = expanded && item.contentType 
+      if(value){
+        contentType = value
+      }
+       return(
           <View style={{
             flexDirection: "row",
             padding: 10,
             justifyContent: "space-between",
             alignItems: "center" ,
-            backgroundColor: "#A9DAD6" }}>
-            <Text style={{ fontWeight: "600" }}>
-              {" "}{item.contentType}
+            }}>
+            <Text style={{ fontWeight: "600" }} >
+            {" "}{item.contentType.charAt(0).toUpperCase()+item.contentType.slice(1)}
+             
             </Text>
             <Icon style={styles.iconStyle} name={expanded ? "keyboard-arrow-down" : "keyboard-arrow-up" }  size={24}/>
 
           </View>
         )
-      _renderHeaderInner(item,expanded){
-        return (
+      }
+      _renderHeaderInner=(item,expanded)=>{
+          // this.props.updateContentType({})
+          return(
             <View style={{
               flexDirection: "row",
               padding: 10,
               justifyContent: "space-between",
               alignItems: "center" ,
-              backgroundColor: "#A9DAD6" }}>
+               }}>
               <Text style={{ fontWeight: "600" }}>
                 {" "}{item.languageName}
               </Text>
               <Icon style={styles.iconStyle} name={expanded ? "keyboard-arrow-down" : "keyboard-arrow-up" }  size={24}/>
-  
             </View>
           )
-      }
-      _renderContentInner(item){
-        <Text style={{marginLeft:8}} >{item.versionModels.map(v=><Text>{v.versionName}</Text>)}</Text>
-      }
-      _renderContent = (item) =>(
-            // <Text style={{marginLeft:8}} >{item.content.map(v=><Text>{v.languageName}</Text>)}</Text>
+        }
+      
+      _renderContentInner = (item)=>{
+        console.log("CONTENT TYPE GLOBAL VALUE in inner ",contentType)
+
+        return(
+          item.versionModels.map(v=>
+          <TouchableOpacity 
+            style={{
+              // flexDirection: "row",
+              padding: 10,
+              }}
+              onPress={()=>{
+                this.props.navigation.setParams({modalVisible:false,visibleParallelView:true});
+                this.props.updateContentType({contentType:contentType,contentLanguage:item.languageName,contentLanguageCode:item.languageCode,contentVersion:v.versionName,constentVersionCode:v.versionCode,contentSourceId:v.sourceId})
+              }} 
+            >
+              <Text >{v.versionName}</Text>
+              <Text>{v.versionCode}</Text>
+            </TouchableOpacity>)
+        
+      )}
+
+      _renderContent = (item) =>{
+          return(
             <Accordion
             dataArray={item.content}
             animation={true}
             expanded={true}
             renderHeader={this._renderHeaderInner}
             renderContent={this._renderContentInner}
-            />
-        )
+          />
+          )
+      }
       
       render(){
+         console.log("CONTENT TYPE ",this.props.contentType)
+         console.log("CONTENT TYPE GLOBAL VALUE",contentType)
+
           return(
             <View>
             <Modal
@@ -78,19 +114,14 @@ import {connect} from 'react-redux'
               >
               <View style={{height:'80%',width:'70%',alignSelf:'flex-end',top:40}}>
               <Card>
-                {/* <FlatList
-                data={this.props.availableContents}
-                extraData={this.props}
-                renderItem={({item, index, separators}) =>( */}
                     <Accordion 
                     dataArray={this.props.availableContents}
                     animation={true}
                     expanded={true}
                     renderHeader={this._renderHeader}
                     renderContent={this._renderContent}
+
                     />
-                {/* )}
-            /> */}
               </Card>
               </View>
               </TouchableWithoutFeedback>
@@ -111,7 +142,14 @@ import {connect} from 'react-redux'
 const mapStateToProps = state =>{
   return{
     availableContents:state.contents.contentLanguages,
-    // commentaryLanguages:state.contents.commentaryLanguages,
+    contentType:state.updateVersion.contentType,
+
   }
 }
-export default connect(mapStateToProps,null)(SelectContent)
+const mapDispatchToProps = dispatch =>{
+  return {
+    updateContentType:(content) =>dispatch(updateContentType(content)),
+    
+  }
+}
+export default connect(mapStateToProps,mapDispatchToProps)(SelectContent)

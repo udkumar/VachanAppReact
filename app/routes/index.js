@@ -37,14 +37,19 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import SelectionTab from '../screens/ReferenceSelection/'
 import BookMarks from '../screens/Bookmarks/';
 import Infographics from '../screens/StudyHelp/InfoGraphics/';
-import Header from '../components/Header';
 
 const NavStack = createStackNavigator(
   {  
       Bible:{
         screen:Bible,
+        navigationOptions: {
+          // title: 'Home',
+          // header: null
+        },
       },
-      Search: { screen: Search },
+      Search: { screen: Search,
+
+       },
       BackupRestore: {screen: BackupRestore },
       SelectionTab:{screen:SelectionTab,
         navigationOptions: { headerTitle:"Select Chapter" }
@@ -69,7 +74,7 @@ const NavStack = createStackNavigator(
   
   
   { 
-   
+    // headerMode: 'none',
     defaultNavigationOptions: {
       headerStyle: {
           backgroundColor: "#3F51B5",

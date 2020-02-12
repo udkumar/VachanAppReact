@@ -10,30 +10,18 @@
         const languages = API_BASE_URL 
         const response = yield call(fetchApi,languages)
         const contentCommentry = {content:"Commentary",contentVersion:response}
-        // for(var i=0; i<response.length; i++){
-        //   if(response[i].languageCode==payload.languageCode){
-        //     contentCommentry.contentCommentry.push(response[i].commentaries)
-        //   }
-        // }
-        // console.log("AVAILABLE COMMENTARIES ",contentCommentry)
         yield put(commentaryLanguageSuccess(contentCommentry))
       } catch (e) {
       yield put(commentaryLanguageFailure(e))
       }
   }
-
+  
   function* fetchCommentaryContent(params){
     try {
     const payload = params.payload 
-    const languages = API_BASE_URL 
-    const response = yield call(fetchApi,languages)
-    for(var i=0; i<response.length; i++){
-      if(response[i].languageCode==payload.languageCode){
-        const content = API_BASE_URL +"/"+response[i].commentaries[0].sourceId+"/"+payload.bookId+"/"+payload.chapter
+        const content = API_BASE_URL +"/"+payload.contentSourceId+"/"+payload.bookId+"/"+payload.chapter
         const res = yield call(fetchApi,content)
         yield put(commentaryContentSuccess(res))
-      }
-    }
     } catch (e) {
     yield put(commentaryContentFailure(e))
     } 
