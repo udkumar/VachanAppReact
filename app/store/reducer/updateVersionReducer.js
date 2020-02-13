@@ -16,8 +16,8 @@ const initialState = {
    contentType:'bible',
    contentLanguage:'Hindi',
    contentLanguageCode:'hin',
-   contentVersion:'IRV',
-   constentVersionCode:'Indian Revised Version'
+   contentVersion:'Indian Revised Version',
+   contentVersionCode:'irv'
 }
 function UpdateVersionReducer(state=initialState,action){
     switch(action.type) {
@@ -55,7 +55,7 @@ function UpdateVersionReducer(state=initialState,action){
             contentLanguage:action.payload.contentLanguage,
             contentLanguageCode:action.payload.contentLanguageCode,
             contentVersion:action.payload.contentVersion,
-            constentVersionCode:action.payload.constentVersionCode,
+            contentVersionCode:action.payload.contentVersionCode,
             contentSourceId:action.payload.contentSourceId
         }
         default: 

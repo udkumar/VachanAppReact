@@ -8,8 +8,7 @@ export const fetchVersionContent = payload=>({
 
 export const versionContentSuccess = payload => ({
   type: VERSION_CONTENT_SUCCESS,
-  chapterContent:payload.chapterContent,
-  totalVerses:payload.totalVerses
+  payload
 })
 
 export const versionContentFailure = error => ({

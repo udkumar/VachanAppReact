@@ -52,8 +52,8 @@ function fetchVersionReducer(state=initialState,action){
         return {
             ...state,
             loading:false,
-            chapterContent:action.chapterContent,
-            totalVerses:action.totalVerses,
+            chapterContent:action.payload.chapterContent,
+            totalVerses:action.payload.totalVerses,
         }
         case VERSION_CONTENT_FAILURE:
         return {

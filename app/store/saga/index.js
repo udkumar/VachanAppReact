@@ -4,6 +4,7 @@ import {watchVersion} from './apiFetch/fetchVersion'
 import {watchCommentary} from './apiFetch/fetchCommentary'
 import {watchAudio} from './apiFetch/fetchAudio'
 import {watchAllContent} from './apiFetch/fetchAllContent'
+import {watchParallelBible} from './apiFetch/parallelBible'
 
 
 export default function* rootSaga() {
@@ -11,7 +12,8 @@ export default function* rootSaga() {
     ...watchVersion,
     ...watchCommentary,
     ...watchAudio,
-    ...watchAllContent
+    ...watchAllContent,
+    ...watchParallelBible
   ])
 }
 //all saga put here its a root of all saga 

@@ -34,8 +34,6 @@ class Commentary extends Component {
   }
   render(){
 
-    // console.log("UPDATE VERSION ",this.props.contentType )
-
     var convertToText = (response) => {
       let exRegex = /<b>(.*?)<\/b>/g
     //replaced string with bld because on spliting with '<b>' tag ,all text get mixed not able to identify where to apply the bold style 
@@ -59,7 +57,7 @@ class Commentary extends Component {
       <View>
         <Header style={{height:40,borderLeftWidth:0.5,borderLeftColor:'#fff'}} >
           <Body>
-            <Title style={{fontSize:16}}>{this.props.constentVersionCode}</Title>
+            <Title style={{fontSize:16}}>{this.props.contentVersionCode}</Title>
           </Body>
           <Right>
           <Button transparent onPress={()=>this.props.toggleParallelView(false)}>
@@ -153,7 +151,7 @@ const mapStateToProps = state =>{
     contentType:state.updateVersion.contentType,
 
     contentSourceId:state.updateVersion.contentSourceId,
-    constentVersionCode:state.updateVersion.constentVersionCode,
+    contentVersionCode:state.updateVersion.contentVersionCode,
     commentaryContent:state.commentaryFetch.commentaryContent
   }
 

@@ -34,6 +34,7 @@ import {connect} from 'react-redux'
 import Commentary from '../StudyHelp/Commentary/'
 import MainHeader from '../../components/MainHeader'
 import {Card,CardItem,Content,Body,Header,Container, Button,Right,Left,Title} from 'native-base'
+import BibleChapter from './component/BibleChapter';
 
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
@@ -519,23 +520,10 @@ toggleAudio(){
       this.props.navigation.setParams({visibleParallelView:value})
     }
   render() {
-    console.log("UPDATE VERSION ",this.props.contentType )
       return (
         <View>
-          
           <View style={{flexDirection:'row'}}>
-            {/* <MainHeader 
-              navStyles={navStyles}
-              languageName={this.props.language}
-              languageCode={this.props.languageCode}
-              versionCode={this.props.version}
-              bookName={this.props.bookName}
-              chapterNumber={this.state.currentVisibleChapter}
-              navigation={this.props.navigation}
-              toggleAudio={this.toggleAudio}
-              onBookmark={this.onBookmark}
-              modalVisible={false}
-            /> */}
+           
             <View style={{width:this.props.navigation.getParam("visibleParallelView") ? '50%' : '100%'}}>
             {this.props.navigation.getParam("visibleParallelView") &&
               <Header style={{height:40,borderLeftWidth:0.5,borderLeftColor:'#fff'}}>
@@ -605,7 +593,6 @@ toggleAudio(){
                               getSelection = {(verseIndex, chapterNumber, verseNumber,text) => {
                               this.getSelectedReferences(verseIndex, chapterNumber, verseNumber,text)
                               }}
-                              
                               HightlightedVerse = {this.state.HightlightedVerseArray}
                               chapterNumber ={this.state.currentVisibleChapter}
                               bookId={this.state.bookId}
@@ -662,9 +649,20 @@ toggleAudio(){
           : null }
             </View>
             {/**parallelView**/}
-            {this.props.navigation.getParam("visibleParallelView")== true ? <View style={{width:'50%'}}>
-            <Commentary toggleParallelView={(value)=>this.toggleParallelView(value)} />
-            </View> : null}
+            {this.props.navigation.getParam("visibleParallelView")== true ? (
+            <View style={{width:'50%'}}>
+             {this.props.contentType == 'bible' ? <BibleChapter 
+              currentVisibleChapter={this.state.currentVisibleChapter}
+              toggleParallelView={(value)=>this.toggleParallelView(value)}
+              totalChapters={this.state.totalChapters}
+              showBottomBar={this.props.showBottomBar}
+               /> : 
+               <Commentary 
+                toggleParallelView={(value)=>this.toggleParallelView(value)} 
+               />}  
+            </View>
+            )
+             : null}
         </View>
         </View>
       )
@@ -724,7 +722,8 @@ const mapStateToProps = state =>{
 
     audioURL:state.audioFetch.url,
     availableCommentaries:state.commentaryFetch.availableCommentaries,
-    commentary:state.commentaryFetch.commentaryContent
+    commentary:state.commentaryFetch.commentaryContent,
+    contentType:state.updateVersion.contentType,
   }
 }
 const mapDispatchToProps = dispatch =>{

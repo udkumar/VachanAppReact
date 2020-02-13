@@ -70,7 +70,7 @@ var contentType = ''
               }}
               onPress={()=>{
                 this.props.navigation.setParams({modalVisible:false,visibleParallelView:true});
-                this.props.updateContentType({contentType:contentType,contentLanguage:item.languageName,contentLanguageCode:item.languageCode,contentVersion:v.versionName,constentVersionCode:v.versionCode,contentSourceId:v.sourceId})
+                this.props.updateContentType({contentType:contentType,contentLanguage:item.languageName,contentLanguageCode:item.languageCode,contentVersion:v.versionName,contentVersionCode:v.versionCode,contentSourceId:v.sourceId})
               }} 
             >
               <Text >{v.versionName}</Text>
@@ -92,7 +92,7 @@ var contentType = ''
       }
       
       render(){
-         console.log("CONTENT TYPE ",this.props.contentType)
+         console.log("CONTENT TYPE ",this.props.availableContents)
          console.log("CONTENT TYPE GLOBAL VALUE",contentType)
 
           return(
