@@ -21,47 +21,48 @@ class ChapterSelection extends Component {
 
   constructor(props){
     super(props)
-    console.log("props in chapter selection ",props)
     this.state = {
-      isLoading:false,
-      chapterData:[],
+      isLoading:true,
+      totalChapters:[],
       bookId:this.props.bookId,
-      totalChapters:this.props.totalChapters
     }
     this.styles = numberSelection(this.props.colorFile, this.props.sizeFile);   
     // this.onNumPress = this.onNumPress.bind(this)
   }
   static getDerivedStateFromProps(nextProps, prevState){
-    var chapters = []
-    if(nextProps.bookId !== prevState.bookId || nextProps.totalChapters !== prevState.totalChapters){
+    console.log("verses nextProps",nextProps.bookId,nextProps.totalChapters.length," prevState",prevState.bookId,prevState.totalChapters.length)
+    var chapterData = []
+    if(nextProps.bookId !== prevState.bookId){
+
       for(var i=0;i<=nextProps.totalChapters.length-1;i++){
-        chapters.push(i+1)
+        chapterData.push(i+1)
       }
-      return { bookId: nextProps.bookId, totalChapters: nextProps.totalChapters,chapterData:chapters};
-   }
-   else return null;
- }
+      return{totalChapters:chapterData,bookId:nextProps.bookId}
+    }
+   else return null
+
+  }
+
   getChapters(){
   var chapterData = []
-  for(var i=0;i<=this.props.totalChapters.length-1;i++){
+  for(var i=0;i<=this.state.totalChapters.length-1;i++){
     chapterData.push(i+1)
   }
-  this.setState({chapterData})
+  this.setState({totalChapters:chapterData,isLoading:false})
   }
 
   componentDidMount(){
     this.getChapters()
   }
-  
    onNumPress=(item,index)=>{
     var time =  new Date()
-    DbQueries.addHistory(this.props.language, this.props.version, this.props.bookId, item, time)
+    DbQueries.addHistory(this.props.language, this.props.versionCode, this.props.bookId, item, time)
     this.setState({isLoading:true},async()=>{
     try{
       this.props.selectedChapter(item,this.props.totalChapters[index])
+
       this.setState({isLoading:false})
       this.props.navigation.navigate('Verses')
-
     }
       catch(error){
         console.log(error)
@@ -81,12 +82,12 @@ class ChapterSelection extends Component {
 
   
   render() {
-    console.log("chapters ",this.state.chapterData)
+    console.log("is loading ",this.state.isLoading)
     return (
       <SelectionGrid
       styles={this.styles}
       onNumPress={(item,index)=>{this.onNumPress(item,index)}}
-      numbers={this.state.chapterData}
+      numbers={this.state.totalChapters}
       loader={this.state.isLoading}
       heighlightedNumber={this.props.chapterNumber}
       />
@@ -97,10 +98,9 @@ class ChapterSelection extends Component {
 const mapStateToProps = state =>{
   return{
     language: state.updateVersion.language,
-    version:state.updateVersion.version,
+    versionCode:state.updateVersion.versionCode,
     sourceId:state.updateVersion.sourceId,
     downloaded:state.updateVersion.downloaded,
-
     
     bookId:state.updateVersion.bookId,
     bookName:state.updateVersion.bookName,

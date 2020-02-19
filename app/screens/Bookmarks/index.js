@@ -144,8 +144,8 @@ class BookMarks extends Component {
 const mapStateToProps = state =>{
   return{
     languageName: state.updateVersion.language,
-    versionCode: state.updateVersion.version,
-    bookId:state.updateVersion.version,
+    versionCode: state.updateVersion.versionCode,
+    bookId:state.updateVersion.bookId,
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
   }

@@ -31,7 +31,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
               <View style={{flex:1}}>
               { item.versionModels.map((ele, index, key) => (
                 <List>
-                  <ListItem button={true} onPress={()=>{navigateTo(item.languageName,item.languageCode,ele.versionCode,ele.sourceId, ele.downloaded,null  )}}>
+                  <ListItem button={true} onPress={()=>{navigateTo(item.languageName,item.languageCode,ele.versionCode,ele.sourceId, ele.downloaded)}}>
                   <Left>
                   <View style={{alignSelf:'center',marginLeft:12}}>
                     <Text style={[styles.text,{fontWeight:'bold'}]} >{ele.versionCode} </Text>

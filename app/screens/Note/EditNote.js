@@ -216,7 +216,7 @@ class EditNote extends Component {
               chapterNumber: this.props.chapterNumber, 
               verseNumber: this.props.verseNumber.toString(), 
               verseText:response.chapterContent.verses[this.props.verseNumber-1].text,
-              versionCode: this.props.version, 
+              versionCode: this.props.versionCode, 
               languageName: this.props.language
             };
             let referenceList = [...this.state.referenceList]
@@ -358,7 +358,7 @@ class EditNote extends Component {
 const mapStateToProps = state =>{
   return{
     language:state.updateVersion.language,
-    version:state.updateVersion.version,
+    versionCode:state.updateVersion.versionCode,
     sourceId:state.updateVersion.sourceId,
 
     bookId:state.editNote.bookId,

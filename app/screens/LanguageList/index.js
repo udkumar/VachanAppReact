@@ -134,18 +134,21 @@ class LanguageList extends Component {
       }
     }
  
-    navigateTo = (langName,langCode,verCode,sourceId,downloaded,file)=>{
+    navigateTo = (langName,langCode,verCode,sourceId,downloaded)=>{
       // const url = BASE_URL+
       // if(this.props.navigation.state.params.contentType == 'bible'){
-        console.log("navigate back ",langName,langCode,verCode,sourceId,downloaded,file)
+        console.log("navigate back ",langName,langCode,verCode,sourceId,downloaded)
         AsyncStorageUtil.setAllItems([
           [AsyncStorageConstants.Keys.SourceId, JSON.stringify(sourceId)],
           [AsyncStorageConstants.Keys.LanguageName, langName],
+          [AsyncStorageConstants.Keys.LanguageCode, langCode],
           [AsyncStorageConstants.Keys.VersionCode, verCode],
+
           [AsyncStorageConstants.Keys.Downloaded, JSON.stringify(downloaded)]
         ]); 
-        this.props.updateVersion(langName,langCode,verCode,sourceId,downloaded)
-        this.props.navigation.state.params.callBackForUpdateBook(null)
+        this.props.updateVersion({language:langName,languageCode:langCode,versionCode:verCode,sourceId:sourceId,downloaded:downloaded})
+        // this.props.updateVersion(langName,langCode,verCode,sourceId,downloaded)
+        // this.props.navigation.state.params.callBackForUpdateBook(null)
       // }
       this.props.navigation.goBack()
       // this.props.updateInfographics(file ? file : this.props.fileName)

@@ -79,10 +79,9 @@ class App extends Component {
           AsyncStorageConstants.Keys.SizeMode,
           AsyncStorageConstants.Keys.VerseViewMode,
           AsyncStorageConstants.Keys.LastReadReference,
+          AsyncStorageConstants.Keys.LanguageName,
           AsyncStorageConstants.Keys.LanguageCode,
           AsyncStorageConstants.Keys.VersionCode,
-          AsyncStorageConstants.Keys.LanguageName,
-          AsyncStorageConstants.Keys.VersionName,
           AsyncStorageConstants.Keys.BookId,
           AsyncStorageConstants.Keys.BookName,
           AsyncStorageConstants.Keys.ChapterNumber,
@@ -91,23 +90,22 @@ class App extends Component {
           AsyncStorageConstants.Keys.Downloaded
         ])
         
-        console.log(" RES OF ASYNC VALUE",res)
-        const  colorMode= res[0][1]== null ? AsyncStorageConstants.Values.DayMode : parseInt(res[0][1])
-        const  sizeMode= res[1][1] == null ? AsyncStorageConstants.Values.SizeModeNormal : parseInt(res[1][1])
-        const  verseInLine=  res[3][1] == null ? AsyncStorageConstants.Values.VerseInLine : res[3][1]
-        const  languageCode= res[4][1] == null ? this.props.languageCode : res[4][1]
-        const  versionCode= res[5][1] == null ? this.props.version : res[5][1]
-        const  languageName= res[6][1] == null ? this.props.language : res[6][1]
-        // const  versionName= res[7][1] == null ? AsyncStorageConstants.Values.DefVersionName : res[7][1]
-        const  bookId= res[8][1] == null ? this.props.bookId:res[8][1]
-        const  bookName= res[9][1] == null ? this.props.bookName:res[9][1]
-        const  chapterNumber= res[10][1] == null ? this.props.chapterNumber:parseInt(res[10][1])
-        // const  bookNumber= res[11][1] == null ? AsyncStorageConstants.Values.DefBookNumber:parseInt(res[11][1])
-        const  sourceId= res[12][1] == null ? this.props.sourceId:parseInt(res[12][1])
-        const  downloaded= res[13][1] == null ? this.props.downloaded:res[13][1].toString()
-        const  totalChapters= this.props.totalChapters
+          console.log(" RES OF ASYNC VALUE",res)
+          const  colorMode= res[0][1]== null ? AsyncStorageConstants.Values.DayMode : parseInt(res[0][1])
+          const  sizeMode= res[1][1] == null ? AsyncStorageConstants.Values.SizeModeNormal : parseInt(res[1][1])
+          const  verseInLine=  res[3][1] == null ? AsyncStorageConstants.Values.VerseInLine : res[3][1]
+          const  languageName= res[4][1] == null ? this.props.language : res[4][1]
+          const  languageCode= res[5][1] == null ? this.props.languageCode : res[5][1]
+          const  versionCode= res[6][1] == null ? this.props.versionCode : res[6][1]
+          const  bookId= res[7][1] == null ? this.props.bookId:res[7][1]
+          const  bookName= res[8][1] == null ? this.props.bookName:res[8][1]
+          const  chapterNumber= res[9][1] == null ? this.props.chapterNumber:parseInt(res[9][1])
+          // const  bookNumber= res[11][1] == null ? AsyncStorageConstants.Values.DefBookNumber:parseInt(res[11][1])
+          const  sourceId= res[11][1] == null ? this.props.sourceId:parseInt(res[11][1])
+          const  downloaded= res[12][1] == null ? this.props.downloaded:res[12][1].toString()
+          const  totalChapters= this.props.totalChapters
 
-          this.props.updateVersion(languageName,languageCode,versionCode,sourceId,downloaded)
+          this.props.updateVersion({language:languageName,languageCode:languageCode,versionCode:versionCode,sourceId:sourceId,downloaded:downloaded})
           this.props.selectedBook(bookId,bookName,totalChapters)
           this.props.selectedChapter(chapterNumber,null)
           this.props.updateColorMode(colorMode)
@@ -123,20 +121,18 @@ class App extends Component {
       // })
 
     }
-    // componentDidUpdate(prevProps){
-    //   console.log("prevProps",prevProps)
-    // }
+    componentDidUpdate(prevProps){
+      console.log("prevProps",prevProps)
+    }
     render() {
-        return <AppNavigator 
-        
-        />
+        return <AppNavigator  />
     }
 }
 const mapStateToProps = state =>{
   return{
     language: state.updateVersion.language,
     languageCode:state.updateVersion.languageCode,
-    version:state.updateVersion.version,
+    versionCode:state.updateVersion.versionCode,
     sourceId:state.updateVersion.sourceId,
     downloaded:state.updateVersion.downloaded,
     contentType:state.updateVersion.contentType,

@@ -1,14 +1,10 @@
 import { UPDATE_VERSION , SELECTED_BOOK,SELECTED_CHAPTER,SELECTED_VERSE,UPDATE_CONTENT_TYPE} from "./actionsType";
 import Commentary from "../../screens/Bible/Navigate/Commentary";
 
-export const updateVersion = (language,languageCode,version,sourceId,downloaded)=>{
+export const updateVersion = (payload)=>{
     return {
         type:UPDATE_VERSION,
-        language:language,
-        languageCode:languageCode,
-        version:version,
-        sourceId:sourceId,
-        downloaded:downloaded
+        payload
     }
 }
 

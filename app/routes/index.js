@@ -14,32 +14,30 @@ import InfoGraphics from '../screens/StudyHelp/InfoGraphics/'
 import More from '../screens/StudyHelp/More/'
 import {connect} from 'react-redux'
 import {updateContentType} from '../store/action/'
-
-
-
-
-
-// import Audio from '../screens/Bible/Navigate/Audio/'
-// import Video from '../screens/Bible/Navigate/Video/'
 import StudyHelp from '../screens/StudyHelp/'
 
-// import ReferenceSelection from 
-// import ChapterSelection from '../screens/numberSelection/ChapterSelection'
 import Hints from '../screens/Hints/Hints'
 import BackupRestore from '../screens/backup/BackupRestore'
 // import DrawerScreen from '../screens/DrawerScreen/DrawerScreen'
 import Bible from '../screens/Bible'
-// import BottomTab from '../screens/Bible/BottomTab'
 import LanguageList from '../screens/LanguageList'
-// import More from '../screens/More'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import SelectionTab from '../screens/ReferenceSelection/'
 import BookMarks from '../screens/Bookmarks/';
 import Infographics from '../screens/StudyHelp/InfoGraphics/';
 
+import ModalForSelection from '../screens/ModalForSelection'
+
 const NavStack = createStackNavigator(
   {  
+    // ModalForSelection:{
+    //   screen:ModalForSelection,
+    //   navigationOptions: {
+    //     // title: 'Home',
+    //     header: null
+    //   },
+    // },
       Bible:{
         screen:Bible,
         navigationOptions: {

@@ -92,8 +92,7 @@ var contentType = ''
       }
       
       render(){
-         console.log("CONTENT TYPE ",this.props.availableContents)
-         console.log("CONTENT TYPE GLOBAL VALUE",contentType)
+         console.log("CONTENT TYPE GLOBAL VALUE",this.props.visible)
 
           return(
             <View>
@@ -101,7 +100,7 @@ var contentType = ''
               animationType="fade"
               transparent={true}
               visible={this.props.visible}
-              onPress={()=>{this.props.navigation.setParams({modalVisible:false})}} 
+              onPress={()=>{this.props.navigation.setParams({modalVisible:!this.props.visible})}} 
               >
               <TouchableWithoutFeedback
                 style={{
@@ -110,7 +109,7 @@ var contentType = ''
                   justifyContent: 'center',
                   alignItems: 'center',
                   }} 
-              onPressOut={()=>{this.props.navigation.setParams({modalVisible:false})}} 
+                onPressOut={()=>{this.props.navigation.setParams({modalVisible:false})}} 
               >
               <View style={{height:'80%',width:'70%',alignSelf:'flex-end',top:40}}>
               <Card>

@@ -181,7 +181,7 @@ export  default connect(mapStateToProps,null)(Note)
 // const mapStateToProps = state =>{
 //   return{
 //     language:state.updateVersion.language,
-//     version:state.updateVersion.version,
+//     version:state.updateVersion.versionCode,
 //     sourceId:state.updateVersion.sourceId,
 
 //     // bookId:state.editNote.bookId,

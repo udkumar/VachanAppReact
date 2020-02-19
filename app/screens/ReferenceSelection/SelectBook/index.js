@@ -13,7 +13,7 @@ import {
   ActivityIndicator
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import {Segment,Button,Tab,Tabs} from 'native-base'
+import {Segment,Button,Tab,Tabs, Item} from 'native-base'
 import { SelectBookPageStyle } from './styles.js';
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
@@ -23,7 +23,7 @@ import APIFetch from '../../../utils/APIFetch'
 import {getBookNameFromMapping,getBookSectionFromMapping,getBookNumberFromMapping,getBookChaptersFromMapping} from '../../../utils/UtilFunctions';
 import DbQueries from '../../../utils/dbQueries.js';
 import {connect} from 'react-redux'
-import {selectedBook,addBookToNote} from '../../../store/action/'
+import {selectedBook,addBookToNote,fetchVersionBooks} from '../../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
 
 
@@ -32,7 +32,6 @@ import Spinner from 'react-native-loading-spinner-overlay';
 // import { changeBook } from '../../../store/action/referenceUpdate.js';
 
  class SelectBook extends Component {
-
   constructor(props){
     super(props)
     this.state = {
@@ -44,11 +43,11 @@ import Spinner from 'react-native-loading-spinner-overlay';
       // OTSize:this.getOTSize(),
       OTSize: function(){
           var count = 0;
-          if(this.bookList.length == 0){
+          if(props.books.length == 0){
           return 0
           }else{
-            for(var i=0 ; i<this.bookList.length ; i++){
-              if(this.bookList[i].bookNumber <= 39){
+            for(var i=0 ; i<props.books.length ; i++){
+              if(props.books[i].bookNumber <= 39){
                 count ++;
               }
               else{
@@ -61,11 +60,11 @@ import Spinner from 'react-native-loading-spinner-overlay';
     },
       NTSize:function(){
         var count = 0;
-        if(this.bookList.length == 0 ){
+        if(props.books.length == 0 ){
           return 0
         }else{
-          for(var i=this.bookList.length-1 ; i>=0 ; i--){
-            if(this.bookList[i].bookNumber >= 40){
+          for(var i=props.books.length-1 ; i>=0 ; i--){
+            if(props.books[i].bookNumber >= 40){
               count++
             }
             else{
@@ -84,7 +83,6 @@ import Spinner from 'react-native-loading-spinner-overlay';
         waitForInteraction: true
     }
   }
-
   toggleButton(value){
     this.setState({activeTab:value})
     if(value == false){
@@ -94,20 +92,6 @@ import Spinner from 'react-native-loading-spinner-overlay';
       this.flatlistRef.scrollToIndex({index:0,viewPosition:0,animated: false,viewOffset:0})
     }
   }
-   componentWillReceiveProps(props){
-     this.setState({
-        colorFile:props.colorFile,
-        colorMode: props.colorMode,
-        sizeFile:props.sizeFile,
-        lastRead: props.screenProps.lastRead,
-        // booksList: props.screenProps.booksList,
-        // OTSize:this.getOTSize(),
-        // NTSize:this.getNTSize(props.screenProps.booksList)
-      })
-   
-    this.styles = SelectBookPageStyle(props.colorFile, props.sizeFile);   
-  }
- 
   getItemLayout = (data, index) => (
     { length: 48, offset: 48 * index, index }
   )
@@ -116,65 +100,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
   this.getBooks()  
   }
   async getBooks(){
-    var bookListData=[]
-    // this.setState({isLoading:bookListData.length == 0 ? true : false})
-    if(this.props.downloaded == true){
-        this.setState({isLoading:true})
-        var booksid = await DbQueries.getDownloadedBook(this.props.language,this.props.version)
-        // console.log("res ",booksid)
-        for(var i = 0; i<=booksid.length-1;i++){
-          var bookId = booksid[i]
-          var books= {
-                bookId:bookId,
-                bookName:getBookNameFromMapping(bookId,this.props.language),
-                section:getBookSectionFromMapping(bookId),
-                bookNumber:getBookNumberFromMapping(bookId),
-                languageName: this.props.language, 
-                versionCode:this.props.version, 
-                numOfChapters:getBookChaptersFromMapping(bookId)
-            }
-                bookListData.push(books)
-          }
-      }
-    else{
-      this.setState({isLoading:true})
-      try{
-        var booksid = await APIFetch.availableBooks(this.props.sourceId)
-        console.log("books id ",booksid)
-        if(booksid.length !=0){
-          if(booksid.status == 500){
-            alert("sorry are unavailable ")
-          }
-          else{
-            for(var i =0;i<=booksid[0].books.length-1;i++){
-              var bookId = booksid[0].books[i].abbreviation
-              var books= {
-                    bookId:bookId,
-                    bookName: getBookNameFromMapping(bookId,this.props.language),
-                    section:getBookSectionFromMapping(bookId),bookNumber:getBookNumberFromMapping(bookId),
-                    bookNumber:getBookNumberFromMapping(bookId),
-                    languageName: this.props.language, 
-                    versionCode:this.props.version, 
-                    numOfChapters:getBookChaptersFromMapping(bookId)
-              }
-                    bookListData.push(books)
-          }
-          }
-        }
-        else{
-          alert("check internet connection")
-        }
-      }
-      catch(error){
-        alert("ERROR ",error)
-      }
-    }
-  
-    var res = bookListData.length == 0 ? [] : bookListData.sort(function(a, b){return a.bookNumber - b.bookNumber})
-    console.log("response data ",res)
-    this.setState({bookList:res,isLoading:false})
-    
-
+    this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,isDownloaded:this.props.downloaded,sourceId:this.props.sourceId})
   }
 
   navigateToChapter(item){
@@ -185,12 +111,12 @@ import Spinner from 'react-native-loading-spinner-overlay';
 renderItem = ({item, index})=> {
     return (
       <TouchableOpacity 
-          onPress={()=>{this.navigateToChapter(item,index)}}>
+          onPress={()=>this.navigateToChapter(item)}>
           <View 
             style={this.styles.bookList}>
             <Text
               style={
-                [this.styles.textStyle,{fontWeight:item.bookName == this.props.bookName ? "bold" : "normal"}]
+                [this.styles.textStyle,{fontWeight:item == this.props.bookName ? "bold" : "normal"}]
               }
               >
               {item.bookName}
@@ -206,13 +132,12 @@ renderItem = ({item, index})=> {
   }
 
   getOTSize(){
-    console.log("book list in ot ",this.state.bookList)
     var count = 0;
-    if(this.state.bookList.length == 0){
+    if(this.props.books.length == 0){
      return
     }else{
-      for(var i=0 ; i<this.state.bookList.length ; i++){
-        if(this.state.bookList[i].bookNumber <= 39){
+      for(var i=0 ; i<this.props.books.length ; i++){
+        if(this.props.books[i].bookNumber <= 39){
           count ++;
         }
         else{
@@ -227,11 +152,11 @@ renderItem = ({item, index})=> {
   getNTSize(){
 
     var count = 0;
-    if(this.state.bookList.length == 0 ){
+    if(this.props.books.length == 0 ){
       return
     }else{
-      for(var i=this.state.bookList.length-1 ; i>=0 ; i--){
-        if(this.state.bookList[i].bookNumber >= 40){
+      for(var i=this.props.books.length-1 ; i>=0 ; i--){
+        if(this.props.books[i].bookNumber >= 40){
           count++
         }
         else{
@@ -257,6 +182,7 @@ renderItem = ({item, index})=> {
 
 
   render(){
+    // console.log("BOOKS ",this.props.books)
     let activeBgColor = this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#3F51B5' : '#fff'
     let inactiveBgColor =  this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#fff' : '#3F51B5'
     return (
@@ -314,7 +240,7 @@ renderItem = ({item, index})=> {
             </Segment>
             <FlatList
               ref={ref => this.flatlistRef = ref}
-              data={this.state.bookList}
+              data={this.props.books}
               getItemLayout={this.getItemLayout}
               onScroll={this.handleScroll}
               renderItem={this.renderItem}
@@ -335,13 +261,13 @@ renderItem = ({item, index})=> {
 const mapStateToProps = state =>{
   return{
     language: state.updateVersion.language,
-    version:state.updateVersion.version,
+    versionCode:state.updateVersion.versionCode,
     sourceId:state.updateVersion.sourceId,
     downloaded:state.updateVersion.downloaded,
     
     bookId:state.updateVersion.bookId,
     bookName:state.updateVersion.bookName,
-
+    books:state.versionFetch.data,
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
     colorMode:state.updateStyling.colorMode
@@ -351,7 +277,8 @@ const mapStateToProps = state =>{
 const mapDispatchToProps = dispatch =>{
   return {
     selectedBook:(bookId,bookName,totalChapters) =>dispatch(selectedBook(bookId,bookName,totalChapters)),
-    addBookToNote:(bookId,bookName,totalChapters)=>dispatch(addBookToNote(bookId,bookName,totalChapters))
+    addBookToNote:(bookId,bookName,totalChapters)=>dispatch(addBookToNote(bookId,bookName,totalChapters)),
+    fetchVersionBooks:(payload)=>dispatch(fetchVersionBooks(payload)),
   }
 }
 export  default connect(mapStateToProps,mapDispatchToProps)(SelectBook)

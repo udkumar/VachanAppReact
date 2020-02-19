@@ -3,7 +3,8 @@ import { UPDATE_VERSION, SELECTED_BOOK,SELECTED_CHAPTER,SELECTED_VERSE, UPDATE_C
 const initialState = {
    language:'Hindi',
    languageCode:'hin',
-   version:'IRV',
+   version:'Indian Revised Bible',
+   versionCode:'IRV',
    sourceId:45,
    downloaded:false,
    bookId:'3jn',
@@ -17,18 +18,18 @@ const initialState = {
    contentLanguage:'Hindi',
    contentLanguageCode:'hin',
    contentVersion:'Indian Revised Version',
-   contentVersionCode:'irv'
+   contentVersionCode:'IRV'
 }
 function UpdateVersionReducer(state=initialState,action){
     switch(action.type) {
         case UPDATE_VERSION:
         return {
             ...state,
-        language:action.language,
-        languageCode:action.languageCode,
-        version:action.version,
-        sourceId:action.sourceId,
-        downloaded:action.downloaded
+        language:action.payload.language,
+        languageCode:action.payload.languageCode,
+        versionCode:action.payload.versionCode,
+        sourceId:action.payload.sourceId,
+        downloaded:action.payload.downloaded
         }
         case SELECTED_BOOK:
         return {

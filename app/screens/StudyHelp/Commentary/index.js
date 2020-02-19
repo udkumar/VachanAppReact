@@ -79,7 +79,7 @@ class Commentary extends Component {
     :
     <Card>
     <CardItem header bordered>
-      <Text>{this.props.commentaryContent.bookCode} {this.props.commentaryContent.chapterId}</Text>
+      <Text>{this.props.bookName} {this.props.commentaryContent.chapterId}</Text>
     </CardItem>
     {this.props.commentaryContent.bookIntro  == '' ? null :
     <CardItem header bordered>
@@ -140,7 +140,7 @@ headerTextStyle:{
 const mapStateToProps = state =>{
   return{
     language: state.updateVersion.language,
-    version:state.updateVersion.version,
+    versionCode:state.updateVersion.versionCode,
     chapterNumber:state.updateVersion.chapterNumber,
     totalChapters:state.updateVersion.totalChapters,
     bookName:state.updateVersion.bookName,

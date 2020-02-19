@@ -15,36 +15,42 @@ import {getBookNameFromMapping,getBookChaptersFromMapping} from '../../../utils/
 import {selectedChapter,fetchVersionLanguage,fetchVersionContent,fetchAudioUrl,fetchParallelBible} from '../../../store/action/'
 import { styles } from '../styles';
 import {connect} from 'react-redux'
-import {Body,Header, Button,Right,Title} from 'native-base'
+import {Body,Header, Button,Right,Title, Left} from 'native-base'
 class BibleChapter extends Component {
     constructor(props){
         super(props)
         this.styles = styles(this.props.colorFile, this.props.sizeFile);    
+        this.state={
+            currentVisibleChapter:this.props.currentVisibleChapter
+        }
     }
     queryParallelBible =(val)=>{
-        this.props.fetchParallelBible({isDownloaded:this.props.downloaded,sourceId:this.props.contentSourceId,language:this.props.contentLanguageCode,version:this.props.contentVersionCode,bookId:this.props.bookId,chapter:val != null ? this.props.currentVisibleChapter + val: this.props.chapterNumber})
+        this.setState({currentVisibleChapter:val != null ? this.state.currentVisibleChapter + val:this.props.currentVisibleChapter},()=>{
+        this.props.fetchParallelBible({isDownloaded:this.props.downloaded,sourceId:this.props.contentSourceId,language:this.props.contentLanguageCode,version:this.props.contentVersionCode,bookId:this.props.bookId,chapter:val != null ? this.state.currentVisibleChapter + val: this.props.chapterNumber})
+            
+        })
     }
     componentDidMount(){
         this.queryParallelBible(null)
     }
     render(){
-        console.log(" PARALLEL BIBLE ",this.props.parallelBible)
+        console.log(" PARALLEL BIBLE ",this.props.contentLanguage)
         return(
-            <View>
-                <Header style={{height:40,borderLeftWidth:0.5,borderLeftColor:'#fff'}}>
-                <Body styel={{flexDirection:"row"}}>
+            <View  style={{borderLeftWidth: 1,  borderLeftColor: '#eee',}}>
+                <Header style={{height:40, borderLeftWidth:0.2, borderLeftColor:'#fff'}}>
+                <Left> 
                     <Button transparent onPress={()=>{this.props.navigation.navigate("SelectionTab")}}>
-                        <Title style={{fontSize:16}}>{getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language)} {this.props.currentVisibleChapter}</Title>
+                        <Title style={{fontSize:16}}>{getBookNameFromMapping(this.props.bookId,this.props.contentLanguage).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.contentLanguage).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language)} {this.state.currentVisibleChapter}</Title>
                         <Icon name="arrow-drop-down" color="#fff" size={20}/>
                     </Button>
-                </Body>
+                </Left> 
                 <Right>
                 <Button transparent onPress={()=>this.props.toggleParallelView(false)}>
                     <Icon name='close' color={'#fff'} size={20}/>
                 </Button>
                 </Right>
                 </Header>
-              <ScrollView ref={(ref) => { this.scrollViewRef = ref; }} >
+              <ScrollView showsVerticalScrollIndicator={false} ref={(ref) => { this.scrollViewRef = ref; }} >
                 <View style={this.styles.chapterList}>
                     {this.props.parallelBible.map((verse, index) => 
                     <View>
@@ -64,9 +70,9 @@ class BibleChapter extends Component {
                 </View>
                     
                 </ScrollView>
-                <View style={{justifyContent:(this.props.currentVisibleChapter != 1 &&  this.props.currentVisibleChapter != this.props.totalChapters) ? 'center' : 'space-around',alignItems:'center'}}>
+                <View style={{justifyContent:(this.state.currentVisibleChapter != 1 &&  this.state.currentVisibleChapter != this.props.totalChapters) ? 'center' : 'space-around',alignItems:'center'}}>
                     {
-                    this.props.currentVisibleChapter == 1 ? null :
+                    this.state.currentVisibleChapter == 1 ? null :
                     <View style={this.styles.bottomBarPrevView}>
                         <Icon name={'chevron-left'} color="#3F51B5" size={32} 
                             style={this.styles.bottomBarChevrontIcon} 
@@ -75,7 +81,7 @@ class BibleChapter extends Component {
                     </View>
                     }
                     {
-                    this.props.currentVisibleChapter == this.props.totalChapters.length ? null :
+                    this.state.currentVisibleChapter == this.props.totalChapters.length ? null :
                     <View style={this.styles.bottomBarNextView}>
                         <Icon name={'chevron-right'} color="#3F51B5" size={32} 
                             style={this.styles.bottomBarChevrontIcon} 
@@ -95,7 +101,7 @@ const mapStateToProps = state =>{
     return{
         language: state.updateVersion.language,
         languageCode:state.updateVersion.languageCode,
-        version:state.updateVersion.version,
+        versionCode:state.updateVersion.versionCode,
         sourceId:state.updateVersion.sourceId,
         downloaded:state.updateVersion.downloaded,
         contentType:state.updateVersion.contentType,
@@ -117,8 +123,10 @@ const mapStateToProps = state =>{
         commentary:state.commentaryFetch.commentaryContent,
         contentType:state.updateVersion.contentType,
         contentSourceId:state.updateVersion.contentSourceId,
+
         contentVersionCode:state.updateVersion.contentVersionCode,
         contentLanguageCode:state.updateVersion.contentLanguageCode,
+        contentLanguage:state.updateVersion.contentLanguage,
 
         parallelBible:state.parallel.parallelBible
     }

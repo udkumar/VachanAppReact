@@ -7,7 +7,6 @@ export default class ReferenceSelection extends Component {
         super(props)
     }
     navigateBack = ()=>{
-        this.props.navigation.state.params.getReference()
         this.props.navigation.goBack()
     }
     render(){
@@ -15,7 +14,6 @@ export default class ReferenceSelection extends Component {
             <SelectionTab
                 screenProps={{
                     navigateBack:this.navigateBack,
-
                 }}
             />
         )

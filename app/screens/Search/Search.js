@@ -254,7 +254,7 @@ class Search extends Component {
 const mapStateToProps = state =>{
   return{
     languageName: state.updateVersion.language,
-    version:state.updateVersion.version,
+    versionCode:state.updateVersion.versionCode,
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
   }

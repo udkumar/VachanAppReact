@@ -155,7 +155,7 @@ headerTextStyle:{
 const mapStateToProps = state =>{
   return{
     language: state.updateVersion.language,
-    version:state.updateVersion.version,
+    versionCode:state.updateVersion.versionCode,
     chapterNumber:state.updateVersion.chapterNumber,
     totalChapters:state.updateVersion.totalChapters,
     bookName:state.updateVersion.bookName,
