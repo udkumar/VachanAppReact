@@ -7,7 +7,7 @@ const SelectBottomTabBar = ({styles,bottomHighlightText,doHighlight,addToNotes,a
     <View style={styles.bottomBar}>
   
     <View style={styles.bottomOption}>
-    <TouchableOpacity onPress={doHighlight}  
+    <TouchableOpacity onPress={()=>{doHighlight}}  
     >
       <Text style={styles.bottomOptionText}>
         {bottomHighlightText == true ? 'HIGHLIGHT' : 'REMOVE HIGHLIGHT' }

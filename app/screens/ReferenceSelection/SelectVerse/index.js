@@ -17,7 +17,6 @@ import SelectionGrid from '../../../components/SelectionGrid/';
 
 
 
-
 class SelectVerse extends Component {
 
   constructor(props){
@@ -33,6 +32,7 @@ class SelectVerse extends Component {
 
       // selectedIndex: 0,
     }
+
     this.styles = numberSelection(this.props.colorFile, this.props.sizeFile);   
     
   }
@@ -49,15 +49,6 @@ class SelectVerse extends Component {
     }
    else return null
   }
-//  componentDidUpdate(prevProps,prevState){
-//   var verses = []
-//   if(prevState.totalChapters !== this.state.totalChapters || prevState.totalChapters !== this.state.totalVerses){
-//     for(var i = 1; i<= this.props.totalVerses; i++ ){
-//       verses.push(i)
-//     }
-//  }
-//  else return null;
-//  }
   queryBook() {
     const verseArray = []
       for(var i = 1; i<=this.state.totalVerses; i++ ){
@@ -67,12 +58,14 @@ class SelectVerse extends Component {
     }
 
   componentDidMount(){
+    console.log("SELECT VERSE")
       this.queryBook()
   }
   onVerseSelected=(item)=> {
     this.props.selectedVerse(item)
     this.props.addVerseToNote(item)
     this.props.screenProps.navigateBack()
+   
   }
   
   render() {

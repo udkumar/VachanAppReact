@@ -9,6 +9,8 @@ import {
 import APIFetch from '../../../utils/APIFetch'
 import { numberSelection } from './styles.js';
 import DbQueries from '../../../utils/dbQueries'
+import {AsyncStorageConstants} from '../../../utils/AsyncStorageConstants'
+import AsyncStorageUtil from '../../../utils/AsyncStorageUtil'
 
 import {connect} from 'react-redux'
 import {selectedChapter,addChapterToNote} from '../../../store/action/'
@@ -26,21 +28,19 @@ class ChapterSelection extends Component {
       totalChapters:[],
       bookId:this.props.bookId,
     }
+
     this.styles = numberSelection(this.props.colorFile, this.props.sizeFile);   
     // this.onNumPress = this.onNumPress.bind(this)
   }
   static getDerivedStateFromProps(nextProps, prevState){
-    console.log("verses nextProps",nextProps.bookId,nextProps.totalChapters.length," prevState",prevState.bookId,prevState.totalChapters.length)
     var chapterData = []
     if(nextProps.bookId !== prevState.bookId){
-
       for(var i=0;i<=nextProps.totalChapters.length-1;i++){
         chapterData.push(i+1)
       }
       return{totalChapters:chapterData,bookId:nextProps.bookId}
     }
    else return null
-
   }
 
   getChapters(){
@@ -52,8 +52,10 @@ class ChapterSelection extends Component {
   }
 
   componentDidMount(){
+    console.log("SELECT CHAPTER")
     this.getChapters()
   }
+ 
    onNumPress=(item,index)=>{
     var time =  new Date()
     DbQueries.addHistory(this.props.language, this.props.versionCode, this.props.bookId, item, time)
@@ -62,6 +64,9 @@ class ChapterSelection extends Component {
       this.props.selectedChapter(item,this.props.totalChapters[index])
 
       this.setState({isLoading:false})
+      AsyncStorageUtil.setAllItems([
+        [AsyncStorageConstants.Keys.ChapterNumber, JSON.stringify(item)],
+      ]); 
       this.props.navigation.navigate('Verses')
     }
       catch(error){
@@ -82,7 +87,7 @@ class ChapterSelection extends Component {
 
   
   render() {
-    console.log("is loading ",this.state.isLoading)
+    // console.log("is loading ",this.state.isLoading)
     return (
       <SelectionGrid
       styles={this.styles}

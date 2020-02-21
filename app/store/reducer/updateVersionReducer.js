@@ -14,11 +14,11 @@ const initialState = {
    verseNumber: 1,
    totalVerses:15,
    verseText:'',
-   contentType:'bible',
-   contentLanguage:'Hindi',
-   contentLanguageCode:'hin',
-   contentVersion:'Indian Revised Version',
-   contentVersionCode:'IRV'
+   parallelContentType:'bible',
+   parallelContentLanguage:'Hindi',
+   parallelContentLanguageCode:'hin',
+   parallelContentVersion:'Indian Revised Version',
+   parallelContentVersionCode:'IRV'
 }
 function UpdateVersionReducer(state=initialState,action){
     switch(action.type) {
@@ -52,12 +52,12 @@ function UpdateVersionReducer(state=initialState,action){
         case UPDATE_CONTENT_TYPE:
         return {
             ...state,
-            contentType:action.payload.contentType,
-            contentLanguage:action.payload.contentLanguage,
-            contentLanguageCode:action.payload.contentLanguageCode,
-            contentVersion:action.payload.contentVersion,
-            contentVersionCode:action.payload.contentVersionCode,
-            contentSourceId:action.payload.contentSourceId
+            parallelContentType:action.payload.parallelContentType,
+            parallelContentLanguage:action.payload.parallelContentLanguage,
+            parallelContentLanguageCode:action.payload.parallelContentLanguageCode,
+            parallelContentVersion:action.payload.parallelContentVersion,
+            parallelContentVersionCode:action.payload.parallelContentVersionCode,
+            parallelContentSourceId:action.payload.parallelContentSourceId
         }
         default: 
         return state

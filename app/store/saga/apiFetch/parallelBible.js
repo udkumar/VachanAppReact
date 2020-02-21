@@ -20,7 +20,6 @@ const API_BASE_URL = 'https://api.autographamt.com/v1/'
     else{
       const url = API_BASE_URL + "bibles" + "/" + payload.sourceId + "/" + "books" + "/" + payload.bookId + "/" + "chapter" + "/" + payload.chapter
       const response = yield call(fetchApi,url)
-      console.log("PARALLEL BIBLE CONTENT ",response)
       chapterContent = response.chapterContent.verses
       totalVerses = response.chapterContent.verses.length
     }

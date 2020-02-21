@@ -40,9 +40,6 @@ class Setting extends Component {
     }
     this.styles = settingsPageStyle(this.props.colorFile, this.props.sizeFile);
   }
-
-
-
   async onChangeSlider(value){
     await this.props.updateFontSize(value)
     // this.styles = settingsPageStyle(this.props.colorFile, this.props.sizeFile);

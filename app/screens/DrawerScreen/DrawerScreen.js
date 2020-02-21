@@ -10,18 +10,26 @@ class DrawerScreen extends Component {
   
   render () {
     const valueProps  = this.props.navigation.state.routes[0].index == 1 ? (this.props.navigation.state.routes[0].routes[1].params ? this.props.navigation.state.routes[0].routes[1].params.photorUl : null) : null
-
+ 
     const iconName = [
-      {icon:'local-library',pressIcon:'Home',},
+      // {icon:'local-library',pressIcon:'Home',},
       {icon:'info',pressIcon:'About'},
-      {icon:'search',pressIcon:'Search'},
-      {icon:'description',pressIcon:'Articles'},
-      {icon:'thumb-up',pressIcon:'Subscribe'},
-      {icon:'help',pressIcon:'FAQ & Help Videos'},
-      {icon:'comment',pressIcon:'Feedback'},
-      {icon:'contacts',pressIcon:'Contact Us'},
-      {icon:'account-circle',pressIcon:'Account'},
-      {icon:'settings',pressIcon:'Settings'}
+      {icon:'bookmark',pressIcon:'BookMarks'},
+      {icon:'highlight',pressIcon:'Highlights'},
+      {icon:'note',pressIcon:'Notes'},
+      {icon:'history',pressIcon:'History'},
+      // {icon:'more',pressIcon:'Commentary'},
+
+      // {icon:'search',pressIcon:'Search'},
+      // {icon:'description',pressIcon:'Articles'},
+      // {icon:'thumb-up',pressIcon:'Subscribe'},
+      // {icon:'help',pressIcon:'FAQ & Help Videos'},
+      // {icon:'comment',pressIcon:'Feedback'},
+      // {icon:'contacts',pressIcon:'Contact Us'},
+      // {icon:'account-circle',pressIcon:'Account'},
+      // {icon:}
+
+      {icon:'settings',pressIcon:'Settings'},
     ]
     return (
       <ScrollView style={{flex:1}}> 
@@ -54,7 +62,6 @@ class DrawerScreen extends Component {
         }
       
       </ScrollView>
-
     );
   }
 }

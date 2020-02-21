@@ -2,10 +2,11 @@ import React, {Component} from 'react';
 import {Modal, Text,TouchableOpacity,Dimensions,StyleSheet,Animated,LayoutAnimation,FlatList, View, Alert,TouchableWithoutFeedback} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {Card,CardItem,Content,Body,List,ListItem,Left,Right,Accordion} from 'native-base'
-import {updateContentType} from '../../../store/action/'
-import Orientation from 'react-native-orientation';
+import {updateContentType,fetchAllContent} from '../../../store/action/'
 import {styles} from '../../LanguageList/styles'
 import {connect} from 'react-redux'
+
+
 
 var contentType = ''
 
@@ -22,6 +23,7 @@ var contentType = ''
   
      _renderHeader = (item, expanded) =>{
       var value = expanded && item.contentType 
+      console.log("content type ......",value)
       if(value){
         contentType = value
       }
@@ -59,7 +61,6 @@ var contentType = ''
         }
       
       _renderContentInner = (item)=>{
-        console.log("CONTENT TYPE GLOBAL VALUE in inner ",contentType)
 
         return(
           item.versionModels.map(v=>
@@ -70,7 +71,7 @@ var contentType = ''
               }}
               onPress={()=>{
                 this.props.navigation.setParams({modalVisible:false,visibleParallelView:true});
-                this.props.updateContentType({contentType:contentType,contentLanguage:item.languageName,contentLanguageCode:item.languageCode,contentVersion:v.versionName,contentVersionCode:v.versionCode,contentSourceId:v.sourceId})
+                this.props.updateContentType({parallelContentType:contentType,parallelContentLanguage:item.languageName,parallelContentLanguageCode:item.languageCode,parallelContentVersion:v.versionName,parallelContentVersionCode:v.versionCode,parallelContentSourceId:v.sourceId})
               }} 
             >
               <Text >{v.versionName}</Text>
@@ -90,9 +91,12 @@ var contentType = ''
           />
           )
       }
-      
+      // componentDidUpdate(prevProps,prevState){
+      //   if(prevProps.availableContents !==prevState.availableContents){
+      //     this.props.fetchAllContent()
+      //   }
+      // }
       render(){
-         console.log("CONTENT TYPE GLOBAL VALUE",this.props.visible)
 
           return(
             <View>
@@ -141,13 +145,14 @@ var contentType = ''
 const mapStateToProps = state =>{
   return{
     availableContents:state.contents.contentLanguages,
-    contentType:state.updateVersion.contentType,
+    contentType:state.updateVersion.parallelContentType,
 
   }
 }
 const mapDispatchToProps = dispatch =>{
   return {
     updateContentType:(content) =>dispatch(updateContentType(content)),
+    fetchAllContent:()=>dispatch(fetchAllContent()),
     
   }
 }

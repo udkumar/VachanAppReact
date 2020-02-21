@@ -1,5 +1,5 @@
 // all of our routes
-import {createStackNavigator, createBottomTabNavigator,createSwitchNavigator,createAppContainer} from 'react-navigation'
+import {createStackNavigator, createDrawerNavigator,createSwitchNavigator,createAppContainer} from 'react-navigation'
 import React,{Component} from 'react';
 import About from '../screens/About/About'
 import Search from '../screens/Search/Search'
@@ -18,16 +18,18 @@ import StudyHelp from '../screens/StudyHelp/'
 
 import Hints from '../screens/Hints/Hints'
 import BackupRestore from '../screens/backup/BackupRestore'
-// import DrawerScreen from '../screens/DrawerScreen/DrawerScreen'
+import DrawerScreen from '../screens/DrawerScreen/DrawerScreen'
 import Bible from '../screens/Bible'
 import LanguageList from '../screens/LanguageList'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import SelectionTab from '../screens/ReferenceSelection/'
 import BookMarks from '../screens/Bookmarks/';
 import Infographics from '../screens/StudyHelp/InfoGraphics/';
 
 import ModalForSelection from '../screens/ModalForSelection'
+
+
 
 const NavStack = createStackNavigator(
   {  
@@ -40,10 +42,18 @@ const NavStack = createStackNavigator(
     // },
       Bible:{
         screen:Bible,
-        navigationOptions: {
-          // title: 'Home',
-          // header: null
-        },
+        navigationOptions: ({ navigation }) => ({
+          // title: null,  // Title to appear in status bar
+          // header:null,
+          // headerLeft :<MenuIcon navigate={navigation.navigate}/>,
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+          
+           
+        })
+      
       },
       Search: { screen: Search,
 
@@ -90,11 +100,37 @@ const NavStack = createStackNavigator(
   }
 )
 
+const DrawerNavigate = createDrawerNavigator({
+ 
+  StackNavigate:{
+    screen: NavStack
+  },
 
+},
+{
+  // initialRouteName: 'Bible',
+  contentComponent:DrawerScreen,
+  drawerWidth: 250
+},
+);
+
+const MenuIcon = (navigation) => {
+      console.log("navigation of drawer "+JSON.stringify(navigation))
+      return (
+          <Icon 
+            name="menu"  
+            color="#fff"
+            onPress={() => {navigation.navigate('DrawerToggle'),console.log("menu on press")}}
+            style={{marginHorizontal:8,fontSize:20}}
+          />
+      );
+    // return <Icon name="keyboard-arrow-lefte"  Size={38}/>
+   
+}
 
 
 const SwitchNavigator = createSwitchNavigator({
-  NavStack:NavStack
+  DrawerNavigate:DrawerNavigate
   });
   
  export const AppNavigator = createAppContainer(SwitchNavigator);

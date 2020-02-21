@@ -7,7 +7,11 @@ export default class ReferenceSelection extends Component {
         super(props)
     }
     navigateBack = ()=>{
+        this.props.navigation.state.params.getReference()
         this.props.navigation.goBack()
+    }
+    getCurrentRouteName = (currentState)=>{
+        console.log("current route name ",currentState)
     }
     render(){
         return(

@@ -9,7 +9,6 @@ import timestamp from '../../assets/timestamp.json'
 import { getBookNameFromMapping, getBookSectionFromMapping, getBookNumberFromMapping } from '../../utils/UtilFunctions';
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants';
-import ExpandableItemComponent from './Expandable';
 import { styles } from './styles.js';
 import {connect} from 'react-redux';
 import {updateVersion,updateInfographics,} from '../../store/action/'
@@ -19,6 +18,83 @@ import { State } from 'react-native-gesture-handler';
 const languageList = async () => { 
   return await DbQueries.getLangaugeList()
 }
+
+class ExpandableItemComponent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      layoutHeight: 0,
+      modalVisible:true,
+
+    };
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);    
+  }
+  componentWillReceiveProps(nextProps){
+    if (nextProps.item.isExpanded) {
+      this.setState(() => {
+        return {
+          layoutHeight: null,
+        };
+      });
+    } else {
+      this.setState(() => {
+        return {
+          layoutHeight: 0,
+        };
+      });
+    }
+  }
+ 
+  render() {
+    return (
+      <View style={this.styles.container}>
+      {/* <Card> */}
+      <List>
+      <ListItem button={true} onPress={this.props.onClickFunction}>
+        <Left>
+        <Text style={this.styles.text} >{this.props.item.languageName }</Text>
+        </Left>
+        <Right>
+          <Icon style={this.styles.iconStyle} name={this.props.item.isExpanded ? "keyboard-arrow-down" : "keyboard-arrow-up" }  size={24}/>
+        </Right>
+        </ListItem>
+        </List>
+        <View
+          style={{
+            height: this.state.layoutHeight,
+            overflow: 'hidden',
+          }}>
+          {/*Content under the header of the Expandable List Item*/}
+          {this.props.item.versionModels.map((item, index, key) => (
+              <List>
+                <ListItem button={true} onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId, item.downloaded  )}}>
+                <Left>
+                <View style={{alignSelf:'center',marginLeft:12}}>
+                  <Text style={[this.styles.text,{fontWeight:'bold'}]} >{item.versionCode} </Text>
+                  <Text style={[this.styles.text,{marginLeft:8}]} > {item.versionName}</Text>
+                </View>
+                </Left>
+                <Right>
+                {
+                  item.downloaded == true ? 
+                  <Icon style={[this.styles.iconStyle,{marginRight:8}]} name="check" size={24}  onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId,item.downloaded)}}
+                  />
+                :
+                  <Icon  style={[this.styles.iconStyle,{marginRight:12}]} name="file-download" size={24} onPress={()=>{this.props.DownloadBible(this.props.item.languageName,item.versionCode,index,item.sourceId)}}/>
+                }
+              
+              </Right>
+              </ListItem>
+              </List>
+          ))}
+        </View>
+      {/* </Card> */}
+
+      </View>
+    );
+  }
+}
+
 
 class LanguageList extends Component {
     static navigationOptions = ({navigation}) => ({
@@ -65,11 +141,21 @@ class LanguageList extends Component {
       var d = new Date('1-feb-2000')
       var ud = new Date(timestamp.languageUpdate)
       var diffDays = Math.round(Math.abs((d.getTime() - ud.getTime())/(oneDay)))
-            this.setState({
-              languages: this.props.bibleLanguages[0].content,
-              searchList: lanVer
-            })
+      var languageList =  await DbQueries.getLangaugeList()
+      for(var i =0 ; i<languageList.length;i++){
+        lanVer.push(languageList[i])
+      }
+      if(languageList.length == 0){
+        DbQueries.addLangaugeList(this.props.bibleLanguages[0].content)
+        lanVer = this.props.bibleLanguages[0].content
+
+      }
+      this.setState({
+        languages: lanVer,
+        searchList: lanVer
+      })
     }
+    
     // SearchFilterFunction = (text)=>{
     //     const newData = this.state.searchList.filter(function(item){
     //       const itemData = item.languageName
@@ -88,6 +174,7 @@ class LanguageList extends Component {
 
       var bookModels = []
       try{
+        this.setState({startDownload:true})
         var content = await APIFetch.getAllBooks(sourceId,"json")
         var content = content.bibleContent
         for(var id in content){
@@ -129,12 +216,16 @@ class LanguageList extends Component {
       languageList().then(async(language) => {
         this.setState({languages:language})
       })
+      this.setState({startDownload:false})
+
       }catch(error){
+      this.setState({startDownload:false})
         alert("There is some error on downloading this version please select another version")
       }
     }
  
     navigateTo = (langName,langCode,verCode,sourceId,downloaded)=>{
+      console.log("downloaded ",downloaded)
       // const url = BASE_URL+
       // if(this.props.navigation.state.params.contentType == 'bible'){
         console.log("navigate back ",langName,langCode,verCode,sourceId,downloaded)
@@ -147,6 +238,9 @@ class LanguageList extends Component {
           [AsyncStorageConstants.Keys.Downloaded, JSON.stringify(downloaded)]
         ]); 
         this.props.updateVersion({language:langName,languageCode:langCode,versionCode:verCode,sourceId:sourceId,downloaded:downloaded})
+        this.props.navigation.state.params.callBackForUpdateBook(null)
+        this.props.navigation.goBack()
+        
         // this.props.updateVersion(langName,langCode,verCode,sourceId,downloaded)
         // this.props.navigation.state.params.callBackForUpdateBook(null)
       // }
@@ -158,8 +252,18 @@ class LanguageList extends Component {
     render(){
       return (
         <View style={this.styles.MainContainer}>
-        {this.props.isFetching &&  <Spinner visible={true} textContent={'Loading...'}/>}
-        
+        {this.props.isLoading &&
+            <Spinner
+            visible={true}
+            textContent={'Loading...'}
+            //  textStyle={styles.spinnerTextStyle}
+          />}
+          {this.state.startDownload &&
+            <Spinner
+            visible={true}
+            textContent={'DOWNLOADING BIBLE...'}
+            //  textStyle={styles.spinnerTextStyle}
+          />}
         <View style={{flex:1}}>
         {/* <TextInput 
           style={this.styles.TextInputStyleClass}
@@ -172,14 +276,22 @@ class LanguageList extends Component {
         <FlatList
           data={this.state.languages}
           extraData={this.state}
-          renderItem={({item, index, separators}) =><ExpandableItemComponent
+          renderItem={({item, index, separators}) =>
+          <ExpandableItemComponent
+            // key={item}
             onClickFunction={this.updateLayout.bind(this, index)}
             item={item}
             DownloadBible = {this.DownloadBible}
-            navigateTo = {this.navigateTo}
-            // contentType = {this.props.navigation.state.params.contentType}
-            styles={this.styles}
-          />}
+            goToBible = {this.navigateTo}
+            startDownload ={this.state.startDownload}
+            colorFile={this.state.colorFile}
+            sizeFile={this.state.sizeFile}
+            isLoading = {this.state.isLoading}
+            index = {this.state.index}
+            languageName = {this.state.languageName}
+            // setModalVisible={this.setModalVisible}
+          />
+          }
 
         />
       </ScrollView>
@@ -206,7 +318,7 @@ const mapStateToProps = state =>{
 
 const mapDispatchToProps = dispatch =>{
   return {
-    updateVersion: (language,langaugeCode,version,sourceId,downloaded)=>dispatch(updateVersion(language,langaugeCode,version,sourceId,downloaded)),
+    updateVersion: (value)=>dispatch(updateVersion(value)),
     updateInfographics:(fileName)=>dispatch(updateInfographics(fileName)),
   }
 }

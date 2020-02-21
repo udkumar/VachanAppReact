@@ -226,10 +226,12 @@ class DbHelper {
 	
 
 	async updateBookmarkInBook(langName,verCode,bId,cNum, isBookmark) {
+		console.log(" langName,verCode,bId,cNum, isBookmark) ",langName,verCode,bId,cNum, isBookmark)
 		let realm = await this.getRealm();
 		if(realm){
 			realm.write(() => {
 			let chapter = realm.objects('BookmarksListModel').filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" &&  bookId == "' + bId + '" && chapterNumber == "'+cNum+'"')
+			console.log("book mark chappter ",chapter)
 			if(isBookmark){
 				if(chapter==cNum){
 					return

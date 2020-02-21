@@ -44,7 +44,7 @@ class HighLights extends Component {
       versionCode:this.props.versionCode,
       bookId:this.props.bookId
     }
-    this.styles = highlightstyle(props.colorFile, props.sizeFile);  
+    this.styles = highlightstyle(this.props.colorFile, this.props.sizeFile);  
     
   }
   async getHighlights(){
@@ -108,8 +108,13 @@ class HighLights extends Component {
     );
   }
 }
+
 const mapStateToProps = state =>{
   return{
+    languageName: state.updateVersion.language,
+    // languageCode:state.updateVersion.languageCode,
+    versionCode:state.updateVersion.versionCode,
+    bookId:state.updateVersion.bookId,
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
   }

@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-community/async-storage';
+
 export default class AsyncStorageUtil {
 
     static async getAllItems (paramKeys) {

@@ -142,7 +142,7 @@ var moment = require('moment');
           this.state.isLoading ? <ActivityIndicator animate = {true}/> : 
             data.list.map((item, index) => 
             <TouchableOpacity onPress={()=>this.props.navigation.navigate("Bible",{bookId: item.bookId, 
-              bookName: getBookNameFromMapping(item.bookId), chapterNumber: item.chapterNumber })}>
+              bookName: getBookNameFromMapping(item.bookId,this.props.languageName), chapterNumber: item.chapterNumber })}>
               <Text style={this.styles.contentText}>{getBookNameFromMapping(item.bookId,this.props.languageName)} : {item.chapterNumber} </Text>
             </TouchableOpacity>
             )

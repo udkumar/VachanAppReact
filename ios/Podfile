@@ -31,6 +31,10 @@ target 'AutographaGo_ReactNative' do
 
     pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
 
+    pod 'react-native-orientation', :path => '../node_modules/react-native-orientation'
+
+    pod 'RNScreens', :path => '../node_modules/react-native-screens'
+
   end
 
   target 'AutographaGo_ReactNativeTests' do

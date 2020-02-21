@@ -36,9 +36,9 @@ const API_BASE_URL = 'https://api.vachanonline.net/v1'
       }
       commentary.push({languageName:language,languageCode:languageCode,versionModels:versions})
     }
-
     yield put(allContentSuccess([{contentType:"bible",content:bible},{contentType:"commentary",content:commentary}]))
     } catch (e) {
+      console.log("commentary error ",error)
     yield put(allContentFailure(e))
     }
   }

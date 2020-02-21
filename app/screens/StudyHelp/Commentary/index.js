@@ -13,6 +13,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import {connect} from 'react-redux'
 import {Card,CardItem,Content,Body,Header,Container, Right,Left,Title,Button} from 'native-base'
 import{fetchCommentaryContent} from '../../../store/action/index'
+import {getBookNameFromMapping} from '../../../utils/UtilFunctions';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import startEndIndex from '../../../assets/commentary_mapping'
 import { NavigationEvents } from 'react-navigation';
@@ -30,10 +31,14 @@ class Commentary extends Component {
         }
     }
   componentDidMount(){
-    this.props.fetchCommentaryContent({contentSourceId:this.props.contentSourceId,bookId:this.props.bookId,chapter:this.props.chapterNumber})
+    this.props.fetchCommentaryContent({parallelContentSourceId:this.props.parallelContentSourceId,bookId:this.props.bookId,chapter:this.props.chapterNumber})
+  }
+  componentDidUpdate(prevProps,prevState){
+    if(prevProps.bookId !== this.props.bookId || this.props.chapterNumber !==this.props.currentVisibleChapter){
+      this.props.fetchCommentaryContent({parallelContentSourceId:this.props.parallelContentSourceId,bookId:this.props.bookId,chapter:this.props.chapterNumber})
+    }
   }
   render(){
-
     var convertToText = (response) => {
       let exRegex = /<b>(.*?)<\/b>/g
     //replaced string with bld because on spliting with '<b>' tag ,all text get mixed not able to identify where to apply the bold style 
@@ -57,11 +62,11 @@ class Commentary extends Component {
       <View>
         <Header style={{height:40,borderLeftWidth:0.5,borderLeftColor:'#fff'}} >
           <Body>
-            <Title style={{fontSize:16}}>{this.props.contentVersionCode}</Title>
+            <Title style={{fontSize:16}}>{this.props.parallelContentVersionCode}</Title>
           </Body>
           <Right>
           <Button transparent onPress={()=>this.props.toggleParallelView(false)}>
-            <Icon name='close' color={'#fff'} size={20}/>
+            <Icon name='cancel' color={'#fff'} size={20}/>
           </Button>
           </Right>
         </Header>
@@ -79,7 +84,7 @@ class Commentary extends Component {
     :
     <Card>
     <CardItem header bordered>
-      <Text>{this.props.bookName} {this.props.commentaryContent.chapterId}</Text>
+      <Text>{getBookNameFromMapping(this.props.bookId,this.props.parallelContentLanguage)} {  } {this.props.commentaryContent.chapter}</Text>
     </CardItem>
     {this.props.commentaryContent.bookIntro  == '' ? null :
     <CardItem header bordered>
@@ -91,11 +96,8 @@ class Commentary extends Component {
         data={this.props.commentaryContent.commentaries}
         renderItem={({ item }) => (
           <View style={{paddingBottom:4}}>
-          {/* <CardItem bordered> */}
-          <Body>
               {item.verse ? <Text style={{fontWeight:'bold'}}>Verse Number : {item.verse}</Text> :null}  
           <Text>{convertToText(item.text)}</Text>
-          </Body>
           </View>
         )}
         // keyExtractor={item => item.bookId}
@@ -150,9 +152,11 @@ const mapStateToProps = state =>{
 
     contentType:state.updateVersion.contentType,
 
-    contentSourceId:state.updateVersion.contentSourceId,
-    contentVersionCode:state.updateVersion.contentVersionCode,
-    commentaryContent:state.commentaryFetch.commentaryContent
+    parallelContentSourceId:state.updateVersion.parallelContentSourceId,
+    parallelContentVersionCode:state.updateVersion.parallelContentVersionCode,
+    parallelContentLanguage:state.updateVersion.parallelContentLanguage,
+    commentaryContent:state.commentaryFetch.commentaryContent,
+    parallelContentLanguageCode:state.updateVersion.parallelContentLanguageCode
   }
 
 }

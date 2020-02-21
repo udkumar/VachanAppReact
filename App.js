@@ -121,9 +121,9 @@ class App extends Component {
       // })
 
     }
-    componentDidUpdate(prevProps){
-      console.log("prevProps",prevProps)
-    }
+    // componentDidUpdate(prevProps){
+    //   console.log("prevProps",prevProps)
+    // }
     render() {
         return <AppNavigator  />
     }

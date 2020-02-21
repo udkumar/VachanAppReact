@@ -10,6 +10,7 @@ import VerseView from '../VerseView'
 // import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 // import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
 import Player from '../Navigate/Audio/Player';
+import Spinner from 'react-native-loading-spinner-overlay';
 // import {getResultText} from '../../utils/UtilFunctions';
 import {getBookNameFromMapping,getBookChaptersFromMapping} from '../../../utils/UtilFunctions';
 import {selectedChapter,fetchVersionLanguage,fetchVersionContent,fetchAudioUrl,fetchParallelBible} from '../../../store/action/'
@@ -21,32 +22,43 @@ class BibleChapter extends Component {
         super(props)
         this.styles = styles(this.props.colorFile, this.props.sizeFile);    
         this.state={
-            currentVisibleChapter:this.props.currentVisibleChapter
+            currentVisibleChapter:this.props.currentVisibleChapter,
+            id:this.props.id
         }
     }
     queryParallelBible =(val)=>{
         this.setState({currentVisibleChapter:val != null ? this.state.currentVisibleChapter + val:this.props.currentVisibleChapter},()=>{
-        this.props.fetchParallelBible({isDownloaded:this.props.downloaded,sourceId:this.props.contentSourceId,language:this.props.contentLanguageCode,version:this.props.contentVersionCode,bookId:this.props.bookId,chapter:val != null ? this.state.currentVisibleChapter + val: this.props.chapterNumber})
-            
+        this.props.fetchParallelBible({isDownloaded:this.props.downloaded,sourceId:this.props.parallelContentSourceId,language:this.props.parallelContentLanguage,version:this.props.parallelContentVersionCode,bookId:this.props.bookId,chapter:val != null ? this.state.currentVisibleChapter + val: this.props.chapterNumber})
         })
     }
     componentDidMount(){
         this.queryParallelBible(null)
     }
+    componentDidUpdate(prevProps,prevState){
+    if(prevProps.id !== this.state.id || prevState.currentVisibleChapter !==this.state.currentVisibleChapter){
+        this.props.fetchParallelBible({isDownloaded:this.props.downloaded,sourceId:this.props.parallelContentSourceId,language:this.props.parallelContentLanguage,version:this.props.parallelContentVersionCode,bookId:this.props.bookId,chapter: this.props.chapterNumber})
+    }
+    }
     render(){
-        console.log(" PARALLEL BIBLE ",this.props.contentLanguage)
+        console.log(" PARALLEL BIBLE ",)
         return(
-            <View  style={{borderLeftWidth: 1,  borderLeftColor: '#eee',}}>
+            <View>
+                {this.props.isLoading &&
+                    <Spinner
+                    visible={true}
+                    textContent={'Loading...'}
+                    //  textStyle={styles.spinnerTextStyle}
+                />}
                 <Header style={{height:40, borderLeftWidth:0.2, borderLeftColor:'#fff'}}>
                 <Left> 
                     <Button transparent onPress={()=>{this.props.navigation.navigate("SelectionTab")}}>
-                        <Title style={{fontSize:16}}>{getBookNameFromMapping(this.props.bookId,this.props.contentLanguage).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.contentLanguage).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language)} {this.state.currentVisibleChapter}</Title>
+                        <Title style={{fontSize:16}}>{getBookNameFromMapping(this.props.bookId,this.props.parallelContentLanguage).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.parallelContentLanguage).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.parallelContentLanguage)} {this.state.currentVisibleChapter}</Title>
                         <Icon name="arrow-drop-down" color="#fff" size={20}/>
                     </Button>
                 </Left> 
                 <Right>
                 <Button transparent onPress={()=>this.props.toggleParallelView(false)}>
-                    <Icon name='close' color={'#fff'} size={20}/>
+                    <Icon name='cancel' color={'#fff'} size={20}/>
                 </Button>
                 </Right>
                 </Header>
@@ -70,7 +82,7 @@ class BibleChapter extends Component {
                 </View>
                     
                 </ScrollView>
-                <View style={{justifyContent:(this.state.currentVisibleChapter != 1 &&  this.state.currentVisibleChapter != this.props.totalChapters) ? 'center' : 'space-around',alignItems:'center'}}>
+                {/* <View style={{justifyContent:(this.state.currentVisibleChapter != 1 &&  this.state.currentVisibleChapter != this.props.totalChapters) ? 'center' : 'space-around',alignItems:'center'}}>
                     {
                     this.state.currentVisibleChapter == 1 ? null :
                     <View style={this.styles.bottomBarPrevView}>
@@ -89,7 +101,7 @@ class BibleChapter extends Component {
                         />
                     </View>
                     }
-                </View>
+                </View> */}
             </View>
         )
     }
@@ -104,7 +116,6 @@ const mapStateToProps = state =>{
         versionCode:state.updateVersion.versionCode,
         sourceId:state.updateVersion.sourceId,
         downloaded:state.updateVersion.downloaded,
-        contentType:state.updateVersion.contentType,
     
         chapterNumber:state.updateVersion.chapterNumber,
         bookName:state.updateVersion.bookName,
@@ -113,20 +124,18 @@ const mapStateToProps = state =>{
     
         sizeFile:state.updateStyling.sizeFile,
         colorFile:state.updateStyling.colorFile,
-        close:state.updateSplitScreen.close,
+        isLoading:state.versionFetch.loading,
+
   
         fetchedData:state.versionFetch,
         totalVerses:state.versionFetch.totalVerses,
   
         audioURL:state.audioFetch.url,
-        availableCommentaries:state.commentaryFetch.availableCommentaries,
-        commentary:state.commentaryFetch.commentaryContent,
-        contentType:state.updateVersion.contentType,
-        contentSourceId:state.updateVersion.contentSourceId,
 
-        contentVersionCode:state.updateVersion.contentVersionCode,
-        contentLanguageCode:state.updateVersion.contentLanguageCode,
-        contentLanguage:state.updateVersion.contentLanguage,
+        parallelContentSourceId:state.updateVersion.parallelContentSourceId,
+        parallelContentVersionCode:state.updateVersion.parallelContentVersionCode,
+        parallelContentLanguage:state.updateVersion.parallelContentLanguage,
+        parallelContentLanguageCode:state.updateVersion.parallelContentLanguageCode,
 
         parallelBible:state.parallel.parallelBible
     }

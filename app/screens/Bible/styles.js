@@ -3,8 +3,8 @@ import { Icon } from 'native-base';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-export const styles =(colorFile, sizeFile, fontfamily) =>{
-    console.log("fonts in bible page .................................>>>>>   ",fontfamily)
+export const styles =(colorFile, sizeFile) =>{
+    // console.log("color file ",colorFile,sizeFile)
     return StyleSheet.create({
     container:{
         flex:1,
@@ -68,7 +68,7 @@ export const styles =(colorFile, sizeFile, fontfamily) =>{
         
     },
     VerseText:{
-        fontFamily:fontfamily, 
+        // fontFamily:fontfamily, 
         fontWeight:'100'
     },
     bottomBarPrevView:{
@@ -79,8 +79,6 @@ export const styles =(colorFile, sizeFile, fontfamily) =>{
         left:0,
         width: 56, 
         height: 56, 
-       
-        // backgroundColor: colorFile.backgroundColor,
         backgroundColor:colorFile.semiTransparentBackground,
         justifyContent:'center'
     },
@@ -129,24 +127,17 @@ export const styles =(colorFile, sizeFile, fontfamily) =>{
     verseTextSelectedHighlighted:{
         backgroundColor:colorFile.highlightColor,
         textDecorationLine: 'underline',
-        color:colorFile.textColor
-        
     },
     verseTextNotSelectedNotHighlighted:{
-        color:colorFile.textColor
-
 
     },
     verseTextNotSelectedHighlighted:{
-        backgroundColor:colorFile.highlightColor,
-        color:colorFile.textColor
-
+        backgroundColor:colorFile.highlightColor
     },
     verseTextSelectedNotHighlighted:{
         textDecorationLine: 'underline',
-        color:colorFile.textColor
-
     },
+    
     addToSharefooterComponent:{
 
     },

@@ -19,7 +19,7 @@
   function* fetchCommentaryContent(params){
     try {
     const payload = params.payload 
-        const content = API_BASE_URL +"/"+payload.contentSourceId+"/"+payload.bookId+"/"+payload.chapter
+        const content = API_BASE_URL +"/"+payload.parallelContentSourceId+"/"+payload.bookId+"/"+payload.chapter
         const res = yield call(fetchApi,content)
         yield put(commentaryContentSuccess(res))
     } catch (e) {

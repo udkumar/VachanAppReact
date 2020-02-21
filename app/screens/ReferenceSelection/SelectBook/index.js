@@ -18,6 +18,7 @@ import { SelectBookPageStyle } from './styles.js';
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 import {AsyncStorageConstants} from '../../../utils/AsyncStorageConstants'
+import AsyncStorageUtil from '../../../utils/AsyncStorageUtil'
 
 import APIFetch from '../../../utils/APIFetch'
 import {getBookNameFromMapping,getBookSectionFromMapping,getBookNumberFromMapping,getBookChaptersFromMapping} from '../../../utils/UtilFunctions';
@@ -26,10 +27,6 @@ import {connect} from 'react-redux'
 import {selectedBook,addBookToNote,fetchVersionBooks} from '../../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
 
-
-
-
-// import { changeBook } from '../../../store/action/referenceUpdate.js';
 
  class SelectBook extends Component {
   constructor(props){
@@ -40,40 +37,8 @@ import Spinner from 'react-native-loading-spinner-overlay';
       colorMode:this.props.colorMode,
       activeTab:true,
       bookList: [],
-      // OTSize:this.getOTSize(),
-      OTSize: function(){
-          var count = 0;
-          if(props.books.length == 0){
-          return 0
-          }else{
-            for(var i=0 ; i<props.books.length ; i++){
-              if(props.books[i].bookNumber <= 39){
-                count ++;
-              }
-              else{
-                break;
-              }
-            }
-          }
-   
-    return count 
-    },
-      NTSize:function(){
-        var count = 0;
-        if(props.books.length == 0 ){
-          return 0
-        }else{
-          for(var i=props.books.length-1 ; i>=0 ; i--){
-            if(props.books[i].bookNumber >= 40){
-              count++
-            }
-            else{
-              break;
-            }
-          }
-        }
-        return count 
-      },
+      NTSize:0,
+      OTSize:0,
       isLoading:false
     }
     this.styles = SelectBookPageStyle(this.state.colorFile, this.state.sizeFile);
@@ -86,7 +51,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
   toggleButton(value){
     this.setState({activeTab:value})
     if(value == false){
-      this.flatlistRef.scrollToIndex({index:this.state.OTSize(),viewPosition:0,animated: false,viewOffset:0})
+      this.flatlistRef.scrollToIndex({index:this.state.OTSize,viewPosition:0,animated: false,viewOffset:0})
     }
     else{
       this.flatlistRef.scrollToIndex({index:0,viewPosition:0,animated: false,viewOffset:0})
@@ -106,7 +71,52 @@ import Spinner from 'react-native-loading-spinner-overlay';
   navigateToChapter(item){
     this.props.selectedBook(item.bookId,item.bookName,item.numOfChapters)
     this.props.addBookToNote(item.bookId,item.bookName,item.numOfChapters)
+    AsyncStorageUtil.setAllItems([
+      [AsyncStorageConstants.Keys.BookId,item.bookId],
+      [AsyncStorageConstants.Keys.BookName,item.bookName]
+      
+    ]); 
     this.props.navigation.navigate('Chapters')
+  } 
+
+  getOTSize=()=>{
+    var count = 0;
+    if(this.props.books.length == 0){
+      this.setState({OTSize:0})
+    }else{
+      for(var i=0 ; i<this.props.books.length ; i++){
+        if(this.props.books[i].bookNumber <= 39){
+          count ++;
+        }
+        else{
+          break;
+        }
+      }
+  }
+  this.setState({OTSize:count})
+  }
+
+getNTSize=()=>{
+  var count = 0;
+  if(this.props.books.length == 0 ){
+    this.setState({NTSize:0})
+  }else{
+    for(var i=this.props.books.length-1 ; i>=0 ; i--){
+      if(this.props.books[i].bookNumber >= 40){
+        count++
+      }
+      else{
+        break;
+      }
+    }
+  }
+  this.setState({NTSize:count})
+}
+  componentDidUpdate(prevProps,prevState){
+    if(prevProps.books !==this.props.books ){
+      this.getOTSize()
+      this.getNTSize()
+    }
   }
 renderItem = ({item, index})=> {
     return (
@@ -131,46 +141,9 @@ renderItem = ({item, index})=> {
     );
   }
 
-  getOTSize(){
-    var count = 0;
-    if(this.props.books.length == 0){
-     return
-    }else{
-      for(var i=0 ; i<this.props.books.length ; i++){
-        if(this.props.books[i].bookNumber <= 39){
-          count ++;
-        }
-        else{
-          break;
-        }
-      }
-    }
-   
-    return count 
-  }
-
-  getNTSize(){
-
-    var count = 0;
-    if(this.props.books.length == 0 ){
-      return
-    }else{
-      for(var i=this.props.books.length-1 ; i>=0 ; i--){
-        if(this.props.books[i].bookNumber >= 40){
-          count++
-        }
-        else{
-          break;
-        }
-      }
-    }
-    
-    return count 
-  }
-
   onViewableItemsChanged = ({ viewableItems, changed }) => {
       if (viewableItems.length > 0) {
-        if (viewableItems[0].index < this.state.OTSize()) {
+        if (viewableItems[0].index < this.state.OTSize) {
           // toggel to OT
           this.setState({activeTab:true})
         } else {
@@ -187,7 +160,7 @@ renderItem = ({item, index})=> {
     let inactiveBgColor =  this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#fff' : '#3F51B5'
     return (
       <View style={this.styles.container}>
-      {this.state.isLoading ? 
+      {this.props.isLoading ? 
          <Spinner
          visible={true}
          textContent={'Loading...'}
@@ -197,13 +170,13 @@ renderItem = ({item, index})=> {
         <View style={this.styles.bookNameContainer}>
         <Segment>
               {
-                this.state.OTSize() > 0 
+                this.state.OTSize > 0 
               ?
               <Button 
                 active={this.state.activeTab} 
                 style={[{
                   backgroundColor: this.state.activeTab ? activeBgColor : inactiveBgColor,
-                  width: this.state.NTSize() == 0 ? width : width*1/2,
+                  width: this.state.NTSize == 0 ? width : width*1/2,
                   },this.styles.segmentButton]} 
                 onPress={this.toggleButton.bind(this,true)
                 }
@@ -216,14 +189,14 @@ renderItem = ({item, index})=> {
               </Button>
               : null}
               {
-                this.state.NTSize() > 0 
+                this.state.NTSize > 0 
 
               ?
               <Button 
                 active={!this.state.activeTab} 
                 style={[{
                   backgroundColor: !this.state.activeTab ? activeBgColor : inactiveBgColor,
-                  width: this.state.OTSize() == 0 ? width : width*1/2,                  
+                  width: this.state.OTSize == 0 ? width : width*1/2,                  
                 },this.styles.segmentButton]} 
                 onPress={this.toggleButton.bind(this,false)}>
                 <Text 
@@ -270,7 +243,8 @@ const mapStateToProps = state =>{
     books:state.versionFetch.data,
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
-    colorMode:state.updateStyling.colorMode
+    colorMode:state.updateStyling.colorMode,
+    isLoading:state.versionFetch.loading
   }
 }
 
