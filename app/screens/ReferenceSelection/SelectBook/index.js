@@ -24,7 +24,7 @@ import APIFetch from '../../../utils/APIFetch'
 import {getBookNameFromMapping,getBookSectionFromMapping,getBookNumberFromMapping,getBookChaptersFromMapping} from '../../../utils/UtilFunctions';
 import DbQueries from '../../../utils/dbQueries.js';
 import {connect} from 'react-redux'
-import {selectedBook,addBookToNote,fetchVersionBooks} from '../../../store/action/'
+import {selectedBook,addBookToNote,fetchVersionBooks,parallelSelectedBook} from '../../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
 
 
@@ -42,7 +42,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
       isLoading:false
     }
     this.styles = SelectBookPageStyle(this.state.colorFile, this.state.sizeFile);
-    this.navigateToChapter = this.navigateToChapter.bind(this)
+    this.navigateTo = this.navigateTo.bind(this)
     this.viewabilityConfig = {
         itemVisiblePercentThreshold: 100,
         waitForInteraction: true
@@ -57,6 +57,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
       this.flatlistRef.scrollToIndex({index:0,viewPosition:0,animated: false,viewOffset:0})
     }
   }
+
   getItemLayout = (data, index) => (
     { length: 48, offset: 48 * index, index }
   )
@@ -65,17 +66,27 @@ import Spinner from 'react-native-loading-spinner-overlay';
   this.getBooks()  
   }
   async getBooks(){
-    this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,isDownloaded:this.props.downloaded,sourceId:this.props.sourceId})
-  }
+    console.log(" ")
+    if(!this.props.screenProps.parallelBible || this.props.screenProps.parallelBible==null){
+      this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,isDownloaded:this.props.downloaded,sourceId:this.props.sourceId})
+    }
+    else{
+      this.props.fetchVersionBooks({language:this.props.parallelContentLanguage,versionCode:this.props.parallelContentVersionCode,isDownloaded:this.props.parallelContentDownloaded,sourceId:this.props.parallelContentSourceId})
 
-  navigateToChapter(item){
-    this.props.selectedBook(item.bookId,item.bookName,item.numOfChapters)
-    this.props.addBookToNote(item.bookId,item.bookName,item.numOfChapters)
-    AsyncStorageUtil.setAllItems([
-      [AsyncStorageConstants.Keys.BookId,item.bookId],
-      [AsyncStorageConstants.Keys.BookName,item.bookName]
-      
-    ]); 
+    }
+  }
+  navigateTo(item){
+    if(!this.props.screenProps.parallelBible || this.props.screenProps.parallelBible==null){
+      this.props.selectedBook(item.bookId,item.bookName,item.numOfChapters)
+      this.props.addBookToNote(item.bookId,item.bookName,item.numOfChapters)
+      AsyncStorageUtil.setAllItems([
+        [AsyncStorageConstants.Keys.BookId,item.bookId],
+        [AsyncStorageConstants.Keys.BookName,item.bookName]
+      ]); 
+    }
+    else{
+      this.props.parallelSelectedBook(item.bookId,item.bookName,item.numOfChapters)
+    }
     this.props.navigation.navigate('Chapters')
   } 
 
@@ -112,16 +123,16 @@ getNTSize=()=>{
   }
   this.setState({NTSize:count})
 }
-  componentDidUpdate(prevProps,prevState){
-    if(prevProps.books !==this.props.books ){
-      this.getOTSize()
-      this.getNTSize()
-    }
+componentDidUpdate(prevProps,prevState){
+  if(prevProps.books !==this.props.books ){
+    this.getOTSize()
+    this.getNTSize()
   }
+}
 renderItem = ({item, index})=> {
     return (
       <TouchableOpacity 
-          onPress={()=>this.navigateToChapter(item)}>
+          onPress={()=>this.navigateTo(item)}>
           <View 
             style={this.styles.bookList}>
             <Text
@@ -237,14 +248,18 @@ const mapStateToProps = state =>{
     versionCode:state.updateVersion.versionCode,
     sourceId:state.updateVersion.sourceId,
     downloaded:state.updateVersion.downloaded,
-    
-    bookId:state.updateVersion.bookId,
-    bookName:state.updateVersion.bookName,
+
+    parallelContentSourceId:state.updateVersion.parallelContentSourceId,
+    parallelContentVersionCode:state.updateVersion.parallelContentVersionCode,
+    parallelContentLanguage:state.updateVersion.parallelContentLanguage,
+    parallelContentDownloaded:state.updateVersion.parallelContentDownloaded,
+
     books:state.versionFetch.data,
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
     colorMode:state.updateStyling.colorMode,
-    isLoading:state.versionFetch.loading
+    isLoading:state.versionFetch.loading,
+
   }
 }
 
@@ -253,6 +268,9 @@ const mapDispatchToProps = dispatch =>{
     selectedBook:(bookId,bookName,totalChapters) =>dispatch(selectedBook(bookId,bookName,totalChapters)),
     addBookToNote:(bookId,bookName,totalChapters)=>dispatch(addBookToNote(bookId,bookName,totalChapters)),
     fetchVersionBooks:(payload)=>dispatch(fetchVersionBooks(payload)),
+    parallelSelectedBook:(bookId,bookName,totalChapters) =>dispatch(parallelSelectedBook(bookId,bookName,totalChapters)),
+    
+    
   }
 }
 export  default connect(mapStateToProps,mapDispatchToProps)(SelectBook)

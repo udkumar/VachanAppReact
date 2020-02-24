@@ -11,7 +11,7 @@ import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants';
 import { styles } from './styles.js';
 import {connect} from 'react-redux';
-import {updateVersion,updateInfographics,} from '../../store/action/'
+import {updateVersion,updateInfographics,fetchAllContent} from '../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
 import {API_BASE_URL} from '../../utils/APIConstant'
 import { State } from 'react-native-gesture-handler';
@@ -67,7 +67,7 @@ class ExpandableItemComponent extends Component {
           {/*Content under the header of the Expandable List Item*/}
           {this.props.item.versionModels.map((item, index, key) => (
               <List>
-                <ListItem button={true} onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId, item.downloaded  )}}>
+                <ListItem button={true} onPress={()=>{this.props.goToBible(this.props.item.languageName,this.props.item.languageCode,item.versionCode,item.sourceId, item.downloaded  )}}>
                 <Left>
                 <View style={{alignSelf:'center',marginLeft:12}}>
                   <Text style={[this.styles.text,{fontWeight:'bold'}]} >{item.versionCode} </Text>
@@ -77,7 +77,7 @@ class ExpandableItemComponent extends Component {
                 <Right>
                 {
                   item.downloaded == true ? 
-                  <Icon style={[this.styles.iconStyle,{marginRight:8}]} name="check" size={24}  onPress={()=>{this.props.goToBible(this.props.item.languageName,item.versionCode,item.sourceId,item.downloaded)}}
+                  <Icon style={[this.styles.iconStyle,{marginRight:8}]} name="check" size={24}  onPress={()=>{this.props.goToBible(this.props.item.languageName,this.props.item.languageCode,item.versionCode,item.sourceId, item.downloaded )}}
                   />
                 :
                   <Icon  style={[this.styles.iconStyle,{marginRight:12}]} name="file-download" size={24} onPress={()=>{this.props.DownloadBible(this.props.item.languageName,item.versionCode,index,item.sourceId)}}/>
@@ -135,6 +135,13 @@ class LanguageList extends Component {
     async componentDidMount(){
       this.fetchLanguages()  
     }
+    componentDidUpdate(prevProps,prevState){
+      if(prevState.languages !==this.state.languages){
+        this.setState({
+          languages: this.props.bibleLanguages[0].content
+        })
+      }
+    }
     async fetchLanguages(){
       var lanVer = []
       var oneDay = 24*60*60*1000; 
@@ -145,10 +152,12 @@ class LanguageList extends Component {
       for(var i =0 ; i<languageList.length;i++){
         lanVer.push(languageList[i])
       }
-      if(languageList.length == 0){
+      if(languageList.length == 0 && this.props.bibleLanguages[0].content.length > 0 ){
         DbQueries.addLangaugeList(this.props.bibleLanguages[0].content)
         lanVer = this.props.bibleLanguages[0].content
-
+      }
+      else{
+        this.props.fetchAllContent()
       }
       this.setState({
         languages: lanVer,
@@ -226,29 +235,20 @@ class LanguageList extends Component {
  
     navigateTo = (langName,langCode,verCode,sourceId,downloaded)=>{
       console.log("downloaded ",downloaded)
-      // const url = BASE_URL+
-      // if(this.props.navigation.state.params.contentType == 'bible'){
         console.log("navigate back ",langName,langCode,verCode,sourceId,downloaded)
+        this.props.updateVersion({language:langName,languageCode:langCode,versionCode:verCode,sourceId:sourceId,downloaded:downloaded,bookId:this.props.bookId,chapterNumber:this.props.chapterNumber})
         AsyncStorageUtil.setAllItems([
           [AsyncStorageConstants.Keys.SourceId, JSON.stringify(sourceId)],
           [AsyncStorageConstants.Keys.LanguageName, langName],
           [AsyncStorageConstants.Keys.LanguageCode, langCode],
           [AsyncStorageConstants.Keys.VersionCode, verCode],
-
           [AsyncStorageConstants.Keys.Downloaded, JSON.stringify(downloaded)]
         ]); 
-        this.props.updateVersion({language:langName,languageCode:langCode,versionCode:verCode,sourceId:sourceId,downloaded:downloaded})
-        this.props.navigation.state.params.callBackForUpdateBook(null)
         this.props.navigation.goBack()
-        
-        // this.props.updateVersion(langName,langCode,verCode,sourceId,downloaded)
-        // this.props.navigation.state.params.callBackForUpdateBook(null)
-      // }
-      this.props.navigation.goBack()
-      // this.props.updateInfographics(file ? file : this.props.fileName)
-      // this.props.navigation.state.params.getInfoFileName(null)
     }
-
+    componentWillUnmount(){
+      this.props.navigation.state.params.callBackForUpdateBook(null)
+    }
     render(){
       return (
         <View style={this.styles.MainContainer}>
@@ -320,6 +320,7 @@ const mapDispatchToProps = dispatch =>{
   return {
     updateVersion: (value)=>dispatch(updateVersion(value)),
     updateInfographics:(fileName)=>dispatch(updateInfographics(fileName)),
+    fetchAllContent:()=>dispatch(fetchAllContent()),
   }
 }
 export default connect(mapStateToProps,mapDispatchToProps)(LanguageList)

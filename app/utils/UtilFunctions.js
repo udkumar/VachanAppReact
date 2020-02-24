@@ -10,13 +10,20 @@ export function getBookNameFromMapping(id,language) {
                 var bookId =  id.toUpperCase()
                 if (key == bookId) {
                     var val = obj[key];
+                    var matchedValue = ''
                     for(var key2 in val.book_name){
                         var lang =  language.toLowerCase()
                         if(lang == key2){
-                            return val.book_name[key2]
+                            console.log(" language matched ",val.book_name[key2])
+                            matchedValue = val.book_name[key2]
                         }
                     }
-                    
+                    if(matchedValue !== ''){
+                        return matchedValue
+                    }
+                    else{
+                        return val.book_name['english']
+                    }
                 }
             }
         }

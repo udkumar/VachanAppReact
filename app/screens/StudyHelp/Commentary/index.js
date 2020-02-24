@@ -30,14 +30,18 @@ class Commentary extends Component {
           commentary: []
         }
     }
+  componentWillMount(){
+      this.props.fetchCommentaryContent({parallelContentSourceId:this.props.parallelContentSourceId,bookId:this.props.bookId,chapter:this.props.chapterNumber})
+    }
   componentDidMount(){
     this.props.fetchCommentaryContent({parallelContentSourceId:this.props.parallelContentSourceId,bookId:this.props.bookId,chapter:this.props.chapterNumber})
   }
-  componentDidUpdate(prevProps,prevState){
-    if(prevProps.bookId !== this.props.bookId || this.props.chapterNumber !==this.props.currentVisibleChapter){
-      this.props.fetchCommentaryContent({parallelContentSourceId:this.props.parallelContentSourceId,bookId:this.props.bookId,chapter:this.props.chapterNumber})
-    }
-  }
+  // componentDidUpdate(prevProps,prevState){
+  //   if(prevProps.bookId !== this.props.bookId || this.props.chapterNumber !==this.props.currentVisibleChapter){
+  //     this.props.fetchCommentaryContent({parallelContentSourceId:this.props.parallelContentSourceId,bookId:this.props.bookId,chapter:this.props.chapterNumber})
+  //   }
+  // }
+
   render(){
     var convertToText = (response) => {
       let exRegex = /<b>(.*?)<\/b>/g

@@ -58,3 +58,7 @@ export const ALL_LANGUAGE_FAILURE = 'all_language_failure'
 export const FETCH_PARALLEL_BIBLE = 'fetch_parallel_bible'; 
 export const PARALLEL_BIBLE_SUCCESS = 'parallel_bible_success'; 
 export const PARALLEL_BIBLE_FAILURE = 'parallel_bible_failure';
+
+export const PARALLEL_SELECTED_BOOK = 'parallel_selected_book';
+export const PARALLEL_SELECTED_CHAPTER ='parallel_selected_chapter';
+export const PARALLEL_SELECTED_VERSE = 'parallel_selected_verse';

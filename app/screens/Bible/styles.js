@@ -71,25 +71,46 @@ export const styles =(colorFile, sizeFile) =>{
         // fontFamily:fontfamily, 
         fontWeight:'100'
     },
-    bottomBarPrevView:{
-        borderRadius: 32, 
-        margin:8, 
+    bottomBarParallelPrevView:{
         position:'absolute', 
-        bottom:20, 
+        backgroundColor:colorFile.semiTransparentBackground,
+        justifyContent:'center',
+        height:40,
+        width:40,
+        borderRadius: 28,
+        bottom:48,
+        left:8
+    },
+    bottomBarPrevView:{
+        height:56,
+        width:56,
+        borderRadius:32,
+        margin:8,
+        bottom:20,
         left:0,
-        width: 56, 
-        height: 56, 
+        position:'absolute', 
         backgroundColor:colorFile.semiTransparentBackground,
         justifyContent:'center'
     },
-    bottomBarNextView:{
-        borderRadius: 32, 
-        margin:8, 
+    bottomBarNextParallelView:{
         position:'absolute', 
-        bottom:20, 
+        backgroundColor:colorFile.semiTransparentBackground,
+        justifyContent:'center',
+        height:40,
+        width:40,
+        borderRadius: 28,
+        bottom:48,
+        right:8
+    },
+
+    bottomBarNextView:{
+        height:56,
+        width:56,
+        borderRadius:32,
+        margin:8,
+        bottom:20,
         right:0,
-        width: 56, 
-        height: 56, 
+        position:'absolute', 
         backgroundColor:colorFile.semiTransparentBackground,
         justifyContent:'center'
     },
@@ -98,7 +119,7 @@ export const styles =(colorFile, sizeFile) =>{
         margin:8, 
         position:'absolute', 
         bottom:20, 
-        // left:0,
+        left:0,
         // width: 56, 
         // height: 56, 
        
@@ -117,7 +138,7 @@ export const styles =(colorFile, sizeFile) =>{
     },
     verseNumber:{
         fontSize:sizeFile.contentText,
-        color:colorFile.textColor
+        // color:colorFile.textColor
     },
     verseChapterNumber:{
         fontSize:sizeFile.titleText,

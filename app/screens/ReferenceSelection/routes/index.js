@@ -9,7 +9,7 @@ const SelectionTabStack = createMaterialTopTabNavigator(
         Books: {
             screen: SelectBook,
             navigationOptions: {
-                tabBarLabel: 'SelectBook',
+                tabBarLabel: 'Select Book',
                 // tabBarIcon: ({ tintColor }) => <MaterialIcons name='account-circle' size={26} style={{ color: tintColor }} />
               },
         },

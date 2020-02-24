@@ -167,7 +167,7 @@ class Setting extends Component {
             </List>
 
             <List>
-              <TouchableOpacity onPress={()=>this.props.navigation.navigate('BackupRestore')}>              
+              <TouchableOpacity onPress={()=>{this.props.navigation.navigate('BackupRestore')}}>              
                 <ListItem style={this.styles.cardItemStyle}>
                   <Icon name='settings-backup-restore' size={24} style={this.styles.cardItemIconCustom} />
                   <Text style={this.styles.textStyle}>Backup and Restore</Text>
@@ -176,7 +176,7 @@ class Setting extends Component {
             </List>
            
             <List>
-              <TouchableOpacity onPress={()=>this.props.navigation.navigate('DownloadLanguage')}>              
+              <TouchableOpacity onPress={()=>{this.props.navigation.navigate('LanguageList')}}>              
                 <ListItem style={this.styles.cardItemStyle}>
                   <Icon name='cloud-download' style={this.styles.cardItemIconCustom} />
                   <Text style={this.styles.textStyle}>Download More Bibles</Text>
@@ -194,7 +194,7 @@ class Setting extends Component {
             </List>
              */}
             <List>
-            <TouchableOpacity onPress={()=>this.props.navigation.navigate('About')}>
+            <TouchableOpacity onPress={()=>{this.props.navigation.navigate('About')}}>
               <ListItem style={this.styles.cardItemStyle}>
                 <Icon name='info' style={this.styles.cardItemIconCustom}/>
                 <Text style={this.styles.textStyle}>About</Text>

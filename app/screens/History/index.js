@@ -14,6 +14,8 @@ import { View } from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {getBookNameFromMapping} from '../../utils/UtilFunctions';
 import Accordion from 'react-native-collapsible/Accordion';
+import {updateVersion} from '../../store/action/'
+
 import {List,ListItem} from 'native-base'
 import { historyStyle } from './styles.js'
 import {connect} from 'react-redux'
@@ -131,18 +133,20 @@ var moment = require('moment');
       </View> 
     )
   }
-
+  goToContent(item){
+    this.props.updateVersion({language:item.languageName,languageCode:item.languageCode,versionCode:item.versionCode,sourceId:item.sourceId,downloaded:item.downloaded,bookId:item.bookId,chapterNumber:item.chapterNumber})
+    this.props.navigation.navigate("Bible")
+  }
+  
   _renderContent  = (data) => {
     console.log("is active ")
     console.log("version model"+JSON.stringify(data))
     return (
       <View>
         {
-          
           this.state.isLoading ? <ActivityIndicator animate = {true}/> : 
             data.list.map((item, index) => 
-            <TouchableOpacity onPress={()=>this.props.navigation.navigate("Bible",{bookId: item.bookId, 
-              bookName: getBookNameFromMapping(item.bookId,this.props.languageName), chapterNumber: item.chapterNumber })}>
+            <TouchableOpacity onPress={()=>{this.goToContent(item)}}>
               <Text style={this.styles.contentText}>{getBookNameFromMapping(item.bookId,this.props.languageName)} : {item.chapterNumber} </Text>
             </TouchableOpacity>
             )
@@ -188,5 +192,10 @@ const mapStateToProps = state =>{
     colorFile:state.updateStyling.colorFile,
   }
 }
+const mapDispatchToProps = dispatch =>{
+  return {
+    updateVersion: (value)=>dispatch(updateVersion(value)),
+  }
+}
 
-export  default connect(mapStateToProps,null)(History)
+export  default connect(mapStateToProps,mapDispatchToProps)(History)

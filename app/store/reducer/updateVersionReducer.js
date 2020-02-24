@@ -18,7 +18,8 @@ const initialState = {
    parallelContentLanguage:'Hindi',
    parallelContentLanguageCode:'hin',
    parallelContentVersion:'Indian Revised Version',
-   parallelContentVersionCode:'IRV'
+   parallelContentVersionCode:'IRV',
+   parallelContentDownloaded:false
 }
 function UpdateVersionReducer(state=initialState,action){
     switch(action.type) {
@@ -29,7 +30,9 @@ function UpdateVersionReducer(state=initialState,action){
         languageCode:action.payload.languageCode,
         versionCode:action.payload.versionCode,
         sourceId:action.payload.sourceId,
-        downloaded:action.payload.downloaded
+        downloaded:action.payload.downloaded,
+        bookId:action.payload.bookId,
+        chapterNumber:action.payload.chapterNumber
         }
         case SELECTED_BOOK:
         return {
@@ -57,7 +60,8 @@ function UpdateVersionReducer(state=initialState,action){
             parallelContentLanguageCode:action.payload.parallelContentLanguageCode,
             parallelContentVersion:action.payload.parallelContentVersion,
             parallelContentVersionCode:action.payload.parallelContentVersionCode,
-            parallelContentSourceId:action.payload.parallelContentSourceId
+            parallelContentSourceId:action.payload.parallelContentSourceId,
+            parallelContentDownloaded:false
         }
         default: 
         return state

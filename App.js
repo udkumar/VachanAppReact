@@ -105,7 +105,7 @@ class App extends Component {
           const  downloaded= res[12][1] == null ? this.props.downloaded:res[12][1].toString()
           const  totalChapters= this.props.totalChapters
 
-          this.props.updateVersion({language:languageName,languageCode:languageCode,versionCode:versionCode,sourceId:sourceId,downloaded:downloaded})
+          this.props.updateVersion({language:languageName,languageCode:languageCode,versionCode:versionCode,sourceId:sourceId,downloaded:downloaded,bookId:bookId,chapterNumber:chapterNumber})
           this.props.selectedBook(bookId,bookName,totalChapters)
           this.props.selectedChapter(chapterNumber,null)
           this.props.updateColorMode(colorMode)

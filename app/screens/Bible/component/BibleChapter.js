@@ -17,6 +17,7 @@ import {selectedChapter,fetchVersionLanguage,fetchVersionContent,fetchAudioUrl,f
 import { styles } from '../styles';
 import {connect} from 'react-redux'
 import {Body,Header, Button,Right,Title, Left} from 'native-base'
+
 class BibleChapter extends Component {
     constructor(props){
         super(props)
@@ -27,20 +28,30 @@ class BibleChapter extends Component {
         }
     }
     queryParallelBible =(val)=>{
-        this.setState({currentVisibleChapter:val != null ? this.state.currentVisibleChapter + val:this.props.currentVisibleChapter},()=>{
-        this.props.fetchParallelBible({isDownloaded:this.props.downloaded,sourceId:this.props.parallelContentSourceId,language:this.props.parallelContentLanguage,version:this.props.parallelContentVersionCode,bookId:this.props.bookId,chapter:val != null ? this.state.currentVisibleChapter + val: this.props.chapterNumber})
-        })
+        this.setState({currentVisibleChapter:val != null ? this.state.currentVisibleChapter + val : this.props.currentVisibleChapter},()=>{
+        this.props.fetchParallelBible({isDownloaded:this.props.downloaded,sourceId:this.props.parallelContentSourceId,language:this.props.parallelContentLanguage,version:this.props.parallelContentVersionCode,bookId:this.state.id,chapter:val != null ? this.state.currentVisibleChapter + val: this.props.currentVisibleChapter})
+            this.setState({currentVisibleChapter:this.state.currentVisibleChapter})
+    })
     }
     componentDidMount(){
         this.queryParallelBible(null)
     }
     componentDidUpdate(prevProps,prevState){
-    if(prevProps.id !== this.state.id || prevState.currentVisibleChapter !==this.state.currentVisibleChapter){
-        this.props.fetchParallelBible({isDownloaded:this.props.downloaded,sourceId:this.props.parallelContentSourceId,language:this.props.parallelContentLanguage,version:this.props.parallelContentVersionCode,bookId:this.props.bookId,chapter: this.props.chapterNumber})
+    if(prevState.id !== this.state.id || prevState.currentVisibleChapter !== this.state.currentVisibleChapter ){
+        this.props.fetchParallelBible({isDownloaded:this.props.downloaded,sourceId:this.props.parallelContentSourceId,language:this.props.parallelContentLanguage,version:this.props.parallelContentVersionCode,bookId:this.state.id,chapter:this.state.currentVisibleChapter})
+        this.setState({id:this.state.id,currentVisibleChapter:this.state.currentVisibleChapter })
+
     }
+    if(this.props.parallelChapter !== prevProps.parallelChapter || this.props.parallelBookId !== prevProps.parallelBookId){
+        console.log("selected from its own tab")
+        this.props.fetchParallelBible({isDownloaded:this.props.downloaded,sourceId:this.props.parallelContentSourceId,language:this.props.parallelContentLanguage,version:this.props.parallelContentVersionCode,bookId:this.props.parallelBookId,chapter:this.props.parallelChapter})
+        this.setState({id:this.props.parallelBookId,currentVisibleChapter:this.props.parallelChapter })
+    }    
     }
     render(){
-        console.log(" PARALLEL BIBLE ",)
+        // console.log("state ",this.state.currentVisibleChapter,this.state.id)
+        // console.log("props ",this.props.parallelChapter,this.props.parallelBookId)
+
         return(
             <View>
                 {this.props.isLoading &&
@@ -50,12 +61,12 @@ class BibleChapter extends Component {
                     //  textStyle={styles.spinnerTextStyle}
                 />}
                 <Header style={{height:40, borderLeftWidth:0.2, borderLeftColor:'#fff'}}>
-                <Left> 
-                    <Button transparent onPress={()=>{this.props.navigation.navigate("SelectionTab")}}>
-                        <Title style={{fontSize:16}}>{getBookNameFromMapping(this.props.bookId,this.props.parallelContentLanguage).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.parallelContentLanguage).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.parallelContentLanguage)} {this.state.currentVisibleChapter}</Title>
+                {/* <Left>  */}
+                    <Button transparent onPress={()=>{this.props.navigation.navigate("SelectionTab",{getReference:this.queryParallelBible,updateBibleProps:false})}}>
+                        <Title style={{fontSize:16}}>{getBookNameFromMapping(this.state.id,this.props.parallelContentLanguage).length > 8 ? getBookNameFromMapping(this.state.id,this.props.parallelContentLanguage).slice(0,7)+"..." : getBookNameFromMapping(this.props.id,this.props.parallelContentLanguage)} {this.state.currentVisibleChapter}</Title>
                         <Icon name="arrow-drop-down" color="#fff" size={20}/>
                     </Button>
-                </Left> 
+                {/* </Left>  */}
                 <Right>
                 <Button transparent onPress={()=>this.props.toggleParallelView(false)}>
                     <Icon name='cancel' color={'#fff'} size={20}/>
@@ -80,13 +91,12 @@ class BibleChapter extends Component {
                     </View>
                     )}
                 </View>
-                    
                 </ScrollView>
-                {/* <View style={{justifyContent:(this.state.currentVisibleChapter != 1 &&  this.state.currentVisibleChapter != this.props.totalChapters) ? 'center' : 'space-around',alignItems:'center'}}>
+                {/* <View> */}
                     {
                     this.state.currentVisibleChapter == 1 ? null :
-                    <View style={this.styles.bottomBarPrevView}>
-                        <Icon name={'chevron-left'} color="#3F51B5" size={32} 
+                    <View  style={this.styles.bottomBarParallelPrevView}>
+                        <Icon name={'chevron-left'} color="#3F51B5" size={16} 
                             style={this.styles.bottomBarChevrontIcon} 
                             onPress={()=>this.queryParallelBible(-1)}
                         />
@@ -94,14 +104,14 @@ class BibleChapter extends Component {
                     }
                     {
                     this.state.currentVisibleChapter == this.props.totalChapters.length ? null :
-                    <View style={this.styles.bottomBarNextView}>
-                        <Icon name={'chevron-right'} color="#3F51B5" size={32} 
+                    <View style={this.styles.bottomBarNextParallelView}>
+                        <Icon name={'chevron-right'} color="#3F51B5" size={16} 
                             style={this.styles.bottomBarChevrontIcon} 
                             onPress={()=>this.queryParallelBible(1)}
                         />
                     </View>
                     }
-                </View> */}
+                {/* </View> */}
             </View>
         )
     }
@@ -126,17 +136,22 @@ const mapStateToProps = state =>{
         colorFile:state.updateStyling.colorFile,
         isLoading:state.versionFetch.loading,
 
-  
+        totalChapters:state.updateVersion.totalChapters,
+        
         fetchedData:state.versionFetch,
         totalVerses:state.versionFetch.totalVerses,
   
         audioURL:state.audioFetch.url,
 
+        // paralleltotalChapters:state.parallel.totalChapters,
+        parallelBookId:state.parallel.bookId,
+        parallelChapter:state.parallel.chapterNumber,
+
+
         parallelContentSourceId:state.updateVersion.parallelContentSourceId,
         parallelContentVersionCode:state.updateVersion.parallelContentVersionCode,
         parallelContentLanguage:state.updateVersion.parallelContentLanguage,
         parallelContentLanguageCode:state.updateVersion.parallelContentLanguageCode,
-
         parallelBible:state.parallel.parallelBible
     }
   }

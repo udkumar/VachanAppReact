@@ -13,7 +13,7 @@ import {AsyncStorageConstants} from '../../../utils/AsyncStorageConstants'
 import AsyncStorageUtil from '../../../utils/AsyncStorageUtil'
 
 import {connect} from 'react-redux'
-import {selectedChapter,addChapterToNote} from '../../../store/action/'
+import {selectedChapter,addChapterToNote,parallelSelectedChapter} from '../../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
 import SelectionGrid from '../../../components/SelectionGrid/';
 import { Item } from 'native-base';
@@ -23,32 +23,49 @@ class ChapterSelection extends Component {
 
   constructor(props){
     super(props)
+    console.log("props navigation",props)
     this.state = {
       isLoading:true,
-      totalChapters:[],
-      bookId:this.props.bookId,
+      totalChapters:!this.props.screenProps.parallelBible ||this.props.screenProps.parallelBible ==null ? this.props.totalChapters : this.props.paralleltotalChapters,
+      chapterData:[],
+      bookId:!this.props.screenProps.parallelBible ||this.props.screenProps.parallelBible == null ? this.props.bookId : this.props.parallelBookId,
     }
 
     this.styles = numberSelection(this.props.colorFile, this.props.sizeFile);   
     // this.onNumPress = this.onNumPress.bind(this)
   }
-  static getDerivedStateFromProps(nextProps, prevState){
-    var chapterData = []
-    if(nextProps.bookId !== prevState.bookId){
-      for(var i=0;i<=nextProps.totalChapters.length-1;i++){
-        chapterData.push(i+1)
-      }
-      return{totalChapters:chapterData,bookId:nextProps.bookId}
-    }
-   else return null
-  }
 
+  static getDerivedStateFromProps(nextProps, prevState){
+    console.log('screen props ',nextProps.screenProps.parallelBible)
+    if(!nextProps.screenProps.parallelBible || nextProps.screenProps.parallelBible==null){
+      if(nextProps.bookId !== prevState.bookId || prevState.totalChapters !== nextProps.totalChapters){
+        var chapterData = []
+        // console.log("chapter data ",nextProps.totalChapters)
+        for(var i=0;i<nextProps.totalChapters.length;i++){
+          chapterData.push(i+1)
+        }
+        return{totalChapters:nextProps.totalChapters,bookId:nextProps.bookId,chapterData:chapterData,isLoading:false}
+      }
+    }
+    else{
+      if(nextProps.parallelBookId !== prevState.bookId  || nextProps.paralleltotalChapters !== prevState.totalChapters){
+        var chapterData = []
+        for(var i=0;i<nextProps.paralleltotalChapters.length;i++){
+          chapterData.push(i+1)
+        }
+        return{totalChapters:nextProps.paralleltotalChapters,bookId:nextProps.parallelBookId,chapterData:chapterData,isLoading:false}
+      }
+    }
+     
+  //  else return{totalChapters:prevState.totalChapters,bookId:prevState.bookId,chapterData:prevState.chapterData}
+  }
   getChapters(){
+    console.log("totalchapters ",this.props.totalChapters)
   var chapterData = []
-  for(var i=0;i<=this.state.totalChapters.length-1;i++){
+  for(var i=0;i<this.state.totalChapters.length;i++){
     chapterData.push(i+1)
   }
-  this.setState({totalChapters:chapterData,isLoading:false})
+  this.setState({chapterData,isLoading:false})
   }
 
   componentDidMount(){
@@ -57,23 +74,28 @@ class ChapterSelection extends Component {
   }
  
    onNumPress=(item,index)=>{
-    var time =  new Date()
-    DbQueries.addHistory(this.props.language, this.props.versionCode, this.props.bookId, item, time)
-    this.setState({isLoading:true},async()=>{
-    try{
-      this.props.selectedChapter(item,this.props.totalChapters[index])
-
-      this.setState({isLoading:false})
-      AsyncStorageUtil.setAllItems([
-        [AsyncStorageConstants.Keys.ChapterNumber, JSON.stringify(item)],
-      ]); 
-      this.props.navigation.navigate('Verses')
-    }
-      catch(error){
-        console.log(error)
+    if(!this.props.screenProps.parallelBible || this.props.screenProps.parallelBible==null){
+      var time =  new Date()
+      DbQueries.addHistory(this.props.sourceId,this.props.language,this.props.languageCode, this.props.versionCode, this.props.bookId, item,this.props.downloaded, time)
+      this.setState({isLoading:true},async()=>{
+      try{
+        this.props.selectedChapter(item,this.state.totalChapters[index])
+        this.setState({isLoading:false})
+        AsyncStorageUtil.setAllItems([
+          [AsyncStorageConstants.Keys.ChapterNumber, JSON.stringify(item)],
+        ]); 
       }
+        catch(error){
+          console.log(error)
+        }
+      }
+      )
     }
-    )
+    else{
+      this.props.parallelSelectedChapter(item,this.state.totalChapters[index])
+    }
+    this.props.navigation.navigate('Verses')
+    // this.props.navigation.navigate('Verses',{bookId:this.props.navigation.state.params.bookId,totalChapters:item,totalVerses:this.state.totalChapters[index]})
    
     // const resetAction = NavigationActions.reset({
     //   index: 0,
@@ -87,12 +109,13 @@ class ChapterSelection extends Component {
 
   
   render() {
+    // console.log("SELECT CHAPTER",this.props.totalChapters)
     // console.log("is loading ",this.state.isLoading)
     return (
       <SelectionGrid
       styles={this.styles}
       onNumPress={(item,index)=>{this.onNumPress(item,index)}}
-      numbers={this.state.totalChapters}
+      numbers={this.state.chapterData}
       loader={this.state.isLoading}
       heighlightedNumber={this.props.chapterNumber}
       />
@@ -102,17 +125,20 @@ class ChapterSelection extends Component {
 
 const mapStateToProps = state =>{
   return{
+   
     language: state.updateVersion.language,
+    languageCode:state.updateVersion.languageCode,
     versionCode:state.updateVersion.versionCode,
     sourceId:state.updateVersion.sourceId,
     downloaded:state.updateVersion.downloaded,
-    
+
     bookId:state.updateVersion.bookId,
     bookName:state.updateVersion.bookName,
     totalChapters:state.updateVersion.totalChapters,
-    chapterNumber:state.updateVersion.chapterNumber,
-    contentType:state.updateVersion.contentType,
-    
+
+    parallelBookId:state.parallel.bookId,
+    parallelBookName:state.parallel.bookName,
+    paralleltotalChapters:state.parallel.totalChapters,
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
   }
@@ -121,7 +147,8 @@ const mapStateToProps = state =>{
 const mapDispatchToProps = dispatch =>{
   return {
     selectedChapter: (chapterNumber,totalVerses)=>dispatch(selectedChapter(chapterNumber,totalVerses)),
-    addChapterToNote:(chapterNumber,totalVerses)=>dispatch(addChapterToNote(chapterNumber,totalVerses))
+    addChapterToNote:(chapterNumber,totalVerses)=>dispatch(addChapterToNote(chapterNumber,totalVerses)),
+    parallelSelectedChapter: (chapterNumber,totalVerses)=>dispatch(parallelSelectedChapter(chapterNumber,totalVerses)),
   }
 }
 export  default connect(mapStateToProps,mapDispatchToProps)(ChapterSelection)

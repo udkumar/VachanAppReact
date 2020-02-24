@@ -28,7 +28,7 @@ class DbHelper {
     async getRealm() {
     	try {
     		return await Realm.open({
-				schemaVersion: 26,
+				schemaVersion: 28,
 				deleteRealmIfMigrationNeeded: true, 
 				path:
 					Platform.OS === 'ios'
@@ -320,15 +320,18 @@ class DbHelper {
 		}
 	}
 
-	async addHistory(langName, verCode, bId, cNum, timeStamp) {
+	async addHistory(sourceId,langName,langCode, verCode, bId, cNum,downloaded, timeStamp) {
 		let realm = await this.getRealm();
 		if (realm) {
 			realm.write(() => {
 				realm.create('HistoryModel', {
+					sourceId:sourceId,
 					languageName: langName,
+					languageCode:langCode,
 					versionCode: verCode,
 					bookId: bId,
 					chapterNumber: cNum,
+					downloaded:downloaded,
 					time: timeStamp
 				})
 				console.log("write.. history complete..")
@@ -440,14 +443,12 @@ class DbHelper {
 			}
 			if(found==false){
 				console.log("add version ")
-				
 					realm.write(() => {
 						for(var i=0;i<bookmodel.length;i++){
 						realm.create('BookModel', bookmodel[i])
 					}
 					resultsB[0].bookNameList = bookmodel[i].bookId
 					resultsA[0].downloaded = true;
-
 					})
 					
 			}

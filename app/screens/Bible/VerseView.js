@@ -61,7 +61,7 @@ class VerseView extends Component {
     let isSelect = this.has(this.props.selectedReferences, obj)
 
     let isHighlight = this.isHighlight()
-    // console.log("is highlight ",isHighlight,"is selected",isSelect)
+    // console.log("is highlighted verseArray ",this.props.HightlightedVerse)
 
     
     // const BackgroundColorConfig = this.Animation.interpolate(

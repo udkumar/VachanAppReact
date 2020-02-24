@@ -7,17 +7,21 @@ export default class ReferenceSelection extends Component {
         super(props)
     }
     navigateBack = ()=>{
-        this.props.navigation.state.params.getReference()
         this.props.navigation.goBack()
     }
     getCurrentRouteName = (currentState)=>{
         console.log("current route name ",currentState)
+    }
+  
+    componentWillUnmount(){
+        this.props.navigation.state.params.getReference()
     }
     render(){
         return(
             <SelectionTab
                 screenProps={{
                     navigateBack:this.navigateBack,
+                    parallelBible:this.props.navigation.state.params ? (this.props.navigation.state.params.parallelBible ? true : false) : null,
                 }}
             />
         )
