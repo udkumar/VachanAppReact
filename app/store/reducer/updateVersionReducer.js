@@ -1,4 +1,4 @@
-import { UPDATE_VERSION, SELECTED_BOOK,SELECTED_CHAPTER,SELECTED_VERSE, UPDATE_CONTENT_TYPE  } from '../action/actionsType';
+import { UPDATE_VERSION,UPDATE_VERSION_BOOK, UPDATE_CONTENT_TYPE  } from '../action/actionsType';
 
 const initialState = {
    language:'Hindi',
@@ -21,6 +21,7 @@ const initialState = {
    parallelContentVersionCode:'IRV',
    parallelContentDownloaded:false
 }
+
 function UpdateVersionReducer(state=initialState,action){
     switch(action.type) {
         case UPDATE_VERSION:
@@ -31,26 +32,17 @@ function UpdateVersionReducer(state=initialState,action){
         versionCode:action.payload.versionCode,
         sourceId:action.payload.sourceId,
         downloaded:action.payload.downloaded,
-        bookId:action.payload.bookId,
-        chapterNumber:action.payload.chapterNumber
+       
         }
-        case SELECTED_BOOK:
+        case UPDATE_VERSION_BOOK:
         return {
             ...state,
-            bookId:action.bookId,
-            bookName:action.bookName,
-            totalChapters:action.totalChapters,
-        }
-        case SELECTED_CHAPTER:
-        return {
-            ...state,
-            chapterNumber:action.chapterNumber,
-            totalVerses:action.totalVerses,
-        }
-        case SELECTED_VERSE:
-        return {
-            ...state,
-            verseNumber:action.verseNumber,
+            bookId:action.payload.bookId,
+            bookName:action.payload.bookName,
+            chapterNumber:action.payload.chapterNumber,
+            totalChapters:action.payload.totalChapters,
+            totalVerses:action.payload.totalVerses,
+            verseNumber:action.payload.verseNumber
         }
         case UPDATE_CONTENT_TYPE:
         return {

@@ -13,7 +13,7 @@ import { styles } from './styles.js';
 class VerseView extends Component {
   constructor(props){
     super(props)
-    this.Animation = new Animated.Value(0);
+    // this.Animation = new Animated.Value(0);
     this.styles = styles(this.props.colorFile, this.props.sizeFile);    
 
   }

@@ -194,15 +194,14 @@ class EditNote extends Component {
     }
   }
 
-  getReference = () => {
-    // const verseNum = this.prosps.verseNumber.toString()
-    if (this.checkIfReferencePresent(this.props.bookId, this.props.bookName, this.props.chapterNumber, this.props.verseNumber)) {
+  getReference = (item) => {
+    if (this.checkIfReferencePresent(item.bookId, item.bookName, item.chapterNumber, item.verseNumber)) {
       return;
     }
     try{
       this.setState({isLoading:true},async()=>{
-        let response =  await APIFetch.getChapterContent(this.props.sourceId,this.props.bookId,this.props.chapterNumber)
-        console.log("SOURCE ID ",this.props.sourceId,"BOOK ID ",this.props.bookId,"Chapter number",this.props.chapterNumber)
+        let response =  await APIFetch.getChapterContent(this.props.sourceId,item.bookId,item.chapterNumber)
+        console.log("SOURCE ID ",this.props.sourceId,"BOOK ID ",item.bookId,"Chapter number",item.chapterNumber)
         if(response.length != 0){
           console.log("res -------",response)
     
@@ -210,12 +209,13 @@ class EditNote extends Component {
     
             alert("response success false")
           }else{
-          console.log("res",response.chapterContent.verses[this.props.verseNumber-1].text)
-            let refModel = {bookId:this.props.bookId, 
-              bookName: this.props.bookName, 
-              chapterNumber: this.props.chapterNumber, 
-              verseNumber: this.props.verseNumber.toString(), 
-              verseText:response.chapterContent.verses[this.props.verseNumber-1].text,
+          console.log("res",response.chapterContent.verses[item.verseNumber-1].text)
+            let refModel = {
+              bookId:item.bookId, 
+              bookName:item.bookName, 
+              chapterNumber: item.chapterNumber, 
+              verseNumber: item.verseNumber.toString(), 
+              verseText:response.chapterContent.verses[item.verseNumber-1].text,
               versionCode: this.props.versionCode, 
               languageName: this.props.language
             };
@@ -237,14 +237,15 @@ class EditNote extends Component {
     
     this.props.navigation.navigate('SelectionTab', {
         getReference: this.getReference,
-        // content:editNote
-        // bookId:this.props.navigation.state.params.bookId,
-        // chapterNumber:this.props.navigation.state.params.chapterNumber,
-        // totalVerses:this.props.navigation.state.params.totalVerses,
+        bookId:this.props.navigation.state.params.bookId,
+        // bookName:this.props.navigation.state.params.bookName,
+        chapterNumber:this.props.navigation.state.params.chapterNumber,
+        totalVerses:this.props.navigation.state.params.totalVerses,
+        totalChapters:this.props.navigation.state.params.totalChapters,
+        // verseNumber:this.props.navigation.state.params.verseNumber
       })
-
   }
-
+  
   openReference(index) {
     // todo open reference in RV page
     var list = this.state.referenceList
@@ -363,12 +364,12 @@ const mapStateToProps = state =>{
     versionCode:state.updateVersion.versionCode,
     sourceId:state.updateVersion.sourceId,
 
-    bookId:state.editNote.bookId,
-    bookName:state.editNote.bookName,
-    bodyText:state.editNote.bodyText,
-    chapterNumber:state.editNote.chapterNumber,
-    verseNumber: state.editNote.verseNumber,
-    index:state.editNote.index,
+    // bookId:state.editNote.bookId,
+    // bookName:state.editNote.bookName,
+    // bodyText:state.editNote.bodyText,
+    // chapterNumber:state.editNote.chapterNumber,
+    // verseNumber: state.editNote.verseNumber,
+    // index:state.editNote.index,
     
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,

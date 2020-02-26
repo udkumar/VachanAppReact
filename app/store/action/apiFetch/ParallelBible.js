@@ -16,25 +16,3 @@ export const parallelBiblefailure = error => ({
   error:error,
 })
 
-export const parallelSelectedBook = (bookId,bookName,totalChapters)=>{
-  return {
-      type:PARALLEL_SELECTED_BOOK,
-      bookId:bookId,
-      bookName:bookName,
-      totalChapters:totalChapters,
-  }
-}
-export const parallelSelectedChapter = (chapterNumber,totalVerses)=>{
-  return {
-      type:PARALLEL_SELECTED_CHAPTER,
-      chapterNumber:chapterNumber,
-      totalVerses:totalVerses,
-  }
-}
-
-export const parallelSelectedVerse = (verseNumber)=>{
-  return {
-      type:PARALLEL_SELECTED_VERSE,
-      verseNumber:verseNumber,
-  }
-}

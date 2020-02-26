@@ -22,10 +22,10 @@ import VerseView from './VerseView'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
 import Player from '../../screens/Bible/Navigate/Audio/Player';
-// import {getResultText} from '../../utils/UtilFunctions';
+import {getResultText} from '../../utils/UtilFunctions';
 import {getBookNameFromMapping,getBookChaptersFromMapping} from '../../utils/UtilFunctions';
 import APIFetch from '../../utils/APIFetch'
-import {selectedChapter,fetchVersionLanguage,fetchVersionContent,fetchAudioUrl,} from '../../store/action/'
+import {selectedChapter,fetchVersionLanguage,fetchVersionContent,fetchAudioUrl,updateVersionBook} from '../../store/action/'
 import SelectContent from '../Bible/component/SelectContent'
 import SelectBottomTabBar from '../Bible/component/SelectBottomTabBar'
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -60,38 +60,20 @@ class Bible extends Component {
                   </View>
                   <View style={{marginRight:10}}>
                     <TouchableOpacity style={navStyles.touchableStyleLeft} 
-                      onPress={() =>{navigation.navigate("SelectionTab", {getReference:params.callBackForUpdateBook,selectedContented:true})}}>
- 
-                      {/* onPress={() =>{navigation.navigate("SelectionTab",{bookId:params.bookId,chapterNumber:params.currentChapter,totalVerses:params.totalVerses,getReference:params.callBackForUpdateBook,contentType:'bible'})}}> */}
+                      onPress={() =>{navigation.navigate("SelectionTab", {getReference:params.getRef,bookId:params.bookId,chapterNumber:params.currentChapter,totalChapters:params.numOfChapter,totalVerses:params.numOfVerse})}}> 
                       <Text  style={navStyles.headerTextStyle}>{params.bookName}  {params.currentChapter }</Text>
                     <Icon name="arrow-drop-down" color="#fff" size={20}/>
                     </TouchableOpacity>
                   </View>
                   <View style={{marginRight:10}}>
-                    <TouchableOpacity onPress={() =>{{navigation.navigate("LanguageList", {callBackForUpdateBook:params.callBackForUpdateBook})}}} style={navStyles.headerLeftStyle}>
+                    <TouchableOpacity onPress={() =>{{navigation.navigate("LanguageList",{updateVersion:params.updatelangVer})}}} style={navStyles.headerLeftStyle}>
                       <Text style={navStyles.headerTextStyle}>{params.languageName}  {params.versionCode}</Text>
                       <Icon name="arrow-drop-down" color="#fff" size={20}/>
                     </TouchableOpacity>
                   </View>
                 </View>
             ), 
-          //   headerTitle:(
-          //     <View style={navStyles.headerLeftStyle}>
-          //       <View style={{marginRight:10}}>
-          //         <TouchableOpacity style={navStyles.touchableStyleLeft}  
-          //           onPress={() =>{navigation.navigate("SelectionTab")}}>
-          //           <Text  style={navStyles.headerTextStyle}>{params.bookName}  {params.currentChapter }</Text>
-          //         <Icon name="arrow-drop-down" color="#fff" size={20}/>
-          //         </TouchableOpacity>
-          //       </View>
-          //       <View style={{marginRight:10}}>
-          //         <TouchableOpacity onPress={() =>{navigation.navigate("LanguageList")}} style={navStyles.headerLeftStyle}>
-          //           <Text style={navStyles.headerTextStyle}>{params.languageName}  {params.versionCode}</Text>
-          //           <Icon name="arrow-drop-down" color="#fff" size={20}/>
-          //         </TouchableOpacity>
-          //       </View>
-          //     </View>
-          // ), 
+       
             headerTintColor:"#fff",
             headerStyle: {
               backgroundColor: "#3F51B5",
@@ -131,20 +113,26 @@ class Bible extends Component {
     super(props);
 
     this.state = {
+      // languageName:this.props.language,
+      // languageCode:this.props.languageCode,
+      // versionCode:this.props.versionCode,
+      // sourceId:this.props.sourceId,
+      // downloaded:this.props.downloaded,
+      // bookId:this.props.bookId,
+      // bookName:this.props.bookName,
+      // totalChapters:this.props.totalChapters,
+      // totalVerses:this.props.totalVerses,
+      // verseNumber:this.props.verseNumber,
+      audio:false,
+
       isLoading: false,
       showBottomBar: false,
-      //onFullScreen:false,
-      // bookName:getBookNameFromMapping(this.props.bookId,this.props.language),
-      // bookId:this.props.bookId,
-      // menuHighlightedText: false,
       bookmarksList: [],
       isBookmark: false,
       currentVisibleChapter:this.props.chapterNumber,
-      sourceId:this.props.sourceId,
       bookNumber:this.props.bookNumber,
       selectedReferenceSet: [],
       verseInLine: this.props.verseInLine,
-      // totalChapters:this.props.totalChapters,
       bottomHighlightText:false,
       HightlightedVerseArray:[],
       gestureState: {},
@@ -154,9 +142,7 @@ class Bible extends Component {
 
       scrollDirection:'up',
       close:true,
-      // chaptersArray:[],
       message:'',
-      totalVerses:0,
       status:false,
       modalVisible: false,
       arrLayout:[]
@@ -165,6 +151,7 @@ class Bible extends Component {
 
     this.getSelectedReferences = this.getSelectedReferences.bind(this)
     this.onBookmarkPress = this.onBookmarkPress.bind(this)
+    // this.getReference = this.getReference.bind(this)
 
     this.pinchDiff = 0
     this.pinchTime = new Date().getTime()
@@ -178,11 +165,6 @@ class Bible extends Component {
     })
     this.styles = styles(nextProps.colorFile, nextProps.sizeFile);  
   }
-
-  // componentWillMount(){
-  //   const initial = Orientation.getInitialOrientation();
-  //   Orientation.unlockAllOrientations()
-  // }
 
   scrollToVerse(){
     if(this.state.arrLayout.length > 0){
@@ -249,10 +231,10 @@ class Bible extends Component {
       onResponderSingleTapConfirmed: (evt, gestureState) => {
         console.log('onResponderSingleTapConfirmed...' + JSON.stringify(gestureState));
       },
-      
       moveThreshold: 2,
       debug: false
     });
+
     this.props.navigation.setParams({
       onBookmark: this.onBookmarkPress,
       isBookmark:this.state.isBookmark,
@@ -262,49 +244,85 @@ class Bible extends Component {
       languageName: this.props.language, 
       versionCode: this.props.versionCode,
       bookId:this.props.bookId,
-      audio:this.props.audioURL,
-      totalVerses:this.state.totalVerses,
+      audio:this.state.audioURL !== null ? true : false,
       modalVisible:false,
       toggleModal:this.setState({modalVisible:!this.state.modalVisible}),
       visibleParallelView:false,
-      callBackForUpdateBook:this.queryBookFromAPI,
+      getRef:this.getReference,
+      updatelangVer:this.updateVersion,
+      numOfChapter:this.props.totalChapters,
+      numOfVerse:this.props.totalVerses
     })
     this.scrollToVerse()
     this.queryBookFromAPI(null)
   }
-  componentDidUpdate(prevProps,prevState) {
-    if (this.props.bookId !== prevProps.bookId || this.props.chapterNumber !== prevProps.chapterNumber || this.props.sourceId !== prevProps.sourceId) {
-        this.queryBookFromAPI(null)
-        this.getBookMarks()
-    }
-    // if(this.props.bookId !== prevProps.bookId || this.props.chapterNumber !== prevProps.chapterNumber || this.props.verseNumber !== prevProps.verseNumber){
-    //   this.scrollToVerse()
-    // }
+  
+  getReference = (item)=>{
+    var time =  new Date()
+    DbQueries.addHistory(this.props.sourceId,this.props.language,this.props.languageCode, this.props.versionCode, item.bookId, item.chapterNumber, this.props.downloaded, time)
+    AsyncStorageUtil.setAllItems([
+      [AsyncStorageConstants.Keys.BookId, item.bookId],
+      [AsyncStorageConstants.Keys.BookName, item.bookName],
+      [AsyncStorageConstants.Keys.ChapterNumber, JSON.stringify(item.chapterNumber)],
+      [AsyncStorageConstants.Keys.TotalChapters, JSON.stringify(item.totalChapters)],
+      [AsyncStorageConstants.Keys.TotalVerses, JSON.stringify(item.totalVerses)],
+      [AsyncStorageConstants.Keys.VerseNumber, JSON.stringify(item.verseNumber)]
+    ])
+    this.props.updateVersionBook({
+      bookId:item.bookId,
+      bookName:item.bookName,
+      chapterNumber:item.chapterNumber,
+      totalChapters:item.totalChapters,
+      totalVerses:item.totalVerses,
+      verseNumber:item.verseNumber
+    })
   }
-  queryBookFromAPI = async(val)=>{
-    console.log("query book ",this.props.downloaded,this.props.language,this.props.sourceId)
+
+  // updateVersion=(item)=>{
+  //   try{
+  //     this.props.navigation.setParams({
+  //       bookName:getBookNameFromMapping(this.props.bookId,item.language).length > 8 ? getBookNameFromMapping(this.props.bookId,item.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,item.language),
+  //       currentChapter:this.props.currentVisibleChapter,
+  //       numOfChapter:this.props.totalChapters,
+  //       numOfVerse:this.props.totalVerses
+  //     })
+  //     this.props.fetchVersionContent({isDownloaded:item.downloaded,sourceId:item.sourceId,language:item.language,version:item.versionCode,bookId:this.props.bookId,chapter:this.props.chapterNumber})
+  //     this.setState({isLoading:false})
+  //   }
+  //   catch(error) {
+  //     this.setState({isLoading:false})
+  //     alert("It seems no version available or check your internet connection ",error)
+  //   }
+  //   this.audioComponentUpdate()
+  //   this.getHighlights()
+  //   this.getBookMarks()
+  // }
+
+  componentDidUpdate(prevProps,prevState){
+    console.log("prevProps value ",prevProps.bookId,this.props.bookId)
+    if(this.props.bookId !== prevProps.bookId || this.props.chapterNumber !==prevProps.chapterNumber ||this.props.sourceId !==prevProps.sourceId ){
+      this.queryBookFromAPI(null)
+    }
+  }
+  queryBookFromAPI = (val)=>{
+    console.log("query book ",this.props.downloaded,this.props.language,this.props.sourceId,this.props.totalChapters,this.props.totalVerses)
     this.setState({isLoading:true,currentVisibleChapter: val != null ? this.state.currentVisibleChapter + val : this.props.chapterNumber },async()=>{
           try{
-            this.props.fetchVersionContent({isDownloaded:this.props.downloaded,sourceId:this.props.sourceId,language:this.props.language,version:this.props.versionCode,bookId:this.props.bookId,chapter:this.state.currentVisibleChapter})
-            this.setState({
-            // totalChapters: getBookChaptersFromMapping(this.props.bookId),
-            totalVerses:this.props.totalVerses,
-            isLoading:false,
-            currentVisibleChapter:this.state.currentVisibleChapter
-            })
             this.props.navigation.setParams({
-              totalVerses:this.props.totalVerses,
               languageName:this.props.language,
               versionCode:this.props.versionCode,
               bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
               currentChapter:this.state.currentVisibleChapter,
-             
+              numOfChapter:this.props.totalChapters,
+              numOfVerse:this.props.totalVerses
             })
+            this.props.fetchVersionContent({isDownloaded:this.props.downloaded,sourceId:this.props.sourceId,language:this.props.language,version:this.props.versionCode,bookId:this.props.bookId,chapter:this.state.currentVisibleChapter})
+            this.setState({isLoading:false})
           }
           catch(error) {
+            this.setState({isLoading:false})
             alert("It seems no version available or check your internet connection ",error)
           }
-          // this.setState({arrLayout})
           this.audioComponentUpdate()
           this.getHighlights()
           this.getBookMarks()
@@ -312,7 +330,7 @@ class Bible extends Component {
 }
 
 toggleAudio=()=>{
-  if(this.props.audioURL){
+  if(this.state.audio){
     this.setState({status:!this.state.status})
   }
   else{
@@ -325,14 +343,31 @@ toggleAudio=()=>{
      )
   }
 }
-
- audioComponentUpdate = () =>{
-  this.props.fetchAudioUrl({languageCode:this.props.languageCode,versionCode:this.props.versionCode,bookId:this.props.bookId,chapter:this.state.currentVisibleChapter})
-  this.props.navigation.setParams({
-    audio:this.props.audioURL,
-  })
-  console.log("PROPS FETCH in funtion",this.props.audioURL)
+audioComponentUpdate = async() =>{
+var found = false
+let res =  await APIFetch.availableAudioBook(this.props.languageCode,this.props.versionCode)
+try{
+if(res.length !== 0){
+for (var key in res.books){
+  if(key == this.props.bookId){
+    found = true
+    this.props.navigation.setParams({audio:true})
+    this.setState({audio:true})
+    break;
+  }
 }
+  if(found==false){
+    this.props.navigation.setParams({audio:false })
+    this.setState({audio:false})
+  }
+}
+}
+catch(error){
+this.props.navigation.setParams({audio:false})
+this.setState({audio:false})
+}
+}
+
   async getHighlights(){
     let model2 = await  DbQueries.queryHighlights(this.props.language,this.props.versionCode,this.props.bookId)
     const HightlightedVerseArray = []
@@ -448,7 +483,8 @@ toggleAudio=()=>{
         bookId:id,
         onbackNote:this.onbackNote,
         chapterNumber:this.state.currentVisibleChapter,
-        totalVerses:this.state.totalVerses,
+        totalVerses:this.props.totalVerses,
+        totalChapters:this.props.totalChapters,
         noteIndex:-1,
         // noteObject:''
     })
@@ -485,7 +521,7 @@ toggleAudio=()=>{
         let tempVal = item.split('_')
         for(var i=0; i<=this.state.HightlightedVerseArray.length-1; i++){
           if(this.state.HightlightedVerseArray[i].chapterNumber == JSON.parse(tempVal[0]) && this.state.HightlightedVerseArray[i].verseNumber == JSON.parse(tempVal[2]) &&  this.state.HightlightedVerseArray[i].bookId == this.props.bookId) {
-            await DbQueries.updateHighlightsInVerse( this.props.language, this.props.versionCode,this.props.bookId,this.state.currentVisibleChapter, tempVal[2],false)
+            await DbQueries.updateHighlightsInVerse(this.props.language, this.props.versionCode,this.props.bookId,this.state.currentVisibleChapter, tempVal[2],false)
             this.state.HightlightedVerseArray.splice(i, 1)
           }
         }
@@ -494,7 +530,9 @@ toggleAudio=()=>{
     this.setState({ selectedReferenceSet: [], showBottomBar: false})
   }
 
-
+  getVerseText(cNum, vIndex) {
+    return getResultText(this.state.modelData[cNum - 1].verseComponentsModels[vIndex].text)
+  }
   //share verse
   addToShare = () => {
     let shareText = ''
@@ -510,27 +548,20 @@ toggleAudio=()=>{
     Share.share({message: shareText})
     this.setState({selectedReferenceSet: [], showBottomBar: false})
   }
-  // componentWillMount(){
-  //   this.queryBookFromAPI(null)
-  // }
+ 
   componentWillUnmount(){
     let lastRead = {
         languageName:this.props.language,
-        versionCode:this.props.versionCode,
+        versionCode:this.state.versionCode,
         bookId:this.props.bookId,
         chapterNumber:this.state.currentVisibleChapter,
       }
-      AsyncStorageUtil.setAllItems([
-        [AsyncStorageConstants.Keys.BookId,this.props.bookId],
-        [AsyncStorageConstants.Keys.BookName,this.props.bookName]
-        [AsyncStorageConstants.Keys.ChapterNumber, JSON.stringify(this.state.currentVisibleChapter)],
-        [AsyncStorageConstants.Keys.LastReadReference, lastRead]
-      ]); 
-    this.props.selectedChapter(this.state.currentVisibleChapter,this.props.totalVerses)
-    // Orientation.getOrientation((err, orientation) => {
-      // console.log(`Current Device Orientation: ${orientation}`);
-    // })
-    // Orientation.removeOrientationListener(this._orientationDidChange);
+      // AsyncStorageUtil.setAllItems([
+      //   [AsyncStorageConstants.Keys.BookId,this.props.bookId],
+      //   [AsyncStorageConstants.Keys.BookName,this.props.bookName]
+      //   [AsyncStorageConstants.Keys.ChapterNumber, JSON.stringify(this.state.currentVisibleChapter)],
+      //   [AsyncStorageConstants.Keys.LastReadReference, lastRead]
+      // ])
   }
 
   //close split screen 
@@ -561,20 +592,38 @@ toggleAudio=()=>{
   toggleParallelView(value){
     this.props.navigation.setParams({visibleParallelView:value})
   }
+
+  // getRefParallel =(item)=>{
+  //   if(item !== null ){
+  //     return item
+  //   }
+  //   else{
+  //     return null
+  //   }
+  // }
+
   render() {
+    console.log("total verses ",this.props.totalVerses , "total chapters ",this.props.totalChapters)
       return (
         <View  style={this.styles.container}>
-           {this.props.isLoading &&
+           {this.props.isLoading  &&
             <Spinner
             visible={true}
             textContent={'Loading...'}
             //  textStyle={styles.spinnerTextStyle}
           />}
+          {this.state.isLoading &&
+            <Spinner
+            visible={true}
+            textContent={'Loading...'}
+            //  textStyle={styles.spinnerTextStyle}
+          />}
+          {/* {this.props.error ? alert()} */}
           <View style={{flexDirection:'row'}}>
             <View style={{width:this.props.navigation.getParam("visibleParallelView") ? '50%' : '100%'}}>
             {this.props.navigation.getParam("visibleParallelView") &&
               <Header style={{height:40}}>
-                    <Button transparent onPress={()=>{this.props.navigation.navigate("SelectionTab",{getReference:this.queryBookFromAPI})}}>
+                    <Button transparent onPress={()=>{this.props.navigation.navigate("SelectionTab",{getReference:this.getReference})}}>
                         <Title style={{fontSize:16}}>{getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language)} {this.state.currentVisibleChapter}</Title>
                         <Icon name="arrow-drop-down" color="#fff" size={20}/>
                     </Button>
@@ -640,7 +689,7 @@ toggleAudio=()=>{
                       </View>
                   }
               </ScrollView>
-              <View style={{justifyContent:(this.state.currentVisibleChapter != 1 &&  this.state.currentVisibleChapter == this.state.currentVisibleChapter != this.props.totalChapters.length) ? 'center' : 'space-around',alignItems:'center'}}>
+              <View style={{justifyContent:(this.state.currentVisibleChapter != 1 &&  this.state.currentVisibleChapter == this.state.currentVisibleChapter != this.props.totalChapters) ? 'center' : 'space-around',alignItems:'center'}}>
             {
             this.state.currentVisibleChapter == 1 
             ? null :
@@ -653,10 +702,16 @@ toggleAudio=()=>{
             }
           <View style={this.styles.bottomBarAudioCenter}>
           {
-            this.state.status && <Player url={this.props.audioURL}  />}
+            this.state.status && <Player 
+            languageCode={this.props.languageCode} 
+            versionCode={this.props.versionCode}  
+            bookId={this.props.bookId}
+            chapter={this.state.currentVisibleChapter}
+            />
+          }
           </View>
             {
-              this.state.currentVisibleChapter == this.props.totalChapters.length
+              this.state.currentVisibleChapter == this.props.totalChapters
             ? null :
             <View style={this.props.navigation.getParam("visibleParallelView") ? this.styles.bottomBarNextParallelView : this.styles.bottomBarNextView }>
                 <Icon name={'chevron-right'} color="#3F51B5" size={this.props.navigation.getParam("visibleParallelView") ? 16 : 32} 
@@ -715,11 +770,12 @@ toggleAudio=()=>{
             {this.props.navigation.getParam("visibleParallelView")== true ? (
             <View style={{width:'50%',borderLeftWidth: 1,  borderLeftColor: '#eee'}}>
              {this.props.contentType == 'bible' ? <BibleChapter 
-              currentVisibleChapter={this.state.currentVisibleChapter}
+              currentChapter={this.state.currentVisibleChapter}
               id={this.props.bookId}
+              bookName={this.props.bookName}
               toggleParallelView={(value)=>this.toggleParallelView(value)}
-              totalChapters={this.props.totalChapters.length}
-              // showBottomBar={this.props.showBottomBar}
+              totalChapters={this.props.totalChapters}
+              totalVerses={this.props.totalVerses}
               navigation={this.props.navigation}
                /> : 
                <Commentary 
@@ -776,6 +832,7 @@ const mapStateToProps = state =>{
 
     chapterNumber:state.updateVersion.chapterNumber,
     totalChapters:state.updateVersion.totalChapters,
+    totalVerses:state.updateVersion.totalVerses,
     bookName:state.updateVersion.bookName,
     bookId:state.updateVersion.bookId,
     fontFamily:state.updateStyling.fontFamily,
@@ -786,7 +843,6 @@ const mapStateToProps = state =>{
 
     fetchedData:state.versionFetch,
     chapterContent:state.versionFetch.chapterContent,
-    totalVerses:state.versionFetch.totalVerses,
 
     verseNumber:state.updateVersion.verseNumber,
     isLoading:state.versionFetch.loading,
@@ -798,11 +854,12 @@ const mapStateToProps = state =>{
 }
 const mapDispatchToProps = dispatch =>{
   return {
-    selectedChapter: (chapterNumber,totalVerses)=>dispatch(selectedChapter(chapterNumber,totalVerses)),
     closeSplitScreen :(close)=>dispatch(closeSplitScreen(close)),
     fetchVersionLanguage:()=>dispatch(fetchVersionLanguage()),
     fetchVersionContent:(payload)=>dispatch(fetchVersionContent(payload)),
     fetchAudioUrl:(payload)=>dispatch(fetchAudioUrl(payload)),
+    updateVersionBook: (value)=>dispatch(updateVersionBook(value)),
+
   }
 }
 export  default connect(mapStateToProps,mapDispatchToProps)(Bible)

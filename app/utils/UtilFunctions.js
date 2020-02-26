@@ -14,7 +14,6 @@ export function getBookNameFromMapping(id,language) {
                     for(var key2 in val.book_name){
                         var lang =  language.toLowerCase()
                         if(lang == key2){
-                            console.log(" language matched ",val.book_name[key2])
                             matchedValue = val.book_name[key2]
                         }
                     }

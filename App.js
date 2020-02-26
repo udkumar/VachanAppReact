@@ -8,7 +8,7 @@ import { styleFile } from './app/utils/styles.js'
 import {AsyncStorageConstants} from './app/utils/AsyncStorageConstants'
 import SplashScreen from 'react-native-splash-screen'
 import {connect} from 'react-redux'
-import {updateColorMode,updateFontSize,updateContentType,updateVerseInLine,updateVersion,selectedBook,selectedChapter,fetchAllContent, fetchAllLanguage} from './app/store/action/'
+import {updateColorMode,updateFontSize,updateContentType,updateVerseInLine,updateVersion,fetchAllContent, updateVersionBook} from './app/store/action/'
 
 class App extends Component {
     constructor(props){
@@ -87,7 +87,10 @@ class App extends Component {
           AsyncStorageConstants.Keys.ChapterNumber,
           AsyncStorageConstants.Keys.BookNumber,
           AsyncStorageConstants.Keys.SourceId,
-          AsyncStorageConstants.Keys.Downloaded
+          AsyncStorageConstants.Keys.Downloaded,
+          AsyncStorageConstants.Keys.TotalChapters,
+          AsyncStorageConstants.Keys.TotalVerses,
+          AsyncStorageConstants.Keys.VerseNumber
         ])
         
           console.log(" RES OF ASYNC VALUE",res)
@@ -101,13 +104,24 @@ class App extends Component {
           const  bookName= res[8][1] == null ? this.props.bookName:res[8][1]
           const  chapterNumber= res[9][1] == null ? this.props.chapterNumber:parseInt(res[9][1])
           // const  bookNumber= res[11][1] == null ? AsyncStorageConstants.Values.DefBookNumber:parseInt(res[11][1])
-          const  sourceId= res[11][1] == null ? this.props.sourceId:parseInt(res[11][1])
-          const  downloaded= res[12][1] == null ? this.props.downloaded:res[12][1].toString()
-          const  totalChapters= this.props.totalChapters
-
-          this.props.updateVersion({language:languageName,languageCode:languageCode,versionCode:versionCode,sourceId:sourceId,downloaded:downloaded,bookId:bookId,chapterNumber:chapterNumber})
-          this.props.selectedBook(bookId,bookName,totalChapters)
-          this.props.selectedChapter(chapterNumber,null)
+          const  sourceId= res[11][1] == null ? this.props.sourceId : parseInt(res[11][1])
+          const  downloaded = res[12][1] == null ? this.props.downloaded : res[12][1].toString()
+          const totalChapters = res[13][1] == null ? this.props.totalChapters : parseInt(res[13][1])
+          const totalVerses = res[14][1] == null ? this.props.totalVerses : parseInt(res[14][1])
+          const verseNumber = res[15][1] == null ? this.props.verseNumber : parseInt(res[15][1])
+          
+          this.props.updateVersion({language:languageName,languageCode:languageCode,
+            versionCode:versionCode,sourceId:sourceId,downloaded:downloaded,
+            
+          })
+          this.props.updateVersionBook({
+            bookId:bookId,bookName:bookName,
+            bookName:bookName,
+            chapterNumber:chapterNumber,
+            totalChapters:totalChapters,
+            totalVerses:totalVerses,
+            verseNumber:verseNumber
+          })
           this.props.updateColorMode(colorMode)
           this.props.updateVerseInLine(verseInLine)
           this.props.updateFontSize(sizeMode)
@@ -140,6 +154,8 @@ const mapStateToProps = state =>{
 
     chapterNumber:state.updateVersion.chapterNumber,
     totalChapters:state.updateVersion.totalChapters,
+    totalVerses:state.updateVersion.totalVerses,
+    verseNumber:state.updateVersion.verseNumber,
     bookName:state.updateVersion.bookName,
     bookId:state.updateVersion.bookId,
     fontFamily:state.updateStyling.fontFamily,
@@ -152,14 +168,15 @@ const mapStateToProps = state =>{
 }
 const mapDispatchToProps = dispatch =>{
   return {
-    updateVersion: (language,version,sourceId,downloaded)=>dispatch(updateVersion(language,version,sourceId,downloaded)),
-    selectedBook:(bookId,bookName,totalChapters) =>dispatch(selectedBook(bookId,bookName,totalChapters)),
-    selectedChapter: (chapterNumber,totalVerses)=>dispatch(selectedChapter(chapterNumber,totalVerses)),
+    updateVersion: (payload)=>dispatch(updateVersion(payload)),
+    updateVersionBook: (payload)=>dispatch(updateVersionBook(payload)),
+
     updateColorMode:(colorMode)=>dispatch(updateColorMode(colorMode)),
     updateFontSize:(sizeMode)=>dispatch(updateFontSize(sizeMode)),
     updateVerseInLine:(val)=>dispatch(updateVerseInLine(val)),
     updateContentType:(val)=>dispatch(updateContentType(val)),
     fetchAllContent:()=>dispatch(fetchAllContent()),
+    
     // fetchAllLanguage:()=>dispatch(fetchAllLanguage())
   }
 }

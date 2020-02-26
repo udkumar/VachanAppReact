@@ -2,11 +2,9 @@
 export const EDIT_NOTE = 'edit_note';
 export const DELETE_NOTE = 'delete_note';
 export const UPDATE_VERSION = 'update_version';
+export const UPDATE_VERSION_BOOK = 'update_version_book';
 export const UPDATE_BOOK = 'update_book';
 
-export const SELECTED_BOOK = 'selected_book';
-export const SELECTED_CHAPTER = 'selected_chapter';
-export const SELECTED_VERSE = 'selected_verse';
 export const UPDATE_CONTENT_TYPE = 'update_content_type';
 
 export const ADD_BOOK_TO_NOTE = 'add_book_to_note';
@@ -58,7 +56,3 @@ export const ALL_LANGUAGE_FAILURE = 'all_language_failure'
 export const FETCH_PARALLEL_BIBLE = 'fetch_parallel_bible'; 
 export const PARALLEL_BIBLE_SUCCESS = 'parallel_bible_success'; 
 export const PARALLEL_BIBLE_FAILURE = 'parallel_bible_failure';
-
-export const PARALLEL_SELECTED_BOOK = 'parallel_selected_book';
-export const PARALLEL_SELECTED_CHAPTER ='parallel_selected_chapter';
-export const PARALLEL_SELECTED_VERSE = 'parallel_selected_verse';

@@ -18,6 +18,9 @@ export const AsyncStorageConstants = {
         BookNumber:"book_number",
         SourceId:"source_id",
         Downloaded:"downloaded",
+        TotalChapters:'total_chapters',
+        TotalVerses:'total_verses',
+        VerseNumber:'verseNumber',
         FontFamily:"font_family"
     },
     Values: {

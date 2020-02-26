@@ -10,6 +10,7 @@ import Controls from './Controls';
 import Video from 'react-native-video';
 import {connect} from 'react-redux'
 import APIFetch from '../../../../utils/APIFetch'
+import {fetchAudioUrl} from '../../../../store/action/'
 
 class Player extends Component {
   constructor(props) {
@@ -80,7 +81,14 @@ class Player extends Component {
       }), 0);
     } */
   }
-
+componentDidMount(){
+  this.props.fetchAudioUrl({
+    languageCode:this.props.languageCode,
+    versionCode:this.props.versionCode,
+    bookId:this.props.bookId,
+    chapter:this.props.chapter
+  })
+}
   render() {
     console.log("PORP   URL .....",this.props.url)
     const track = this.state.audioFile;
@@ -102,7 +110,7 @@ class Player extends Component {
           onBack={this.onBack.bind(this)}
           onForward={this.onForward.bind(this)}
           paused={this.state.paused}/>
-        <Video source={{uri: this.props.url}} // Can be a URL or a local file.
+        <Video source={{uri: this.props.audioURL}} // Can be a URL or a local file.
           ref="audioElement"
           paused={this.state.paused}               // Pauses playback entirely.
           resizeMode="cover"           // Fill the whole screen at aspect ratio.
@@ -128,7 +136,16 @@ const styles = {
   }
 };
 
+const mapStateToProps = state =>{
+  return{
+    audioURL:state.audioFetch.url,
+  }
+}
+const mapDispatchToProps = dispatch =>{
+  return {
+    fetchAudioUrl:(payload)=>dispatch(fetchAudioUrl(payload)),
+  }
+}
+export  default connect(mapStateToProps,mapDispatchToProps)(Player)
 
-
-export  default Player
 

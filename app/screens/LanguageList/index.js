@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Text, StyleSheet,ScrollView,Dimensions, Modal,View,ActivityIndicator,TextInput,FlatList,LayoutAnimation,UIManager,Platform,TouchableOpacity} from 'react-native';
-import {Card,ListItem,Left,Right,List} from 'native-base'
+import {Card,ListItem,Left,Right,List,Accordion} from 'native-base'
 import { NavigationActions,StackActions } from 'react-navigation'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import DbQueries from '../../utils/dbQueries'
@@ -13,88 +13,12 @@ import { styles } from './styles.js';
 import {connect} from 'react-redux';
 import {updateVersion,updateInfographics,fetchAllContent} from '../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
+
 import {API_BASE_URL} from '../../utils/APIConstant'
 import { State } from 'react-native-gesture-handler';
 const languageList = async () => { 
   return await DbQueries.getLangaugeList()
 }
-
-class ExpandableItemComponent extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      layoutHeight: 0,
-      modalVisible:true,
-
-    };
-    this.styles = styles(this.props.colorFile, this.props.sizeFile);    
-  }
-  componentWillReceiveProps(nextProps){
-    if (nextProps.item.isExpanded) {
-      this.setState(() => {
-        return {
-          layoutHeight: null,
-        };
-      });
-    } else {
-      this.setState(() => {
-        return {
-          layoutHeight: 0,
-        };
-      });
-    }
-  }
- 
-  render() {
-    return (
-      <View style={this.styles.container}>
-      {/* <Card> */}
-      <List>
-      <ListItem button={true} onPress={this.props.onClickFunction}>
-        <Left>
-        <Text style={this.styles.text} >{this.props.item.languageName }</Text>
-        </Left>
-        <Right>
-          <Icon style={this.styles.iconStyle} name={this.props.item.isExpanded ? "keyboard-arrow-down" : "keyboard-arrow-up" }  size={24}/>
-        </Right>
-        </ListItem>
-        </List>
-        <View
-          style={{
-            height: this.state.layoutHeight,
-            overflow: 'hidden',
-          }}>
-          {/*Content under the header of the Expandable List Item*/}
-          {this.props.item.versionModels.map((item, index, key) => (
-              <List>
-                <ListItem button={true} onPress={()=>{this.props.goToBible(this.props.item.languageName,this.props.item.languageCode,item.versionCode,item.sourceId, item.downloaded  )}}>
-                <Left>
-                <View style={{alignSelf:'center',marginLeft:12}}>
-                  <Text style={[this.styles.text,{fontWeight:'bold'}]} >{item.versionCode} </Text>
-                  <Text style={[this.styles.text,{marginLeft:8}]} > {item.versionName}</Text>
-                </View>
-                </Left>
-                <Right>
-                {
-                  item.downloaded == true ? 
-                  <Icon style={[this.styles.iconStyle,{marginRight:8}]} name="check" size={24}  onPress={()=>{this.props.goToBible(this.props.item.languageName,this.props.item.languageCode,item.versionCode,item.sourceId, item.downloaded )}}
-                  />
-                :
-                  <Icon  style={[this.styles.iconStyle,{marginRight:12}]} name="file-download" size={24} onPress={()=>{this.props.DownloadBible(this.props.item.languageName,item.versionCode,index,item.sourceId)}}/>
-                }
-              
-              </Right>
-              </ListItem>
-              </List>
-          ))}
-        </View>
-      {/* </Card> */}
-
-      </View>
-    );
-  }
-}
-
 
 class LanguageList extends Component {
     static navigationOptions = ({navigation}) => ({
@@ -135,13 +59,7 @@ class LanguageList extends Component {
     async componentDidMount(){
       this.fetchLanguages()  
     }
-    componentDidUpdate(prevProps,prevState){
-      if(prevState.languages !==this.state.languages){
-        this.setState({
-          languages: this.props.bibleLanguages[0].content
-        })
-      }
-    }
+ 
     async fetchLanguages(){
       var lanVer = []
       var oneDay = 24*60*60*1000; 
@@ -156,9 +74,7 @@ class LanguageList extends Component {
         DbQueries.addLangaugeList(this.props.bibleLanguages[0].content)
         lanVer = this.props.bibleLanguages[0].content
       }
-      else{
-        this.props.fetchAllContent()
-      }
+     
       this.setState({
         languages: lanVer,
         searchList: lanVer
@@ -178,7 +94,7 @@ class LanguageList extends Component {
     // }
 
    
-    DownloadBible = async(langName,verCode,index,sourceId)=>{
+    downloadBible = async(langName,verCode,index,sourceId)=>{
       console.log("language name"+langName+" ver code  "+verCode+" source id "+sourceId)
 
       var bookModels = []
@@ -234,20 +150,60 @@ class LanguageList extends Component {
     }
  
     navigateTo = (langName,langCode,verCode,sourceId,downloaded)=>{
-      console.log("downloaded ",downloaded)
         console.log("navigate back ",langName,langCode,verCode,sourceId,downloaded)
-        this.props.updateVersion({language:langName,languageCode:langCode,versionCode:verCode,sourceId:sourceId,downloaded:downloaded,bookId:this.props.bookId,chapterNumber:this.props.chapterNumber})
+        this.props.updateVersion({language:langName,languageCode:langCode,versionCode:verCode,sourceId:sourceId,downloaded:downloaded})
         AsyncStorageUtil.setAllItems([
           [AsyncStorageConstants.Keys.SourceId, JSON.stringify(sourceId)],
           [AsyncStorageConstants.Keys.LanguageName, langName],
           [AsyncStorageConstants.Keys.LanguageCode, langCode],
           [AsyncStorageConstants.Keys.VersionCode, verCode],
           [AsyncStorageConstants.Keys.Downloaded, JSON.stringify(downloaded)]
-        ]); 
+        ]) 
+        // this.props.navigation.state.params.updateVersion({language:langName,languageCode:langCode,versionCode:verCode,sourceId:sourceId,downloaded:downloaded})
         this.props.navigation.goBack()
     }
-    componentWillUnmount(){
-      this.props.navigation.state.params.callBackForUpdateBook(null)
+    _renderHeader = (item, expanded) =>{
+      return(
+        <View style={{
+          flexDirection: "row",
+          padding: 10,
+          justifyContent: "space-between",
+          alignItems: "center" ,
+          }}>
+          <Text>
+          {/* {" "}{item.languageName.charAt(0).toUpperCase()+item.languageName.slice(1)} */}
+          {item.languageName}
+          </Text>
+          <Icon name={expanded ? "keyboard-arrow-down" : "keyboard-arrow-up" }  size={24}/>
+        </View>
+      )
+    }
+    _renderContent = (item) =>{
+      return(
+        <View>
+            {/*Content under the header of the Expandable List Item*/}
+            {item.versionModels.map((element, index, key) => (
+              <TouchableOpacity 
+              style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginHorizontal:8}} 
+               onPress={()=>{this.navigateTo(item.languageName,item.languageCode,element.versionCode,element.sourceId, element.downloaded  )}}>
+                  <View>
+                    <Text style={[this.styles.text,{marginLeft:8,fontWeight:'bold'}]} >{element.versionCode} </Text>
+                    <Text style={[this.styles.text,{marginLeft:8}]} >{element.versionName}</Text>
+                  </View>
+                  <View>
+                  {
+                    element.downloaded == true ? 
+                    <Icon style={[this.styles.iconStyle,{marginRight:8}]} name="check" size={24}  onPress={()=>{this.navigateTo(item.languageName,item.languageCode,element.versionCode,element.sourceId, element.downloaded )}}
+                    />
+                  :
+                    <Icon  style={[this.styles.iconStyle,{marginRight:12}]} name="file-download" size={24} onPress={()=>{this.downloadBible(item.languageName,element.versionCode,index,element.sourceId)}}/>
+                  }
+                
+                </View>
+                </TouchableOpacity>
+            ))}
+        </View>
+      )
     }
     render(){
       return (
@@ -264,7 +220,6 @@ class LanguageList extends Component {
             textContent={'DOWNLOADING BIBLE...'}
             //  textStyle={styles.spinnerTextStyle}
           />}
-        <View style={{flex:1}}>
         {/* <TextInput 
           style={this.styles.TextInputStyleClass}
           onChangeText={(text) => this.SearchFilterFunction(text)}
@@ -272,30 +227,14 @@ class LanguageList extends Component {
           underlineColorAndroid='transparent'
           placeholder="Search Here"
         />   */}
-        <ScrollView>
-        <FlatList
-          data={this.state.languages}
-          extraData={this.state}
-          renderItem={({item, index, separators}) =>
-          <ExpandableItemComponent
-            // key={item}
-            onClickFunction={this.updateLayout.bind(this, index)}
-            item={item}
-            DownloadBible = {this.DownloadBible}
-            goToBible = {this.navigateTo}
-            startDownload ={this.state.startDownload}
-            colorFile={this.state.colorFile}
-            sizeFile={this.state.sizeFile}
-            isLoading = {this.state.isLoading}
-            index = {this.state.index}
-            languageName = {this.state.languageName}
-            // setModalVisible={this.setModalVisible}
+        <Accordion 
+          dataArray={this.state.languages}
+          animation={true}
+          expanded={true}
+          renderHeader={this._renderHeader}
+          renderContent={this._renderContent}
           />
-          }
-
-        />
-      </ScrollView>
-      </View>
+       
       </View>
       )
     }
@@ -307,12 +246,7 @@ const mapStateToProps = state =>{
     chapterNumber:state.updateVersion.chapterNumber,
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
-    fontFamily:state.updateStyling.fontFamily,
-    fileName:state.infographics.fileName,
-    contentType:state.updateVersion.contentType,
     bibleLanguages:state.contents.contentLanguages,
-    commentaryLanguages:state.contents.commentaryLanguages,
-    // allLanguage:state.contents.allLanguages
   }
 }
 

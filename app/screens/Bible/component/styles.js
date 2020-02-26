@@ -41,15 +41,7 @@ export const styles =(colorFile, sizeFile) =>{
         alignItems:'center',
        
     },
-    playButton: {
-        height: 72,
-        width: 72,
-        borderWidth: 1,
-        borderColor: '#eee',
-        borderRadius: 72 / 2,
-        alignItems: 'center',
-        justifyContent: 'center',
-      },
+ 
      
     bottomOptionText:{
         textAlign:'center',
@@ -81,17 +73,6 @@ export const styles =(colorFile, sizeFile) =>{
         bottom:48,
         left:8
     },
-    bottomBarPrevView:{
-        height:56,
-        width:56,
-        borderRadius:32,
-        margin:8,
-        bottom:20,
-        left:0,
-        position:'absolute', 
-        backgroundColor:colorFile.semiTransparentBackground,
-        justifyContent:'center'
-    },
     bottomBarNextParallelView:{
         position:'absolute', 
         backgroundColor:colorFile.semiTransparentBackground,
@@ -103,23 +84,12 @@ export const styles =(colorFile, sizeFile) =>{
         right:8
     },
 
-    bottomBarNextView:{
-        height:56,
-        width:56,
-        borderRadius:32,
-        margin:8,
-        bottom:20,
-        right:0,
-        position:'absolute', 
-        backgroundColor:colorFile.semiTransparentBackground,
-        justifyContent:'center'
-    },
     bottomBarAudioCenter:{
         borderRadius: 32, 
         margin:8, 
         position:'absolute', 
         bottom:20, 
-        // left:0,
+        left:0,
         // width: 56, 
         // height: 56, 
        

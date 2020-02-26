@@ -25,7 +25,7 @@ const API_BASE_URL = 'https://api.autographamt.com/v1/'
       const payload = params.payload
       let bookListData = []
       if(payload.isDownloaded == true ) {
-         response = yield call(DbQueries.getDownloadedBook(payload.language,payload.versionCode)) 
+         response = yield DbQueries.getDownloadedBook(payload.language,payload.versionCode)
          for(var i = 0; i<response.length;i++){
           var bookId = response[i]
           var books = {
@@ -68,8 +68,10 @@ const API_BASE_URL = 'https://api.autographamt.com/v1/'
       let chapterContent=[]
       let totalVerses=null
       const payload = params.payload
+      console.log("payload.isDownloaded ",payload.isDownloaded)
     if(payload.isDownloaded == true ) {
-      const response = yield call(DbQueries.queryVersions(payload.language,payload.version,payload.bookId,payload.chapter)) 
+      const response = yield DbQueries.queryVersions(payload.language,payload.version,payload.bookId,payload.chapter) 
+      console.log(" downloaded ......",response)
       chapterContent = response[0].verses
       totalVerses = response[0].length
     }
@@ -78,9 +80,14 @@ const API_BASE_URL = 'https://api.autographamt.com/v1/'
       const response = yield call(fetchApi,url)
       chapterContent = response.chapterContent.verses
       totalVerses = response.chapterContent.verses.length
+      console.log("not downloaded ",response)
+      console.log(" chapterContent ",chapterContent)
+      console.log("totalVerses ",totalVerses)
     }
     yield put(versionContentSuccess({chapterContent:chapterContent,totalVerses:totalVerses}))
     } catch (e) {
+      console.log("error fetch content ",e)
+
     yield put(versionContentFailure(e))
     }
   }

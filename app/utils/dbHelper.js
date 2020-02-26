@@ -331,7 +331,7 @@ class DbHelper {
 					versionCode: verCode,
 					bookId: bId,
 					chapterNumber: cNum,
-					downloaded:downloaded,
+					downloaded:JSON.parse(downloaded),
 					time: timeStamp
 				})
 				console.log("write.. history complete..")

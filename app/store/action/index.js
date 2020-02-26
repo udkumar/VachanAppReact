@@ -1,14 +1,11 @@
 
 export {updateBCV,deleteNote} from './editNote'
-// export {selectedBook,selectedChapter,selectedVerse} from './referenceUpdate'
 export {addBookToNote,addChapterToNote,addVerseToNote,updateNoteBody} from './editNote'
 
-export {updateVersion,selectedBook,selectedChapter,selectedVerse,updateContentType} from './updateVersion'
+export {updateVersion,updateContentType,updateVersionBook} from './updateVersion'
 export {updateFontSize,updateColorMode,updateVerseInLine} from './updateStyling'
 export {closeSplitScreen,updateDimensions} from './splitScreenProps'
 export {updateInfographics} from './updateInfographics'
-
-
 
 export {fetchAudioUrl,audioURLSuccess,audioURLFailure} from './apiFetch/audio/fetchUrl'
 
@@ -21,4 +18,4 @@ export {fetchVersionContent,versionContentSuccess,versionContentFailure} from '.
 
 export {fetchAllContent,allContentSuccess,allContentFailure} from './apiFetch/fetchAllContentType/fetchAllContent'
 export {fetchAllLanguage,allLanguageSuccess,allLanguageFailure} from './apiFetch/fetchAllContentType/allLanguages'
-export {fetchParallelBible,parallelBibleSuccess,parallelBiblefailure,parallelSelectedBook,parallelSelectedChapter,parallelSelectedVerse} from './apiFetch/ParallelBible'
+export {fetchParallelBible,parallelBibleSuccess,parallelBiblefailure} from './apiFetch/ParallelBible'

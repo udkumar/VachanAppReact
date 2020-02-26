@@ -7,41 +7,26 @@ import {
   ScrollView,
   TouchableOpacity,
   FlatList,
-  Linking,
-  Platform,
-  Alert,
-  ActivityIndicator
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {Segment,Button,Tab,Tabs, Item} from 'native-base'
 import { SelectBookPageStyle } from './styles.js';
+import {AsyncStorageConstants} from '../../../utils/AsyncStorageConstants'
+import {connect} from 'react-redux'
+import Spinner from 'react-native-loading-spinner-overlay';
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
-import {AsyncStorageConstants} from '../../../utils/AsyncStorageConstants'
-import AsyncStorageUtil from '../../../utils/AsyncStorageUtil'
 
-import APIFetch from '../../../utils/APIFetch'
-import {getBookNameFromMapping,getBookSectionFromMapping,getBookNumberFromMapping,getBookChaptersFromMapping} from '../../../utils/UtilFunctions';
-import DbQueries from '../../../utils/dbQueries.js';
-import {connect} from 'react-redux'
-import {selectedBook,addBookToNote,fetchVersionBooks,parallelSelectedBook} from '../../../store/action/'
-import Spinner from 'react-native-loading-spinner-overlay';
-
-
- class SelectBook extends Component {
+class SelectBook extends Component {
   constructor(props){
     super(props)
     this.state = {
-      colorFile:this.props.colorFile,
-      sizeFile:this.props.sizeFile,
-      colorMode:this.props.colorMode,
       activeTab:true,
-      bookList: [],
       NTSize:0,
       OTSize:0,
       isLoading:false
     }
-    this.styles = SelectBookPageStyle(this.state.colorFile, this.state.sizeFile);
+    this.styles = SelectBookPageStyle(this.props.colorFile, this.props.sizeFile);
     this.navigateTo = this.navigateTo.bind(this)
     this.viewabilityConfig = {
         itemVisiblePercentThreshold: 100,
@@ -61,32 +46,8 @@ import Spinner from 'react-native-loading-spinner-overlay';
   getItemLayout = (data, index) => (
     { length: 48, offset: 48 * index, index }
   )
-
-  componentDidMount(){
-  this.getBooks()  
-  }
-  async getBooks(){
-    console.log(" ")
-    if(!this.props.screenProps.parallelBible || this.props.screenProps.parallelBible==null){
-      this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,isDownloaded:this.props.downloaded,sourceId:this.props.sourceId})
-    }
-    else{
-      this.props.fetchVersionBooks({language:this.props.parallelContentLanguage,versionCode:this.props.parallelContentVersionCode,isDownloaded:this.props.parallelContentDownloaded,sourceId:this.props.parallelContentSourceId})
-
-    }
-  }
   navigateTo(item){
-    if(!this.props.screenProps.parallelBible || this.props.screenProps.parallelBible==null){
-      this.props.selectedBook(item.bookId,item.bookName,item.numOfChapters)
-      this.props.addBookToNote(item.bookId,item.bookName,item.numOfChapters)
-      AsyncStorageUtil.setAllItems([
-        [AsyncStorageConstants.Keys.BookId,item.bookId],
-        [AsyncStorageConstants.Keys.BookName,item.bookName]
-      ]); 
-    }
-    else{
-      this.props.parallelSelectedBook(item.bookId,item.bookName,item.numOfChapters)
-    }
+    this.props.screenProps.updateSelectedBook(item)
     this.props.navigation.navigate('Chapters')
   } 
 
@@ -137,7 +98,9 @@ renderItem = ({item, index})=> {
             style={this.styles.bookList}>
             <Text
               style={
-                [this.styles.textStyle,{fontWeight:item == this.props.bookName ? "bold" : "normal"}]
+                [this.styles.textStyle,
+                  {fontWeight:item.bookId == this.props.screenProps.selectedBookId ? "bold" : "normal"}
+                ]
               }
               >
               {item.bookName}
@@ -166,7 +129,6 @@ renderItem = ({item, index})=> {
 
 
   render(){
-    // console.log("BOOKS ",this.props.books)
     let activeBgColor = this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#3F51B5' : '#fff'
     let inactiveBgColor =  this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#fff' : '#3F51B5'
     return (
@@ -240,37 +202,12 @@ renderItem = ({item, index})=> {
   }
 
 }
-
-
 const mapStateToProps = state =>{
   return{
-    language: state.updateVersion.language,
-    versionCode:state.updateVersion.versionCode,
-    sourceId:state.updateVersion.sourceId,
-    downloaded:state.updateVersion.downloaded,
-
-    parallelContentSourceId:state.updateVersion.parallelContentSourceId,
-    parallelContentVersionCode:state.updateVersion.parallelContentVersionCode,
-    parallelContentLanguage:state.updateVersion.parallelContentLanguage,
-    parallelContentDownloaded:state.updateVersion.parallelContentDownloaded,
-
     books:state.versionFetch.data,
+    isLoading:state.versionFetch.isLoading,
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
-    colorMode:state.updateStyling.colorMode,
-    isLoading:state.versionFetch.loading,
-
   }
 }
-
-const mapDispatchToProps = dispatch =>{
-  return {
-    selectedBook:(bookId,bookName,totalChapters) =>dispatch(selectedBook(bookId,bookName,totalChapters)),
-    addBookToNote:(bookId,bookName,totalChapters)=>dispatch(addBookToNote(bookId,bookName,totalChapters)),
-    fetchVersionBooks:(payload)=>dispatch(fetchVersionBooks(payload)),
-    parallelSelectedBook:(bookId,bookName,totalChapters) =>dispatch(parallelSelectedBook(bookId,bookName,totalChapters)),
-    
-    
-  }
-}
-export  default connect(mapStateToProps,mapDispatchToProps)(SelectBook)
+ export default connect(mapStateToProps,null)(SelectBook)
