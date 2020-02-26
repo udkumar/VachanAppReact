@@ -15,8 +15,12 @@ const API_BASE_URL = 'https://api.autographamt.com/v1/'
     const url = API_BASE_URL + "bibles"
     const response = yield call(fetchApi,url)
     yield put(versionLanguageSuccess(response))
+    yield put(versionLanguageFailure(null))
+
     } catch (e) {
     yield put(versionLanguageFailure(e))
+    yield put(versionLanguageSuccess([]))
+
     }
   }
   
@@ -56,10 +60,11 @@ const API_BASE_URL = 'https://api.autographamt.com/v1/'
       }
     var res = bookListData.length == 0 ? [] : bookListData.sort(function(a, b){return a.bookNumber - b.bookNumber})
     yield put(versionBooksSuccess(res))
+    yield put(versionBooksFailure(null))
     } catch (e) {
-      console.log("VERSION BOOKS //////........",e)
-
     yield put(versionBooksFailure(e))
+    yield put(versionBooksSuccess([]))
+
     }
   }
 
@@ -85,10 +90,14 @@ const API_BASE_URL = 'https://api.autographamt.com/v1/'
       console.log("totalVerses ",totalVerses)
     }
     yield put(versionContentSuccess({chapterContent:chapterContent,totalVerses:totalVerses}))
+    yield put(versionContentFailure(null))
+    
     } catch (e) {
       console.log("error fetch content ",e)
 
     yield put(versionContentFailure(e))
+    yield put(versionContentSuccess([]))
+
     }
   }
   

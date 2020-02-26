@@ -18,6 +18,8 @@ const GIT_BASE_API = 'https://github.com/Bridgeconn/vachancontentrepository/raw/
                     const url = GIT_BASE_API + "audio_bibles"+"/"+ payload.languageCode + "/" + ver_code + "/" + payload.bookId  + "/" + payload.chapter + ".mp3"
                     const response = yield call(fetch,url)
                     yield put(audioURLSuccess(response.url))
+                    yield put(audioURLFailure(null))
+
                     // break;
                 // }
             // }
@@ -27,6 +29,7 @@ const GIT_BASE_API = 'https://github.com/Bridgeconn/vachancontentrepository/raw/
 
         } catch (e) {
         yield put(audioURLFailure(e))
+        yield put(audioURLSuccess([]))
         }
     }
     

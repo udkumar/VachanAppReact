@@ -24,8 +24,12 @@ const API_BASE_URL = 'https://api.autographamt.com/v1/'
       totalVerses = response.chapterContent.verses.length
     }
     yield put(parallelBibleSuccess({parallelBible:chapterContent,totalVerses:totalVerses}))
+    yield put(parallelBiblefailure(null))
+
     } catch (e) {
     yield put(parallelBiblefailure(e))
+    yield put(parallelBibleSuccess([]))
+
     }
   }
   

@@ -4,6 +4,7 @@ import {
   View,
   ScrollView,
   FlatList,
+  Alert,
   ActivityIndicator,
   Dimensions,
   TouchableHighlight,
@@ -152,7 +153,7 @@ class Bible extends Component {
     this.getSelectedReferences = this.getSelectedReferences.bind(this)
     this.onBookmarkPress = this.onBookmarkPress.bind(this)
     // this.getReference = this.getReference.bind(this)
-
+    this.alertPresent
     this.pinchDiff = 0
     this.pinchTime = new Date().getTime()
     this.styles = styles(this.props.colorFile, this.props.sizeFile);    
@@ -592,18 +593,31 @@ this.setState({audio:false})
   toggleParallelView(value){
     this.props.navigation.setParams({visibleParallelView:value})
   }
-
-  // getRefParallel =(item)=>{
-  //   if(item !== null ){
-  //     return item
-  //   }
-  //   else{
-  //     return null
-  //   }
-  // }
+  errorMessage(){
+    console.log("props ",this.props.error)
+    if (!this.alertPresent) {
+        this.alertPresent = true;
+        if (this.props.error) {
+            Alert.alert("", "Check your internet connection", [{text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
+        } else {
+            this.alertPresent = false;
+        }
+    }
+  }
+updateData = ()=>{
+  if(this.props.error){
+    this.queryBookFromAPI(null)
+    this.errorMessage()
+  }
+  else{
+    return
+  }
+}
 
   render() {
-    console.log("total verses ",this.props.totalVerses , "total chapters ",this.props.totalChapters)
+    console.log("error value ",this.props.error)
+    console.log(" value ",this.props.chapterContent)
+
       return (
         <View  style={this.styles.container}>
            {this.props.isLoading  &&
@@ -618,7 +632,16 @@ this.setState({audio:false})
             textContent={'Loading...'}
             //  textStyle={styles.spinnerTextStyle}
           />}
-          {/* {this.props.error ? alert()} */}
+          {(this.props.error || this.props.chapterContent.length === 0)?
+            <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+            <TouchableOpacity 
+            onPress={()=>this.updateData()}
+            style={{height:40,width:120,borderRadius:4,backgroundColor:'#3F51B5',justifyContent:'center',alignItems:'center'}}
+            >
+            <Text style={{fontSize:18,color:'#fff'}}>Reload</Text>
+            </TouchableOpacity>
+            </View>
+          :
           <View style={{flexDirection:'row'}}>
             <View style={{width:this.props.navigation.getParam("visibleParallelView") ? '50%' : '100%'}}>
             {this.props.navigation.getParam("visibleParallelView") &&
@@ -786,7 +809,7 @@ this.setState({audio:false})
             </View>
             )
              : null}
-        </View>
+        </View>}
         </View>
       )
   }
@@ -843,7 +866,7 @@ const mapStateToProps = state =>{
 
     fetchedData:state.versionFetch,
     chapterContent:state.versionFetch.chapterContent,
-
+    error:state.versionFetch.error,
     verseNumber:state.updateVersion.verseNumber,
     isLoading:state.versionFetch.loading,
 

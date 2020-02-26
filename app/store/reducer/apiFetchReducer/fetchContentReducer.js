@@ -18,8 +18,6 @@ function fetchContentReducer(state=initialState,action){
         return {
             ...state,
             loading:false,
-            // bibleLanguages:action.payload[0],
-            // commentaryLanguages:action.payload[1],
             contentLanguages:action.payload
         }
         case ALL_CONTENT_FAILURE:

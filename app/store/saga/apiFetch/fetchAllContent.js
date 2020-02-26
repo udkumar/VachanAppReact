@@ -37,17 +37,24 @@ const API_BASE_URL = 'https://api.vachanonline.net/v1'
       commentary.push({languageName:language,languageCode:languageCode,versionModels:versions})
     }
     yield put(allContentSuccess([{contentType:"bible",content:bible},{contentType:"commentary",content:commentary}]))
-    } catch (e) {
+    yield put(allContentFailure(null))
+    
+  } catch (e) {
       console.log("commentary error ",error)
     yield put(allContentFailure(e))
+    yield put(allContentSuccess([]))
     }
   }
   function* fetchAllLanguage(){
     try {
       const response = yield call(fetchApi,'https://api.vachanonline.net/v1/languages')
       yield put(allLanguageSuccess(response))
+      yield put(allLanguageFailure(null))
+
       } catch (e) {
       yield put(allLanguageFailure(e))
+      yield put(allLanguageSuccess([]))
+
       }
   }
   

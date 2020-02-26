@@ -11,8 +11,12 @@
         const response = yield call(fetchApi,languages)
         const contentCommentry = {content:"Commentary",contentVersion:response}
         yield put(commentaryLanguageSuccess(contentCommentry))
+        yield put(commentaryLanguageFailure(null))
+
       } catch (e) {
-      yield put(commentaryLanguageFailure(e))
+        yield put(commentaryLanguageFailure(e))
+        yield put(commentaryLanguageSuccess([]))
+
       }
   }
   
@@ -22,8 +26,12 @@
         const content = API_BASE_URL +"/"+payload.parallelContentSourceId+"/"+payload.bookId+"/"+payload.chapter
         const res = yield call(fetchApi,content)
         yield put(commentaryContentSuccess(res))
+        yield put(commentaryContentFailure(null))
+
     } catch (e) {
     yield put(commentaryContentFailure(e))
+    yield put(commentaryContentSuccess([]))
+
     } 
   }
 
