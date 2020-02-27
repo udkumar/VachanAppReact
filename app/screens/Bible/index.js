@@ -24,9 +24,9 @@ import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
 import Player from '../../screens/Bible/Navigate/Audio/Player';
 import {getResultText} from '../../utils/UtilFunctions';
-import {getBookNameFromMapping,getBookChaptersFromMapping} from '../../utils/UtilFunctions';
+import {getBookNameFromMapping,getBookChaptersFromMapping,getBookNumOfVersesFromMapping} from '../../utils/UtilFunctions';
 import APIFetch from '../../utils/APIFetch'
-import {selectedChapter,fetchVersionLanguage,fetchVersionContent,fetchAudioUrl,updateVersionBook} from '../../store/action/'
+import {fetchDownloadedVersionContent,fetchVersionLanguage,fetchVersionContent,fetchAudioUrl,updateVersionBook} from '../../store/action/'
 import SelectContent from '../Bible/component/SelectContent'
 import SelectBottomTabBar from '../Bible/component/SelectBottomTabBar'
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -125,7 +125,10 @@ class Bible extends Component {
       // totalVerses:this.props.totalVerses,
       // verseNumber:this.props.verseNumber,
       audio:false,
-
+      chapterContent:[],
+      error:null,
+      // downloadedChapters:[],
+      downloadedChapter:[],
       isLoading: false,
       showBottomBar: false,
       bookmarksList: [],
@@ -158,6 +161,17 @@ class Bible extends Component {
     this.pinchTime = new Date().getTime()
     this.styles = styles(this.props.colorFile, this.props.sizeFile);    
   }
+//   static getDerivedStateFromProps(nextProps, prevState) {
+//     // if(nextProps.downloaded !== prevState.downloaded ||
+//     //   nextProps.sourceId !==prevState.sourceId
+//     // ){
+//     //   return{downloaded:nextProps.downloaded,sourceId:nextProps.sourceId,colorFile:nextProps.colorFile,sizeFile:nextProps.sizeFile,}
+//     // }
+//     return{
+//       colorFile:nextProps.colorFile,
+//       sizeFile:nextProps.sizeFile,
+//     }
+// }
   componentWillReceiveProps(nextProps,prevState){
     this.setState({
       colorFile:nextProps.colorFile,
@@ -167,14 +181,14 @@ class Bible extends Component {
     this.styles = styles(nextProps.colorFile, nextProps.sizeFile);  
   }
 
-  scrollToVerse(){
+  scrollToVerse(verseNumber){
     if(this.state.arrLayout.length > 0){
-    console.log("SCROLL TO ........  ",this.state.arrLayout, " ",this.state.arrLayout[this.props.verseNumber],"  ",this.props.verseNumber)
+    console.log("SCROLL TO ........  ",this.state.arrLayout, " ",this.state.arrLayout[verseNumber],"  ",verseNumber)
 
       // if(this.arrLayout[this.props.verseNumber+1] == this.props.verseNumber)
       this.scrollViewRef.scrollTo({
         x: 0,
-        y: this.state.arrLayout[this.props.verseNumber-1],
+        y: this.state.arrLayout[verseNumber-1],
         // animated: true,
       })
     }
@@ -245,7 +259,7 @@ class Bible extends Component {
       languageName: this.props.language, 
       versionCode: this.props.versionCode,
       bookId:this.props.bookId,
-      audio:this.state.audioURL !== null ? true : false,
+      audio:this.state.audio,
       modalVisible:false,
       toggleModal:this.setState({modalVisible:!this.state.modalVisible}),
       visibleParallelView:false,
@@ -254,11 +268,11 @@ class Bible extends Component {
       numOfChapter:this.props.totalChapters,
       numOfVerse:this.props.totalVerses
     })
-    this.scrollToVerse()
     this.queryBookFromAPI(null)
   }
   
   getReference = (item)=>{
+    this.scrollToVerse(item.verseNumber)
     var time =  new Date()
     DbQueries.addHistory(this.props.sourceId,this.props.language,this.props.languageCode, this.props.versionCode, item.bookId, item.chapterNumber, this.props.downloaded, time)
     AsyncStorageUtil.setAllItems([
@@ -277,6 +291,7 @@ class Bible extends Component {
       totalVerses:item.totalVerses,
       verseNumber:item.verseNumber
     })
+
   }
 
   // updateVersion=(item)=>{
@@ -301,27 +316,46 @@ class Bible extends Component {
 
   componentDidUpdate(prevProps,prevState){
     console.log("prevProps value ",prevProps.bookId,this.props.bookId)
-    if(this.props.bookId !== prevProps.bookId || this.props.chapterNumber !==prevProps.chapterNumber ||this.props.sourceId !==prevProps.sourceId ){
+    if(this.props.bookId !== prevProps.bookId || this.props.chapterNumber !== prevProps.chapterNumber ||this.props.sourceId !== prevProps.sourceId ){
       this.queryBookFromAPI(null)
     }
   }
-  queryBookFromAPI = (val)=>{
+  
+  queryBookFromAPI = async(val)=>{
     console.log("query book ",this.props.downloaded,this.props.language,this.props.sourceId,this.props.totalChapters,this.props.totalVerses)
-    this.setState({isLoading:true,currentVisibleChapter: val != null ? this.state.currentVisibleChapter + val : this.props.chapterNumber },async()=>{
+    this.setState({isLoading:true,currentVisibleChapter: val != null ? this.state.currentVisibleChapter + val : this.props.chapterNumber,error:null },async()=>{
           try{
             this.props.navigation.setParams({
               languageName:this.props.language,
               versionCode:this.props.versionCode,
+              bookId:this.props.bookId,
               bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
               currentChapter:this.state.currentVisibleChapter,
               numOfChapter:this.props.totalChapters,
               numOfVerse:this.props.totalVerses
             })
-            this.props.fetchVersionContent({isDownloaded:this.props.downloaded,sourceId:this.props.sourceId,language:this.props.language,version:this.props.versionCode,bookId:this.props.bookId,chapter:this.state.currentVisibleChapter})
-            this.setState({isLoading:false})
+            let downloaded = await AsyncStorageUtil.getAllItems([
+              AsyncStorageConstants.Keys.Downloaded,
+            ])
+            if(JSON.parse(downloaded[0][1])){
+               console.log("downloade ",downloaded[0][1])
+              var content = await DbQueries.queryVersions(this.props.language,this.props.versionCode,this.props.bookId,this.state.currentVisibleChapter) 
+                console.log("content ",content )
+              this.setState({chapterContent:content[0].verses,isLoading:false,currentVisibleChapter:this.state.currentVisibleChapter})
+
+              // this.setState({chapterContent:content[0].chapters[this.state.currentVisibleChapter-1].verses,isLoading:false,currentVisibleChapter:this.state.currentVisibleChapter})
+            }
+            else{
+              var content = await APIFetch.getChapterContent(this.props.sourceId, this.props.bookId, this.state.currentVisibleChapter)
+              console.log("fetch content",content)
+                this.setState({chapterContent:content.chapterContent.verses,isLoading:false,currentVisibleChapter:this.state.currentVisibleChapter})
+            }
+           
           }
+
           catch(error) {
-            this.setState({isLoading:false})
+            this.setState({isLoading:false,error:error})
+            console.log("ERROR ",error)
             alert("It seems no version available or check your internet connection ",error)
           }
           this.audioComponentUpdate()
@@ -344,7 +378,8 @@ toggleAudio=()=>{
      )
   }
 }
-audioComponentUpdate = async() =>{
+async audioComponentUpdate(){
+  console.log("audio value ",this.state.audio)
 var found = false
 let res =  await APIFetch.availableAudioBook(this.props.languageCode,this.props.versionCode)
 try{
@@ -484,8 +519,8 @@ this.setState({audio:false})
         bookId:id,
         onbackNote:this.onbackNote,
         chapterNumber:this.state.currentVisibleChapter,
-        totalVerses:this.props.totalVerses,
-        totalChapters:this.props.totalChapters,
+        totalVerses:getBookNumOfVersesFromMapping(id,this.state.currentVisibleChapter),
+        totalChapters:getBookChaptersFromMapping(id),
         noteIndex:-1,
         // noteObject:''
     })
@@ -531,9 +566,7 @@ this.setState({audio:false})
     this.setState({ selectedReferenceSet: [], showBottomBar: false})
   }
 
-  getVerseText(cNum, vIndex) {
-    return getResultText(this.state.modelData[cNum - 1].verseComponentsModels[vIndex].text)
-  }
+
   //share verse
   addToShare = () => {
     let shareText = ''
@@ -543,7 +576,7 @@ this.setState({audio:false})
       let vIndex= parseInt(tempVal[1])
       let verseNumber= tempVal[2]
       shareText = shareText.concat(this.props.bookName + " " + chapterNumber + ":" + verseNumber + " ");
-      shareText = shareText.concat(this.getVerseText(chapterNumber, vIndex));
+      shareText = shareText.concat(parseInt(tempVal[3]))
       shareText = shareText.concat("\n");
     }
     Share.share({message: shareText})
@@ -605,9 +638,9 @@ this.setState({audio:false})
     }
   }
 updateData = ()=>{
-  if(this.props.error){
-    this.queryBookFromAPI(null)
+  if(this.state.error){
     this.errorMessage()
+    this.queryBookFromAPI(null)
   }
   else{
     return
@@ -615,24 +648,17 @@ updateData = ()=>{
 }
 
   render() {
-    console.log("error value ",this.props.error)
-    console.log(" value ",this.props.chapterContent)
+    console.log("chapter content value ",this.state.error)
 
       return (
         <View  style={this.styles.container}>
-           {this.props.isLoading  &&
-            <Spinner
-            visible={true}
-            textContent={'Loading...'}
-            //  textStyle={styles.spinnerTextStyle}
-          />}
           {this.state.isLoading &&
             <Spinner
             visible={true}
             textContent={'Loading...'}
             //  textStyle={styles.spinnerTextStyle}
           />}
-          {(this.props.error || this.props.chapterContent.length === 0)?
+          {(this.state.error) ?
             <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
             <TouchableOpacity 
             onPress={()=>this.updateData()}
@@ -658,7 +684,7 @@ updateData = ()=>{
                     <View style={this.styles.chapterList}>
                      <FlatList
                       style={{padding:10}}
-                      data={this.props.chapterContent }
+                      data={this.state.chapterContent }
                       extraData={this.state}
                       renderItem={({item, index}) => 
                       <VerseView
@@ -681,8 +707,9 @@ updateData = ()=>{
                       />
                       </View>
                   :
+                
                       <View style={this.styles.chapterList}>
-                        {this.props.chapterContent.map((verse, index) => 
+                        {this.state.chapterContent.map((verse, index) => 
                         <View 
                         onLayout={event => {
                           const layout = event.nativeEvent.layout;
@@ -706,7 +733,7 @@ updateData = ()=>{
                               // verseSelected ={this.props.verseNumber}
                             />
                         </Text>
-                        {index == this.props.chapterContent.length - 1  && ( this.state.showBottomBar ? <View style={{height:64, marginBottom:4}} />: null ) }
+                        {index == this.state.chapterContent.length - 1  && ( this.state.showBottomBar ? <View style={{height:64, marginBottom:4}} />: null ) }
                         </View>
                         )}
                       </View>
@@ -864,15 +891,16 @@ const mapStateToProps = state =>{
     colorFile:state.updateStyling.colorFile,
     close:state.updateSplitScreen.close,
 
-    fetchedData:state.versionFetch,
-    chapterContent:state.versionFetch.chapterContent,
-    error:state.versionFetch.error,
-    verseNumber:state.updateVersion.verseNumber,
-    isLoading:state.versionFetch.loading,
-
-    audioURL:state.audioFetch.url,
+    // fetchedData:state.versionFetch,
+    // chapterContent:state.versionFetch.chapterContent,
+    // error:state.versionFetch.error,
+    // verseNumber:state.updateVersion.verseNumber,
+    // isLoading:state.versionFetch.loading,
+    // downloadedChapter:state.downloadedBible.downloadedChapter,
+    // audioURL:state.audioFetch.url,
     availableCommentaries:state.commentaryFetch.availableCommentaries,
     commentary:state.commentaryFetch.commentaryContent,
+
   }
 }
 const mapDispatchToProps = dispatch =>{
@@ -880,9 +908,9 @@ const mapDispatchToProps = dispatch =>{
     closeSplitScreen :(close)=>dispatch(closeSplitScreen(close)),
     fetchVersionLanguage:()=>dispatch(fetchVersionLanguage()),
     fetchVersionContent:(payload)=>dispatch(fetchVersionContent(payload)),
-    fetchAudioUrl:(payload)=>dispatch(fetchAudioUrl(payload)),
+    // fetchAudioUrl:(payload)=>dispatch(fetchAudioUrl(payload)),
     updateVersionBook: (value)=>dispatch(updateVersionBook(value)),
-
+    // fetchDownloadedVersionContent:(payload)=>dispatch(fetchDownloadedVersionContent(payload))
   }
 }
 export  default connect(mapStateToProps,mapDispatchToProps)(Bible)

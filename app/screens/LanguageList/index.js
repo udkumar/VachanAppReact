@@ -16,6 +16,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 
 import {API_BASE_URL} from '../../utils/APIConstant'
 import { State } from 'react-native-gesture-handler';
+
 const languageList = async () => { 
   return await DbQueries.getLangaugeList()
 }
@@ -74,7 +75,6 @@ class LanguageList extends Component {
         DbQueries.addLangaugeList(this.props.bibleLanguages[0].content)
         lanVer = this.props.bibleLanguages[0].content
       }
-     
       this.setState({
         languages: lanVer,
         searchList: lanVer
@@ -150,7 +150,6 @@ class LanguageList extends Component {
     }
  
     navigateTo = (langName,langCode,verCode,sourceId,downloaded)=>{
-        console.log("navigate back ",langName,langCode,verCode,sourceId,downloaded)
         this.props.updateVersion({language:langName,languageCode:langCode,versionCode:verCode,sourceId:sourceId,downloaded:downloaded})
         AsyncStorageUtil.setAllItems([
           [AsyncStorageConstants.Keys.SourceId, JSON.stringify(sourceId)],
@@ -159,7 +158,6 @@ class LanguageList extends Component {
           [AsyncStorageConstants.Keys.VersionCode, verCode],
           [AsyncStorageConstants.Keys.Downloaded, JSON.stringify(downloaded)]
         ]) 
-        // this.props.navigation.state.params.updateVersion({language:langName,languageCode:langCode,versionCode:verCode,sourceId:sourceId,downloaded:downloaded})
         this.props.navigation.goBack()
     }
     _renderHeader = (item, expanded) =>{
@@ -170,11 +168,13 @@ class LanguageList extends Component {
           justifyContent: "space-between",
           alignItems: "center" ,
           }}>
-          <Text>
+          <Text
+          style={this.styles.headerText} 
+          >
           {/* {" "}{item.languageName.charAt(0).toUpperCase()+item.languageName.slice(1)} */}
           {item.languageName}
           </Text>
-          <Icon name={expanded ? "keyboard-arrow-down" : "keyboard-arrow-up" }  size={24}/>
+          <Icon  style={this.styles.iconStyle} name={expanded ? "keyboard-arrow-down" : "keyboard-arrow-up" }  size={24}/>
         </View>
       )
     }
@@ -253,8 +253,8 @@ const mapStateToProps = state =>{
 const mapDispatchToProps = dispatch =>{
   return {
     updateVersion: (value)=>dispatch(updateVersion(value)),
-    updateInfographics:(fileName)=>dispatch(updateInfographics(fileName)),
     fetchAllContent:()=>dispatch(fetchAllContent()),
+
   }
 }
 export default connect(mapStateToProps,mapDispatchToProps)(LanguageList)

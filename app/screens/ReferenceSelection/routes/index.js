@@ -14,7 +14,6 @@ const SelectionTabStack = createMaterialTopTabNavigator(
               },
         },
         Chapters:{
-
             screen:SelectChapter,
             navigationOptions: {
                 tabBarLabel: 'Select Chapter',
@@ -35,7 +34,7 @@ const SelectionTabStack = createMaterialTopTabNavigator(
         // tabBarPosition: 'bottom',
         // activeTintColor:'#3F51B5',
         inactiveTintColor:'#000',
-        swipeEnabled:true,
+        swipeEnabled:false,
         tabBarOptions: {
             labelStyle: { fontSize: 16,margin:0,padding:0,color:"#3F51B5" },
             // showIcon: true,

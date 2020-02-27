@@ -1,9 +1,8 @@
-import {FETCH_VERSION_LANGUAGE,FETCH_VERSION_BOOKS,FETCH_VERSION_CONTENT,VERSION_LANGUAGE_SUCCESS,VERSION_BOOKS_SUCCESS,VERSION_CONTENT_SUCCESS,VERSION_LANGUAGE_FAILURE,VERSION_BOOKS_FAILURE,VERSION_CONTENT_FAILURE } from '../../action/actionsType'
+import {FETCH_VERSION_LANGUAGE,FETCH_VERSION_BOOKS,FETCH_VERSION_CONTENT,VERSION_LANGUAGE_SUCCESS,VERSION_BOOKS_SUCCESS,VERSION_CONTENT_SUCCESS,VERSION_LANGUAGE_FAILURE,VERSION_BOOKS_FAILURE,VERSION_CONTENT_FAILURE} from '../../action/actionsType'
 
 const initialState = {
     data:[],
     chapterContent:[],
-    totalVerses:null,
     error:null,
     loading:false
 }
@@ -53,7 +52,6 @@ function fetchVersionReducer(state=initialState,action){
             ...state,
             loading:false,
             chapterContent:action.payload.chapterContent,
-            totalVerses:action.payload.totalVerses,
         }
         case VERSION_CONTENT_FAILURE:
         return {

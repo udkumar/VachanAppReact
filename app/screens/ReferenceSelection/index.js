@@ -9,6 +9,7 @@ import {
 import {connect} from 'react-redux'
 import {SelectionTab} from './routes/index'
 import {fetchVersionBooks} from '../../store/action/'
+import { getBookNumOfVersesFromMapping } from '../../utils/UtilFunctions';
 
 
 class ReferenceSelection extends Component {
@@ -26,7 +27,6 @@ class ReferenceSelection extends Component {
     //   selectedBookIndex: 0,
       selectedBookId: this.props.navigation.state.params.bookId,
       selectedBookName: this.props.navigation.state.params.bookName,
-      numOfChapters: [],
       totalChapters:this.props.navigation.state.params.totalChapters,
       selectedChapterIndex: 0,
       selectedChapterNumber: this.props.navigation.state.params.chapterNumber,
@@ -40,20 +40,22 @@ class ReferenceSelection extends Component {
   }
 
   updateSelectedBook = (item) => {
+    console.log("item ob book ",item)
     this.setState({
         // selectedBookIndex: index,
         selectedBookId: item.bookId, 
         selectedBookName: item.bookName, 
-        numOfChapters: item.numOfChapters
+        totalChapters: item.numOfChapters,
+        totalVerses:getBookNumOfVersesFromMapping(this.state.selectedBookId,this.state.selectedChapterNumber)
     })
   }
 
   updateSelectedChapter = (chapterNumber,index) => {
-    console.log("this.state.numOfChapters[index] ",this.state.numOfChapters[index])
+    console.log("this.state.numOfChapters[index] ",this.state.totalChapters,)
     this.setState({
         selectedChapterIndex: index, 
         selectedChapterNumber: chapterNumber,
-        totalVerses:this.state.numOfChapters[index]
+        totalVerses:getBookNumOfVersesFromMapping(this.state.selectedBookId,this.state.selectedChapterNumber)
     })
   }
 
@@ -63,7 +65,7 @@ class ReferenceSelection extends Component {
     this.props.navigation.state.params.getReference({
       bookId:this.state.selectedBookId,bookName:this.state.selectedBookName,
       chapterNumber:this.state.selectedChapterNumber,
-      totalChapters:this.state.numOfChapters.length,
+      totalChapters:this.state.totalChapters,
       totalVerses:this.state.totalVerses,
       verseNumber:verseNumber})
       this.props.navigation.pop()
@@ -80,7 +82,6 @@ class ReferenceSelection extends Component {
 
           selectedBookIndex: this.state.selectedBookIndex,
           selectedBookId: this.state.selectedBookId,
-          numOfChapters: this.state.numOfChapters,
           selectedChapterIndex: this.state.selectedChapterIndex,
           selectedChapterNumber: this.state.selectedChapterNumber,
           selectedVerseIndex: this.state.selectedVerseIndex,

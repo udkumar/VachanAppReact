@@ -390,20 +390,21 @@ class DbHelper {
 		}
 		return null
 	}
+
+	//get all available booklist
 	async getDownloadedBook(langName,verCode){
 		console.log("languaeg name ",langName,"version code ",verCode)
 		let realm = await this.getRealm();
 		console.log("realm ",realm)
 		if(realm){
 			console.log("realm  inside")
-
 					let result = realm.objectForPrimaryKey("LanguageModel", langName);
 					let resultsA = result.versionModels;
 					let resultB = resultsA.filtered('versionCode == "'+verCode+'" ');
 					return resultB[0].bookNameList
 		}
 	}
-
+	//download version
 	async addNewVersion(langName,verCode,bookmodel,sourceId){
       console.log("add new version ",langName,verCode,sourceId)
 
@@ -420,8 +421,6 @@ class DbHelper {
 			else{
 				var bookIdList =[]
 			if(resultBoook.length == 0){
-
-
 				// direct adding data to db 
 				realm.write(() => {
 						for(var i=0;i<bookmodel.length;i++){
@@ -456,15 +455,41 @@ class DbHelper {
 	}
 	}
 	}
-
+	//query  chapter
 	async queryVersions(langName,verCode,bookId,chapterNumber){
-		 console.log("query version ",langName,verCode,bookId,chapterNumber)
+		console.log("query version ",langName,verCode,bookId,chapterNumber)
+		let realm = await this.getRealm()
+		
+		if(realm){
+			console.log("realm is present")
+			var version = realm.objects('ChapterModel').filtered('chapterOwner.languageName ==[c] "' + langName + '" && chapterOwner.versionCode ==[c] "' + verCode + '" && chapterOwner.bookId ==   "' + bookId + '" && chapterNumber ==   "' + chapterNumber + '"' )
+			return version
+			// let result = realm.objects('BookModel').filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId ==   "' + bookId + '"' )
+			// return result
+			// // var resultA = result[0].chapters
+			// resultA.filtered('chapterNumber ')
+		// if(version){
+			// console.l
+		// }else{
+		// 	return null
+		// }
+		// return version
+		}
+	}
+	//query book
+	async queryBook(langName,verCode,bookId){
+		console.log("query version ",langName,verCode,bookId)
 		let realm = await this.getRealm()
 		if(realm){
-		var version = realm.objects('ChapterModel').filtered('chapterOwner.languageName ==[c] "' + langName + '" && chapterOwner.versionCode ==[c] "' + verCode + '" && chapterOwner.bookId ==   "' + bookId + '" && chapterNumber ==   "' + chapterNumber + '"' )
-		return version
+		var book = realm.objects('BookModel').filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId ==   "' + bookId + '"' )
+		if(book){
+			console.log(book," book from db ")
 		}
+		else{
+			console.log(" sorry no data present")
 
+		}
+		}
 	}
 }
 

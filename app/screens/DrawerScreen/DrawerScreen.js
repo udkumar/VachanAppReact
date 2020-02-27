@@ -18,9 +18,9 @@ class DrawerScreen extends Component {
       {icon:'highlight',pressIcon:'Highlights'},
       {icon:'note',pressIcon:'Notes'},
       {icon:'history',pressIcon:'History'},
-      // {icon:'more',pressIcon:'Commentary'},
+      // {icon:'insert-comment',pressIcon:'Commentary'},
+      // {icon:'image',pressIcon:'Infographics'},
 
-      // {icon:'search',pressIcon:'Search'},
       // {icon:'description',pressIcon:'Articles'},
       // {icon:'thumb-up',pressIcon:'Subscribe'},
       // {icon:'help',pressIcon:'FAQ & Help Videos'},

@@ -129,6 +129,7 @@ renderItem = ({item, index})=> {
 
 
   render(){
+    console.log("BOOK LIST ",this.props.books)
     let activeBgColor = this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#3F51B5' : '#fff'
     let inactiveBgColor =  this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#fff' : '#3F51B5'
     return (

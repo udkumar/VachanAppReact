@@ -31,6 +31,9 @@ export const FETCH_VERSION_CONTENT = 'fetch_version_content';
 export const VERSION_CONTENT_SUCCESS = 'version_content_success';
 export const VERSION_CONTENT_FAILURE  ='version_content_failure';
 
+export const FETCH_DOWNLOADED_VERSION_CONTENT = 'fetch_downloaded_version_content';
+export const VERSION_DOWNLOADED_CONTENT_FAILURE = 'version_downloaded_content_failure';
+export const VERSION_DOWNLOADED_CONTENT_SUCCESS = 'version_downloaded_content_success';
 
 export const FETCH_AUDIO_URL = 'fetch_audio_url';
 export const AUDIO_URL_SUCCESS = 'audio_url_success';

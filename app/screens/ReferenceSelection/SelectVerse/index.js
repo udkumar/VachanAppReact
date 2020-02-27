@@ -14,17 +14,15 @@ import {connect} from 'react-redux'
   constructor(props){
     super(props)
     this.state = {
-      totalVerses:this.props.screenProps.totalVerses,
       verseData:Array.from(new Array(this.props.screenProps.totalVerses), (x,i) => i+1),
     }
     this.styles = numberSelection(this.props.colorFile, this.props.sizeFile);   
 
   }
   static getDerivedStateFromProps(nextProps, prevState) {
-    if(nextProps.screenProps.totalVerses !== prevState.totalVerses){
       return{verseData:Array.from(new Array(nextProps.screenProps.totalVerses), (x,i) => i+1)}
-    }
   }
+ 
   onVerseSelected=(item,index)=> {
     this.props.screenProps.updateSelectedVerse(item,index)
   }

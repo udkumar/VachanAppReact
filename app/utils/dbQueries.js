@@ -109,6 +109,9 @@ class DbQueries {
     queryVersions(lang,ver,bookId,chapter){
        return DbHelper.queryVersions(lang,ver,bookId,chapter)
     }
+    queryBook(lang,ver,bookId){
+        return DbHelper.queryBook(lang,ver,bookId)
+    }
     getDownloadedBook(lang,ver){
         return DbHelper.getDownloadedBook(lang,ver)
     }

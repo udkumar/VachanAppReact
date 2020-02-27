@@ -15,7 +15,6 @@ export const styles =(colorFile, sizeFile) =>{
         fontSize:sizeFile.contentText,
         color:colorFile.textColor,
         justifyContent:'center',
-        
     },
     chapterList:{
         margin:16

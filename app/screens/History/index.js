@@ -12,10 +12,9 @@ import {
 import DbQueries from '../../utils/dbQueries'
 import { View } from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import {getBookNameFromMapping} from '../../utils/UtilFunctions';
-import Accordion from 'react-native-collapsible/Accordion';
-import {updateVersion} from '../../store/action/'
-
+import {Accordion} from 'native-base';
+import {updateVersion,updateVersionBook} from '../../store/action/'
+import {getBookNameFromMapping,getBookChaptersFromMapping,getBookNumOfVersesFromMapping} from '../../utils/UtilFunctions'
 import {List,ListItem} from 'native-base'
 import { historyStyle } from './styles.js'
 import {connect} from 'react-redux'
@@ -118,7 +117,6 @@ var moment = require('moment');
     DbQueries.clearHistory()
     this.setState({historyList: []})
     this.props.navigation.setParams({
-      // onClearHistory:this.onClearHistory,
       historyListLength:0
     })
   }
@@ -134,7 +132,19 @@ var moment = require('moment');
     )
   }
   goToContent(item){
-    this.props.updateVersion({language:item.languageName,languageCode:item.languageCode,versionCode:item.versionCode,sourceId:item.sourceId,downloaded:item.downloaded,bookId:item.bookId,chapterNumber:item.chapterNumber})
+    console.log(" version Code ",item.versionCode,"getBookChaptersFromMapping ",getBookChaptersFromMapping(item.bookId)," getBookNumOfVersesFromMapping ",getBookNumOfVersesFromMapping(item.bookId,item.chapterNumber))
+    this.props.updateVersion({language:item.languageName,languageCode:item.languageCode,
+      versionCode:item.versionCode,sourceId:item.sourceId,
+      downloaded:item.downloaded})
+    this.props.updateVersionBook({
+      bookId:item.bookId, 
+      bookName:getBookNameFromMapping(item.languageName,item.bookId),
+      chapterNumber:item.chapterNumber,
+      totalChapters:getBookChaptersFromMapping(item.bookId),
+      totalVerses:getBookNumOfVersesFromMapping(item.bookId,item.chapterNumber),
+      verseNumber:item.verseNumber
+    })
+    
     this.props.navigation.navigate("Bible")
   }
   
@@ -170,13 +180,12 @@ var moment = require('moment');
           
         </View>
       :
+    
         <Accordion
-          activeSection={this.state.activeSection}
-          sections={this.state.historyList}
+          dataArray={this.state.historyList}
+          expanded={true}
           renderHeader={this._renderHeader}
           renderContent={this._renderContent}
-          underlayColor="tranparent"
-          initiallyActiveSection={0}
         /> 
       }
     </View>
@@ -195,6 +204,7 @@ const mapStateToProps = state =>{
 const mapDispatchToProps = dispatch =>{
   return {
     updateVersion: (value)=>dispatch(updateVersion(value)),
+    updateVersionBook:(value)=>dispatch(updateVersionBook(value))
   }
 }
 

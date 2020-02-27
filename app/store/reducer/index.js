@@ -11,6 +11,7 @@ import fetchCommentaryReducer from './apiFetchReducer/fetchCommentaryReducer'
 import fetchAudioReducer from './apiFetchReducer/fetchAudioReducer'
 import  fetchContentReducer from './apiFetchReducer/fetchContentReducer'
 import parallelBibleReducer from './apiFetchReducer/parallelBibleReducer'
+import downloadedContent from './apiFetchReducer/downloadedContentReducer'
 
  const rootReducer = combineReducers({
     editNote: editNoteReducer,
@@ -22,6 +23,7 @@ import parallelBibleReducer from './apiFetchReducer/parallelBibleReducer'
     commentaryFetch:fetchCommentaryReducer,
     audioFetch:fetchAudioReducer,
     contents:fetchContentReducer,
-    parallel:parallelBibleReducer
+    parallel:parallelBibleReducer,
+    downloadedBible:downloadedContent
 });
 export default  rootReducer

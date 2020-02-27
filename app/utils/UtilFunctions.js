@@ -53,12 +53,27 @@ export function getBookChaptersFromMapping(id){
             var bookId =  id.toUpperCase()
             if (key == bookId) {
                 var val = obj[key];
-                return val.total_chapters;
+                return val.total_chapters.length;
             }
         }
     }
     return null;
 }
+export function getBookNumOfVersesFromMapping(id,chapterNumber){
+    var obj = id_name_map.id_name_map;
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            // console.log("bookid in get Book Chapters From Mapping ",id)
+            var bookId =  id.toUpperCase()
+            if (key == bookId) {
+                var val = obj[key];
+                return val.total_chapters[chapterNumber-1]
+            }
+        }
+    }
+    return null;
+}
+
 export function getBookSectionFromMapping(id) {
     var obj = id_name_map.id_name_map;
     for (var key in obj) {

@@ -19,6 +19,7 @@ import startEndIndex from '../../../assets/commentary_mapping'
 import { NavigationEvents } from 'react-navigation';
 import APIFetch from '../../../utils/APIFetch'
 import { ScrollView } from 'react-native-gesture-handler';
+import {styles} from './styles'
 
 
 class Commentary extends Component {
@@ -29,6 +30,7 @@ class Commentary extends Component {
         this.state = {
           commentary: []
         }
+        this.styles = styles(this.props.colorFile, this.props.sizeFile)
     }
   componentWillMount(){
       this.props.fetchCommentaryContent({parallelContentSourceId:this.props.parallelContentSourceId,bookId:this.props.bookId,chapter:this.props.chapterNumber})
@@ -63,7 +65,7 @@ class Commentary extends Component {
       return (<Text>{temp}</Text>)
     }
     return (
-      <View>
+      <View style={this.styles.container}>
         <Header style={{height:40,borderLeftWidth:0.5,borderLeftColor:'#fff'}} >
           <Body>
             <Title style={{fontSize:16}}>{this.props.parallelContentVersionCode}</Title>
@@ -74,73 +76,45 @@ class Commentary extends Component {
           </Button>
           </Right>
         </Header>
-    <ScrollView>
-    {/* <NavigationEvents
-    onWillFocus={() =>getCommmentary()}
-    /> */}
     {
       this.props.commentaryContent.length == 0 ? 
        <Spinner
        visible={true}
        textContent={'Loading...'}
-       // textStyle={styles.spinnerTextStyle}
    />
     :
+    <ScrollView style={this.styles.container}>
     <Card>
-    <CardItem header bordered>
-      <Text>{getBookNameFromMapping(this.props.bookId,this.props.parallelContentLanguage)} {  } {this.props.commentaryContent.chapter}</Text>
+    <CardItem style={this.styles.cardItemBackground} >
+      <Text style={this.styles.commentaryHeading}>{getBookNameFromMapping(this.props.bookId,this.props.parallelContentLanguage)} {  } {this.props.commentaryContent.chapter}</Text>
     </CardItem>
     {this.props.commentaryContent.bookIntro  == '' ? null :
-    <CardItem header bordered>
-      <Text>{convertToText(this.props.commentaryContent.bookIntro)}</Text>
+    <CardItem style={this.styles.cardItemBackground}>
+      <Text style={this.styles.commentaryHeading}>{convertToText(this.props.commentaryContent.bookIntro)}</Text>
     </CardItem>}
-  
-    <CardItem>
+    <CardItem style={this.styles.cardItemBackground}>
     <FlatList
         data={this.props.commentaryContent.commentaries}
         renderItem={({ item }) => (
           <View style={{paddingBottom:4}}>
-              {item.verse ? <Text style={{fontWeight:'bold'}}>Verse Number : {item.verse}</Text> :null}  
-          <Text>{convertToText(item.text)}</Text>
+              {item.verse && 
+              ( item.verse == 0  ? 
+              <Text style={this.styles.commentaryHeading}>Chapter Intro</Text> :
+              <Text style={this.styles.commentaryHeading}>Verse Number : {item.verse}</Text> 
+              )} 
+          <Text style={this.styles.commentaryText}>{convertToText(item.text)}</Text>
           </View>
         )}
         // keyExtractor={item => item.bookId}
       />
       </CardItem>
       </Card>
-      }
       </ScrollView>
+      }
       </View>
     );
   }
 }
-
-const styles = StyleSheet.create({
-headerLeftStyle:{
-  flex:1,
-  marginHorizontal:10,
-  flexDirection:'row',
-},
-
-headerRightStyle:{
-  flexDirection:'row',
-  flex:1,
-
-},
-touchableStyleRight:{
-    flexDirection:"row",
-    marginRight:10
-},
-touchableStyleLeft:{
-  flexDirection:"row",
-    marginLeft:10,
-},
-headerTextStyle:{
-    fontSize:16,
-    color:"#fff",
-    textAlign:'center'
-},
-});
 
 
 const mapStateToProps = state =>{

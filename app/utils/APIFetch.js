@@ -135,9 +135,9 @@ var APIFetch = {
             })
                 .then(ApiUtils.checkStatus)
                 .then((response) => response)
-                .catch(e => console.log("erorr fetching all books ", e))
+                .catch(e => console.log(" ", e))
         } catch (error) {
-            console.log("error on getting all books ", error)
+            console.log("fetching audio ", error)
             return error;
         }
     },
@@ -154,9 +154,9 @@ var APIFetch = {
             })
                 .then(ApiUtils.checkStatus)
                 .then((response) => response.json())
-                .catch(e => console.log("erorr fetching all books ", e))
+                .catch(e => console.log(" ", e))
         } catch (error) {
-            console.log("error on getting all books ", error)
+            console.log("error in fetching manifest file of audio ", error)
             return error;
         }
     },

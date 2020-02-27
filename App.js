@@ -105,7 +105,7 @@ class App extends Component {
           const  chapterNumber= res[9][1] == null ? this.props.chapterNumber:parseInt(res[9][1])
           // const  bookNumber= res[11][1] == null ? AsyncStorageConstants.Values.DefBookNumber:parseInt(res[11][1])
           const  sourceId= res[11][1] == null ? this.props.sourceId : parseInt(res[11][1])
-          const  downloaded = res[12][1] == null ? this.props.downloaded : res[12][1].toString()
+          const  downloaded = res[12][1] == null ? this.props.downloaded : JSON.parse(res[12][1])
           const totalChapters = res[13][1] == null ? this.props.totalChapters : parseInt(res[13][1])
           const totalVerses = res[14][1] == null ? this.props.totalVerses : parseInt(res[14][1])
           const verseNumber = res[15][1] == null ? this.props.verseNumber : parseInt(res[15][1])

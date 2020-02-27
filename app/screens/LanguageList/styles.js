@@ -47,6 +47,9 @@ export const styles =(colorFile, sizeFile,fontfamily) =>{
         justifyContent:'space-between',
         backgroundColor:colorFile.backgroundColor
       },
+      iconStyle:{
+        color:colorFile.iconColor
+      },
       headerText: {
         fontSize: 16,
         color:colorFile.textColor
@@ -81,5 +84,7 @@ export const styles =(colorFile, sizeFile,fontfamily) =>{
         justifyContent:'space-between',
         backgroundColor:colorFile.backgroundColor
       },
+
+      //selectioncontent 
    })
 }

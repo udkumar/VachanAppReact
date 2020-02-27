@@ -16,20 +16,14 @@ class ChapterSelection extends Component {
 
   constructor(props){
     super(props)
-    console.log("props navigation",this.props.screenProps.totalChapters )
+    console.log("props navigation",this.props.screenProps.totalChapters)
     this.state = {
-      numOfChapters:this.props.screenProps.numOfChapters,
-      chapterData:Array.from(new Array(this.props.screenProps.numOfChapters.length == 0 ? this.props.screenProps.totalChapters : this.props.screenProps.numOfChapters.length ), (x,i) => i+1),
+      chapterData:Array.from(new Array(this.props.screenProps.totalChapters), (x,i) => i+1),
     }
     this.styles = numberSelection(this.props.colorFile, this.props.sizeFile);   
   }
   static getDerivedStateFromProps(nextProps, prevState) {
-    if(nextProps.screenProps.numOfChapters !== prevState.numOfChapters){
-      return{chapterData:Array.from(new Array(nextProps.screenProps.numOfChapters.length == 0 ? nextProps.screenProps.totalChapters : nextProps.screenProps.numOfChapters.length), (x,i) => i+1)}
-    }
-    else{
-      return{chapterData:Array.from(new Array( nextProps.screenProps.totalChapters), (x,i) => i+1)}
-    }
+      return{chapterData:Array.from(new Array(nextProps.screenProps.totalChapters), (x,i) => i+1)}
   }
    onNumPress=(item,index)=>{
     this.props.screenProps.updateSelectedChapter(item,index)

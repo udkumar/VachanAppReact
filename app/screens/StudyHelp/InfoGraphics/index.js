@@ -24,7 +24,8 @@ class Infographics extends Component {
         headerTitle:(
             <View style={{flex:1,marginRight:10}}>
               <TouchableOpacity style={styles.touchableStyleLeft}  
-              onPress={() =>{navigation.navigate("LanguageList", {contentType:'infographics'})}}>
+              // onPress={() =>{navigation.navigate("LanguageList", {contentType:'infographics'})}}
+              >
                 <Text  style={styles.headerTextStyle}>{params.file} </Text>
               <Icon name="arrow-drop-down" color="#fff" size={24}/>
               </TouchableOpacity>
@@ -63,8 +64,6 @@ class Infographics extends Component {
       {
         console.log("ORIENTATION ",this.state.Width_Layout )
         console.log("ORIENTATION ",this.state.Height_Layout )
-
-        // Write Your own code here, which you want to execute on Landscape Mode.
           this.setState({
           OrientationStatus : 'Landscape Mode'
           })
@@ -72,8 +71,6 @@ class Infographics extends Component {
       else{
         console.log("ORIENTATION ",this.state.Width_Layout )
         console.log("ORIENTATION ",this.state.Height_Layout )
-
-        // Write Your own code here, which you want to execute on Portrait Mode.
           this.setState({
           OrientationStatus : 'Portrait Mode'
           })
@@ -152,12 +149,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = state =>{
   return{
     language: state.updateVersion.language,
-    languageCode:state.updateVersion.languageCode,
-    version:state.updateVersion.version,
-    sourceId:state.updateVersion.sourceId,
-    downloaded:state.updateVersion.downloaded,
     contentType:state.updateVersion.contentType,
-
 
     chapterNumber:state.updateVersion.chapterNumber,
     totalChapters:state.updateVersion.totalChapters,
@@ -169,7 +161,6 @@ const mapStateToProps = state =>{
     colorFile:state.updateStyling.colorFile,
     close:state.updateSplitScreen.close,
 
-    audio:state.updateAudio.visible,
     filePath:state.infographics.url,
     file:state.infographics.fileName
 

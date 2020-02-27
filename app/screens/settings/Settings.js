@@ -87,7 +87,7 @@ class Setting extends Component {
       <View style={this.styles.container}>
         <View style={this.styles.containerMargin}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            <List >
+            <List>
               <ListItem style={this.styles.cardItemStyle}>
                 <Left>
                   <Text style={this.styles.textStyle}>
@@ -130,9 +130,7 @@ class Setting extends Component {
                 </View>
                 </Right>
               </ListItem>
-            </List>
             
-            <List>
               <ListItem  bordered style={this.styles.cardItemStyle}>
                 <Right style={this.styles.cardItemAlignRight}>
                   <View style={this.styles.cardItemRow}>
@@ -151,9 +149,7 @@ class Setting extends Component {
                   />
                 </Right>
               </ListItem>
-            </List>
            
-            <List style={{elevation:4}}>
               <ListItem style={this.styles.switchButtonCard}>
                 <Text style={this.styles.textStyle}>One Verse Per Line</Text>
                 <Switch 
@@ -164,42 +160,25 @@ class Setting extends Component {
                   style={this.styles.cardItemIconCustom} 
                 />
               </ListItem>
-            </List>
-
-            <List>
-              <TouchableOpacity onPress={()=>{this.props.navigation.navigate('BackupRestore')}}>              
-                <ListItem style={this.styles.cardItemStyle}>
+              <ListItem>
+              <TouchableOpacity  style={[{flexDirection:'row'}]} onPress={()=>this.props.navigation.navigate('BackupRestore')}>              
                   <Icon name='settings-backup-restore' size={24} style={this.styles.cardItemIconCustom} />
                   <Text style={this.styles.textStyle}>Backup and Restore</Text>
-                </ListItem>
               </TouchableOpacity>
-            </List>
-           
-            <List>
-              <TouchableOpacity onPress={()=>{this.props.navigation.navigate('LanguageList')}}>              
-                <ListItem style={this.styles.cardItemStyle}>
+              </ListItem>
+
+              <ListItem >
+              <TouchableOpacity style={[{flexDirection:'row'}]} onPress={()=>this.props.navigation.navigate('LanguageList')}>              
                   <Icon name='cloud-download' style={this.styles.cardItemIconCustom} />
                   <Text style={this.styles.textStyle}>Download More Bibles</Text>
-                </ListItem>
               </TouchableOpacity>
-            </List>
-          {/*             
-            <List>
-              <TouchableOpacity onPress={()=>this.props.navigation.navigate('Hints')}>
-                <ListItem style={this.styles.cardItemStyle}>
-                  <Icon name='help' style={this.styles.cardItemIconCustom} />
-                  <Text style={this.styles.textStyle}>Open Hints</Text>
-                </ListItem>
-              </TouchableOpacity>
-            </List>
-             */}
-            <List>
-            <TouchableOpacity onPress={()=>{this.props.navigation.navigate('About')}}>
-              <ListItem style={this.styles.cardItemStyle}>
-                <Icon name='info' style={this.styles.cardItemIconCustom}/>
-                <Text style={this.styles.textStyle}>About</Text>
               </ListItem>
-            </TouchableOpacity>
+              <ListItem >
+              <TouchableOpacity style={[{flexDirection:'row'}]} onPress={()=>this.props.navigation.navigate('About')}>
+                  <Icon name='info' style={this.styles.cardItemIconCustom}/>
+                  <Text style={this.styles.textStyle}>About</Text>
+              </TouchableOpacity>
+              </ListItem>
             </List>
           </ScrollView>
         </View>

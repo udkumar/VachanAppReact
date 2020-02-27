@@ -18,7 +18,7 @@ var contentType = ''
             // contentType:this.props.contentType
          }
       //  this.updateContent = this.props.updateContentType({contentType:expanded == true ? item.contentType : this.props.contentType})
-
+         this.styles =styles(this.props.colorFile, this.props.sizeFile)
      }
   
      _renderHeader = (item, expanded) =>{
@@ -115,7 +115,7 @@ var contentType = ''
                   }} 
                 onPressOut={()=>{this.props.navigation.setParams({modalVisible:false})}} 
               >
-              <View style={{height:'80%',width:'70%',alignSelf:'flex-end',top:40}}>
+              <View style={{ height:'80%',width:'70%',alignSelf:'flex-end',top:40}}>
               <Card>
                     <Accordion 
                     dataArray={this.props.availableContents}
@@ -146,6 +146,8 @@ const mapStateToProps = state =>{
   return{
     availableContents:state.contents.contentLanguages,
     contentType:state.updateVersion.parallelContentType,
+    sizeFile:state.updateStyling.sizeFile,
+    colorFile:state.updateStyling.colorFile,
 
   }
 }
