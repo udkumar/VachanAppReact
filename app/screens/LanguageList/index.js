@@ -60,7 +60,10 @@ class LanguageList extends Component {
     async componentDidMount(){
       this.fetchLanguages()  
     }
- 
+    reloadLanguages(){
+      this.props.fetchAllContent()
+      this.fetchLanguages()
+    }
     async fetchLanguages(){
       var lanVer = []
       var oneDay = 24*60*60*1000; 
@@ -71,10 +74,14 @@ class LanguageList extends Component {
       for(var i =0 ; i<languageList.length;i++){
         lanVer.push(languageList[i])
       }
+      if(this.props.bibleLanguages.length == 0 && languageList.length == 0){
+        this.reloadLanguages()
+      }
       if(languageList.length == 0 && this.props.bibleLanguages[0].content.length > 0 ){
         DbQueries.addLangaugeList(this.props.bibleLanguages[0].content)
         lanVer = this.props.bibleLanguages[0].content
       }
+     
       this.setState({
         languages: lanVer,
         searchList: lanVer

@@ -121,8 +121,8 @@ class Bible extends Component {
       // downloaded:this.props.downloaded,
       // bookId:this.props.bookId,
       // bookName:this.props.bookName,
-      // totalChapters:this.props.totalChapters,
-      // totalVerses:this.props.totalVerses,
+      totalChapters:this.props.totalChapters,
+      totalVerses:this.props.totalVerses,
       // verseNumber:this.props.verseNumber,
       audio:false,
       chapterContent:[],
@@ -173,9 +173,13 @@ class Bible extends Component {
 //     }
 // }
   componentWillReceiveProps(nextProps,prevState){
+    console.log("verseInLine ",nextProps.verseInLine,prevState.verseInLine)
     this.setState({
       colorFile:nextProps.colorFile,
       sizeFile:nextProps.sizeFile,
+      totalVerses:nextProps.totalVerses,
+      totalChapters:nextProps.totalChapters,
+      verseInLine:nextProps.verseInLine
       // arrLayout:nextProps.arrLayout
     })
     this.styles = styles(nextProps.colorFile, nextProps.sizeFile);  
@@ -265,8 +269,8 @@ class Bible extends Component {
       visibleParallelView:false,
       getRef:this.getReference,
       updatelangVer:this.updateVersion,
-      numOfChapter:this.props.totalChapters,
-      numOfVerse:this.props.totalVerses
+      numOfChapter:this.state.totalChapters,
+      numOfVerse:this.state.totalVerses
     })
     this.queryBookFromAPI(null)
   }
@@ -299,8 +303,8 @@ class Bible extends Component {
   //     this.props.navigation.setParams({
   //       bookName:getBookNameFromMapping(this.props.bookId,item.language).length > 8 ? getBookNameFromMapping(this.props.bookId,item.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,item.language),
   //       currentChapter:this.props.currentVisibleChapter,
-  //       numOfChapter:this.props.totalChapters,
-  //       numOfVerse:this.props.totalVerses
+  //       numOfChapter:this.state.totalChapters,
+  //       numOfVerse:this.state.totalVerses
   //     })
   //     this.props.fetchVersionContent({isDownloaded:item.downloaded,sourceId:item.sourceId,language:item.language,version:item.versionCode,bookId:this.props.bookId,chapter:this.props.chapterNumber})
   //     this.setState({isLoading:false})
@@ -322,7 +326,7 @@ class Bible extends Component {
   }
   
   queryBookFromAPI = async(val)=>{
-    console.log("query book ",this.props.downloaded,this.props.language,this.props.sourceId,this.props.totalChapters,this.props.totalVerses)
+    console.log("query book ",this.props.downloaded,this.props.language,this.props.sourceId,this.state.totalChapters,this.state.totalVerses)
     this.setState({isLoading:true,currentVisibleChapter: val != null ? this.state.currentVisibleChapter + val : this.props.chapterNumber,error:null },async()=>{
           try{
             this.props.navigation.setParams({
@@ -331,8 +335,8 @@ class Bible extends Component {
               bookId:this.props.bookId,
               bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
               currentChapter:this.state.currentVisibleChapter,
-              numOfChapter:this.props.totalChapters,
-              numOfVerse:this.props.totalVerses
+              numOfChapter:this.state.totalChapters,
+              numOfVerse:this.state.totalVerses
             })
             let downloaded = await AsyncStorageUtil.getAllItems([
               AsyncStorageConstants.Keys.Downloaded,
@@ -356,11 +360,12 @@ class Bible extends Component {
           catch(error) {
             this.setState({isLoading:false,error:error})
             console.log("ERROR ",error)
-            alert("It seems no version available or check your internet connection ",error)
+            // alert("It seems no version available or check your internet connection ",error)
           }
           this.audioComponentUpdate()
           this.getHighlights()
           this.getBookMarks()
+          // this.setState({showBottomBar:false})
     })
 }
 
@@ -576,7 +581,7 @@ this.setState({audio:false})
       let vIndex= parseInt(tempVal[1])
       let verseNumber= tempVal[2]
       shareText = shareText.concat(this.props.bookName + " " + chapterNumber + ":" + verseNumber + " ");
-      shareText = shareText.concat(parseInt(tempVal[3]))
+      shareText = shareText.concat(tempVal[3])
       shareText = shareText.concat("\n");
     }
     Share.share({message: shareText})
@@ -648,7 +653,7 @@ updateData = ()=>{
 }
 
   render() {
-    console.log("chapter content value ",this.state.error)
+    console.log("chapter content value ",this.state.verseInLine)
 
       return (
         <View  style={this.styles.container}>
@@ -739,7 +744,7 @@ updateData = ()=>{
                       </View>
                   }
               </ScrollView>
-              <View style={{justifyContent:(this.state.currentVisibleChapter != 1 &&  this.state.currentVisibleChapter == this.state.currentVisibleChapter != this.props.totalChapters) ? 'center' : 'space-around',alignItems:'center'}}>
+              <View style={{justifyContent:(this.state.currentVisibleChapter != 1 &&  this.state.currentVisibleChapter == this.state.currentVisibleChapter != this.state.totalChapters) ? 'center' : 'space-around',alignItems:'center'}}>
             {
             this.state.currentVisibleChapter == 1 
             ? null :
@@ -761,7 +766,7 @@ updateData = ()=>{
           }
           </View>
             {
-              this.state.currentVisibleChapter == this.props.totalChapters
+              this.state.currentVisibleChapter == this.state.totalChapters
             ? null :
             <View style={this.props.navigation.getParam("visibleParallelView") ? this.styles.bottomBarNextParallelView : this.styles.bottomBarNextView }>
                 <Icon name={'chevron-right'} color="#3F51B5" size={this.props.navigation.getParam("visibleParallelView") ? 16 : 32} 
@@ -824,8 +829,8 @@ updateData = ()=>{
               id={this.props.bookId}
               bookName={this.props.bookName}
               toggleParallelView={(value)=>this.toggleParallelView(value)}
-              totalChapters={this.props.totalChapters}
-              totalVerses={this.props.totalVerses}
+              totalChapters={this.state.totalChapters}
+              totalVerses={this.state.totalVerses}
               navigation={this.props.navigation}
                /> : 
                <Commentary 
@@ -889,6 +894,7 @@ const mapStateToProps = state =>{
 
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
+    verseInLine:state.updateStyling.verseInLine,
     close:state.updateSplitScreen.close,
 
     // fetchedData:state.versionFetch,

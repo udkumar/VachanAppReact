@@ -35,19 +35,19 @@ export const AsyncStorageConstants = {
 
         VerseInLine:false,
         FontFamily:{
-         english:"NotoSans-Regular ",
-            kannada:"NotoSansKannadaUI-Regular",
-            hindi:" NotoSansDevanagariUI-Regular",
-            tamil:"NotoSansTamilUI-Regular",
-            telugu:"NotoSansTeluguUI-Regular",
-            marathi:"NotoSansDevanagariUI-Regular",
-            punjabi:"NotoSansGurmukhiUI-Regular",
-            assamese:"NotoSansBengaliUI-Regular",
-            bengali:"NotoSansBengaliUI-Regular",
-            urdu:"NotoNastaliqUrdu-Regular",
-            odiya:"NotoSansOriyaUI-Regular",
-             gujarati:"NotoSansGujaratiUI-Regular",
-             malayalam:"NotoSansMalayalamUI-Regular"
+        english:"NotoSans-Regular ",
+        kannada:"NotoSansKannadaUI-Regular",
+        hindi:" NotoSansDevanagariUI-Regular",
+        tamil:"NotoSansTamilUI-Regular",
+        telugu:"NotoSansTeluguUI-Regular",
+        marathi:"NotoSansDevanagariUI-Regular",
+        punjabi:"NotoSansGurmukhiUI-Regular",
+        assamese:"NotoSansBengaliUI-Regular",
+        bengali:"NotoSansBengaliUI-Regular",
+        urdu:"NotoNastaliqUrdu-Regular",
+        odiya:"NotoSansOriyaUI-Regular",
+        gujarati:"NotoSansGujaratiUI-Regular",
+        malayalam:"NotoSansMalayalamUI-Regular"
 
         },
         LastReadReference: {

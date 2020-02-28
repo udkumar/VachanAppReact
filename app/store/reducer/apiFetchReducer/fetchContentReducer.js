@@ -3,7 +3,6 @@ import {FETCH_ALL_CONTENT,FECTH_ALL_LANGUAGE,ALL_LANGUAGE_SUCCESS,ALL_CONTENT_SU
 const initialState = {
     contentLanguages:[],
     allLanguages:[],
-    contentLanguages:[],
     error:null,
     loading:false
 }

@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import {Card,CardItem,Content,Body,List,ListItem,Left,Right,Accordion} from 'native-base'
 import {updateContentType,fetchAllContent} from '../../../store/action/'
 import {styles} from '../../LanguageList/styles'
+import Spinner from 'react-native-loading-spinner-overlay';
 import {connect} from 'react-redux'
 
 
@@ -17,6 +18,7 @@ var contentType = ''
             isExpanded :false,
             // contentType:this.props.contentType
          }
+         this.alertPresent = false
       //  this.updateContent = this.props.updateContentType({contentType:expanded == true ? item.contentType : this.props.contentType})
          this.styles =styles(this.props.colorFile, this.props.sizeFile)
      }
@@ -96,10 +98,40 @@ var contentType = ''
       //     this.props.fetchAllContent()
       //   }
       // }
+      errorMessage(){
+        if (!this.alertPresent) {
+            this.alertPresent = true;
+            if (this.props.error) {
+                Alert.alert("", "Check your internet connection", [{text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
+            } else {
+                this.alertPresent = false;
+            }
+        }
+      }
+      reloadLanguage(){
+        this.errorMessage()
+        this.props.fetchAllContent()
+      }
       render(){
-
           return(
+            this.props.isLoading ?
+            <Spinner
+            visible={true}
+            textContent={'Loading...'}
+            //  textStyle={styles.spinnerTextStyle}
+          /> : (
+            this.props.error ? 
+            <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+            <TouchableOpacity 
+            onPress={()=>this.reloadLanguage}
+            style={{height:40,width:120,borderRadius:4,backgroundColor:'#3F51B5',justifyContent:'center',alignItems:'center'}}
+            >
+            <Text style={{fontSize:18,color:'#fff'}}>Reload</Text>
+            </TouchableOpacity>
+            </View>
+            :
             <View>
+
             <Modal
               animationType="fade"
               transparent={true}
@@ -137,7 +169,7 @@ var contentType = ''
                   size={20} 
               /> 
             </TouchableOpacity>
-          </View>
+          </View>)
           )
       }
   }
@@ -145,7 +177,10 @@ var contentType = ''
 const mapStateToProps = state =>{
   return{
     availableContents:state.contents.contentLanguages,
+    error:state.contents.error,
+    isLoading:state.contents.loading,
     contentType:state.updateVersion.parallelContentType,
+
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
 

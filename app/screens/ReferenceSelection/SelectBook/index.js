@@ -84,8 +84,20 @@ getNTSize=()=>{
   }
   this.setState({NTSize:count})
 }
+componentWillReceiveProps(nextProps){
+
+}
+// componentWillMount(){
+//   this.getOTSize()
+//   this.getNTSize()
+// }
+componentDidMount(){
+  this.getOTSize()
+  this.getNTSize()
+}
 componentDidUpdate(prevProps,prevState){
-  if(prevProps.books !==this.props.books ){
+  if(prevProps.books !== this.props.books ){
+    console.log("update books list ")
     this.getOTSize()
     this.getNTSize()
   }

@@ -10,6 +10,7 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
 const Controls = ({
+  styles,
   paused,
   shuffleOn,
   repeatOn,
@@ -24,25 +25,25 @@ const Controls = ({
   <View style={styles.container}>
     <View style={{width: 20}} />
     <TouchableOpacity onPress={onBack}>
-      <Icon name="fast-rewind"  color={"#fff"} size={24} />
+      <Icon styles={styles.iconStyle} name="fast-rewind"  size={24} />
     </TouchableOpacity>
     <View style={{width: 10}} />
     {!paused ?
       <TouchableOpacity onPress={onPressPause}>
         <View style={styles.playButton}>
-        <Icon name="pause" color={"#fff"}size={24}  style={[forwardDisabled && {opacity: 0.3}]}/>
+        <Icon  styles={styles.iconStyle} name="pause"size={24}  style={[forwardDisabled && {opacity: 0.3}]}/>
         </View>
       </TouchableOpacity> :
       <TouchableOpacity onPress={onPressPlay}>
         <View style={styles.playButton}>
-        <Icon  color={"#fff"} name="play-arrow" size={30}/>
+        <Icon  styles={styles.iconStyle}   name="play-arrow" size={30}/>
         </View>
       </TouchableOpacity>
     }
     <View style={{width: 10}} />
     <TouchableOpacity onPress={onForward}
       disabled={forwardDisabled}>
-      <Icon  color={"#fff"} name="fast-forward" size={24}  />
+      <Icon  styles={styles.iconStyle} name="fast-forward" size={24}  />
     </TouchableOpacity>
     <View style={{width: 20}} />
     
@@ -51,30 +52,3 @@ const Controls = ({
 
 export default Controls;
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    // backgroundColor:'#3F51B5'
-    // paddingTop: 8,
-  },
-  playButton: {
-    height:36,
-    width: 36,
-    borderWidth: 1,
-    borderColor: '#fff',
-    borderRadius: 36 / 2,
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  
-  secondaryControl: {
-    // height: 18,
-    // width: 18,
-  },
-  off: {
-    opacity: 0.30,
-  }
-})

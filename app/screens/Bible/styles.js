@@ -121,11 +121,9 @@ export const styles =(colorFile, sizeFile) =>{
         // left:0,
         // width: 56, 
         // height: 56, 
-       
         // backgroundColor: colorFile.backgroundColor,
-        // backgroundColor:colorFile.semiTransparentBackground,
-        backgroundColor:'rgba(63, 81, 181,0.5)',
-
+        backgroundColor:colorFile.semiTransparentBackground,
+        // backgroundColor:'rgba(63, 81, 181,0.5)',
         justifyContent:'center'
     },
     bottomBarChevrontIcon:{ 

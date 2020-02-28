@@ -29,11 +29,11 @@ const API_BASE_URL = 'https://api.autographamt.com/v1/'
   function* fetchVersionBooks(params) {
     try {
       const payload = params.payload
-      let downloaded = yield AsyncStorageUtil.getAllItems([
-        AsyncStorageConstants.Keys.Downloaded,
-      ])
+      // let downloaded = yield AsyncStorageUtil.getAllItems([
+      //   AsyncStorageConstants.Keys.Downloaded,
+      // ])
       let bookListData = []
-      if(downloaded[0][1]) {
+      if(payload.downloaded) {
         console.log("payload bible ")
         var response = yield DbQueries.getDownloadedBook(payload.language,payload.versionCode)
          for(var i = 0; i<response.length;i++){
@@ -66,7 +66,7 @@ const API_BASE_URL = 'https://api.autographamt.com/v1/'
         }
         console.log("book list fetch book list ",response)
       }
-      console.log("NOT GETTING DATA ")
+      console.log("NOT GETTING DATA ",bookListData)
     var res = bookListData.length == 0 ? [] : bookListData.sort(function(a, b){return a.bookNumber - b.bookNumber})
     yield put(versionBooksSuccess(res))
     yield put(versionBooksFailure(null))

@@ -11,6 +11,7 @@ import Video from 'react-native-video';
 import {connect} from 'react-redux'
 import APIFetch from '../../../../utils/APIFetch'
 import {fetchAudioUrl} from '../../../../store/action/'
+import {styles} from './styles'
 
 class Player extends Component {
   constructor(props) {
@@ -26,6 +27,7 @@ class Player extends Component {
       shuffleOn: false,
       // visibleAudio:false
     };
+    this.styles = styles(this.props.colorFile, this.props.sizeFile)
   }
 
   setDuration(data) {
@@ -93,13 +95,14 @@ componentDidMount(){
     console.log("PORP   URL .....",this.props.url)
     const track = this.state.audioFile;
     return (
-      <View style={styles.container}>
+      <View style={this.styles.container}>
         {/* <SeekBar
           onSeek={this.seek.bind(this)}
           trackLength={this.state.totalLength}
           onSlidingStart={() => this.setState({paused: true})}
           currentPosition={this.state.currentPosition} /> */}
           <Controls
+          styles={this.styles}
           onPressRepeat={() => this.setState({repeatOn : !this.state.repeatOn})}
           repeatOn={this.state.repeatOn}
           // shuffleOn={this.state.shuffleOn}
@@ -120,25 +123,19 @@ componentDidMount(){
           onProgress={this.setTime.bind(this)}    // Callback every ~250ms with currentTime
           onEnd={this.onEnd}           // Callback when playback finishes
           onError={this.videoError}    // Callback when video cannot be loaded
-          style={styles.audioElement} />
+          style={this.styles.audioElement} />
       </View>
     );
   }
 }
 
-const styles = {
-  container: {
-    flex: 1,
-  },
-  audioElement: {
-    height: 0,
-    width: 0,
-  }
-};
+
 
 const mapStateToProps = state =>{
   return{
     audioURL:state.audioFetch.url,
+    sizeFile:state.updateStyling.sizeFile,
+    colorFile:state.updateStyling.colorFile,
   }
 }
 const mapDispatchToProps = dispatch =>{

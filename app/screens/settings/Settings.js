@@ -36,7 +36,7 @@ class Setting extends Component {
       colorFile:this.props.colorFile,
       sizeMode:this.props.sizeMode,
       sizeFile:this.props.sizeFile,
-      verseInLine:false
+      verseInLine:this.props.verseInLine
     }
     this.styles = settingsPageStyle(this.props.colorFile, this.props.sizeFile);
   }
@@ -58,22 +58,25 @@ class Setting extends Component {
       ]);
   }
 
-   onVerseInLineModeChange(){
+   onVerseInLineModeChange=()=>{
+     console.log("verse in line ",this.state.verseInLine)
     this.setState({verseInLine:!this.state.verseInLine}, ()=>{
-        this.props.updateVerseInLine(this.state.verseInLine);
+     console.log("verse in line ",this.state.verseInLine)
+        this.props.updateVerseInLine(!this.state.verseInLine);
           AsyncStorageUtil.setAllItems([
-          [AsyncStorageConstants.Keys.VerseViewMode, JSON.stringify(this.state.verseInLine)],
+          [AsyncStorageConstants.Keys.VerseViewMode, JSON.stringify(!this.state.verseInLine)],
         ]);
       })
   }
 
-  static getDerivedStateFromProps(props, state){
+  static getDerivedStateFromProps(nextProps){
+    console.log("props ",nextProps)
     return{
-      colorMode:props.colorMode,
-      sizeMode:props.sizeMode,
-      colorFile:props.colorFile,
-      sizeFile:props.sizeFile,
-      verseInLine:props.verseInLine
+      colorMode:nextProps.colorMode,
+      sizeMode:nextProps.sizeMode,
+      colorFile:nextProps.colorFile,
+      sizeFile:nextProps.sizeFile,
+      verseInLine:nextProps.verseInLine
     }
   }
   render() {
@@ -155,7 +158,7 @@ class Setting extends Component {
                 <Switch 
                   size={24} 
                   thumbColor={this.state.colorMode == AsyncStorageConstants.Values.DayMode ? dayModeIconColor: nightModeIconColor}
-                  onValueChange={()=>this.onVerseInLineModeChange}
+                  onValueChange={this.onVerseInLineModeChange}
                   value={this.state.verseInLine}
                   style={this.styles.cardItemIconCustom} 
                 />

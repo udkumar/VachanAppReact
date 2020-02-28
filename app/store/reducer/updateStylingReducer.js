@@ -7,8 +7,8 @@ import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants.js'
 
 const initialState = {
     colorMode:AsyncStorageConstants.Values.DayMode,
-    colorFile :dayColors,
     sizeMode:AsyncStorageConstants.Values.SizeModeNormal,
+    colorFile :dayColors,
     sizeFile:mediumFont,
     verseInLine:AsyncStorageConstants.Values.verseInLine,
     fontFamily:AsyncStorageConstants.Values.FontFamily["hindi"]

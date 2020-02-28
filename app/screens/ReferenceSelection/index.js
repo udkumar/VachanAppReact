@@ -10,6 +10,8 @@ import {connect} from 'react-redux'
 import {SelectionTab} from './routes/index'
 import {fetchVersionBooks} from '../../store/action/'
 import { getBookNumOfVersesFromMapping } from '../../utils/UtilFunctions';
+import Spinner from 'react-native-loading-spinner-overlay';
+
 
 
 class ReferenceSelection extends Component {
@@ -36,6 +38,7 @@ class ReferenceSelection extends Component {
       totalVerses:this.props.navigation.state.params.totalVerses
 
     }
+    this.alertPresent =false
 
   }
 
@@ -72,28 +75,59 @@ class ReferenceSelection extends Component {
   }
 
   componentDidMount(){
-    console.log(" downloaded ",this.props.downloaded)
+    this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,isDownloaded:this.props.downloaded,sourceId:this.props.sourceId})
+  }
+  errorMessage(){
+    if (!this.alertPresent) {
+        this.alertPresent = true;
+        if (this.props.error) {
+            Alert.alert("", "Check your internet connection", [{text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
+        } else {
+            this.alertPresent = false;
+        }
+    }
+  }
+  reloadBooks(){
+    this.errorMessage()
     this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,isDownloaded:this.props.downloaded,sourceId:this.props.sourceId})
   }
   render() {
     return (
+      this.props.isLoading ?
+        <Spinner
+        visible={true}
+        textContent={'Loading...'}
+        //  textStyle={styles.spinnerTextStyle}
+      /> :(
+        this.props.error ? 
+        <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+        <TouchableOpacity 
+        onPress={()=>this.reloadBooks}
+        style={{height:40,width:120,borderRadius:4,backgroundColor:'#3F51B5',justifyContent:'center',alignItems:'center'}}
+        >
+        <Text style={{fontSize:18,color:'#fff'}}>Reload</Text>
+        </TouchableOpacity>
+        </View>
+        :
         <SelectionTab 
         screenProps={{
 
-          selectedBookIndex: this.state.selectedBookIndex,
-          selectedBookId: this.state.selectedBookId,
-          selectedChapterIndex: this.state.selectedChapterIndex,
-          selectedChapterNumber: this.state.selectedChapterNumber,
-          selectedVerseIndex: this.state.selectedVerseIndex,
-          selectedVerseNumber: this.state.selectedVerseNumber,
-          totalVerses:this.state.totalVerses,
-          totalChapters:this.state.totalChapters,
+        selectedBookIndex: this.state.selectedBookIndex,
+        selectedBookId: this.state.selectedBookId,
+        selectedChapterIndex: this.state.selectedChapterIndex,
+        selectedChapterNumber: this.state.selectedChapterNumber,
+        selectedVerseIndex: this.state.selectedVerseIndex,
+        selectedVerseNumber: this.state.selectedVerseNumber,
+        totalVerses:this.state.totalVerses,
+        totalChapters:this.state.totalChapters,
 
-          updateSelectedBook: this.updateSelectedBook,
-          updateSelectedChapter: this.updateSelectedChapter,
-          updateSelectedVerse: this.updateSelectedVerse,
+        updateSelectedBook: this.updateSelectedBook,
+        updateSelectedChapter: this.updateSelectedChapter,
+        updateSelectedVerse: this.updateSelectedVerse,
 
-        }}/>
+      }}/>
+      ) 
+      
     );
   }
   
@@ -107,6 +141,10 @@ const mapStateToProps = state =>{
         versionCode:state.updateVersion.versionCode,
         sourceId:state.updateVersion.sourceId,
         downloaded:state.updateVersion.downloaded,
+        books:state.versionFetch.data,
+        error:state.versionFetch.error,
+        isLoading:state.versionFetch.loading
+
     }
   }
   const mapDispatchToProps = dispatch =>{
