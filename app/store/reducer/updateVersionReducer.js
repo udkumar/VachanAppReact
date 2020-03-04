@@ -22,7 +22,7 @@ const initialState = {
    parallelContentDownloaded:false
 }
 
-function UpdateVersionReducer(state=initialState,action){
+function updateVersionReducer(state=initialState,action){
     switch(action.type) {
         case UPDATE_VERSION:
         return {
@@ -60,4 +60,4 @@ function UpdateVersionReducer(state=initialState,action){
     }
 }
 
-export default UpdateVersionReducer
+export default updateVersionReducer

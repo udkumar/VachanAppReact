@@ -84,9 +84,9 @@ getNTSize=()=>{
   }
   this.setState({NTSize:count})
 }
-componentWillReceiveProps(nextProps){
+// componentWillReceiveProps(nextProps){
 
-}
+// }
 // componentWillMount(){
 //   this.getOTSize()
 //   this.getNTSize()

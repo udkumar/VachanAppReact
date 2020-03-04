@@ -111,11 +111,21 @@ class DbHelper {
 			var result1 = realm.objects("HighlightsModel");
 			if(bookId == null ){
 				let highlightList = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '"' )
-				return highlightList
+				if(Object.keys(highlightList).length > 0){
+					return highlightList
+				}
+				else{
+					return null
+				}
 			}
 			else{
 				let highlight = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId ==[c]   "' + bookId + '"' )
-				return highlight
+				if(Object.keys(highlight).length > 0){
+					return highlight
+				}
+				else{
+					return null
+				}
 			}
 			
 		}
@@ -257,20 +267,30 @@ class DbHelper {
 		}
 
 	}
-	async queryBookmark(langName,verCode,bId,chapter){
+	async queryBookmark(langName,verCode,bId){
 
 		let realm = await this.getRealm()
 
 			if (realm){
 				let result1 = realm.objects("BookmarksListModel");
-				
-				if(chapter == null  && bId == null){
+				if(bId == null){
 					let bookmarksList = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" ')
-					return bookmarksList
+					// if(object.keys())
+					if(Object.keys(result).length > 0){
+						return bookmarksList
+					}
+					else{
+						return null
+					}
 				}
 				else{
-					let bookmarks = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId =="' + bId + '" && chapterNumber == "' + chapter + '"')
-					return bookmarks
+					let bookmarks = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId =="' + bId + '"')
+					if(Object.keys(bookmarks).length>0){
+						return bookmarks
+					}
+					else{
+						return null
+					}
 				}
 			}
 	}
@@ -385,10 +405,16 @@ class DbHelper {
 	async getLangaugeList(){
 		let realm = await this.getRealm();
 		if(realm){
-					let result = realm.objects('LanguageModel');
-					return result
+		let result = realm.objects('LanguageModel');
+		if(Object.keys(result).length > 0){
+		console.log("result language list found")
+			return result
 		}
-		return null
+		else{
+		console.log("result language list not found")
+			return null
+		}
+		}
 	}
 
 	//get all available booklist
@@ -456,24 +482,19 @@ class DbHelper {
 	}
 	}
 	//query  chapter
-	async queryVersions(langName,verCode,bookId,chapterNumber){
-		console.log("query version ",langName,verCode,bookId,chapterNumber)
+	async queryVersions(langName,verCode,bookId){
+		console.log("query version ",langName,verCode,bookId)
 		let realm = await this.getRealm()
 		
 		if(realm){
 			console.log("realm is present")
-			var version = realm.objects('ChapterModel').filtered('chapterOwner.languageName ==[c] "' + langName + '" && chapterOwner.versionCode ==[c] "' + verCode + '" && chapterOwner.bookId ==   "' + bookId + '" && chapterNumber ==   "' + chapterNumber + '"' )
-			return version
-			// let result = realm.objects('BookModel').filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId ==   "' + bookId + '"' )
-			// return result
-			// // var resultA = result[0].chapters
-			// resultA.filtered('chapterNumber ')
-		// if(version){
-			// console.l
-		// }else{
-		// 	return null
-		// }
-		// return version
+			let result = realm.objects('BookModel').filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId ==   "' + bookId + '"' )
+			if(result.length > 0){
+				return result
+			}
+			else{
+				return null
+			}
 		}
 	}
 	//query book

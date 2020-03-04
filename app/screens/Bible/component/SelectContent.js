@@ -108,7 +108,7 @@ var contentType = ''
             }
         }
       }
-      reloadLanguage(){
+      reloadLanguage=()=>{
         this.errorMessage()
         this.props.fetchAllContent()
       }
@@ -123,7 +123,7 @@ var contentType = ''
             this.props.error ? 
             <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
             <TouchableOpacity 
-            onPress={()=>this.reloadLanguage}
+            onPress={this.reloadLanguage}
             style={{height:40,width:120,borderRadius:4,backgroundColor:'#3F51B5',justifyContent:'center',alignItems:'center'}}
             >
             <Text style={{fontSize:18,color:'#fff'}}>Reload</Text>

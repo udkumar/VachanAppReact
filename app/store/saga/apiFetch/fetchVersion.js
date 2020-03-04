@@ -1,6 +1,9 @@
 
-import { FETCH_VERSION_LANGUAGE,FETCH_VERSION_BOOKS,FETCH_VERSION_CONTENT} from '../../action/actionsType'
-import {versionLanguageSuccess,versionLanguageFailure,versionBooksSuccess,versionBooksFailure,versionContentSuccess,versionContentFailure,versionContentDownloadedSuccess,versionContentDownloadedFailure}  from '../../action/'
+import { FETCH_VERSION_LANGUAGE,FETCH_VERSION_BOOKS,FETCH_VERSION_CONTENT,QUERY_DOWNLOADED_BOOK} from '../../action/actionsType'
+import {versionLanguageSuccess,versionLanguageFailure,
+  versionBooksSuccess,versionBooksFailure,
+  versionContentSuccess,versionContentFailure,
+  downloadedBookSuccess,downloadedBookFailure}  from '../../action/'
 import {getBookNameFromMapping,getBookSectionFromMapping,getBookNumberFromMapping,getBookChaptersFromMapping, getBookNumOfVersesFromMapping} from '../../../utils/UtilFunctions';
 
 import { put, takeLatest, call,fork,all } from 'redux-saga/effects'
@@ -78,6 +81,21 @@ const API_BASE_URL = 'https://api.autographamt.com/v1/'
     }
   }
 
+  function* queryDownloadedBook(params){
+    try{
+      var content = yield DbQueries.queryVersions(params.languageName,params.versionCode,params.bookId) 
+      if(content !== null){
+        yield put(downloadedBookSuccess(content[0].chapters))
+        yield put(downloadedBookFailure(null))
+      }
+    }
+    catch(e){
+      yield put(downloadedBookFailure(e))
+      yield put(downloadedBookSuccess([]))
+      console.log("error fetch content ",e)
+    }
+  }
+
   function* fetchVersionContent(params) {
     try {
       let chapterContent = []
@@ -103,6 +121,7 @@ const API_BASE_URL = 'https://api.autographamt.com/v1/'
     takeLatest(FETCH_VERSION_LANGUAGE, fetchVersionLanguage),
     takeLatest(FETCH_VERSION_BOOKS, fetchVersionBooks),
     takeLatest(FETCH_VERSION_CONTENT, fetchVersionContent),
+    takeLatest(QUERY_DOWNLOADED_BOOK, queryDownloadedBook),
   ]
 
 

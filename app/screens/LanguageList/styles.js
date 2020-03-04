@@ -2,8 +2,8 @@ import {StyleSheet,Dimensions} from 'react-native'
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 
-export const styles =(colorFile, sizeFile,fontfamily) =>{
-  console.log("font in style page....."+ JSON.stringify(fontfamily))
+export const styles =(colorFile, sizeFile) =>{
+  // console.log("font in style page....."+ JSON.stringify(fontfamily))
     return StyleSheet.create({
     MainContainer :{
     flex:1,

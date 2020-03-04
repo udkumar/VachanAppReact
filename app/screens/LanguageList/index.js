@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, StyleSheet,ScrollView,Dimensions, Modal,View,ActivityIndicator,TextInput,FlatList,LayoutAnimation,UIManager,Platform,TouchableOpacity} from 'react-native';
+import { Text,Alert, StyleSheet,ScrollView,Dimensions, Modal,View,ActivityIndicator,TextInput,FlatList,LayoutAnimation,UIManager,Platform,TouchableOpacity} from 'react-native';
 import {Card,ListItem,Left,Right,List,Accordion} from 'native-base'
 import { NavigationActions,StackActions } from 'react-navigation'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -17,9 +17,9 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import {API_BASE_URL} from '../../utils/APIConstant'
 import { State } from 'react-native-gesture-handler';
 
-const languageList = async () => { 
-  return await DbQueries.getLangaugeList()
-}
+// const languageList = async () => { 
+//   return await DbQueries.getLangaugeList()
+// }
 
 class LanguageList extends Component {
     static navigationOptions = ({navigation}) => ({
@@ -35,7 +35,7 @@ class LanguageList extends Component {
           isLoading: false,
           text: '',
           languages:[],
-          searchList:[],
+          // searchList:[],
           startDownload:false,
           index : -1,
           languageName:'',
@@ -43,7 +43,9 @@ class LanguageList extends Component {
           sizeFile:this.props.sizeFile,
 
       }
-      this.styles = styles(this.props.colorFile, this.props.sizeFile);    
+      this.styles = styles(this.props.colorFile, this.props.sizeFile);  
+      this.fetchLanguages = this.fetchLanguages.bind(this) 
+      this.alertPresent = false 
     }
    
     updateLayout(index){
@@ -57,37 +59,60 @@ class LanguageList extends Component {
       })
     }
 
-    async componentDidMount(){
+     componentDidMount(){
       this.fetchLanguages()  
     }
-    reloadLanguages(){
-      this.props.fetchAllContent()
-      this.fetchLanguages()
+
+    errorMessage(){
+      if (!this.alertPresent) {
+          this.alertPresent = true;
+          if (this.state.languages.length == 0) {
+            this.fetchLanguages()
+            Alert.alert("", "Check your internet connection", [{text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
+            }else{
+            console.log("LANGUAGEG LIST ",this.state.languages.length)
+            this.alertPresent = false;
+            // this.setState({languages:this.props.bibleLanguages[0].content})
+          }
+      }
     }
+  updateData(){
+      this.props.fetchAllContent()
+      this.errorMessage()
+  }
     async fetchLanguages(){
+      console.log(" language list ")
       var lanVer = []
-      var oneDay = 24*60*60*1000; 
-      var d = new Date('1-feb-2000')
-      var ud = new Date(timestamp.languageUpdate)
-      var diffDays = Math.round(Math.abs((d.getTime() - ud.getTime())/(oneDay)))
-      var languageList =  await DbQueries.getLangaugeList()
-      for(var i =0 ; i<languageList.length;i++){
-        lanVer.push(languageList[i])
+      // var oneDay = 24*60*60*1000; 
+      // var d = new Date('1-feb-2000')
+      // var ud = new Date(timestamp.languageUpdate)
+      // var diffDays = Math.round(Math.abs((d.getTime() - ud.getTime())/(oneDay)))
+      const languageList =  await DbQueries.getLangaugeList()
+      // console.log("this.props.bibleLanguages[0]",this.props.bibleLanguages[0])
+      console.log("language  ",languageList)
+
+      if(languageList === null){
+        console.log("language LIST ",languageList)
+        if(this.props.bibleLanguages[0].content.length > 0){
+          console.log("no language found call update ",this.props.bibleLanguages[0].content.length)
+          DbQueries.addLangaugeList(this.props.bibleLanguages[0].content)
+          lanVer = this.props.bibleLanguages[0].content
+        }
+        else{
+          console.log("no language found call update ")
+          this.updateData()
+        }
       }
-      if(this.props.bibleLanguages.length == 0 && languageList.length == 0){
-        this.reloadLanguages()
+      else{
+        for(var i =0 ; i<languageList.length;i++){
+          lanVer.push(languageList[i])
+        }
       }
-      if(languageList.length == 0 && this.props.bibleLanguages[0].content.length > 0 ){
-        DbQueries.addLangaugeList(this.props.bibleLanguages[0].content)
-        lanVer = this.props.bibleLanguages[0].content
-      }
-     
       this.setState({
         languages: lanVer,
-        searchList: lanVer
+        // searchList: lanVer
       })
     }
-    
     // SearchFilterFunction = (text)=>{
     //     const newData = this.state.searchList.filter(function(item){
     //       const itemData = item.languageName
@@ -156,17 +181,13 @@ class LanguageList extends Component {
       }
     }
  
-    navigateTo = (langName,langCode,verCode,sourceId,downloaded)=>{
-        this.props.updateVersion({language:langName,languageCode:langCode,versionCode:verCode,sourceId:sourceId,downloaded:downloaded})
-        AsyncStorageUtil.setAllItems([
-          [AsyncStorageConstants.Keys.SourceId, JSON.stringify(sourceId)],
-          [AsyncStorageConstants.Keys.LanguageName, langName],
-          [AsyncStorageConstants.Keys.LanguageCode, langCode],
-          [AsyncStorageConstants.Keys.VersionCode, verCode],
-          [AsyncStorageConstants.Keys.Downloaded, JSON.stringify(downloaded)]
-        ]) 
-        this.props.navigation.goBack()
+    navigateTo(langName,langCode,verCode,sourceId,downloaded){
+       this.props.navigation.state.params.updateLangVer({
+        sourceId:sourceId,languageName:langName,languageCode:langCode, 
+        versionCode:verCode,downloaded:downloaded})
+        this.props.navigation.pop()
     }
+
     _renderHeader = (item, expanded) =>{
       return(
         <View style={{
@@ -213,6 +234,7 @@ class LanguageList extends Component {
       )
     }
     render(){
+      console.log(" languague LIST IN RENDER ",this.state.languages)
       return (
         <View style={this.styles.MainContainer}>
         {this.props.isLoading &&
@@ -227,6 +249,18 @@ class LanguageList extends Component {
             textContent={'DOWNLOADING BIBLE...'}
             //  textStyle={styles.spinnerTextStyle}
           />}
+          
+            {this.state.languages.length == 0  &&
+              <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+              <TouchableOpacity 
+              onPress={()=>this.updateData()}
+              style={{height:40,width:120,borderRadius:4,backgroundColor:'#3F51B5',justifyContent:'center',alignItems:'center'}}
+              >
+              <Text style={{fontSize:18,color:'#fff'}}>Reload</Text>
+              </TouchableOpacity>
+              </View>}
+            
+          
         {/* <TextInput 
           style={this.styles.TextInputStyleClass}
           onChangeText={(text) => this.SearchFilterFunction(text)}

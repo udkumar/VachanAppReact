@@ -1,18 +1,18 @@
 
-import { FETCH_DOWNLOADED_VERSION_CONTENT,VERSION_DOWNLOADED_CONTENT_FAILURE,VERSION_DOWNLOADED_CONTENT_SUCCESS} from '../../actionsType';
+import { QUERY_DOWNLOADED_BOOK,DOWNLOADED_BOOK_SUCCESS,DOWNLOADED_BOOK_FAILURE} from '../../actionsType';
 
-export const fetchDownloadedVersionContent  = payload => ({
-    type: FETCH_DOWNLOADED_VERSION_CONTENT,
+export const queryDownloadedBook  = payload => ({
+    type: QUERY_DOWNLOADED_BOOK,
     payload,
   })
   
-  export const versionContentDownloadedSuccess = payload => ({
-    type: VERSION_DOWNLOADED_CONTENT_SUCCESS,
+  export const downloadedBookSuccess = payload => ({
+    type: DOWNLOADED_BOOK_SUCCESS,
     payload,
   })
   
-  export const versionContentDownloadedFailure = error => ({
-    type: VERSION_DOWNLOADED_CONTENT_FAILURE,
+  export const downloadedBookFailure = error => ({
+    type: DOWNLOADED_BOOK_FAILURE,
     error:error,
   })
   

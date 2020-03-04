@@ -106,8 +106,8 @@ class DbQueries {
     getLangaugeList(){
        return DbHelper.getLangaugeList()
     }
-    queryVersions(lang,ver,bookId,chapter){
-       return DbHelper.queryVersions(lang,ver,bookId,chapter)
+    queryVersions(lang,ver,bookId){
+       return DbHelper.queryVersions(lang,ver,bookId)
     }
     queryBook(lang,ver,bookId){
         return DbHelper.queryBook(lang,ver,bookId)

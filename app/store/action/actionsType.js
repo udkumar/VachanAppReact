@@ -31,6 +31,12 @@ export const FETCH_VERSION_CONTENT = 'fetch_version_content';
 export const VERSION_CONTENT_SUCCESS = 'version_content_success';
 export const VERSION_CONTENT_FAILURE  ='version_content_failure';
 
+
+export const QUERY_DOWNLOADED_BOOK = 'query_downloaded_book';
+export const DOWNLOADED_BOOK_SUCCESS = 'downloaded_book_success';
+export const DOWNLOADED_BOOK_FAILURE ='downloaded_book_failure';
+
+
 export const FETCH_DOWNLOADED_VERSION_CONTENT = 'fetch_downloaded_version_content';
 export const VERSION_DOWNLOADED_CONTENT_FAILURE = 'version_downloaded_content_failure';
 export const VERSION_DOWNLOADED_CONTENT_SUCCESS = 'version_downloaded_content_success';

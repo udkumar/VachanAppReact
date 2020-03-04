@@ -15,7 +15,7 @@ export {fetchCommentaryContent,commentaryContentFailure,commentaryContentSuccess
 export {fetchVersionLanguage,versionLanguageSuccess,versionLanguageFailure} from './apiFetch/version/availableLanguage'
 export {fetchVersionBooks,versionBooksSuccess,versionBooksFailure} from './apiFetch/version/availableBook'
 export {fetchVersionContent,versionContentSuccess,versionContentFailure} from './apiFetch/version/content'
-export {fetchDownloadedVersionContent,versionContentDownloadedSuccess,versionContentDownloadedFailure} from './apiFetch/version/downloadedContent'
+export {queryDownloadedBook,downloadedBookSuccess,downloadedBookFailure} from './apiFetch/version/downloadedContent'
 
 export {fetchAllContent,allContentSuccess,allContentFailure} from './apiFetch/fetchAllContentType/fetchAllContent'
 export {fetchAllLanguage,allLanguageSuccess,allLanguageFailure} from './apiFetch/fetchAllContentType/allLanguages'

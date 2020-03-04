@@ -3,6 +3,7 @@ import {
   Text,
   View,
   TouchableOpacity,
+  Alert,
   FlatList,
   Dimensions
 } from 'react-native';
@@ -80,29 +81,30 @@ class ReferenceSelection extends Component {
   errorMessage(){
     if (!this.alertPresent) {
         this.alertPresent = true;
-        if (this.props.error) {
+        if (this.props.error !== null) {
             Alert.alert("", "Check your internet connection", [{text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
         } else {
             this.alertPresent = false;
         }
     }
   }
-  reloadBooks(){
+  reloadBooks=()=>{
     this.errorMessage()
     this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,isDownloaded:this.props.downloaded,sourceId:this.props.sourceId})
   }
   render() {
+    console.log("IS LAODING ",this.props.isLoading)
     return (
       this.props.isLoading ?
         <Spinner
         visible={true}
         textContent={'Loading...'}
         //  textStyle={styles.spinnerTextStyle}
-      /> :(
+      /> : ( 
         this.props.error ? 
         <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
         <TouchableOpacity 
-        onPress={()=>this.reloadBooks}
+        onPress={this.reloadBooks}
         style={{height:40,width:120,borderRadius:4,backgroundColor:'#3F51B5',justifyContent:'center',alignItems:'center'}}
         >
         <Text style={{fontSize:18,color:'#fff'}}>Reload</Text>
@@ -111,7 +113,6 @@ class ReferenceSelection extends Component {
         :
         <SelectionTab 
         screenProps={{
-
         selectedBookIndex: this.state.selectedBookIndex,
         selectedBookId: this.state.selectedBookId,
         selectedChapterIndex: this.state.selectedChapterIndex,
