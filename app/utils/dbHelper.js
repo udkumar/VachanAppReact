@@ -243,11 +243,9 @@ class DbHelper {
 			let chapter = realm.objects('BookmarksListModel').filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" &&  bookId == "' + bId + '" && chapterNumber == "'+cNum+'"')
 			console.log("book mark chappter ",chapter)
 			if(isBookmark){
-				if(chapter==cNum){
-					return
-				}
-				else{
-					console.log(" if bookmark "+isBookmark)
+			console.log("do book mark chappter ",)
+				if(Object.keys(chapter).length == 0){
+				console.log("chaper already present ",)
 					realm.create('BookmarksListModel',{
 						bookId:bId,
 						chapterNumber:cNum,
@@ -255,14 +253,11 @@ class DbHelper {
 						languageName:langName
 					})
 				}
-				
 			}
 			else{
-			let bookmarkData = realm.objects('BookmarksListModel').filtered('chapterNumber = $0', cNum)
-			console.log("len bookmark : " + bookmarkData)
+			// let bookmarkData = realm.objects('BookmarksListModel').filtered('chapterNumber = $0', cNum)
 			realm.delete(bookmarkData); 
 			}
-
 			})
 		}
 
@@ -285,6 +280,7 @@ class DbHelper {
 				}
 				else{
 					let bookmarks = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId =="' + bId + '"')
+					console.log("bookmarks query from db",bookmarks)
 					if(Object.keys(bookmarks).length>0){
 						return bookmarks
 					}

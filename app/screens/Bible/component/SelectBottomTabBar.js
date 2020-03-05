@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Modal, Text, TouchableHighlight,TouchableOpacity, View, Alert} from 'react-native';
+import {Modal, Text,TouchableOpacity, View, Alert} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
 
@@ -7,10 +7,10 @@ const SelectBottomTabBar = ({styles,bottomHighlightText,doHighlight,addToNotes,a
     <View style={styles.bottomBar}>
   
     <View style={styles.bottomOption}>
-    <TouchableOpacity onPress={()=>{doHighlight}}  
+    <TouchableOpacity onPress={doHighlight}
     >
       <Text style={styles.bottomOptionText}>
-        {bottomHighlightText == true ? 'HIGHLIGHT' : 'REMOVE HIGHLIGHT' }
+      {bottomHighlightText == true ? 'HIGHLIGHT' : 'REMOVE HIGHLIGHT' }
       </Text>
       <Icon name={'border-color'} color="white" size={24} style={styles.bottomOptionIcon} />
       </TouchableOpacity>
