@@ -28,7 +28,7 @@ class DbHelper {
     async getRealm() {
     	try {
     		return await Realm.open({
-				schemaVersion: 28,
+				schemaVersion: 30,
 				deleteRealmIfMigrationNeeded: true, 
 				path:
 					Platform.OS === 'ios'
@@ -280,7 +280,6 @@ class DbHelper {
 				}
 				else{
 					let bookmarks = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId =="' + bId + '"')
-					console.log("bookmarks query from db",bookmarks)
 					if(Object.keys(bookmarks).length>0){
 						return bookmarks
 					}
@@ -412,7 +411,28 @@ class DbHelper {
 		}
 		}
 	}
-
+	// async updateLanguageList(langCode,verCode,bookList){
+	// 	let realm = await this.getRealm()
+	// 	if(realm){
+	// 	let result = realm.objectForPrimaryKey("LanguageModel", langCode)
+	// 	if(Object.keys(result).length>0){
+	// 		let resultsA = result.versionModels;
+	// 		let resultB = resultsA.filtered('versionCode == "'+verCode+'" ')
+	// 		console.log("version code from db ",resultB[0].downloaded,resultB[0].sourceId)
+	// 		realm.write(() => {
+	// 			if (Object.keys(resultB).length > 0) {
+	// 				if(resultB[0].downloaded === true){
+	// 				}
+	// 				else{
+	// 					resultB[0].downloaded = true
+	// 					resultB[0].bookNameList = bookList
+	// 				}
+				
+	// 			}
+	// 		});
+	// 	}
+	// 	}
+	// }
 	//get all available booklist
 	async getDownloadedBook(langName,verCode){
 		console.log("languaeg name ",langName,"version code ",verCode)
@@ -483,10 +503,12 @@ class DbHelper {
 		let realm = await this.getRealm()
 		
 		if(realm){
-			console.log("realm is present")
-			let result = realm.objects('BookModel').filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId ==   "' + bookId + '"' )
-			if(result.length > 0){
-				return result
+			let result = realm.objects('BookModel')
+			let data = result.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId =="' + bookId + '"' )
+			// let resultsA = result.chapters[0]
+			if(Object.keys(data).length > 0){
+				console.log('downloaded book found ',Object.keys(data).length)
+				return data
 			}
 			else{
 				return null
@@ -494,20 +516,20 @@ class DbHelper {
 		}
 	}
 	//query book
-	async queryBook(langName,verCode,bookId){
-		console.log("query version ",langName,verCode,bookId)
-		let realm = await this.getRealm()
-		if(realm){
-		var book = realm.objects('BookModel').filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId ==   "' + bookId + '"' )
-		if(book){
-			console.log(book," book from db ")
-		}
-		else{
-			console.log(" sorry no data present")
+	// async queryBook(langName,verCode,bookId){
+	// 	console.log("query version ",langName,verCode,bookId)
+	// 	let realm = await this.getRealm()
+	// 	if(realm){
+	// 	var book = realm.objects('BookModel').filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId ==   "' + bookId + '"' )
+	// 	if(book){
+	// 		console.log(book," book from db ")
+	// 	}
+	// 	else{
+	// 		console.log(" sorry no data present")
 
-		}
-		}
-	}
+	// 	}
+	// 	}
+	// }
 }
 
 export default new DbHelper();

@@ -106,6 +106,9 @@ class DbQueries {
     getLangaugeList(){
        return DbHelper.getLangaugeList()
     }
+    // updateLanguageList(lang,verCode,booklist){
+    //     return DbHelper.updateLanguageList(lang,verCode,booklist)
+    // }
     queryVersions(lang,ver,bookId){
        return DbHelper.queryVersions(lang,ver,bookId)
     }

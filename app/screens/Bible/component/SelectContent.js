@@ -21,6 +21,7 @@ var contentType = ''
          this.alertPresent = false
       //  this.updateContent = this.props.updateContentType({contentType:expanded == true ? item.contentType : this.props.contentType})
          this.styles =styles(this.props.colorFile, this.props.sizeFile)
+         this.alertPresent = false
      }
   
      _renderHeader = (item, expanded) =>{
@@ -98,45 +99,34 @@ var contentType = ''
       //     this.props.fetchAllContent()
       //   }
       // }
+
       errorMessage(){
         if (!this.alertPresent) {
             this.alertPresent = true;
-            if (this.props.error) {
-                Alert.alert("", "Check your internet connection", [{text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
+            if (this.props.availableContents[0].content.length==0 || this.props.availableContents[1].content.length==0) {
+            this.props.navigation.setParams({modalVisible:false})
+              Alert.alert("", "Check your internet connection", [{text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
             } else {
-                this.alertPresent = false;
+            this.props.navigation.setParams({modalVisible:true})
+            this.alertPresent = false;
             }
         }
       }
-      reloadLanguage=()=>{
-        this.errorMessage()
-        this.props.fetchAllContent()
-      }
-      render(){
-          return(
-            this.props.isLoading ?
-            <Spinner
-            visible={true}
-            textContent={'Loading...'}
-            //  textStyle={styles.spinnerTextStyle}
-          /> : (
-            this.props.error ? 
-            <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-            <TouchableOpacity 
-            onPress={this.reloadLanguage}
-            style={{height:40,width:120,borderRadius:4,backgroundColor:'#3F51B5',justifyContent:'center',alignItems:'center'}}
-            >
-            <Text style={{fontSize:18,color:'#fff'}}>Reload</Text>
-            </TouchableOpacity>
-            </View>
-            :
-            <View>
+      onPressModal = ()=>{
+      this.errorMessage()
+      this.props.fetchAllContent()
 
+    }
+      render(){
+        console.log("availableContents ",this.props.availableContents.content)
+        console.log("availableContents ",this.props.availableContents.contentType)
+          return(
+            <View>
             <Modal
               animationType="fade"
               transparent={true}
               visible={this.props.visible}
-              onPress={()=>{this.props.navigation.setParams({modalVisible:!this.props.visible})}} 
+              onPress={()=>{ this.props.navigation.setParams({modalVisible:this.props.visible})}} 
               >
               <TouchableWithoutFeedback
                 style={{
@@ -161,15 +151,14 @@ var contentType = ''
               </View>
               </TouchableWithoutFeedback>
             </Modal>
-            <TouchableOpacity  style={[this.props.navStyles.touchableStyleRight,{flexDirection:'row'}]}>
+            <TouchableOpacity onPress={this.onPressModal} style={[this.props.navStyles.touchableStyleRight,{flexDirection:'row'}]}>
                 <Icon 
-                  onPress={()=>{this.props.navigation.setParams({modalVisible:!this.props.visible})}} 
                   name='add-circle'
                   color={"#fff"} 
                   size={20} 
               /> 
             </TouchableOpacity>
-          </View>)
+          </View>
           )
       }
   }
@@ -177,8 +166,8 @@ var contentType = ''
 const mapStateToProps = state =>{
   return{
     availableContents:state.contents.contentLanguages,
-    error:state.contents.error,
-    isLoading:state.contents.loading,
+    // error:state.contents.error,
+    // isLoading:state.contents.loading,
     contentType:state.updateVersion.parallelContentType,
 
     sizeFile:state.updateStyling.sizeFile,

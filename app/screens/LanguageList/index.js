@@ -17,9 +17,9 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import {API_BASE_URL} from '../../utils/APIConstant'
 import { State } from 'react-native-gesture-handler';
 
-// const languageList = async () => { 
-//   return await DbQueries.getLangaugeList()
-// }
+const languageList = async () => { 
+  return await DbQueries.getLangaugeList()
+}
 
 class LanguageList extends Component {
     static navigationOptions = ({navigation}) => ({
@@ -177,6 +177,7 @@ class LanguageList extends Component {
 
       }catch(error){
       this.setState({startDownload:false})
+      console.log("error ",error)
         alert("There is some error on downloading this version please select another version")
       }
     }

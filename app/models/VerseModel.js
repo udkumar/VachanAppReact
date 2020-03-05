@@ -9,7 +9,7 @@ VerseModel.schema = {
     	text: {type: 'string', indexed: true},
         number: {type: 'string', indexed: true},
         // metadata:'VerseMetadataModel[]',
-        verseOwner: {type: 'linkingObjects', objectType: 'ChapterModel', property: 'verses' }
+        // verseOwner: {type: 'linkingObjects', objectType: 'ChapterModel', property: 'verses' }
     }
 };
 

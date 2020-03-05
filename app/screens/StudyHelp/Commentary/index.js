@@ -32,12 +32,16 @@ class Commentary extends Component {
         }
         this.styles = styles(this.props.colorFile, this.props.sizeFile)
     }
-  componentWillMount(){
-      this.props.fetchCommentaryContent({parallelContentSourceId:this.props.parallelContentSourceId,bookId:this.props.bookId,chapter:this.props.chapterNumber})
-    }
   componentDidMount(){
-    this.props.fetchCommentaryContent({parallelContentSourceId:this.props.parallelContentSourceId,bookId:this.props.bookId,chapter:this.props.chapterNumber})
+    this.props.fetchCommentaryContent({parallelContentSourceId:this.props.parallelContentSourceId,bookId:this.props.bookId,chapter:this.props.currentVisibleChapter})
   }
+  componentWillUpdate(nextProps) {
+    console.log(" PREV PROP ",this.props.currentVisibleChapter,nextProps.currentVisibleChapter)
+    if (this.props.bookId != nextProps.bookId || nextProps.currentVisibleChapter != this.props.currentVisibleChapter) {
+    this.props.fetchCommentaryContent({parallelContentSourceId:this.props.parallelContentSourceId,bookId:nextProps.bookId,chapter:nextProps.currentVisibleChapter})
+    // bar prop has changed
+    }
+}
   // componentDidUpdate(prevProps,prevState){
   //   if(prevProps.bookId !== this.props.bookId || this.props.chapterNumber !==this.props.currentVisibleChapter){
   //     this.props.fetchCommentaryContent({parallelContentSourceId:this.props.parallelContentSourceId,bookId:this.props.bookId,chapter:this.props.chapterNumber})
@@ -45,6 +49,7 @@ class Commentary extends Component {
   // }
 
   render(){
+    console.log("compoent parallel ",this.props.bookId,this.props.language,this.props.currentVisibleChapter)
     var convertToText = (response) => {
       let exRegex = /<b>(.*?)<\/b>/g
     //replaced string with bld because on spliting with '<b>' tag ,all text get mixed not able to identify where to apply the bold style 
@@ -83,20 +88,18 @@ class Commentary extends Component {
        textContent={'Loading...'}
    />
     :
-    <ScrollView style={this.styles.container}>
-    <Card>
-    <CardItem style={this.styles.cardItemBackground} >
-      <Text style={this.styles.commentaryHeading}>{getBookNameFromMapping(this.props.bookId,this.props.parallelContentLanguage)} {  } {this.props.commentaryContent.chapter}</Text>
-    </CardItem>
-    {this.props.commentaryContent.bookIntro  == '' ? null :
-    <CardItem style={this.styles.cardItemBackground}>
+  <View style={{flex:1}}>
+  <Text style={[this.styles.commentaryHeading,{margin:10}]}>{getBookNameFromMapping(this.props.bookId,this.props.parallelContentLanguage)} {  } {this.props.commentaryContent.chapter}</Text>
+  {this.props.commentaryContent.bookIntro  == '' ? null :
+    <View style={this.styles.cardItemBackground}>
       <Text style={this.styles.commentaryHeading}>{convertToText(this.props.commentaryContent.bookIntro)}</Text>
-    </CardItem>}
-    <CardItem style={this.styles.cardItemBackground}>
+    </View>}
     <FlatList
         data={this.props.commentaryContent.commentaries}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{flexGrow:1,margin:16}}
         renderItem={({ item }) => (
-          <View style={{paddingBottom:4}}>
+          <View style={{padding:10}}>
               {item.verse && 
               ( item.verse == 0  ? 
               <Text style={this.styles.commentaryHeading}>Chapter Intro</Text> :
@@ -105,11 +108,12 @@ class Commentary extends Component {
           <Text style={this.styles.commentaryText}>{convertToText(item.text)}</Text>
           </View>
         )}
+        ListFooterComponent={<View style={{height:40,marginBottom:40}}></View>}
+        
+        // contentContainerStyle={{ paddingBottom: 20}}
         // keyExtractor={item => item.bookId}
       />
-      </CardItem>
-      </Card>
-      </ScrollView>
+      </View>
       }
       </View>
     );

@@ -29,6 +29,7 @@ class BibleChapter extends Component {
             totalChapters:this.props.totalChapters,
             totalVerses:this.props.totalVerses
         }
+        this.alertPresent = false
     }
     queryParallelBible =(val)=>{
         this.setState({currentParallelViewChapter:val != null ? this.state.currentParallelViewChapter + val : this.props.currentChapter},()=>{
@@ -53,16 +54,38 @@ class BibleChapter extends Component {
     componentDidMount(){
         this.queryParallelBible(null)
     }
-    
+    //for updating bible content 
+    // componentWillUpdate(nextProps) {
+    //     console.log(" PREV PROP ",this.props.currentVisibleChapter,nextProps.currentVisibleChapter)
+    //     if (this.props.bookId != nextProps.bookId || nextProps.currentVisibleChapter != this.props.currentVisibleChapter) {
+    //     this.props.fetchCommentaryContent({parallelContentSourceId:this.props.parallelContentSourceId,bookId:nextProps.bookId,chapter:nextProps.currentVisibleChapter})
+    //     // bar prop has changed
+    //     }
+    // }
+
+    errorMessage(){
+        console.log("props ",this.props.error)
+        if (!this.alertPresent) {
+            this.alertPresent = true;
+            if (this.props.error) {
+                Alert.alert("", "Check your internet connection", [{text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
+            } else {
+                this.alertPresent = false;
+            }
+        }
+      }
+    updateData = ()=>{
+      if(this.props.error){
+        this.errorMessage()
+        this.queryParallelBible(null)
+      }
+      else{
+        return
+      }
+    }
     render(){
         return(
             <View style={this.styles.container}>
-                {this.props.isLoading &&
-                    <Spinner
-                    visible={true}
-                    textContent={'Loading...'}
-                    //  textStyle={styles.spinnerTextStyle}
-                />}
                 <Header style={{height:40, borderLeftWidth:0.2, borderLeftColor:'#fff'}}>
                 {/* <Left>  */}
                     <Button transparent onPress={()=>{this.props.navigation.navigate("SelectionTab",{getReference:this.getRef,bookId:this.state.id,chapterNumber:this.state.currentParallelViewChapter,totalChapters:this.state.totalChapters,totalVerses:this.state.totalVerses})}}>
@@ -76,7 +99,23 @@ class BibleChapter extends Component {
                 </Button>
                 </Right>
                 </Header>
-              <ScrollView showsVerticalScrollIndicator={false} ref={(ref) => { this.scrollViewRef = ref; }} >
+                {this.props.isLoading &&
+                    <Spinner
+                    visible={true}
+                    textContent={'Loading...'}
+                    //  textStyle={styles.spinnerTextStyle}
+                />}
+                {(this.props.error) ?
+                    <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+                    <TouchableOpacity 
+                    onPress={()=>this.updateData()}
+                    style={{height:40,width:120,borderRadius:4,backgroundColor:'#3F51B5',
+                    justifyContent:'center',alignItems:'center'}}>
+                        <Text style={{fontSize:18,color:'#fff'}}>Reload</Text>
+                    </TouchableOpacity>
+                    </View>
+                :
+                  <ScrollView showsVerticalScrollIndicator={false} ref={(ref) => { this.scrollViewRef = ref; }} >
                 <View style={this.styles.chapterList}>
                     {this.props.parallelBible.map((verse, index) => 
                     <View>
@@ -94,7 +133,34 @@ class BibleChapter extends Component {
                     </View>
                     )}
                 </View>
-                </ScrollView>
+                </ScrollView> 
+            //     <FlatList
+            //     data={this.props.parallelBible}
+            //     contentContainerStyle={{flexGrow:1,margin:16}}
+            //     extraData={this.state}
+            //     // showsHorizontalScrollIndicator={false}
+            //     showsVerticalScrollIndicator={false}
+            //     renderItem={({verse, index}) => 
+            //     <View>
+            //         <Text letterSpacing={24}
+            //             style={this.styles.verseWrapperText}>
+            //             <Text style={this.styles.verseNumber} >
+            //             {verse.number}{" "}
+            //             </Text>
+            //             <Text style={{fontFamily:'NotoSans-Regular'}}
+            //             >
+            //             {verse.text}
+            //         </Text>         
+            //         </Text>
+            //     {/* {index == this.props.parallelBible.length - 1  && ( this.props.showBottomBar ? <View style={{height:64, marginBottom:4}} />: null ) } */}
+            //     </View>
+            //     }
+            //     keyExtractor={this._keyExtractor}
+            //     ListFooterComponent={<View style={this.styles.addToSharefooterComponent}></View>}
+            //     // ListFooterComponentStyle={}
+
+            //   />
+            }
                 {/* <View> */}
                     {
                     this.state.currentParallelViewChapter == 1 ? null :
@@ -132,7 +198,9 @@ const mapStateToProps = state =>{
         parallelContentVersionCode:state.updateVersion.parallelContentVersionCode,
         parallelContentLanguage:state.updateVersion.parallelContentLanguage,
         parallelContentLanguageCode:state.updateVersion.parallelContentLanguageCode,
-        parallelBible:state.parallel.parallelBible
+        parallelBible:state.parallel.parallelBible,
+        error:state.parallel.error,
+        loading:state.parallel.loading
     }
   }
 

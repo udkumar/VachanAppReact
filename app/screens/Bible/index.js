@@ -292,7 +292,7 @@ class Bible extends Component {
     this.setState({
       bookId:item.bookId,
       bookName:item.bookName,
-      chapterNumber:item.chapterNumber,
+      currentVisibleChapter:item.chapterNumber,
       totalChapters:item.totalChapters,
       totalVerses:item.totalVerses,
       verseNumber:item.verseNumber
@@ -330,14 +330,22 @@ class Bible extends Component {
   }
 
   async getDownloadedContent(){
+      this.setState({isLoading:true})
         var content = await DbQueries.queryVersions(this.state.languageName,this.state.versionCode,this.state.bookId,this.state.currentVisibleChapter) 
-        this.setState({
-          downloadedBook:content[0].chapters,
-          chapterContent:content[0].chapters[this.state.currentVisibleChapter-1].verses,
-          isLoading:false,
-          error:null,
-          currentVisibleChapter:this.state.currentVisibleChapter,
-        })
+        // console.log("content ",content)
+        if(content  !=null){
+          this.setState({
+            downloadedBook:content[0].chapters,
+            chapterContent:content[0].chapters[this.state.currentVisibleChapter-1].verses,
+            isLoading:false,
+            // error:null,
+            // currentVisibleChapter:this.state.currentVisibleChapter,
+          })
+        }
+        else{
+          alert("not abel to fetch book from db")
+        }
+        
   }
 
   async getChapter(){
@@ -355,7 +363,7 @@ class Bible extends Component {
   }
 
   queryBookFromAPI = async(val)=>{
-    console.log("query book ",this.state.downloaded,this.state.languageName,this.state.sourceId,this.state.totalChapters,this.state.totalVerses)
+    // console.log("query book ",this.state.downloaded,this.state.languageName,this.state.sourceId,this.state.totalChapters,this.state.totalVerses)
     this.setState({isLoading:true,currentVisibleChapter: val != null ? this.state.currentVisibleChapter + val : this.props.chapterNumber,error:null },async()=>{
           try{
             this.props.navigation.setParams({
@@ -370,11 +378,14 @@ class Bible extends Component {
             })
             if(this.state.downloaded){
               if(this.state.downloadedBook.length > 0){
-                console.log("downloaded book ",this.state.downloadedBook)
                this.setState({
                 chapterContent:this.state.downloadedBook[this.state.currentVisibleChapter-1].verses,
                 isLoading:false
                })
+              }
+              else{
+                // alert("not found downloaded book")
+                this.getDownloadedContent()
               }
             }
             else{
@@ -469,11 +480,11 @@ this.setState({audio:false})
   }
 
   isBookmark(){
-    console.log(" this.state.bookmarksList ",this.state.bookmarksList.length)
   if(this.state.bookmarksList.length > 0){
     let isBookmark = false
           for(var i = 0; i < this.state.bookmarksList.length;i++){
             console.log("BOOKMARK LIST ",this.state.bookmarksList[i])
+            console.log("current visible chapter ",this.state.currentVisibleChapter, this.state.bookId)
             if(this.state.bookmarksList[i].bookId == this.state.bookId && this.state.bookmarksList[i].chapterNumber == this.state.currentVisibleChapter){
               isBookmark = true
             }
@@ -689,7 +700,7 @@ updateData = ()=>{
 }
 
   render() {
-    console.log(" bookmark list  ",this.state.bookmarksList)
+    // console.log("downloaded book...  ",this.state.downloadedBook[this.state.currentVisibleChapter-1].verses)
     return(
     <View  style={this.styles.container}>
       {this.state.isLoading &&
@@ -718,12 +729,12 @@ updateData = ()=>{
                   </Button>
             </Header>
           }
-          <ScrollView ref={(ref) => { this.scrollViewRef = ref; }} showsVerticalScrollIndicator={false}>
-            <View style={this.styles.chapterList}>
               <FlatList
-                style={{padding:10}}
                 data={this.state.chapterContent }
+                contentContainerStyle={{flexGrow:1,margin:16}}
                 extraData={this.state}
+                // showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
                 renderItem={({item, index}) => 
                   <VerseView
                       ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
@@ -741,10 +752,11 @@ updateData = ()=>{
                   />
                 }
                 keyExtractor={this._keyExtractor}
-                ListFooterComponent={<View style={styles.addToSharefooterComponent} />}
+                ListFooterComponent={<View style={this.styles.addToSharefooterComponent}></View>}
+                // ListFooterComponentStyle={}
+
               />
-            </View>
-          </ScrollView>
+              {/* <View style={{marginBottom:20}}/> */}
           {
             <ChapterNdAudio
             styles={this.styles}
@@ -788,6 +800,7 @@ updateData = ()=>{
               <Commentary 
                 toggleParallelView={(value)=>this.toggleParallelView(value)} 
                 currentVisibleChapter={this.state.currentVisibleChapter}
+                // bookId={this.state.bookId}
               />
             }  
           </View>

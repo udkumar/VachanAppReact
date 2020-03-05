@@ -157,7 +157,8 @@ export const styles =(colorFile, sizeFile) =>{
     },
     
     addToSharefooterComponent:{
-
+        height: 40, 
+        marginBottom: 40 
     },
     IconFloatingStyle:{
         position: 'absolute',

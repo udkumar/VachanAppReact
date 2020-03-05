@@ -76,7 +76,7 @@ class ReferenceSelection extends Component {
   }
 
   componentDidMount(){
-    this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,isDownloaded:this.props.downloaded,sourceId:this.props.sourceId})
+    this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,downloaded:this.props.downloaded,sourceId:this.props.sourceId})
   }
   errorMessage(){
     if (!this.alertPresent) {
@@ -90,7 +90,7 @@ class ReferenceSelection extends Component {
   }
   reloadBooks=()=>{
     this.errorMessage()
-    this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,isDownloaded:this.props.downloaded,sourceId:this.props.sourceId})
+    this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,downloaded:this.props.downloaded,sourceId:this.props.sourceId})
   }
   render() {
     console.log("IS LAODING ",this.props.isLoading)
