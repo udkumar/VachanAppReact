@@ -153,7 +153,7 @@ class Setting extends Component {
                 </Right>
               </ListItem>
            
-              <ListItem style={this.styles.switchButtonCard}>
+              {/* <ListItem style={this.styles.switchButtonCard}>
                 <Text style={this.styles.textStyle}>One Verse Per Line</Text>
                 <Switch 
                   size={24} 
@@ -162,13 +162,13 @@ class Setting extends Component {
                   value={this.state.verseInLine}
                   style={this.styles.cardItemIconCustom} 
                 />
-              </ListItem>
-              <ListItem>
+              </ListItem> */}
+              {/* <ListItem>
               <TouchableOpacity  style={[{flexDirection:'row'}]} onPress={()=>this.props.navigation.navigate('BackupRestore')}>              
                   <Icon name='settings-backup-restore' size={24} style={this.styles.cardItemIconCustom} />
                   <Text style={this.styles.textStyle}>Backup and Restore</Text>
               </TouchableOpacity>
-              </ListItem>
+              </ListItem> */}
 
               <ListItem >
               <TouchableOpacity style={[{flexDirection:'row'}]} onPress={()=>this.props.navigation.navigate('LanguageList')}>              

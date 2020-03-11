@@ -107,7 +107,7 @@ var contentType = ''
             this.props.navigation.setParams({modalVisible:false})
               Alert.alert("", "Check your internet connection", [{text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
             } else {
-            this.props.navigation.setParams({modalVisible:true})
+            this.props.navigation.setParams({modalVisible:!this.props.visible})
             this.alertPresent = false;
             }
         }

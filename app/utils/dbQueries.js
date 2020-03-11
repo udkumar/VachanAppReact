@@ -1,4 +1,5 @@
 import DbHelper from './dbHelper';
+import dbHelper from './dbHelper';
 
 class DbQueries {
 
@@ -111,6 +112,9 @@ class DbQueries {
     // }
     queryVersions(lang,ver,bookId){
        return DbHelper.queryVersions(lang,ver,bookId)
+    }
+    queryTextForNote(lang,ver,bookId,chapterNumber,verseNumber){
+        return DbHelper.queryTextForNote(lang,ver,bookId,chapterNumber,verseNumber)
     }
     queryBook(lang,ver,bookId){
         return DbHelper.queryBook(lang,ver,bookId)

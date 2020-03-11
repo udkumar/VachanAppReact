@@ -138,13 +138,12 @@ var moment = require('moment');
       downloaded:item.downloaded})
     this.props.updateVersionBook({
       bookId:item.bookId, 
-      bookName:getBookNameFromMapping(item.languageName,item.bookId),
+      bookName:getBookNameFromMapping(item.bookId,item.languageName),
       chapterNumber:item.chapterNumber,
       totalChapters:getBookChaptersFromMapping(item.bookId),
       totalVerses:getBookNumOfVersesFromMapping(item.bookId,item.chapterNumber),
-      verseNumber:item.verseNumber
+      // verseNumber:item.verseNumber
     })
-    
     this.props.navigation.navigate("Bible")
   }
   
@@ -157,7 +156,8 @@ var moment = require('moment');
           this.state.isLoading ? <ActivityIndicator animate = {true}/> : 
             data.list.map((item, index) => 
             <TouchableOpacity onPress={()=>{this.goToContent(item)}}>
-              <Text style={this.styles.contentText}>{getBookNameFromMapping(item.bookId,this.props.languageName)} : {item.chapterNumber} </Text>
+
+              <Text style={this.styles.contentText}> {item.languageName} : {getBookNameFromMapping(item.bookId,item.languageName)} : {item.chapterNumber} </Text>
             </TouchableOpacity>
             )
            

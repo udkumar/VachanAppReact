@@ -256,7 +256,7 @@ class DbHelper {
 			}
 			else{
 			// let bookmarkData = realm.objects('BookmarksListModel').filtered('chapterNumber = $0', cNum)
-			realm.delete(bookmarkData); 
+			realm.delete(chapter); 
 			}
 			})
 		}
@@ -271,7 +271,7 @@ class DbHelper {
 				if(bId == null){
 					let bookmarksList = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" ')
 					// if(object.keys())
-					if(Object.keys(result).length > 0){
+					if(Object.keys(bookmarksList).length > 0){
 						return bookmarksList
 					}
 					else{
@@ -509,6 +509,24 @@ class DbHelper {
 			if(Object.keys(data).length > 0){
 				console.log('downloaded book found ',Object.keys(data).length)
 				return data
+			}
+			else{
+				return null
+			}
+		}
+	}
+	async queryTextForNote(langName,verCode,bookId,chapterNumber,verseNumber){
+		console.log("query version ",langName,verCode,bookId,chapterNumber,verseNumber)
+		let realm = await this.getRealm()
+		
+		if(realm){
+			let result = realm.objects('BookModel')
+			let data = result.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId =="' + bookId + '"' )[0]
+			let verse = data.chapters.filtered('chapterNumber =="' +chapterNumber+'"')[0]
+
+			if(Object.keys(verse).length > 0){
+				let val = verse.verses[verseNumber-1].text
+				return val
 			}
 			else{
 				return null

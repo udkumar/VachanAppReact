@@ -13,7 +13,9 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import DbQueries from '../../utils/dbQueries'
 import { bookStyle } from './styles.js'
-import {getBookNameFromMapping} from '../../utils/UtilFunctions';
+import {updateVersionBook} from '../../store/action/'
+
+import {getBookNameFromMapping,getBookChaptersFromMapping,getBookNumOfVersesFromMapping} from '../../utils/UtilFunctions';
 Dimensions.get('window').width
 import {connect} from 'react-redux'
 
@@ -81,7 +83,16 @@ class BookMarks extends Component {
       }
     }
   }
-  navigateToBible(book,chapterNumber){
+  navigateToBible(item){
+    console.log("bible bookmark  ",item)
+    this.props.updateVersionBook({
+      bookId:item.bookId, 
+      bookName:getBookNameFromMapping(item.bookId,item.languageName),
+      chapterNumber:item.chapterNumber,
+      totalChapters:getBookChaptersFromMapping(item.bookId),
+      totalVerses:getBookNumOfVersesFromMapping(item.bookId,item.chapterNumber),
+      verseNumber:item.verseNumber
+    })
     this.props.navigation.navigate("Bible")
   }
   // getItemLayout = (data, index) => {
@@ -111,7 +122,7 @@ class BookMarks extends Component {
           // getItemLayout={this.getItemLayout}
           renderItem={({item, index}) => 
             <TouchableOpacity style={this.styles.bookmarksView}
-              // onPress = { ()=> {this.navigateToBible(item.bookId,item.chapterNumber)}}
+              onPress = { ()=> {this.navigateToBible(item)}}
               >
 
               <Text style={this.styles.bookmarksText}>
@@ -150,7 +161,11 @@ const mapStateToProps = state =>{
     colorFile:state.updateStyling.colorFile,
   }
 }
+const mapDispatchToProps = dispatch =>{
+  return {
+    updateVersionBook:(value)=>dispatch(updateVersionBook(value))
+  }
+}
 
-
-export  default connect(mapStateToProps,null)(BookMarks)
+export  default connect(mapStateToProps,mapDispatchToProps)(BookMarks)
 

@@ -27,6 +27,7 @@ import {connect} from 'react-redux'
 import Spinner from 'react-native-loading-spinner-overlay';
 
 
+
 class EditNote extends Component {
   static navigationOptions = ({navigation}) =>({
     headerTitle: 'Edit Note',
@@ -50,7 +51,8 @@ class EditNote extends Component {
           : this.props.navigation.state.params.referenceList,
         // todo here fix reference list
         referenceList2: this.props.navigation.state.params.referenceList,
-        isLoading:false
+        isLoading:false,
+        verseText:''
     }
 
     this.styles = noteStyle(props.colorFile, props.sizeFile);   
@@ -193,6 +195,40 @@ class EditNote extends Component {
       }
     }
   }
+  async getDownloadedContent(item){
+    this.setState({isLoading:true})
+    //later change it to write query for getting text from realm
+      var content = await DbQueries.queryTextForNote(this.props.language,this.props.versionCode,item.bookId,item.chapterNumber,item.verseNumber) 
+      // console.log("content ",content)
+      if(content  !=null){
+        return content
+        // this.setState({
+        //   verseText:content,
+        // })
+      }
+      else{
+        alert("not abel to fetch book from db")
+      }
+      
+}
+  async getChapter(item){
+    try{
+      // console.log("notes making ",this.props.downloaded,item)
+      if(this.props.downloaded){
+        return this.getDownloadedContent(item)
+        }else{
+          var content = await APIFetch.getChapterContent(this.props.sourceId, item.bookId, item.chapterNumber)
+          if(content.length >0 && content.success){
+          return content.chapterContent.verses[item.verseNumber-1].text
+          }
+          // this.setState({verseText:content.chapterContent.verses[item.verseNumber-1].text})
+      }
+    }
+    catch(error){
+      this.setState({error:error,isLoading:false,chapterContent:[]})
+    }
+  }
+
 
   getReference = (item) => {
     if (this.checkIfReferencePresent(item.bookId, item.bookName, item.chapterNumber, item.verseNumber)) {
@@ -200,30 +236,31 @@ class EditNote extends Component {
     }
     try{
       this.setState({isLoading:true},async()=>{
-        let response =  await APIFetch.getChapterContent(this.props.sourceId,item.bookId,item.chapterNumber)
-        console.log("SOURCE ID ",this.props.sourceId,"BOOK ID ",item.bookId,"Chapter number",item.chapterNumber)
-        if(response.length != 0){
-          console.log("res -------",response)
+      console.log(" verse text ",await this.getChapter(item))
+        // let response =  await APIFetch.getChapterContent(this.props.sourceId,item.bookId,item.chapterNumber)
+        // console.log("SOURCE ID ",this.props.sourceId,"BOOK ID ",item.bookId,"Chapter number",item.chapterNumber)
+        // if(response.length != 0){
+        //   console.log("res -------",response)
     
-          if(response.success == false){
+        //   if(response.success == false){
     
-            alert("response success false")
-          }else{
-          console.log("res",response.chapterContent.verses[item.verseNumber-1].text)
+        //     alert("response success false")
+        //   }else{
+          // console.log("verse text",this.state.verseText)
             let refModel = {
               bookId:item.bookId, 
               bookName:item.bookName, 
               chapterNumber: item.chapterNumber, 
               verseNumber: item.verseNumber.toString(), 
-              verseText:response.chapterContent.verses[item.verseNumber-1].text,
+              verseText:await this.getChapter(item),
               versionCode: this.props.versionCode, 
               languageName: this.props.language
             };
             let referenceList = [...this.state.referenceList]
             referenceList.push(refModel)
             this.setState({referenceList,isLoading:false})
-          }
-        }
+          // }
+        // }
       })
  
   }
@@ -234,16 +271,15 @@ class EditNote extends Component {
   }
 
   onAddVersePress() {
-    
     this.props.navigation.navigate('SelectionTab', {
-        getReference: this.getReference,
-        bookId:this.props.navigation.state.params.bookId,
-        // bookName:this.props.navigation.state.params.bookName,
-        chapterNumber:this.props.navigation.state.params.chapterNumber,
-        totalVerses:this.props.navigation.state.params.totalVerses,
-        totalChapters:this.props.navigation.state.params.totalChapters,
-        // verseNumber:this.props.navigation.state.params.verseNumber
-      })
+      getReference: this.getReference,
+      bookId:this.props.bookId,
+      // bookName:this.props.navigation.state.params.bookName,
+      chapterNumber:this.props.chapterNumber,
+      totalVerses:this.props.totalVerses,
+      totalChapters:this.props.totalChapters,
+      // verseNumber:this.props.navigation.state.params.verseNumber
+    })
   }
   
   openReference(index) {
@@ -364,6 +400,12 @@ const mapStateToProps = state =>{
     versionCode:state.updateVersion.versionCode,
     sourceId:state.updateVersion.sourceId,
 
+
+    chapterNumber:state.updateVersion.chapterNumber,
+    totalChapters:state.updateVersion.totalChapters,
+    totalVerses:state.updateVersion.totalVerses,
+    bookId:state.updateVersion.bookId,
+    downloaded:state.updateVersion.downloaded,
     // bookId:state.editNote.bookId,
     // bookName:state.editNote.bookName,
     // bodyText:state.editNote.bodyText,

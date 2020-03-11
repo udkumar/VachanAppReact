@@ -12,9 +12,10 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import DbQueries from '../../utils/dbQueries'
-import {getBookNameFromMapping} from '../../utils/UtilFunctions';
+import {getBookNameFromMapping,getBookChaptersFromMapping,getBookNumOfVersesFromMapping} from '../../utils/UtilFunctions';
 import { highlightstyle } from './styles'
 import {connect} from 'react-redux'
+import {updateVersionBook} from '../../store/action/'
 
 class HighLights extends Component {
   static navigationOptions = {
@@ -40,15 +41,12 @@ class HighLights extends Component {
     super(props)
     this.state = {
       HightlightedVerseArray:[],
-      languageName:this.props.languageName,
-      versionCode:this.props.versionCode,
-      bookId:this.props.bookId
     }
     this.styles = highlightstyle(this.props.colorFile, this.props.sizeFile);  
     
   }
   async getHighlights(){
-    let model2 = await  DbQueries.queryHighlights(this.state.languageName,this.state.versionCode,null)
+    let model2 = await  DbQueries.queryHighlights(this.props.languageName,this.props.versionCode,null)
     if(model2  == null ){
     }
     else{
@@ -56,7 +54,7 @@ class HighLights extends Component {
         console.log("model  ",model2)
         for(var i = 0; i<=model2.length-1;i++){
           this.setState({
-            HightlightedVerseArray:[...this.state.HightlightedVerseArray,{"chapterNumber":model2[i].chapterNumber,"verseNumber":model2[i].verseNumber}]
+            HightlightedVerseArray:[...this.state.HightlightedVerseArray,model2[i]]
           })
         }
       }
@@ -66,7 +64,7 @@ class HighLights extends Component {
     for(var i=0; i<=this.state.HightlightedVerseArray.length-1; i++){
       if(this.state.HightlightedVerseArray[i].chapterNumber == chapterNum && this.state.HightlightedVerseArray[i].verseNumber == verseNum){
         this.state.HightlightedVerseArray.splice(i, 1)
-        await DbQueries.updateHighlightsInVerse(this.state.languageName, this.state.versionCode,this.state.bookId,chapterNum,verseNum,false)
+        await DbQueries.updateHighlightsInVerse(this.props.languageName, this.props.versionCode,this.props.bookId,chapterNum,verseNum,false)
         this.setState({HightlightedVerseArray:this.state.HightlightedVerseArray})
       }
     }
@@ -74,9 +72,20 @@ class HighLights extends Component {
   componentDidMount(){
     this.getHighlights()
   }
-
+  navigateToBible=(item)=>{
+    console.log("item HIGHIGHTS ",item)
+    this.props.updateVersionBook({
+      bookId:item.bookId, 
+      bookName:getBookNameFromMapping(item.bookId,item.languageName),
+      chapterNumber:item.chapterNumber,
+      totalChapters:getBookChaptersFromMapping(item.bookId),
+      totalVerses:getBookNumOfVersesFromMapping(item.bookId,item.chapterNumber),
+      verseNumber:item.verseNumber
+    })
+    this.props.navigation.navigate("Bible")
+  }
   render() {
-    console.log("langugueg name "+this.state.languageName)
+    console.log("langugueg name "+this.props.languageName)
     return (
       <View style={this.styles.container}>
       <FlatList
@@ -95,10 +104,10 @@ class HighLights extends Component {
       // getItemLayout={this.getItemLayout}
       renderItem={({item, index}) =>
       <TouchableOpacity style={this.styles.highlightsView}
-        // onPress = { ()=> {this.navigateToBible(item.bookId,item.chapterNumber)}}
+        onPress = {()=>this.navigateToBible(item)}
       >
          <Text style={this.styles.hightlightsText}>
-          {getBookNameFromMapping(this.state.bookId,this.state.languageName)} {':'} {item.chapterNumber} {':'} {item.verseNumber}
+          {getBookNameFromMapping(item.bookId,item.languageName)} {':'} {item.chapterNumber} {':'} {item.verseNumber}
           </Text>
         <Icon name='delete-forever' style={this.styles.iconCustom}  onPress={() => {this.removeHighlight(item.chapterNumber,item.verseNumber)}} />
       </TouchableOpacity>
@@ -112,12 +121,16 @@ class HighLights extends Component {
 const mapStateToProps = state =>{
   return{
     languageName: state.updateVersion.language,
-    // languageCode:state.updateVersion.languageCode,
     versionCode:state.updateVersion.versionCode,
     bookId:state.updateVersion.bookId,
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
   }
 }
+const mapDispatchToProps = dispatch =>{
+  return {
+    updateVersionBook:(value)=>dispatch(updateVersionBook(value))
+  }
+}
 
-export  default connect(mapStateToProps,null)(HighLights)
+export  default connect(mapStateToProps,mapDispatchToProps)(HighLights)
