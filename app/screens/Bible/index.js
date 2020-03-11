@@ -736,8 +736,7 @@ updateData = ()=>{
                       styles = {this.styles}
                       selectedReferences = {this.state.selectedReferenceSet}
                       getSelection = {(verseIndex, chapterNumber, verseNumber,text) => {
-                      this.getSelectedReferences(verseIndex, chapterNumber, verseNumber,text)
-                      }}
+                        this.props.navigation.getParam("visibleParallelView")== false && this.getSelectedReferences(verseIndex, chapterNumber, verseNumber,text)  }}
                               
                       HightlightedVerse = {this.state.HightlightedVerseArray}
                       chapterNumber ={this.state.currentVisibleChapter}
