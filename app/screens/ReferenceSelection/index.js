@@ -76,7 +76,13 @@ class ReferenceSelection extends Component {
   }
 
   componentDidMount(){
-    this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,downloaded:this.props.downloaded,sourceId:this.props.sourceId})
+    if(this.props.navigation.state.params.parallelContent){
+      this.props.fetchVersionBooks({language:this.props.parallelContentLanguage,versionCode:this.props.parallelContentVersionCode,downloaded:false,sourceId:this.props.parallelContentSourceId})
+    }
+    else{
+      this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,downloaded:this.props.downloaded,sourceId:this.props.sourceId})
+    }
+    console.log("parallelContentType ",this.props.parallelContentType)
   }
   errorMessage(){
     if (!this.alertPresent) {
@@ -142,10 +148,16 @@ const mapStateToProps = state =>{
         versionCode:state.updateVersion.versionCode,
         sourceId:state.updateVersion.sourceId,
         downloaded:state.updateVersion.downloaded,
+
+        parallelContentSourceId:state.updateVersion.parallelContentSourceId,
+        parallelContentVersionCode:state.updateVersion.parallelContentVersionCode,
+        parallelContentLanguage:state.updateVersion.parallelContentLanguage,
+        parallelContentLanguageCode:state.updateVersion.parallelContentLanguageCode,
+        // parallelContentType:state.updateVersion.parallelContentType,
+
         books:state.versionFetch.data,
         error:state.versionFetch.error,
         isLoading:state.versionFetch.loading
-
     }
   }
   const mapDispatchToProps = dispatch =>{

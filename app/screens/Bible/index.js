@@ -62,7 +62,7 @@ class Bible extends Component {
                   </View>
                   <View style={{marginRight:10}}>
                     <TouchableOpacity style={navStyles.touchableStyleLeft} 
-                      onPress={() =>{navigation.navigate("SelectionTab", {getReference:params.getRef,bookId:params.bookId,chapterNumber:params.currentChapter,totalChapters:params.numOfChapter,totalVerses:params.numOfVerse})}}> 
+                      onPress={() =>{navigation.navigate("SelectionTab", {getReference:params.getRef,parallelContent:false,bookId:params.bookId,chapterNumber:params.currentChapter,totalChapters:params.numOfChapter,totalVerses:params.numOfVerse})}}> 
                       <Text  style={navStyles.headerTextStyle}>{params.bookName}  {params.currentChapter }</Text>
                     <Icon name="arrow-drop-down" color="#fff" size={20}/>
                     </TouchableOpacity>

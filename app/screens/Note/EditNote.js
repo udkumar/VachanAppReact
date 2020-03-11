@@ -273,6 +273,7 @@ class EditNote extends Component {
   onAddVersePress() {
     this.props.navigation.navigate('SelectionTab', {
       getReference: this.getReference,
+      parallelContent:false,
       bookId:this.props.bookId,
       // bookName:this.props.navigation.state.params.bookName,
       chapterNumber:this.props.chapterNumber,

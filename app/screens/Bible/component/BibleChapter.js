@@ -88,7 +88,7 @@ class BibleChapter extends Component {
             <View style={this.styles.container}>
                 <Header style={{height:40, borderLeftWidth:0.2, borderLeftColor:'#fff'}}>
                 {/* <Left>  */}
-                    <Button transparent onPress={()=>{this.props.navigation.navigate("SelectionTab",{getReference:this.getRef,bookId:this.state.id,chapterNumber:this.state.currentParallelViewChapter,totalChapters:this.state.totalChapters,totalVerses:this.state.totalVerses})}}>
+                    <Button transparent onPress={()=>{this.props.navigation.navigate("SelectionTab",{getReference:this.getRef,parallelContent:true,bookId:this.state.id,chapterNumber:this.state.currentParallelViewChapter,totalChapters:this.state.totalChapters,totalVerses:this.state.totalVerses})}}>
                         <Title style={{fontSize:16}}>{getBookNameFromMapping( this.state.id ,this.props.parallelContentLanguage).length > 8 ? getBookNameFromMapping(this.state.id ,this.props.parallelContentLanguage).slice(0,7)+"..." : getBookNameFromMapping(this.state.id,this.props.parallelContentLanguage)} {this.state.currentParallelViewChapter}</Title>
                         <Icon name="arrow-drop-down" color="#fff" size={20}/>
                     </Button>
@@ -199,6 +199,8 @@ const mapStateToProps = state =>{
         parallelContentLanguage:state.updateVersion.parallelContentLanguage,
         parallelContentLanguageCode:state.updateVersion.parallelContentLanguageCode,
         parallelBible:state.parallel.parallelBible,
+        parallelContentType:state.updateVersion.parallelContentType,
+
         error:state.parallel.error,
         loading:state.parallel.loading
     }
