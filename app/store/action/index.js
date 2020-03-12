@@ -9,8 +9,8 @@ export {updateInfographics} from './updateInfographics'
 
 export {fetchAudioUrl,audioURLSuccess,audioURLFailure} from './apiFetch/audio/fetchUrl'
 
-export {fetchCommentaryLanguage,commentaryLanguageFailure,commentaryLanguageSuccess} from './apiFetch/commentary/availableLanguage'
 export {fetchCommentaryContent,commentaryContentFailure,commentaryContentSuccess} from './apiFetch/commentary/content'
+export {fetchDictionaryContent,dictionaryContentFailure,dictionaryContentSuccess} from './apiFetch/dictionary/content'
 
 export {fetchVersionLanguage,versionLanguageSuccess,versionLanguageFailure} from './apiFetch/version/availableLanguage'
 export {fetchVersionBooks,versionBooksSuccess,versionBooksFailure} from './apiFetch/version/availableBook'

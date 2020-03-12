@@ -46,12 +46,18 @@ export const AUDIO_URL_SUCCESS = 'audio_url_success';
 export const AUDIO_URL_FAILURE ='audio_url_failure';
 
 
-export const FETCH_COMMENTARY_LANGUAGE = 'fetch_commentary_language';
-export const COMMENTARY_LANGUAGE_SUCCESS = 'commentary_language_success';
-export const COMMENTARY_LANGUAGE_FAILURE ='commentary_language_failure';
+// export const FETCH_COMMENTARY_LANGUAGE = 'fetch_commentary_language';
+// export const COMMENTARY_LANGUAGE_SUCCESS = 'commentary_language_success';
+// export const COMMENTARY_LANGUAGE_FAILURE ='commentary_language_failure';
+
 export const FETCH_COMMENTARY_CONTENT = 'fetch_commentary_content';
 export const COMMENTARY_CONTENT_SUCCESS = 'commentary_content_success';
-export const COMMENTARY_CONTENT_FAILURE ='commentary_content_failure'
+export const COMMENTARY_CONTENT_FAILURE ='commentary_content_failure';
+
+export const FETCH_DICTIONARY_CONTENT = 'fetch_dictionary_content';
+export const DICTIONARY_CONTENT_SUCCESS = 'dictionary_content_success';
+export const DICTIONARY_CONTENT_FAILURE ='dictionary_content_failure'
+
 
 export const FETCH_ALL_CONTENT = 'fetch_all_content'; 
 export const ALL_CONTENT_SUCCESS = 'all_content_success';

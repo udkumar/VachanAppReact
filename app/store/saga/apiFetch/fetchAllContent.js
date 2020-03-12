@@ -3,18 +3,20 @@ import {FETCH_ALL_CONTENT,FECTH_ALL_LANGUAGE } from '../../action/actionsType'
 import {allContentFailure,allContentSuccess,allLanguageFailure,allLanguageSuccess}  from '../../action/'
 import { put, takeLatest, call,fork,all } from 'redux-saga/effects'
 import fetchApi from '../../api';
-const API_BASE_URL = 'https://api.vachanonline.net/v1'
+const API_BASE_URL = 'https://api.vachanonline.net/v1/'
 
 //fetch audio available book ,audio file 
   function* fetchAllContent() {
     try {
-      const [bibleLanguage,commentaryLanguage] = yield all([
-        call(fetchApi, 'https://api.autographamt.com/v1/bibles'),
-        call(fetchApi, 'https://api.vachanonline.net/v1/commentaries')
+      const [bibleLanguage,commentaryLanguage,dictionariesLanguage] = yield all([
+        call(fetchApi, API_BASE_URL + 'bibles'),
+        call(fetchApi, API_BASE_URL + 'commentaries'),
+        call(fetchApi, API_BASE_URL + 'dictionaries')
       ])
 
     const  bible = []
     const commentary = []
+    const dictionary = []
 
      for(var i = 0; i<bibleLanguage.length;i++){
       var versions = []
@@ -36,7 +38,16 @@ const API_BASE_URL = 'https://api.vachanonline.net/v1'
       }
       commentary.push({languageName:language,languageCode:languageCode,versionModels:versions})
     }
-    yield put(allContentSuccess([{contentType:"bible",content:bible},{contentType:"commentary",content:commentary}]))
+    for(var i = 0; i<dictionariesLanguage.length;i++){
+      var versions = []
+      const language =dictionariesLanguage[i].language.charAt(0).toUpperCase() + dictionariesLanguage[i].language.slice(1)
+        const languageCode = dictionariesLanguage[i].languageCode
+      for(var j= 0; j<dictionariesLanguage[i].dictionaries.length;j++){
+        versions.push({sourceId:dictionariesLanguage[i].dictionaries[j].sourceId,versionName:dictionariesLanguage[i].dictionaries[j].name,versionCode:dictionariesLanguage[i].dictionaries[j].code,license:"license",year:2019,downloaded:false})
+      }
+      dictionary.push({languageName:language,languageCode:languageCode,versionModels:versions})
+    }
+    yield put(allContentSuccess([{contentType:"bible",content:bible},{contentType:"commentary",content:commentary},{contentType:"dictionary",content:dictionary}]))
     yield put(allContentFailure(null))
     
   } catch (e) {

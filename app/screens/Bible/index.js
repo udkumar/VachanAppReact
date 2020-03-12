@@ -35,6 +35,8 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import { styles } from './styles.js';
 import {connect} from 'react-redux'
 import Commentary from '../StudyHelp/Commentary/'
+import Dictionary from '../StudyHelp/Dictionary/'
+
 import MainHeader from '../../components/MainHeader'
 import {Card,CardItem,Content,Body,Header,Container, Button,Right,Left,Title} from 'native-base'
 import BibleChapter from './component/BibleChapter';
@@ -781,7 +783,7 @@ updateData = ()=>{
           this.props.navigation.getParam("visibleParallelView")== true && (
           <View style={{width:'50%',borderLeftWidth: 1,  borderLeftColor: '#eee'}}>
             {
-              this.props.contentType == 'bible' ? 
+              this.props.contentType == 'bible' &&
               <BibleChapter 
                 currentChapter={this.state.currentVisibleChapter}
                 id={this.props.bookId}
@@ -790,13 +792,24 @@ updateData = ()=>{
                 totalChapters={this.props.totalChapters}
                 totalVerses={this.props.totalVerses}
                 navigation={this.props.navigation}
-              /> : 
+            /> }
+            {
+              this.props.contentType =='commentary' &&
               <Commentary 
-                toggleParallelView={(value)=>this.toggleParallelView(value)} 
-                currentVisibleChapter={this.state.currentVisibleChapter}
-                // bookId={this.props.bookId}
-              />
-            }  
+              toggleParallelView={(value)=>this.toggleParallelView(value)} 
+              currentVisibleChapter={this.state.currentVisibleChapter}
+              // bookId={this.props.bookId}
+            />
+            }
+            {
+              this.props.contentType =='dictionary' &&
+              <Dictionary 
+              toggleParallelView={(value)=>this.toggleParallelView(value)} 
+              currentVisibleChapter={this.state.currentVisibleChapter}
+              // bookId={this.props.bookId}
+            />
+            }
+
           </View>
         )}
         </View>}

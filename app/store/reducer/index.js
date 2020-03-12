@@ -9,6 +9,7 @@ import splitScreenReducer from './splitScreenReducer';
 import updateInfographicsReducer from './updateInfographicsReducer'
 import fetchVersionReducer from './apiFetchReducer/fetchVersionReducer'
 import fetchCommentaryReducer from './apiFetchReducer/fetchCommentaryReducer'
+import fetchDictionaryReducer from './apiFetchReducer/fetchDictionaryReducer'
 import fetchAudioReducer from './apiFetchReducer/fetchAudioReducer'
 import fetchContentReducer from './apiFetchReducer/fetchContentReducer'
 import parallelBibleReducer from './apiFetchReducer/parallelBibleReducer'
@@ -23,6 +24,7 @@ import downloadedContent from './apiFetchReducer/downloadedContentReducer'
     infographics:updateInfographicsReducer,
     versionFetch:fetchVersionReducer,
     commentaryFetch:fetchCommentaryReducer,
+    dictionaryFetch:fetchDictionaryReducer,
     audioFetch:fetchAudioReducer,
     contents:fetchContentReducer,
     parallel:parallelBibleReducer,

@@ -10,6 +10,8 @@ import NotePage from '../screens/Note/NotePage'
 import Highlights from '../screens/Highlights/'
 import History from '../screens/History/'
 import Commentary from '../screens/StudyHelp/Commentary/'
+import Dictionary from '../screens/StudyHelp/Dictionary/'
+
 import InfoGraphics from '../screens/StudyHelp/InfoGraphics/'
 import More from '../screens/StudyHelp/More/'
 import {connect} from 'react-redux'
@@ -65,18 +67,19 @@ const NavStack = createStackNavigator(
       Notes:{ screen:Notes
       },
       LanguageList:{screen:LanguageList },
-      EditNote:{  screen:EditNote },
-      NotePage:{ screen:NotePage },
+      EditNote:{screen:EditNote },
+      NotePage:{screen:NotePage },
       StudyHelp:{screen:StudyHelp},
-      Commentary:{screen:Commentary,},
-      About: { screen: About },
-      Settings: { screen: Settings },
-      Hints: { screen: Hints },
-      History:{ screen:History},
-      BookMarks:{  screen:BookMarks },
-      Highlights:{screen:Highlights  },
-      NotePage:{ screen:NotePage },
-      Infographics:{ screen:Infographics, },
+      Commentary:{screen:Commentary},
+      Dictionary:{screen:Dictionary},
+      About:{screen:About},
+      Settings:{screen:Settings},
+      Hints:{screen:Hints},
+      History:{screen:History},
+      BookMarks:{screen:BookMarks},
+      Highlights:{screen:Highlights},
+      NotePage:{screen:NotePage},
+      Infographics:{screen:Infographics},
      
   },
   
