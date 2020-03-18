@@ -128,12 +128,9 @@ var contentType = ''
         // this.props.fetchAllContent()
     }
       render(){
-        // console.log("availableContents ",this.props.availableContents.l)
-        // console.log("availableContents ",this.props.availableContents.contentType)
           return(
             <View>
 
-             {/* { (this.props.error===null) && */}
             <Modal
               animationType="fade"
               transparent={true}

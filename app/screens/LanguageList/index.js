@@ -177,7 +177,6 @@ class LanguageList extends Component {
 
       }catch(error){
       this.setState({startDownload:false})
-      console.log("error ",error)
         alert("There is some error on downloading this version please select another version")
       }
     }
