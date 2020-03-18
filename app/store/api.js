@@ -1,29 +1,38 @@
 
 
-const API_BASE_URL = 'https://api.autographamt.com/v1/'
-const GIT_BASE_API = 'https://github.com/Bridgeconn/vachancontentrepository/raw/master/'
-const GITRAW = 'https://github.com/Bridgeconn/vachancontentrepository/tree/master/'
-const OWN_BASE_URL = 'https://raw.githubusercontent.com/neetuy/BibleContent/master/jpg_files/'
-
+var ApiUtils = {  
+    checkStatus: function(response) {
+      // console.log("response data "+JSON.stringify(response))
+      if (response.ok && response.status == 200) {
+        console.log("response ok "+response)
+        return response
+      } else {
+        let error = new Error(response.statusText);
+        console.log("response error "+error)
+        error.response = response;
+        // console.log("error api util ",ApiUtils)
+        throw error;
+      }
+    }
+  };
 
 const fetchApi = async(url)=> {
-  try {
-      const response = await fetch(url)
-      return response.json()
-  } catch (error) {
-      return error;
-  }
+    try {
+        return await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(ApiUtils.checkStatus)
+            .then((response) => response.json())
+            .catch(e => e)
+    } catch (error) {
+        return error;
+    }
 }
 
-// const fetchFromDB = async()=>{
-//     try {
-//         const response = await fetch(url)
-//         return response.json()
-//     } catch (error) {
-//         return error;
-//     } 
-
-// }
 
 export default fetchApi
 

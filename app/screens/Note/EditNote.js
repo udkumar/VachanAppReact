@@ -50,7 +50,7 @@ class EditNote extends Component {
           ? [] 
           : this.props.navigation.state.params.referenceList,
         // todo here fix reference list
-        referenceList2: this.props.navigation.state.params.referenceList,
+        referenceList2: this.props.navigation.state.params.referenceList ,
         isLoading:false,
         verseText:''
     }
@@ -102,7 +102,7 @@ class EditNote extends Component {
       this.props.navigation.state.params.onbackNote(this.state.referenceList,contentBody)
     }
     this.props.navigation.dispatch(NavigationActions.back())
-    // this.props.navigation.goBack()
+    // this.props.navigation.pop()
   }
 
   showAlert() {
@@ -159,10 +159,15 @@ class EditNote extends Component {
   componentDidMount() {
     this.props.navigation.setParams({ handleAdd: this.saveNote})
     this.props.navigation.setParams({ handleBack: this.onBack})
+    // this.subs = this.props.navigation.addListener("didFocus", () =>{
+    //   // this.getReference(item)
+      this.addRef2()
 
-    this.addRef2()
+    // })
   }
-
+  // componentWillUnmount(){
+  //     this.subs.remove();
+  // }
   onChangeText = (text)=>{
     this.setState({noteBody:text})
   }
@@ -201,27 +206,27 @@ class EditNote extends Component {
       var content = await DbQueries.queryTextForNote(this.props.language,this.props.versionCode,item.bookId,item.chapterNumber,item.verseNumber) 
       // console.log("content ",content)
       if(content  !=null){
-        return content
-        // this.setState({
-        //   verseText:content,
-        // })
+        //  content
+        this.setState({
+          verseText:content,
+        })
       }
       else{
         alert("not abel to fetch book from db")
       }
       
 }
-  async getChapter(item){
+   getChapter=async(item)=>{
     try{
       // console.log("notes making ",this.props.downloaded,item)
       if(this.props.downloaded){
-        return this.getDownloadedContent(item)
+         await this.getDownloadedContent(item)
         }else{
           var content = await APIFetch.getChapterContent(this.props.sourceId, item.bookId, item.chapterNumber)
-          if(content.length >0 && content.success){
-          return content.chapterContent.verses[item.verseNumber-1].text
-          }
-          // this.setState({verseText:content.chapterContent.verses[item.verseNumber-1].text})
+          // if(content.length >0 && content.success){
+          //  content.chapterContent.verses[item.verseNumber-1].text
+          // }
+          this.setState({verseText:content.chapterContent.verses[item.verseNumber-1].text})
       }
     }
     catch(error){
@@ -231,13 +236,16 @@ class EditNote extends Component {
 
 
   getReference = (item) => {
+    console.log("get reference ",item)
+    // if(item)
     if (this.checkIfReferencePresent(item.bookId, item.bookName, item.chapterNumber, item.verseNumber)) {
       return;
     }
     try{
       this.setState({isLoading:true},async()=>{
       console.log(" verse text ",await this.getChapter(item))
-        // let response =  await APIFetch.getChapterContent(this.props.sourceId,item.bookId,item.chapterNumber)
+      await this.getChapter(item)        
+      // let response =  await APIFetch.getChapterContent(this.props.sourceId,item.bookId,item.chapterNumber)
         // console.log("SOURCE ID ",this.props.sourceId,"BOOK ID ",item.bookId,"Chapter number",item.chapterNumber)
         // if(response.length != 0){
         //   console.log("res -------",response)
@@ -252,7 +260,7 @@ class EditNote extends Component {
               bookName:item.bookName, 
               chapterNumber: item.chapterNumber, 
               verseNumber: item.verseNumber.toString(), 
-              verseText:await this.getChapter(item),
+              verseText:this.state.verseText,
               versionCode: this.props.versionCode, 
               languageName: this.props.language
             };

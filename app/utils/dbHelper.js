@@ -299,6 +299,7 @@ class DbHelper {
 	}
 
 	async addOrUpdateNote(index, body, createdTime, modifiedTime, refList){
+		// console.log("verse list ",refList)
 		let realm = await this.getRealm();
 		if (realm) {
 			let results = realm.objects('NoteModel').filtered('createdTime = $0', createdTime);

@@ -30,7 +30,11 @@ var contentType = ''
       if(value){
         contentType = value
       }
-       return(
+      // if(item.content.length == 0){
+      //   return null
+      // }
+      // else{
+        return(
           <View style={{
             flexDirection: "row",
             padding: 10,
@@ -45,6 +49,8 @@ var contentType = ''
 
           </View>
         )
+      // }
+   
       }
       _renderHeaderInner=(item,expanded)=>{
           // this.props.updateContentType({})
@@ -54,17 +60,18 @@ var contentType = ''
               padding: 10,
               justifyContent: "space-between",
               alignItems: "center" ,
-               }}>
+               }}
+              //  onPress={()=>{this.onPressModal}} 
+               >
               <Text style={{ fontWeight: "600" }}>
                 {" "}{item.languageName}
               </Text>
-              <Icon style={styles.iconStyle} name={expanded ? "keyboard-arrow-down" : "keyboard-arrow-up" }  size={24}/>
+              <Icon  style={styles.iconStyle} name={expanded ? "keyboard-arrow-down" : "keyboard-arrow-up" }  size={24}/>
             </View>
           )
         }
       
       _renderContentInner = (item)=>{
-
         return(
           item.versionModels.map(v=>
           <TouchableOpacity 
@@ -80,8 +87,8 @@ var contentType = ''
               <Text >{v.versionName}</Text>
               <Text>{v.versionCode}</Text>
             </TouchableOpacity>)
-        
-      )}
+      )
+    }
 
       _renderContent = (item) =>{
           return(
@@ -94,18 +101,22 @@ var contentType = ''
           />
           )
       }
-      // componentDidUpdate(prevProps,prevState){
-      //   if(prevProps.availableContents !==prevState.availableContents){
-      //     this.props.fetchAllContent()
-      //   }
-      // }
-
+    //   componentDidUpdate(prevProps,prevState){
+    //     if(prevProps.availableContents !== this.props.availableContents){
+    //       this.props.fetchAllContent()
+    //   }
+    // }
       errorMessage(){
         if (!this.alertPresent) {
             this.alertPresent = true;
-            if (this.props.availableContents[0].content.length==0 || this.props.availableContents[1].content.length==0) {
+            if (this.props.error || 
+              this.props.availableContents[0].content.length === 0 ||
+              this.props.availableContents[1].content.length === 0 ||
+              this.props.availableContents[2].content.length === 0
+            ) {
             this.props.navigation.setParams({modalVisible:false})
               Alert.alert("", "Check your internet connection", [{text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
+             this.props.fetchAllContent()
             } else {
             this.props.navigation.setParams({modalVisible:!this.props.visible})
             this.alertPresent = false;
@@ -113,20 +124,21 @@ var contentType = ''
         }
       }
       onPressModal = ()=>{
-      this.errorMessage()
-      this.props.fetchAllContent()
-
+        this.errorMessage()
+        // this.props.fetchAllContent()
     }
       render(){
-        console.log("availableContents ",this.props.availableContents.content)
-        console.log("availableContents ",this.props.availableContents.contentType)
+        // console.log("availableContents ",this.props.availableContents.l)
+        // console.log("availableContents ",this.props.availableContents.contentType)
           return(
             <View>
+
+             {/* { (this.props.error===null) && */}
             <Modal
               animationType="fade"
               transparent={true}
               visible={this.props.visible}
-              onPress={()=>{ this.props.navigation.setParams({modalVisible:this.props.visible})}} 
+              onPress={()=>{this.props.navigation.setParams({modalVisible:this.props.visible})}} 
               >
               <TouchableWithoutFeedback
                 style={{
@@ -151,6 +163,7 @@ var contentType = ''
               </View>
               </TouchableWithoutFeedback>
             </Modal>
+          
             <TouchableOpacity onPress={this.onPressModal} style={[this.props.navStyles.touchableStyleRight,{flexDirection:'row'}]}>
                 <Icon 
                   name='add-circle'
@@ -166,7 +179,7 @@ var contentType = ''
 const mapStateToProps = state =>{
   return{
     availableContents:state.contents.contentLanguages,
-    // error:state.contents.error,
+    error:state.contents.error,
     // isLoading:state.contents.loading,
     contentType:state.updateVersion.parallelContentType,
 

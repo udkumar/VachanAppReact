@@ -7,14 +7,14 @@ import {
 } from 'react-native';
 const Constants = require('../../utils/constants')
 import {connect} from 'react-redux'
-import { styles } from './styles.js';
+// import { styles } from './styles.js';
 
 
 class VerseView extends Component {
   constructor(props){
     super(props)
     // this.Animation = new Animated.Value(0);
-    this.styles = styles(this.props.colorFile, this.props.sizeFile);    
+    // this.styles = styles(this.props.colorFile, this.props.sizeFile);    
 
   }
   onPress() {
@@ -73,22 +73,22 @@ class VerseView extends Component {
 
         return (
           // <Animated.Text onPress={() => {this.onPress()}} 
-          <Text onPress={() => {this.onPress()}} 
+          <Text style ={this.props.styles.textStyle} onPress={() => {this.onPress()}} 
 
           // style={{
             // backgroundColor: (this.props.verseSelected == this.props.verseData.number) ?  BackgroundColorConfig : '#fff'
             // }}
             >
-            <Text style={this.styles.verseNumber} >
+            <Text style={this.props.styles.verseNumber} >
               {this.props.verseData.number}{" "}
             </Text>
             <Text style={ [isSelect && isHighlight 
-                    ? this.styles.verseTextSelectedHighlighted 
+                    ? this.props.styles.verseTextSelectedHighlighted 
                     : !isSelect && !isHighlight 
-                    ? this.styles.verseTextNotSelectedNotHighlighted
+                    ? this.props.styles.verseTextNotSelectedNotHighlighted
                     : !isSelect && isHighlight
-                    ? this.styles.verseTextNotSelectedHighlighted
-                    : this.styles.verseTextSelectedNotHighlighted]}
+                    ? this.props.styles.verseTextNotSelectedHighlighted
+                    : this.props.styles.verseTextSelectedNotHighlighted]}
                     >
               {/* {this.getResultText(this.props.verseData.text)} */}
               {this.props.verseData.text}

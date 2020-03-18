@@ -95,7 +95,7 @@ class NotePage extends Component {
                   {value.bookName} {value.chapterNumber} 
                 </Text>
                 <Text>
-                  {value.verseNumber} {value.verseText} 
+                 <Text style={{fontWeight:"bold"}}> {value.verseNumber}</Text> {value.verseText} 
                 </Text>
                 </View>
                 )

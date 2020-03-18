@@ -17,8 +17,15 @@ const GIT_BASE_API = 'https://github.com/Bridgeconn/vachancontentrepository/raw/
                     // found = true
                     const url = GIT_BASE_API + "audio_bibles"+"/"+ payload.languageCode + "/" + ver_code + "/" + payload.bookId  + "/" + payload.chapter + ".mp3"
                     const response = yield call(fetch,url)
-                    yield put(audioURLSuccess(response.url))
-                    yield put(audioURLFailure(null))
+                    if(response.ok && response.status == 200){
+                        yield put(audioURLSuccess(response.url))
+                        yield put(audioURLFailure(null))
+                    }
+                    else{
+                        yield put(audioURLFailure(e))
+                        yield put(audioURLSuccess([]))
+                    }
+              
 
                     // break;
                 // }

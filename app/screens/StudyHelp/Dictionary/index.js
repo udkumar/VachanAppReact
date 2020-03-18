@@ -8,6 +8,7 @@ import {
   ScrollView,
   Modal,
   Text,
+  Alert,
   View
 } from 'react-native';
 var RNFS = require('react-native-fs');
@@ -23,45 +24,52 @@ import { NavigationEvents } from 'react-navigation';
 import APIFetch from '../../../utils/APIFetch'
 import {styles} from './styles'
 
-
 class Dictionary extends Component {
 
     constructor(props){
       super(props)
 
         this.state = {
-          commentary: [],
-          modalVisible:false,
-          wordDescription:[]
+          modalVisibleDictionary:false,
+          wordDescription:[],
         }
         this.styles = styles(this.props.colorFile, this.props.sizeFile)
+        this.alertPresent =false
+
     }
   componentDidMount(){
     this.props.fetchDictionaryContent({parallelContentSourceId:this.props.parallelContentSourceId})
   }
-  componentWillUpdate(nextProps) {
-    this.props.fetchDictionaryContent({parallelContentSourceId:this.props.parallelContentSourceId})
-  }
+  // componentDidUpdate(nextProps) {
+  //   this.props.fetchDictionaryContent({parallelContentSourceId:nextProps.parallelContentSourceId})
+  // }
+  // componentWillMount(){
+  //   this.props.fetchDictionaryContent({parallelContentSourceId:this.props.parallelContentSourceId})
+
+  // }
   fetchWord=async(word)=>{
+    try{
       var wordDescription = await APIFetch.fetchWord(this.props.parallelContentSourceId,word.wordId)
       this.setState({
         wordDescription:wordDescription.meaning,
-        modalVisible:true
+        modalVisibleDictionary:true
       })
+    }
+    catch(error){
+      this.setState({
+        wordDescription:[],
+        modalVisibleDictionary:false
+      })
+    }
+
   }
     _renderHeader = (item, expanded) =>{
         return(
-          <View style={{
-            flexDirection: "row",
-            padding: 10,
-            justifyContent: "space-between",
-            alignItems: "center" ,
-            }}>
-            <Text style={{ fontWeight: "600" }} >
+          <View style={this.styles.headerStyle}>
+            <Text style={this.styles.headerText} >
             {" "}{item.letter}
-              
             </Text>
-            <Icon style={styles.iconStyle} name={expanded ? "keyboard-arrow-down" : "keyboard-arrow-up" }  size={24}/>
+            <Icon style={this.styles.iconStyle} name={expanded ? "keyboard-arrow-down" : "keyboard-arrow-up" }  size={24}/>
 
           </View>
         )
@@ -76,65 +84,100 @@ class Dictionary extends Component {
             }}
             onPress={()=>this.fetchWord(w)}
           >
-            <Text>{w.word}</Text>
+            <Text style={this.styles.textDescription}>{w.word}</Text>
           </TouchableOpacity>
       )
       )
     }
 
+    errorMessage(){
+      if (!this.alertPresent) {
+          this.alertPresent = true;
+          if (this.props.dictionaryContent.length === 0) {
+              Alert.alert("", "Check your internet connection", [{text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
+              this.props.fetchDictionaryContent({parallelContentSourceId:this.props.parallelContentSourceId})
+            } else {
+              this.alertPresent = false;
+          }
+      }
+    }
+    updateData = ()=>{
+      // if(this.props.error){
+        this.errorMessage()
+      // }
+      // else{
+      //   return
+      // }
+    }
+    
+
   render(){
-    console.log(" dictionary content ",this.state.wordDescription)
+    console.log(" this.props.data ", this.props.dictionaryContent)
+    console.log(" this.props.error ", this.props.error)
+
     return (
+        <View style={this.styles.container}>
+         <Header style={{height:40,borderLeftWidth:0.5,borderLeftColor:'#fff'}} >
+         <Body>
+           <Title style={{fontSize:16}}>{this.props.parallelContentVersionCode}</Title>
+         </Body>
+         <Right>
+         <Button transparent onPress={()=>this.props.toggleParallelView(false)}>
+           <Icon name='cancel' color={'#fff'} size={20}/>
+         </Button>
+         </Right>
+       </Header>
+        {this.state.isLoading &&
+        <Spinner
+        visible={true}
+        textContent={'Loading...'}
+        //  textStyle={styles.spinnerTextStyle}
+      />}
+      {
+        (this.props.error) ? 
+        <View style={{flex:1,justifyContent:'center',alignContent:'center'}}>
+          <TouchableOpacity 
+          onPress={()=>this.updateData()}
+          style={{height:40,width:120,borderRadius:4,backgroundColor:'#3F51B5',
+          justifyContent:'center',alignItems:'center'
+        }}
+          >
+            <Text style={{fontSize:18,color:'#fff'}}>Reload</Text>
+          </TouchableOpacity>
+        </View> 
+      // }
+      :
         <View>
-        <Header style={{height:40,borderLeftWidth:0.5,borderLeftColor:'#fff'}} >
-          <Body>
-            <Title style={{fontSize:16}}>{this.props.parallelContentVersionCode}</Title>
-          </Body>
-          <Right>
-          <Button transparent onPress={()=>this.props.toggleParallelView(false)}>
-            <Icon name='cancel' color={'#fff'} size={20}/>
-          </Button>
-          </Right>
-        </Header>
         <Accordion 
-          dataArray={this.props.dictionaryContent}
-          animation={true}
-          expanded={true}
-          renderHeader={this._renderHeader}
-          renderContent={this._renderContent}
-        />
-        <Modal
-          animated={true}
-          transparent={true}
-          visible={this.state.modalVisible}>
-          <TouchableWithoutFeedback
-            style={{
-              flex: 1,
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              }} 
-            onPressOut={()=>this.setState({modalVisible:false})} 
-            > 
-          <View style={{
-            flex: 1,
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center'}}>
-           <View style={{width:'70%'}}>
-           <Icon name='cancel' size={28} color={'#ff'} style={{position:'absolute',top:-20,right:-20}}/>
-            <Card>
-              <CardItem><Text>Description: {this.state.wordDescription.definition}</Text></CardItem>
-              <CardItem><Text>Keywrod: {this.state.wordDescription.keyword}</Text></CardItem>
-              <CardItem><Text>See Also: {this.state.wordDescription.seeAlso}</Text></CardItem>
-            </Card>
-          </View>
-          </View>
-          {/* <View style={{ height:'70%',width:'70%',alignSelf:'center',backgroundColor:'#fff'}}>
-            <Text>{this.state.wordDescription.definition}</Text>
-          </View>  */}
-          </TouchableWithoutFeedback>
-        </Modal>
+        dataArray={this.props.dictionaryContent}
+        animation={true}
+        expanded={true}
+        renderHeader={this._renderHeader}
+        renderContent={this._renderContent}
+      />
+       <Modal
+         animated={true}
+         transparent={true}
+         visible={this.state.modalVisibleDictionary}>
+         <TouchableWithoutFeedback
+           style={this.styles.dictionaryModal} 
+           onPressOut={()=>this.setState({modalVisibleDictionary:false})} 
+           >
+         <View style={this.styles.dictionaryModalView}>
+          <View style={{width:'70%'}}>
+          <Icon name='cancel' size={28} color={'#ff'} style={{position:'absolute',top:-20,right:-20}}/>
+           <Card>
+             <CardItem><Text >Description: {this.state.wordDescription.definition}</Text></CardItem>
+             <CardItem><Text >Keywrod: {this.state.wordDescription.keyword}</Text></CardItem>
+             {this.state.wordDescription.seeAlso !='' && <CardItem><Text >See Also: {this.state.wordDescription.seeAlso}</Text></CardItem>}
+           </Card>
+         </View>
+         </View>
+         </TouchableWithoutFeedback>
+       </Modal>
+        </View>
+      }
+      
     </View>
     )
 }
@@ -158,13 +201,13 @@ const mapStateToProps = state =>{
     parallelContentVersionCode:state.updateVersion.parallelContentVersionCode,
     parallelContentLanguage:state.updateVersion.parallelContentLanguage,
     dictionaryContent:state.dictionaryFetch.dictionaryContent,
+    error:state.dictionaryFetch.error,
     parallelContentLanguageCode:state.updateVersion.parallelContentLanguageCode
   }
 
 }
 const mapDispatchToProps = dispatch =>{
   return {
-    
     fetchDictionaryContent:(payload)=>dispatch(fetchDictionaryContent(payload)),
     fetchWordId:(payload)=>dispatch(fetchWordId(payload)),
   }

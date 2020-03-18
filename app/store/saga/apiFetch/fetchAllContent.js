@@ -8,10 +8,13 @@ const API_BASE_URL = 'https://api.vachanonline.net/v1/'
 //fetch audio available book ,audio file 
   function* fetchAllContent() {
     try {
+      const bibleAPI = API_BASE_URL + 'bibles'
+      const commentaryAPI = API_BASE_URL + 'commentaries'
+      const dictionaryAPI = API_BASE_URL + 'dictionaries'
       const [bibleLanguage,commentaryLanguage,dictionariesLanguage] = yield all([
-        call(fetchApi, API_BASE_URL + 'bibles'),
-        call(fetchApi, API_BASE_URL + 'commentaries'),
-        call(fetchApi, API_BASE_URL + 'dictionaries')
+        call(fetchApi,bibleAPI),
+        call(fetchApi, commentaryAPI),
+        call(fetchApi,dictionaryAPI)
       ])
 
     const  bible = []

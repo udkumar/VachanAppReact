@@ -183,6 +183,7 @@ class LanguageList extends Component {
     }
  
     navigateTo(langName,langCode,verCode,sourceId,downloaded){
+      console.log(" navigate to ",langName,langCode,verCode,sourceId,downloaded)
        this.props.navigation.state.params.updateLangVer({
         sourceId:sourceId,languageName:langName,languageCode:langCode, 
         versionCode:verCode,downloaded:downloaded})

@@ -19,12 +19,20 @@ const API_BASE_URL = 'https://api.autographamt.com/v1/'
     }
     else{
       const url = API_BASE_URL + "bibles" + "/" + payload.sourceId + "/" + "books" + "/" + payload.bookId + "/" + "chapter" + "/" + payload.chapter
-      const response = yield call(fetchApi,url)
-      chapterContent = response.chapterContent.verses
-      totalVerses = response.chapterContent.verses.length
+      const res = yield call(fetch,url)
+      if(res.ok && res.status == 200){
+        const response =yield res.json()
+        const chapterContent = response.chapterContent.verses
+        const totalVerses = response.chapterContent.verses.length
+        yield put(parallelBibleSuccess({parallelBible:chapterContent,totalVerses:totalVerses}))
+        yield put(parallelBiblefailure(null))
+      }
+      else{
+        yield put(parallelBiblefailure(e))
+        yield put(parallelBibleSuccess([])) 
+      }
     }
-    yield put(parallelBibleSuccess({parallelBible:chapterContent,totalVerses:totalVerses}))
-    yield put(parallelBiblefailure(null))
+    
 
     } catch (e) {
     yield put(parallelBiblefailure(e))

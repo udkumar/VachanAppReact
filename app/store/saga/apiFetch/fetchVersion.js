@@ -98,18 +98,25 @@ const API_BASE_URL = 'https://api.autographamt.com/v1/'
 
   function* fetchVersionContent(params) {
     try {
-      let chapterContent = []
-      let totalVerses=null
+      // let chapterContent = []
+      // let totalVerses=null
       const payload = params.payload
       const url = API_BASE_URL + "bibles" + "/" + payload.sourceId + "/" + "books" + "/" + payload.bookId + "/" + "chapter" + "/" + payload.chapter
-      const response = yield call(fetchApi,url)
-      chapterContent = response.chapterContent.verses
-      totalVerses = response.chapterContent.verses.length
-    yield put(versionContentSuccess({chapterContent:chapterContent,totalVerses:totalVerses}))
-    yield put(versionContentFailure(null))
+      const res= yield call(fetch,url)
+      if(res.ok && res.status == 200){
+        const response =yield res.json()
+        const chapterContent = response.chapterContent.verses
+        const totalVerses = response.chapterContent.verses.length
+        yield put(versionContentSuccess({chapterContent:chapterContent,totalVerses:totalVerses}))
+        yield put(versionContentFailure(null))
+      }
+      else{
+        yield put(versionContentFailure(e))
+        yield put(versionContentSuccess([]))
+      }
+    
     } catch (e) {
       console.log("error fetch content ",e)
-
     yield put(versionContentFailure(e))
     yield put(versionContentSuccess([]))
 

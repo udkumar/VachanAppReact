@@ -127,6 +127,8 @@ class Bible extends Component {
       // totalChapters:this.props.totalChapters,
       // totalVerses:this.props.totalVerses,
       // verseNumber:this.props.verseNumber,
+      colorFile:this.props.colorFile,
+      sizeFile:this.props.sizeFile,
       downloadedBook:[],
       audio:false,
       chapterContent:[],
@@ -192,7 +194,15 @@ class Bible extends Component {
       })
     }
   }
-
+  componentWillReceiveProps(nextProps,prevState){
+    console.log("verseInLine ",nextProps.colorFile,prevState.colorFile)
+    this.setState({
+      colorFile:nextProps.colorFile,
+      sizeFile:nextProps.sizeFile,
+      // arrLayout:nextProps.arrLayout
+    })
+    this.styles = styles(nextProps.colorFile, nextProps.sizeFile);  
+  }
   async componentDidMount(){
     this.gestureResponder = createResponder({
       onStartShouldSetResponder: (evt, gestureState) => true,
@@ -251,6 +261,12 @@ class Bible extends Component {
     this.props.navigation.setParams({
       visibleParallelView:false,
       modalVisible:false,
+      updatelangVer:this.updateLangVer,
+      getRef:this.getReference,
+      audio:this.state.audio,
+      onBookmark: this.onBookmarkPress,
+      toggleAudio:this.toggleAudio,
+
       // toggleModal:this.setState({modalVisible:!this.state.modalVisible}),
     })
     this.subs = this.props.navigation.addListener("didFocus", () =>{
@@ -262,17 +278,12 @@ class Bible extends Component {
       this.getHighlights()
       this.getBookMarks()
       this.props.navigation.setParams({
-        onBookmark: this.onBookmarkPress,
-        toggleAudio:this.toggleAudio,
         bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
         currentChapter:this.state.currentVisibleChapter,
         languageName: this.props.language, 
         versionCode: this.props.versionCode,
         bookId:this.props.bookId,
         audio:this.state.audio,
-        // modalVisible:!this.state.modalVisible,
-        getRef:this.getReference,
-        updatelangVer:this.updateLangVer,
         numOfChapter:this.props.totalChapters,
         numOfVerse:this.props.totalVerses
       })
@@ -573,7 +584,9 @@ this.setState({audio:false})
       refList.push(refModel)
     }
     this.props.navigation.navigate('EditNote', {
+      
         referenceList: refList,
+        // getReference:refList,
         // bookId:id,
         onbackNote:this.onbackNote,
         // chapterNumber:this.state.currentVisibleChapter,
@@ -677,7 +690,7 @@ this.setState({audio:false})
     console.log("props ",this.props.error)
     if (!this.alertPresent) {
         this.alertPresent = true;
-        if (this.props.error) {
+        if (this.state.error) {
             Alert.alert("", "Check your internet connection", [{text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
         } else {
             this.alertPresent = false;
@@ -685,13 +698,11 @@ this.setState({audio:false})
     }
   }
 updateData = ()=>{
-  if(this.state.error){
+  // if(this.state.error){
     this.errorMessage()
     this.queryBookFromAPI(null)
-  }
-  else{
-    return
-  }
+  // }
+ 
 }
 
   render() {

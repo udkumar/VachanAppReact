@@ -135,7 +135,7 @@ export const styles =(colorFile, sizeFile) =>{
     },
     verseNumber:{
         fontSize:sizeFile.contentText,
-        // color:colorFile.textColor
+        color:colorFile.textColor
     },
     verseChapterNumber:{
         fontSize:sizeFile.titleText,
@@ -147,15 +147,18 @@ export const styles =(colorFile, sizeFile) =>{
         textDecorationLine: 'underline',
     },
     verseTextNotSelectedNotHighlighted:{
-
+        
     },
     verseTextNotSelectedHighlighted:{
-        backgroundColor:colorFile.highlightColor
+        backgroundColor:colorFile.highlightColor,
     },
     verseTextSelectedNotHighlighted:{
         textDecorationLine: 'underline',
     },
-    
+    textStyle:{
+        color:colorFile.textColor,
+        fontSize:sizeFile.contentText,
+    },
     addToSharefooterComponent:{
         height: 40, 
         marginBottom: 40 

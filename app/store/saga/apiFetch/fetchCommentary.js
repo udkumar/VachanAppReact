@@ -24,10 +24,15 @@
     try {
     const payload = params.payload 
         const content = API_BASE_URL +payload.parallelContentSourceId+"/"+payload.bookId+"/"+payload.chapter
-        const res = yield call(fetchApi,content)
-        yield put(commentaryContentSuccess(res))
-        yield put(commentaryContentFailure(null))
-
+        const res = yield call(fetch,content)
+        if(res.ok && res.status == 200){
+        const result = yield res.json()
+          yield put(commentaryContentSuccess(result))
+          yield put(commentaryContentFailure(null))
+        }else{
+          yield put(commentaryContentFailure(e))
+          yield put(commentaryContentSuccess([]))
+        }
     } catch (e) {
     yield put(commentaryContentFailure(e))
     yield put(commentaryContentSuccess([]))
