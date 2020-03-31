@@ -1,4 +1,4 @@
-package com.autographago_reactnative;
+package com.vachango;
 import android.os.Bundle;
 import android.content.Intent;
 import android.content.res.Configuration; // <--- import
@@ -28,7 +28,7 @@ public class MainActivity extends ReactActivity {
     }
     @Override
     protected String getMainComponentName() {
-        return "AutographaGo_ReactNative";
+        return "VachanGo";
     }
     @Override
     protected ReactActivityDelegate createReactActivityDelegate() {

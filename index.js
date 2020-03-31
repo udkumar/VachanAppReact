@@ -68,4 +68,4 @@ class RNRedux extends Component{
             </Provider>
     }
 }
-AppRegistry.registerComponent('AutographaGo_ReactNative', () => RNRedux ) ;
+AppRegistry.registerComponent('VachanGo', () => RNRedux ) ;

@@ -17,9 +17,9 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import {API_BASE_URL} from '../../utils/APIConstant'
 import { State } from 'react-native-gesture-handler';
 
-const languageList = async () => { 
-  return await DbQueries.getLangaugeList()
-}
+// const languageList = async () => { 
+//   return await DbQueries.getLangaugeList()
+// }
 
 class LanguageList extends Component {
     static navigationOptions = ({navigation}) => ({
@@ -48,16 +48,6 @@ class LanguageList extends Component {
       this.alertPresent = false 
     }
    
-    updateLayout(index){
-      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-      const responseay = [...this.state.languages];
-      responseay[index]['isExpanded'] = !responseay[index]['isExpanded'];
-      this.setState(() => {
-        return {
-          languages: responseay,
-        }
-      })
-    }
 
      componentDidMount(){
       this.fetchLanguages()  
@@ -89,12 +79,12 @@ class LanguageList extends Component {
       // var diffDays = Math.round(Math.abs((d.getTime() - ud.getTime())/(oneDay)))
       const languageList =  await DbQueries.getLangaugeList()
       // console.log("this.props.bibleLanguages[0]",this.props.bibleLanguages[0])
-      console.log("language  ",languageList)
+      console.log("languages data base  ",languageList)
 
       if(languageList === null){
         console.log("language LIST ",languageList)
         if(this.props.bibleLanguages[0].content.length > 0){
-          console.log("no language found call update ",this.props.bibleLanguages[0].content.length)
+          console.log("language  update ",this.props.bibleLanguages[0].content)
           DbQueries.addLangaugeList(this.props.bibleLanguages[0].content)
           lanVer = this.props.bibleLanguages[0].content
         }
@@ -127,12 +117,11 @@ class LanguageList extends Component {
 
    
     downloadBible = async(langName,verCode,index,sourceId)=>{
-      console.log("language name"+langName+" ver code  "+verCode+" source id "+sourceId)
-
       var bookModels = []
       try{
         this.setState({startDownload:true})
         var content = await APIFetch.getAllBooks(sourceId,"json")
+        if(content.bibleContent){
         var content = content.bibleContent
         for(var id in content){
           var  chapterModels = []
@@ -163,20 +152,24 @@ class LanguageList extends Component {
       var result = bookModels.sort(function(a, b){
         return parseFloat(a.bookId) - parseFloat(b.bookId);  
       })
-      const booksid = await APIFetch.availableBooks(sourceId)
-      var bookListData=[]
-      for(var key in booksid[0].books){
-        var bookId = booksid[0].books[key].abbreviation
-        bookListData.push(bookId)
-      }
-      await DbQueries.addNewVersion(langName,verCode,result,sourceId,bookListData)
-      languageList().then(async(language) => {
-        this.setState({languages:language})
-      })
+      // console.log("result ",result)
+      // const booksid = await APIFetch.availableBooks(sourceId)
+      // var bookListData=[]
+      // for(var key in booksid[0].books){
+      //   var bookId = booksid[0].books[key].abbreviation
+      //   bookListData.push(bookId)
+      // }
+      // langName,versCode,bookModels,sourceId
+      DbQueries.addNewVersion(langName,verCode,result,sourceId)
+      // languageList().then(async(language) => {
+      //   this.setState({languages:language})
+      // })
+    }
       this.setState({startDownload:false})
 
       }catch(error){
       this.setState({startDownload:false})
+      console.log("error ",error)
         alert("There is some error on downloading this version please select another version")
       }
     }
@@ -235,7 +228,7 @@ class LanguageList extends Component {
       )
     }
     render(){
-      console.log(" languague LIST IN RENDER ",this.state.languages)
+      // console.log(" languague LIST IN RENDER ",this.state.languages)
       return (
         <View style={this.styles.MainContainer}>
         {this.props.isLoading &&

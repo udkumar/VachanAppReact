@@ -44,6 +44,7 @@ class DbQueries {
     // addNewBook(bookModel, versionModel, languageModel) {
     //     DbHelper.insertNewBook(bookModel, versionModel, languageModel);
     // }
+    // angName,verCode,result,sourceId,bookListData
     addNewVersion(langName,versCode,bookModels,sourceId){
         DbHelper.addNewVersion(langName,versCode,bookModels,sourceId)
     }

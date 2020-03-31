@@ -28,13 +28,13 @@ class DbHelper {
     async getRealm() {
     	try {
     		return await Realm.open({
-				schemaVersion: 30,
+				schemaVersion: 1,
 				deleteRealmIfMigrationNeeded: true, 
 				path:
 					Platform.OS === 'ios'
 					? RNFS.MainBundlePath + '/vachanApp.realm'
 					: RNFS.DocumentDirectoryPath + '/vachanApp.realm',
-				schema: [LanguageModel, VersionModel, BookModel, ChapterModel, VerseModel, NoteModel, NoteStylingModel,VerseStylingModel, ReferenceModel, HistoryModel,BookmarksListModel,HighlightsModel,VerseMetadataModel] });
+				schema: [LanguageModel.schema, VersionModel.schema, BookModel.schema, ChapterModel.schema, VerseModel.schema, NoteModel.schema, NoteStylingModel.schema,VerseStylingModel.schema, ReferenceModel.schema, HistoryModel.schema,BookmarksListModel.schema,HighlightsModel.schema,VerseMetadataModel.schema] });
 				// console.log('create db:', db.path)
 			} catch (err) {
 			console.log("error in getItem"+err)
@@ -449,20 +449,20 @@ class DbHelper {
 	}
 	//download version
 	async addNewVersion(langName,verCode,bookmodel,sourceId){
-      console.log("add new version ",langName,verCode,sourceId)
-
+		// angName,verCode,result,sourceId,bookListData
 		let realm = await this.getRealm();
 		if(realm){
 			let result = realm.objectForPrimaryKey("LanguageModel",langName)
+			// console.log("LanguageModel  ",result.length)
 			let resultsA = result.versionModels
 			var resultsB = resultsA.filtered('sourceId  =="' + sourceId + '"')
-
 			var resultBoook = realm.objects('BookModel').filtered('languageName ==[c] "' + langName +'" ')
+			
 			if(bookmodel.length == 0){
 				alert("no data to add")
 			}
 			else{
-				var bookIdList =[]
+			var bookIdList =[]
 			if(resultBoook.length == 0){
 				// direct adding data to db 
 				realm.write(() => {
@@ -475,6 +475,7 @@ class DbHelper {
 				})
 			}
 			else{
+			console.log("some book is there ")
 			var found = false;
 			for(var i=0;i<resultBoook.length;i++){
 				console.log("book is version Code  " ,resultBoook[i].languageName)
@@ -483,18 +484,19 @@ class DbHelper {
 					found = true
 				}
 			}
-			if(found==false){
-				console.log("add version ")
-					realm.write(() => {
-						for(var i=0;i<bookmodel.length;i++){
-						realm.create('BookModel', bookmodel[i])
-					}
-					resultsB[0].bookNameList = bookmodel[i].bookId
-					resultsA[0].downloaded = true;
-					})
+			// if(found==false){
+			// 	console.log("add version ")
+			// 		realm.write(() => {
+			// 			for(var i=0;i<bookmodel.length;i++){
+			// 			realm.create('BookModel', bookmodel[i])
+			// 		}
+			// 		resultsB[0].bookNameList = bookmodel[i].bookId
+			// 		resultsA[0].downloaded = true;
+			// 		})
 					
-			}
+			// }
 		}
+		
 	}
 	}
 	}

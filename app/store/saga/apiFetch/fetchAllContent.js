@@ -20,7 +20,7 @@ const API_BASE_URL = 'https://api.vachanonline.net/v1/'
     const  bible = []
     const commentary = []
     const dictionary = []
-
+    
      for(var i = 0; i<bibleLanguage.length;i++){
       var versions = []
       const language =bibleLanguage[i].language.charAt(0).toUpperCase() +bibleLanguage[i].language.slice(1)
