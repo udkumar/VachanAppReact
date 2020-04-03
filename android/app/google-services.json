@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "486797934259-6agdicpq9fnv73h1p22j2qtgtu8odf6o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vachango",
+            "certificate_hash": "5395e95eedfd2e3342e8c7f70499579c6c15d1aa"
+          }
+        },
+        {
           "client_id": "486797934259-gkdusccl094153bdj8cbugfcf5tqqb4j.apps.googleusercontent.com",
           "client_type": 3
         }

@@ -7,7 +7,7 @@ import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.github.yamill.orientation.OrientationPackage; 
 // import com.reactnativecommunity.netinfo.NetInfoPackage;
 // import com.facebook.reactnative.androidsdk.FBSDKPackage;
-// import co.apptailor.googlesignin.RNGoogleSigninPackage;
+import co.apptailor.googlesignin.RNGoogleSigninPackage;
 // import com.facebook.CallbackManager;
 
 import com.brentvatne.react.ReactVideoPackage;
@@ -20,10 +20,10 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
- import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
-// import io.invertase.firebase.auth.RNFirebaseAuthPackage;
-// import io.invertase.firebase.storage.RNFirebaseStoragePackage;
-// import io.invertase.firebase.firestore.RNFirebaseFirestorePackage;
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
+import io.invertase.firebase.auth.RNFirebaseAuthPackage;
+import io.invertase.firebase.storage.RNFirebaseStoragePackage;
+import io.invertase.firebase.firestore.RNFirebaseFirestorePackage;
 // import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 // import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 
@@ -53,17 +53,17 @@ public class MainApplication extends Application implements ReactApplication {
             new SplashScreenReactPackage(),
             // new NetInfoPackage(),
             // new FBSDKPackage(mCallbackManager),
-            // new RNGoogleSigninPackage(),
+            new RNGoogleSigninPackage(),
             new ReactVideoPackage(),
             new RealmReactPackage(),
             new RNZipArchivePackage(),
             new VectorIconsPackage(),
             new RNFSPackage(),
             new AsyncStoragePackage(),
-            new RNFirebasePackage()
-            // new RNFirebaseAuthPackage(),
-            // new RNFirebaseStoragePackage(),
-            // new RNFirebaseFirestorePackage(),
+            new RNFirebasePackage(),
+            new RNFirebaseAuthPackage(),
+            new RNFirebaseStoragePackage(),
+            new RNFirebaseFirestorePackage()
             // new RNFirebaseNotificationsPackage(),
             // new RNFirebaseMessagingPackage()
       );
