@@ -9,7 +9,7 @@ import {
   Button,
   FlatList,
 } from 'react-native';
-import {Card} from 'native-base'
+import {Card,CardItem} from 'native-base'
 import firebase from 'react-native-firebase';
 import Login from './Login';
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -101,7 +101,6 @@ class BackupRestore extends Component {
 
     getUniqueId() {
         console.log("substring ",this.s4)
-
         return this.s4() + this.s4() + '-' + this.s4() + '-' + this.s4() + '-' 
             + this.s4() + '-' + this.s4() + this.s4() + this.s4();
     }
@@ -195,19 +194,19 @@ class BackupRestore extends Component {
     }
 
     doBackup = () => {
-        var emailId = this.state.user == null ? null : this.state.user.email;
+        var emailId = this.state.user == null ? null : this.state.user._user.email;
         if (emailId == null) {
             Alert.alert("User not found")
             return
         }
-        var uid = this.getUniqueId();
+        var uid = this.getUniqueId()
         this.setState({isLoading: true}, () => {
             this.startBackup(uid, emailId)
         })
     }
 
     doList = () => {
-        var emailId = this.state.user == null ? null : this.state.user.email;
+        var emailId = this.state.user == null ? null : this.state.user._user.email;
         if (emailId == null) {
         } else {
             console.log("DO READ.. " + emailId)
@@ -219,6 +218,7 @@ class BackupRestore extends Component {
                         console.log(`${doc.id} => ${doc.data().url}`);
                     })
                     this.setState({dataSource})
+                    console.log("dataSource ",dataSource)
                 })
         }
     }
@@ -248,14 +248,23 @@ class BackupRestore extends Component {
             { cancelable: true }
         )
     }
-
+    convert=(str)=>{
+        console.log(" STR",str)
+        var date = new Date(str)
+        // const  mnth =date.getMonth()+1,
+        // const  day = 
+        // return date.getFullYear()+"-"+mnth+"-"+date.getDate()
+        return date
+      }
+      
     renderItem = ({item,index})=>{
         return(
             <Card style={this.styles.cardStyle}>
                 <TouchableOpacity onPress={()=> this.doRestore(item)}>
                 <CardItem  style={this.styles.cardItemStyle}>
                     <Text style={this.styles.textStyle} >
-                        {item.timestamp.toString()}   
+                        {/* {item.timestamp.seconds.toString()}    */}
+                        {this.convert(item.timestamp.seconds*1000)}
                     </Text>
                 </CardItem>
                 </TouchableOpacity>
@@ -264,7 +273,7 @@ class BackupRestore extends Component {
     }
 
     render() {
-        console.log("user ",this.state.user)
+        // console.log("user ",this.state.user._user.email)
         if (!this.state.user) {
             return <Login 
                 styles = {this.styles}
