@@ -32,11 +32,11 @@ export default class Login extends Component {
     }
 
     doSignIn = () => {
-        if (this.state.email == "") {
+        if (this.state.email == ""){
             Alert.alert("Email", "Email field is empty, please enter email in input box.")
             return
         }
-        this.setState({isLoading: true}, () => {
+        this.setState({isLoading: true},() => {
           const { email, password } = this.state
             firebase.auth()
             .createUserWithEmailAndPassword(email, password)

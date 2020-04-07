@@ -12,6 +12,7 @@ import {SelectionTab} from './routes/index'
 import {fetchVersionBooks} from '../../store/action/'
 import { getBookNumOfVersesFromMapping } from '../../utils/UtilFunctions';
 import Spinner from 'react-native-loading-spinner-overlay';
+import APIFetch from '../../utils/APIFetch'
 
 
 
@@ -75,14 +76,17 @@ class ReferenceSelection extends Component {
       this.props.navigation.pop()
   }
 
-  componentDidMount(){
+  async componentDidMount(){
     if(this.props.navigation.state.params.parallelContent){
       this.props.fetchVersionBooks({language:this.props.parallelContentLanguage,versionCode:this.props.parallelContentVersionCode,downloaded:false,sourceId:this.props.parallelContentSourceId})
     }
     else{
       this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,downloaded:this.props.downloaded,sourceId:this.props.sourceId})
     }
-    console.log("parallelContentType ",this.props.parallelContentType)
+    // var bookLangugae = await APIFetch.fetchBookInLanguage()
+    // for(var i=0;i<=bookLangugae.length;i++){
+    // console.log("parallelContentType ",bookLangugae[i].language)
+    // }
   }
   errorMessage(){
     if (!this.alertPresent) {
@@ -99,7 +103,6 @@ class ReferenceSelection extends Component {
     this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,downloaded:this.props.downloaded,sourceId:this.props.sourceId})
   }
   render() {
-    console.log("IS LAODING ",this.props.isLoading)
     return (
       this.props.isLoading ?
         <Spinner

@@ -254,7 +254,7 @@ class BackupRestore extends Component {
         // const  mnth =date.getMonth()+1,
         // const  day = 
         // return date.getFullYear()+"-"+mnth+"-"+date.getDate()
-        return date
+        return date.toString()
       }
       
     renderItem = ({item,index})=>{

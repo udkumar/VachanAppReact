@@ -37,7 +37,7 @@ const API_BASE_URL = 'https://api.autographamt.com/v1/'
       // ])
       let bookListData = []
       if(payload.downloaded) {
-        console.log("payload bible ")
+        // console.log("payload bible ")
         var response = yield DbQueries.getDownloadedBook(payload.language,payload.versionCode)
          for(var i = 0; i<response.length;i++){
           var bookId = response[i]
@@ -50,34 +50,44 @@ const API_BASE_URL = 'https://api.autographamt.com/v1/'
             }
           bookListData.push(books)
           }
-          console.log("book list fetch book list ")
-          console.log("book list fetch book list ",response)
+         
+          // console.log("book list fetch book list ")
+          // console.log("book list fetch book list ",response)
       }
       else{
-        const url  = API_BASE_URL + "bibles" + "/" + payload.sourceId + "/" + "books"
-        var response = yield call(fetchApi,url)
-        for(var i =0;i<response[0].books.length;i++){
-          var bookId = response[0].books[i].abbreviation
-          var books= {
-                bookId:bookId,
-                bookName: getBookNameFromMapping(bookId,payload.language),
-                section:getBookSectionFromMapping(bookId),
-                bookNumber:getBookNumberFromMapping(bookId),
-                numOfChapters:getBookChaptersFromMapping(bookId)
+        // const url  = API_BASE_URL + "bibles" + "/" + payload.sourceId + "/" + "books"
+        var response = yield call(fetchApi,'https://api.vachanonline.net/v1/booknames')
+        console.language("language ",response)
+
+        for(var i =0;i<response.length;i++){
+          console.language("language ",response[i].language.name)
+          // console.language("language ",payload)response[i].language.name
+          if(payload.language === response[i].language.name){
+            // console.language("language ",response[i].language)
+            for(var j=0;i<response[i].bookNames.length;j++ ){
+                console.language("book id  ",response[i].bookNames[j].book_code)
+              var books= {
+                bookId:response[i].bookNames[j].book_code,
+                bookName:response[i].bookNames[j].abbr,
+                section:getBookSectionFromMapping(response[i].bookNames[j].book_code),
+                bookNumber:response[i].bookNames[j].book_id,
+                numOfChapters:getBookChaptersFromMapping(response[i].bookNames[j].book_code)
+            }
+            bookListData.push(books)
+            }
           }
-          bookListData.push(books)
+         
         }
-        console.log("book list fetch book list ",response)
       }
-      console.log("NOT GETTING DATA ",bookListData)
-    var res = bookListData.length == 0 ? [] : bookListData.sort(function(a, b){return a.bookNumber - b.bookNumber})
-    yield put(versionBooksSuccess(res))
-    yield put(versionBooksFailure(null))
+      var res = bookListData.length == 0 ? [] : bookListData.sort(function(a, b){return a.bookNumber - b.bookNumber})
+      yield put(versionBooksSuccess(res))
+      yield put(versionBooksFailure(null))
+      // console.log("NOT GETTING DATA ",bookListData)
+    
     } catch (e) {
-      console.log("ERROR ON GETTING BOOOKLIST ",e)
+      // console.log("ERROR ON GETTING BOOOKLIST ",e)
     yield put(versionBooksFailure(e))
     yield put(versionBooksSuccess([]))
-
     }
   }
 
