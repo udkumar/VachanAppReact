@@ -99,16 +99,29 @@ class BackupRestore extends Component {
         }
     }
 
-    getUniqueId() {
+    getUniqueId(){
         console.log("substring ",this.s4)
         return this.s4() + this.s4() + '-' + this.s4() + '-' + this.s4() + '-' 
             + this.s4() + '-' + this.s4() + this.s4() + this.s4();
     }
 
-    s4() {
+    s4(){
         return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
     }
-
+    backupData(){
+        firebase.database().ref('users/').set({
+            username: "neetu",
+            email: "neetuy1455",
+          }, function(error) {
+            if (error) {
+                console.log("Some error is there on back up - ",error)
+              // The write failed...
+            } else {
+                console.log("Data saved successfully ")
+              // Data saved successfully!
+            }
+          });
+        }
     startBackup = (uid, emailId) => {
         var self = this;
 
@@ -290,7 +303,7 @@ class BackupRestore extends Component {
                     <Text style={this.styles.textStyle}>Welcome to Autographa Go !</Text>
                     <Button 
                         style={this.styles.buttonStyle}
-                        onPress={this.doBackup}
+                        onPress={this.backupData}
                         title="BACKUP NOW"
                        />
                     <Icon 

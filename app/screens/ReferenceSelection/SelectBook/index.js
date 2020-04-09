@@ -50,7 +50,7 @@ class SelectBook extends Component {
     this.props.screenProps.updateSelectedBook(item)
     this.props.navigation.navigate('Chapters')
   } 
-
+  
   getOTSize=()=>{
     var count = 0;
     if(this.props.books.length == 0){

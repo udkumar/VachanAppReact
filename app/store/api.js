@@ -4,7 +4,7 @@ var ApiUtils = {
     checkStatus: function(response) {
       // console.log("response data "+JSON.stringify(response))
       if (response.ok && response.status == 200) {
-        console.log("response ok "+response)
+        console.log("response ok "+JSON.stringify(response))
         return response
       } else {
         let error = new Error(response.statusText);

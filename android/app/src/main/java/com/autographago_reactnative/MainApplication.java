@@ -24,6 +24,7 @@ import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import io.invertase.firebase.auth.RNFirebaseAuthPackage;
 import io.invertase.firebase.storage.RNFirebaseStoragePackage;
 import io.invertase.firebase.firestore.RNFirebaseFirestorePackage;
+import io.invertase.firebase.database.RNFirebaseDatabasePackage;
 // import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 // import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 
@@ -63,7 +64,8 @@ public class MainApplication extends Application implements ReactApplication {
             new RNFirebasePackage(),
             new RNFirebaseAuthPackage(),
             new RNFirebaseStoragePackage(),
-            new RNFirebaseFirestorePackage()
+            new RNFirebaseFirestorePackage(),
+            new RNFirebaseDatabasePackage()
             // new RNFirebaseNotificationsPackage(),
             // new RNFirebaseMessagingPackage()
       );

@@ -68,7 +68,7 @@ export default class Login extends Component {
         })
     }
 
-    async componentDidMount() {
+    async componentDidMount(){
       var config = {
         apiKey: "AIzaSyDUc9nH-YlnKD9YmJ8oisBfcAbUZh-6wg0",
         authDomain: "vachan-go.firebaseapp.com",

@@ -32,6 +32,7 @@ const API_BASE_URL = 'https://api.autographamt.com/v1/'
   function* fetchVersionBooks(params) {
     try {
       const payload = params.payload
+
       // let downloaded = yield AsyncStorageUtil.getAllItems([
       //   AsyncStorageConstants.Keys.Downloaded,
       // ])
@@ -50,33 +51,34 @@ const API_BASE_URL = 'https://api.autographamt.com/v1/'
             }
           bookListData.push(books)
           }
-         
           // console.log("book list fetch book list ")
           // console.log("book list fetch book list ",response)
       }
       else{
         // const url  = API_BASE_URL + "bibles" + "/" + payload.sourceId + "/" + "books"
-        var response = yield call(fetchApi,'https://api.vachanonline.net/v1/booknames')
-        console.language("language ",response)
-
-        for(var i =0;i<response.length;i++){
-          console.language("language ",response[i].language.name)
-          // console.language("language ",payload)response[i].language.name
-          if(payload.language === response[i].language.name){
-            // console.language("language ",response[i].language)
-            for(var j=0;i<response[i].bookNames.length;j++ ){
-                console.language("book id  ",response[i].bookNames[j].book_code)
-              var books= {
-                bookId:response[i].bookNames[j].book_code,
-                bookName:response[i].bookNames[j].abbr,
-                section:getBookSectionFromMapping(response[i].bookNames[j].book_code),
-                bookNumber:response[i].bookNames[j].book_id,
-                numOfChapters:getBookChaptersFromMapping(response[i].bookNames[j].book_code)
-            }
-            bookListData.push(books)
+        var result = yield call(fetch,'https://api.vachanonline.net/v1/booknames')
+        // console.log("response data  ",result)
+        if(result.ok && result.status == 200){
+          const response = yield result.json()
+          // console.log("response data  ",response)
+          for(var i =0;i<response.length;i++){
+            // console.log("language name ",payload.language.toLowerCase(),response[i].language.name)
+            if(payload.language.toLowerCase() == response[i].language.name){
+              console.log("language equal  ",response[i].language)
+              for(var j=0;j<response[i].bookNames.length;j++ ){
+                  console.log("book id  ",response[i].bookNames[j].book_code)
+                  // console.language("book name  ", response[i].bookNames[j])
+                var books= {
+                  bookId:response[i].bookNames[j].book_code,
+                  bookName:response[i].bookNames[j].long,
+                  section:getBookSectionFromMapping(response[i].bookNames[j].book_code),
+                  bookNumber:response[i].bookNames[j].book_id,
+                  numOfChapters:getBookChaptersFromMapping(response[i].bookNames[j].book_code)
+              }
+              bookListData.push(books)
+              }
             }
           }
-         
         }
       }
       var res = bookListData.length == 0 ? [] : bookListData.sort(function(a, b){return a.bookNumber - b.bookNumber})
