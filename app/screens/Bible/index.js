@@ -706,7 +706,7 @@ updateData = ()=>{
 }
 
   render() {
-    // console.log("downloaded book...  ",this.state.downloadedBook[this.state.currentVisibleChapter-1].verses)
+    console.log("chapter content book...  ",this.state.chapterContent)
     return(
     <View  style={this.styles.container}>
       {this.state.isLoading &&
@@ -735,6 +735,9 @@ updateData = ()=>{
                   </Button>
             </Header>
           }
+          {/* <View>
+        <Text>{this.state.currentVisibleChapter}</Text>
+          </View> */}
               <FlatList
                 data={this.state.chapterContent }
                 contentContainerStyle={{flexGrow:1,margin:16}}

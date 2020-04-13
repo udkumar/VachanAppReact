@@ -135,12 +135,12 @@ export const styles =(colorFile, sizeFile) =>{
     },
     verseNumber:{
         fontSize:sizeFile.contentText,
-        color:colorFile.textColor
+        color:colorFile.textColor,
+        fontWeight:'normal'
     },
     verseChapterNumber:{
         fontSize:sizeFile.titleText,
-        
-        //fontFamily:fontfamily,fontSize:22,
+        // fontWeight:'bold'
     },
     verseTextSelectedHighlighted:{
         backgroundColor:colorFile.highlightColor,

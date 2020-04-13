@@ -10,10 +10,10 @@ BookModel.schema = {
       versionCode: 'string',
       bookId: 'string',
       bookName: 'string',
+      bookNumber: 'int',
       chapters: 'ChapterModel[]',
       // bookmarksList: 'int?[]',
       section: {type: 'string', default: 'NT'},
-      bookNumber: 'int',
       // bookOwner: {type: 'linkingObjects', objectType: 'VersionModel', property:'bookModels' }
     }
 };

@@ -79,12 +79,12 @@ class LanguageList extends Component {
       // var diffDays = Math.round(Math.abs((d.getTime() - ud.getTime())/(oneDay)))
       const languageList =  await DbQueries.getLangaugeList()
       // console.log("this.props.bibleLanguages[0]",this.props.bibleLanguages[0])
-      console.log("languages data base  ",languageList)
+      // console.log("languages data base  ",languageList)
 
       if(languageList === null){
-        console.log("language LIST ",languageList)
+        // console.log("language LIST ",languageList)
         if(this.props.bibleLanguages[0].content.length > 0){
-          console.log("language  update ",this.props.bibleLanguages[0].content)
+          // console.log("language  update ",this.props.bibleLanguages[0].content)
           DbQueries.addLangaugeList(this.props.bibleLanguages[0].content)
           lanVer = this.props.bibleLanguages[0].content
         }
@@ -120,60 +120,58 @@ class LanguageList extends Component {
       var bookModels = []
       try{
         this.setState({startDownload:true})
+        const response = await APIFetch.fetchBookInLanguage()
         var content = await APIFetch.getAllBooks(sourceId,"json")
-        if(content.bibleContent){
-        var content = content.bibleContent
-        for(var id in content){
-          var  chapterModels = []
-          if(content != null){
-            for(var i=0; i< content[id].chapters.length; i++){
-              var  verseModels = []
-              for(var j=0; j< content[id].chapters[i].verses.length; j++){
-                verseModels.push(content[id].chapters[i].verses[j])
-              }
-              var chapterModel = { 
-                chapterNumber:  parseInt(content[id].chapters[i].header.title),
-                numberOfVerses: parseInt(content[id].chapters[i].verses.length),
-                verses:verseModels,
-              }
-              chapterModels.push(chapterModel)
-            }
-          }
-          bookModels.push({
+        for(var i =0;i<response.length;i++){
+          if(langName.toLowerCase() == response[i].language.name && content.bibleContent){
+            for(var j=0;j<response[i].bookNames.length;j++){
+            // console.log("chapters ", this.getChapters(content.bibleContent,response[i].bookNames[j].book_code).length)
+            bookModels.push({
             languageName: langName,
             versionCode: verCode,
-            bookId: id,
-            bookName:getBookNameFromMapping(id,langName),
-            chapters: chapterModels,
-            section: getBookSectionFromMapping(id),
-            bookNumber: getBookNumberFromMapping(id)
+            bookId:response[i].bookNames[j].book_code,
+            bookName:response[i].bookNames[j].long,
+            bookNumber:response[i].bookNames[j].book_id,
+            chapters: this.getChapters(content.bibleContent,response[i].bookNames[j].book_code),
+            section: getBookSectionFromMapping(response[i].bookNames[j].book_code),
           })
+            }
+          }
         }
       var result = bookModels.sort(function(a, b){
         return parseFloat(a.bookId) - parseFloat(b.bookId);  
       })
-      // console.log("result ",result)
-      // const booksid = await APIFetch.fetchBookInLanguage()
-      // var bookListData=[]
-      // for(var key in booksid[0].books){
-      //   var bookId = booksid[0].books[key].abbreviation
-      //   bookListData.push(bookId)
-      // }
-      // langName,versCode,bookModels,sourceId
-      DbQueries.addNewVersion(langName,verCode,result,sourceId)
-      // languageList().then(async(language) => {
-      //   this.setState({languages:language})
-      // })
-    }
+      console.log("result ",result.length)
+      // DbQueries.addNewVersion(langName,verCode,result,sourceId)
       this.setState({startDownload:false})
-
       }catch(error){
       this.setState({startDownload:false})
       console.log("error ",error)
         alert("There is some error on downloading this version please select another version")
       }
     }
- 
+    getChapters=(content,bookId)=>{
+      var chapterModels =[]
+      
+        for(var id in content){
+        if(content != null && id == bookId){
+          console.log("id in chapter",id,bookId)
+          for(var i=0; i<content[id].chapters.length; i++){
+            var  verseModels = []
+            for(var j=0; j<content[id].chapters[i].verses.length; j++){
+              verseModels.push(content[id].chapters[i].verses[j])
+            }
+            var chapterModel = { 
+              chapterNumber:  parseInt(content[id].chapters[i].header.title),
+              numberOfVerses: parseInt(content[id].chapters[i].verses.length),
+              verses:verseModels,
+            }
+            chapterModels.push(chapterModel)
+          }
+          return chapterModels
+        }
+      }
+    }
     navigateTo(langName,langCode,verCode,sourceId,downloaded){
       console.log(" navigate to ",langName,langCode,verCode,sourceId,downloaded)
        this.props.navigation.state.params.updateLangVer({
