@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { Text,Alert, StyleSheet,ScrollView,Dimensions, Modal,View,ActivityIndicator,TextInput,FlatList,LayoutAnimation,UIManager,Platform,TouchableOpacity} from 'react-native';
 import {Card,ListItem,Left,Right,List,Accordion} from 'native-base'
+import firebase from 'react-native-firebase';
 import { NavigationActions,StackActions } from 'react-navigation'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import DbQueries from '../../utils/dbQueries'
 import APIFetch from '../../utils/APIFetch'
 import timestamp from '../../assets/timestamp.json'
-import { getBookNameFromMapping, getBookSectionFromMapping, getBookNumberFromMapping } from '../../utils/UtilFunctions';
+import {getBookSectionFromMapping, getBookNumberFromMapping } from '../../utils/UtilFunctions';
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants';
 import { styles } from './styles.js';
@@ -119,13 +120,25 @@ class LanguageList extends Component {
     downloadBible = async(langName,verCode,index,sourceId)=>{
       var bookModels = []
       try{
+
+        const curTime = Date.now().toString() + "_1"
+        notification = new firebase.notifications.Notification()
+            .setNotificationId(curTime)
+            .setTitle('Downloading')
+            .setBody(this.state.languageName +" Bible downloading" )
+            .android.setChannelId('download_channel')
+            .android.setSmallIcon('ic_launcher')
+            .android.setOngoing(true)
+
+        firebase.notifications().displayNotification(notification)
+
+
         this.setState({startDownload:true})
         const response = await APIFetch.fetchBookInLanguage()
         var content = await APIFetch.getAllBooks(sourceId,"json")
         for(var i =0;i<response.length;i++){
           if(langName.toLowerCase() == response[i].language.name && content.bibleContent){
             for(var j=0;j<response[i].bookNames.length;j++){
-            // console.log("chapters ", this.getChapters(content.bibleContent,response[i].bookNames[j].book_code).length)
             bookModels.push({
             languageName: langName,
             versionCode: verCode,
@@ -138,11 +151,9 @@ class LanguageList extends Component {
             }
           }
         }
-      var result = bookModels.sort(function(a, b){
-        return parseFloat(a.bookId) - parseFloat(b.bookId);  
-      })
-      console.log("result ",result.length)
-      // DbQueries.addNewVersion(langName,verCode,result,sourceId)
+      DbQueries.addNewVersion(langName,verCode,bookModels,sourceId)
+      firebase.notifications().removeDeliveredNotification(curTime)
+      await this.fetchLanguages()
       this.setState({startDownload:false})
       }catch(error){
       this.setState({startDownload:false})

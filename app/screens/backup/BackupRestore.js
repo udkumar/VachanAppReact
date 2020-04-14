@@ -9,7 +9,7 @@ import {
   Button,
   FlatList,
 } from 'react-native';
-import {Card,CardItem} from 'native-base'
+import {Card} from 'native-base'
 import firebase from 'react-native-firebase';
 import Login from './Login';
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -20,6 +20,7 @@ var RNFS = require('react-native-fs');
 import {connect} from 'react-redux'
 
 class BackupRestore extends Component {
+
     static navigationOptions = ({navigation}) => ({
         headerTitle: 'Backup and Restore',
     });
@@ -32,7 +33,7 @@ class BackupRestore extends Component {
         this.state = {
             downloadData:[],
             isLoading: false,
-            user: firebase.auth().currentUser,
+            // user: firebase.auth().currentUser,
             url: props.navigation.getParam('url', null),
             dataSource: [],
 
@@ -42,9 +43,7 @@ class BackupRestore extends Component {
     }
 
     async componentDidMount() {
-        console.log(" USER ",firebase.auth().currentUser)
         this.unsubscriber = firebase.auth().onAuthStateChanged((user) => {
-            console.log("user unsubscriber ",user)
             this.setState({ user });
         });
         
@@ -99,42 +98,30 @@ class BackupRestore extends Component {
         }
     }
 
-    getUniqueId(){
+    getUniqueId() {
         console.log("substring ",this.s4)
+
         return this.s4() + this.s4() + '-' + this.s4() + '-' + this.s4() + '-' 
             + this.s4() + '-' + this.s4() + this.s4() + this.s4();
     }
 
-    s4(){
+    s4() {
         return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
     }
-    backupData(){
-        firebase.database().ref('users/').set({
-            username: "neetu",
-            email: "neetuy1455",
-          }, function(error) {
-            if (error) {
-                console.log("Some error is there on back up - ",error)
-              // The write failed...
-            } else {
-                console.log("Data saved successfully ")
-              // Data saved successfully!
-            }
-          });
-        }
+
     startBackup = (uid, emailId) => {
         var self = this;
 
-    //     // Points to the root reference
-        var storageRef = firebase.app().storage().ref();
-    //     // Points to 'databases'
+        // Points to the root reference
+        // var storageRef = firebase.app().storage().ref();
+        // Points to 'databases'
         var dbRef = storageRef.child('databases/' + emailId + '/' + uid);
-    //     // Points to 'databases/autographa.realm'
-    //     // Note that you can use variables to create child values
-        var fileName = 'vachanApp.realm';
+        // Points to 'databases/autographa.realm'
+        // Note that you can use variables to create child values
+        var fileName = 'autographa.realm';
         var spaceRef = dbRef.child(fileName);
 
-        const fileURI = RNFS.DocumentDirectoryPath+'/vachanApp.realm';
+        const fileURI = RNFS.DocumentDirectoryPath+'/autographa.realm';
         var uploadTask = spaceRef.putFile(fileURI)
 
     //     console.log("START UPLOAD ...")
@@ -146,7 +133,7 @@ class BackupRestore extends Component {
     //         // Observe state change events such as progress, pause, and resume
     //         // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
             var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-    //         console.log('Upload is ' + progress + '% done');
+            console.log('Upload is ' + progress + '% done');
             switch (snapshot.state) {
                 case firebase.storage.TaskState.PAUSED: // or 'paused'
                     console.log('Upload is paused');
@@ -189,9 +176,9 @@ class BackupRestore extends Component {
                     break;
             }
         }, function(error) {
-            // Handle unsuccessful uploads
-            // A full list of error codes is available at
-            // https://firebase.google.com/docs/storage/web/handle-errors
+    //         // Handle unsuccessful uploads
+    //         // A full list of error codes is available at
+    //         // https://firebase.google.com/docs/storage/web/handle-errors
             switch (error.code) {
                 case 'storage/unauthorized':
                     console.log("error : User doesn't have permission to access the object")
@@ -207,19 +194,19 @@ class BackupRestore extends Component {
     }
 
     doBackup = () => {
-        var emailId = this.state.user == null ? null : this.state.user._user.email;
+        var emailId = this.state.user == null ? null : this.state.user.email;
         if (emailId == null) {
             Alert.alert("User not found")
             return
         }
-        var uid = this.getUniqueId()
+        var uid = this.getUniqueId();
         this.setState({isLoading: true}, () => {
             this.startBackup(uid, emailId)
         })
     }
 
     doList = () => {
-        var emailId = this.state.user == null ? null : this.state.user._user.email;
+        var emailId = this.state.user == null ? null : this.state.user.email;
         if (emailId == null) {
         } else {
             console.log("DO READ.. " + emailId)
@@ -231,7 +218,6 @@ class BackupRestore extends Component {
                         console.log(`${doc.id} => ${doc.data().url}`);
                     })
                     this.setState({dataSource})
-                    console.log("dataSource ",dataSource)
                 })
         }
     }
@@ -241,7 +227,7 @@ class BackupRestore extends Component {
 
         RNFS.downloadFile({
                 fromUrl: item.url, 
-                toFile: RNFS.DocumentDirectoryPath + '/vachanApp.realm'
+                toFile: RNFS.DocumentDirectoryPath + '/autographa.realm'
             })
             .promise.then(result => {
                 console.log("RESTOR DONE, nOW RESTATTS")
@@ -261,23 +247,14 @@ class BackupRestore extends Component {
             { cancelable: true }
         )
     }
-    convert=(str)=>{
-        console.log(" STR",str)
-        var date = new Date(str)
-        // const  mnth =date.getMonth()+1,
-        // const  day = 
-        // return date.getFullYear()+"-"+mnth+"-"+date.getDate()
-        return date.toString()
-      }
-      
+
     renderItem = ({item,index})=>{
         return(
             <Card style={this.styles.cardStyle}>
                 <TouchableOpacity onPress={()=> this.doRestore(item)}>
                 <CardItem  style={this.styles.cardItemStyle}>
                     <Text style={this.styles.textStyle} >
-                        {/* {item.timestamp.seconds.toString()}    */}
-                        {this.convert(item.timestamp.seconds*1000)}
+                        {item.timestamp.toString()}   
                     </Text>
                 </CardItem>
                 </TouchableOpacity>
@@ -286,14 +263,13 @@ class BackupRestore extends Component {
     }
 
     render() {
-        // console.log("user ",this.state.user._user.email)
         if (!this.state.user) {
             return <Login 
                 styles = {this.styles}
             />;
         }
         return (
-            // <View style={this.styles.container}>
+            <View style={this.styles.container}>
                 <View style={this.styles.containerMargin}>
                     <ActivityIndicator
                         style={this.styles.loaderStyle}
@@ -303,7 +279,7 @@ class BackupRestore extends Component {
                     <Text style={this.styles.textStyle}>Welcome to Autographa Go !</Text>
                     <Button 
                         style={this.styles.buttonStyle}
-                        onPress={this.backupData}
+                        onPress={this.doBackup}
                         title="BACKUP NOW"
                        />
                     <Icon 
@@ -315,7 +291,7 @@ class BackupRestore extends Component {
                         data={this.state.dataSource}
                         renderItem={this.renderItem}
                         />
-                {/* </View> */}
+                </View>
             </View>
         );
     }

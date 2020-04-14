@@ -168,6 +168,7 @@ dependencies {
     implementation "com.google.firebase:firebase-storage:17.0.0"
     implementation "com.google.firebase:firebase-firestore:19.0.0"
     implementation 'com.google.firebase:firebase-database:19.2.1'
+    implementation 'com.google.firebase:firebase-messaging:20.1.5'
 
     // implementation "com.google.firebase:firebase-core:16.0.1"
     // implementation "com.google.android.gms:play-services-base:15.0.0"
