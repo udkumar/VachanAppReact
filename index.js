@@ -58,6 +58,22 @@ class RNRedux extends Component{
     //     // await this.setInitialValue()
     //       SplashScreen.hide()
     //     }
+    async componentDidMount() {
+          // var email = await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.BackupRestoreEmail, "")
+          // this.setState({email})
+          var config = {
+            apiKey: "AIzaSyDUc9nH-YlnKD9YmJ8oisBfcAbUZh-6wg0",
+            authDomain: "vachan-go.firebaseapp.com",
+            databaseURL: "https://vachan-go.firebaseapp.com",
+            projectId: "vachan-go",
+            storageBucket: "vachan-go.appspot.com",
+             messagingSenderId: "486797934259"
+           };
+          firebase.initializeApp(config);
+            // var email = await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.BackupRestoreEmail, "")
+            // this.setState({email})          
+    }
+
     render(){
     return <Provider store={store}>
                 <PersistGate 

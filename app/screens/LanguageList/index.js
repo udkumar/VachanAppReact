@@ -120,7 +120,6 @@ class LanguageList extends Component {
     downloadBible = async(langName,verCode,index,sourceId)=>{
       var bookModels = []
       try{
-
         const curTime = Date.now().toString() + "_1"
         notification = new firebase.notifications.Notification()
             .setNotificationId(curTime)
@@ -129,7 +128,6 @@ class LanguageList extends Component {
             .android.setChannelId('download_channel')
             .android.setSmallIcon('ic_launcher')
             .android.setOngoing(true)
-
         firebase.notifications().displayNotification(notification)
 
 
@@ -139,6 +137,7 @@ class LanguageList extends Component {
         for(var i =0;i<response.length;i++){
           if(langName.toLowerCase() == response[i].language.name && content.bibleContent){
             for(var j=0;j<response[i].bookNames.length;j++){
+            console.log("book name while downloading from api ",response[i].bookNames[j].long)
             bookModels.push({
             languageName: langName,
             versionCode: verCode,

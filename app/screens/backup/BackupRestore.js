@@ -9,11 +9,12 @@ import {
   Button,
   FlatList,
 } from 'react-native';
-import {Card} from 'native-base'
+import {Card,CardItem} from 'native-base'
 import firebase from 'react-native-firebase';
 import Login from './Login';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {backupPageStyle} from './styles.js'
+import DbQueries from '../../utils/dbQueries'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
 var RNFS = require('react-native-fs');
@@ -33,7 +34,7 @@ class BackupRestore extends Component {
         this.state = {
             downloadData:[],
             isLoading: false,
-            // user: firebase.auth().currentUser,
+            user: firebase.auth().currentUser,
             url: props.navigation.getParam('url', null),
             dataSource: [],
 
@@ -43,10 +44,10 @@ class BackupRestore extends Component {
     }
 
     async componentDidMount() {
+        console.log(" USER ",firebase.auth().currentUser)
         this.unsubscriber = firebase.auth().onAuthStateChanged((user) => {
             this.setState({ user });
         });
-        
         this.doList()
 
         const url = this.state.url;
@@ -108,6 +109,31 @@ class BackupRestore extends Component {
     s4() {
         return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
     }
+    
+    async backupData(uid,emailId){
+        let model = await  DbQueries.queryBookmark(this.props.languageName,this.props.versionCode,null,null)
+        if (model == null) {
+            console.log(" model ",model)
+        }
+        else{
+            console.log(" model not null",model)
+            if(model.length > 0){
+                firebase.database().ref('users/'+uid).set({
+                    emailId: emailId,
+                    uid: uid,
+                    bookmarks:model
+                  }, function(error) {
+                    if (error) {
+                        console.log("Some error is there on back up - ",error)
+                      // The write failed...
+                    } else {
+                        console.log("Data saved successfully ")
+                      // Data saved successfully!
+                    }
+                  });
+            }
+        }
+        }
 
     startBackup = (uid, emailId) => {
         var self = this;
@@ -116,12 +142,12 @@ class BackupRestore extends Component {
         // var storageRef = firebase.app().storage().ref();
         // Points to 'databases'
         var dbRef = storageRef.child('databases/' + emailId + '/' + uid);
-        // Points to 'databases/autographa.realm'
+        // Points to 'databases/vachanApp.realm'
         // Note that you can use variables to create child values
-        var fileName = 'autographa.realm';
+        var fileName = 'vachanApp.realm';
         var spaceRef = dbRef.child(fileName);
 
-        const fileURI = RNFS.DocumentDirectoryPath+'/autographa.realm';
+        const fileURI = RNFS.DocumentDirectoryPath+'/vachanApp.realm';
         var uploadTask = spaceRef.putFile(fileURI)
 
     //     console.log("START UPLOAD ...")
@@ -194,19 +220,23 @@ class BackupRestore extends Component {
     }
 
     doBackup = () => {
-        var emailId = this.state.user == null ? null : this.state.user.email;
+        // var emailId = this.state.user == null ? null : this.state.user.email;
+        var emailId = this.state.user == null ? null : this.state.user._user.email;
         if (emailId == null) {
             Alert.alert("User not found")
             return
         }
+        console.log("this state user ",this.state.user._user.uid)
         var uid = this.getUniqueId();
         this.setState({isLoading: true}, () => {
-            this.startBackup(uid, emailId)
+            // this.startBackup(uid, emailId)
+            this.backupData(this.state.user._user.uid, emailId)
         })
     }
 
     doList = () => {
-        var emailId = this.state.user == null ? null : this.state.user.email;
+        // var emailId = this.state.user == null ? null : this.state.user.email;
+        var emailId = this.state.user == null ? null : this.state.user._user.email;
         if (emailId == null) {
         } else {
             console.log("DO READ.. " + emailId)
@@ -221,13 +251,20 @@ class BackupRestore extends Component {
                 })
         }
     }
-
+    convert=(str)=>{
+        console.log(" STR",str)
+        var date = new Date(str)
+        // const  mnth =date.getMonth()+1,
+        // const  day = 
+        // return date.getFullYear()+"-"+mnth+"-"+date.getDate()
+        return date
+      }
     startRestore = (item) => {
         console.log('OK Pressed .. ' + item.url)
 
         RNFS.downloadFile({
                 fromUrl: item.url, 
-                toFile: RNFS.DocumentDirectoryPath + '/autographa.realm'
+                toFile: RNFS.DocumentDirectoryPath + '/vachanApp.realm'
             })
             .promise.then(result => {
                 console.log("RESTOR DONE, nOW RESTATTS")
@@ -254,7 +291,8 @@ class BackupRestore extends Component {
                 <TouchableOpacity onPress={()=> this.doRestore(item)}>
                 <CardItem  style={this.styles.cardItemStyle}>
                     <Text style={this.styles.textStyle} >
-                        {item.timestamp.toString()}   
+                        {/* {item.timestamp.toString()}    */}
+                        {this.convert(item.timestamp.seconds*1000)}
                     </Text>
                 </CardItem>
                 </TouchableOpacity>
@@ -302,6 +340,8 @@ const mapStateToProps = state =>{
     return{
       sizeFile:state.updateStyling.sizeFile,
       colorFile:state.updateStyling.colorFile,
+      languageName: state.updateVersion.language,
+      versionCode:state.updateVersion.versionCode,
       // chapterNumber:state.selectReference.chapterNumber,
     }
   }

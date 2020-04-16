@@ -40,14 +40,20 @@ const API_BASE_URL = 'https://api.autographamt.com/v1/'
       if(payload.downloaded) {
         // console.log("payload bible ")
         var response = yield DbQueries.getDownloadedBook(payload.language,payload.versionCode)
+        // console.log("book name downloaded  ",response)
+
          for(var i = 0; i<response.length;i++){
-          var bookId = response[i]
+          // var bookId = response[i]
+          console.log("book id ",response[i].bookId)
+          console.log("book name ",response[i].bookName)
+          console.log("book number ",response[i].bookNumber)
+
           var books = {
-                bookId:bookId,
-                bookName:getBookNameFromMapping(bookId,payload.language),
-                section:getBookSectionFromMapping(bookId),
-                bookNumber:getBookNumberFromMapping(bookId),
-                numOfChapters:getBookChaptersFromMapping(bookId)
+                bookId:response[i].bookId,
+                bookName:response[i].bookName,
+                section:getBookSectionFromMapping(response[i].bookId),
+                bookNumber:response[i].bookNumber,
+                numOfChapters:getBookChaptersFromMapping(response[i].bookId)
             }
           bookListData.push(books)
           }
@@ -87,7 +93,7 @@ const API_BASE_URL = 'https://api.autographamt.com/v1/'
       // console.log("NOT GETTING DATA ",bookListData)
     
     } catch (e) {
-      // console.log("ERROR ON GETTING BOOOKLIST ",e)
+      console.log("ERROR ON GETTING BOOOKLIST ",e)
     yield put(versionBooksFailure(e))
     yield put(versionBooksSuccess([]))
     }

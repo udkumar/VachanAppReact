@@ -5,6 +5,10 @@ import {ScrollView, Text, View, StyleSheet,ImageBackground,TouchableOpacity,Imag
 import { DrawerActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {connect} from 'react-redux'
+// import auth from 'react-native-firebase';
+import firebase from 'react-native-firebase'
+import AsyncStorageUtil from '../../utils/AsyncStorageUtil'
+
 
 class DrawerScreen extends Component {
   
@@ -31,6 +35,10 @@ class DrawerScreen extends Component {
 
       {icon:'settings',pressIcon:'Settings'},
     ]
+    logOut=()=>{
+      firebase.auth().signOut()
+      AsyncStorageUtil.removeItem(AsyncStorageConstants.Keys.BackupRestoreEmail)
+    }
     return (
       <ScrollView style={{flex:1}}> 
           <View style={styles.headerContainer}>
@@ -60,6 +68,20 @@ class DrawerScreen extends Component {
               </TouchableOpacity>
           )
         }
+        <TouchableOpacity 
+                onPress={this.logOut}
+                style={{
+                  flex:1,
+                    flexDirection:"row",
+                    padding:8,
+                    borderWidth: 0.3,
+                    borderColor: '#d6d7da'
+                }}>
+                  {/* <Icon name={iconName.icon} size={20} style={{paddingRight:16}}/> */}
+                  <Text style={{fontSize:16}}>
+                    Log Out
+                  </Text>
+        </TouchableOpacity>
       
       </ScrollView>
     );

@@ -14,7 +14,7 @@ import BookmarksListModel from '../models/BookmarksListModel';
 import HighlightsModel from '../models/HighlightsModel';
 import HistoryModel from '../models/HistoryModel';
 import VerseMetadataModel from '../models/VerseMetadataModel';
-
+import bookNameList from '../models/bookNameList';
 
 import {
 	Platform,
@@ -28,13 +28,13 @@ class DbHelper {
     async getRealm() {
     	try {
     		return await Realm.open({
-				schemaVersion: 2,
+				schemaVersion: 4,
 				deleteRealmIfMigrationNeeded: true, 
 				path:
 					Platform.OS === 'ios'
 					? RNFS.MainBundlePath + '/vachanApp.realm'
 					: RNFS.DocumentDirectoryPath + '/vachanApp.realm',
-				schema: [LanguageModel.schema, VersionModel.schema, BookModel.schema, ChapterModel.schema, VerseModel.schema, NoteModel.schema, NoteStylingModel.schema,VerseStylingModel.schema, ReferenceModel.schema, HistoryModel.schema,BookmarksListModel.schema,HighlightsModel.schema,VerseMetadataModel.schema] });
+				schema: [LanguageModel.schema, VersionModel.schema, BookModel.schema, ChapterModel.schema, VerseModel.schema, NoteModel.schema, NoteStylingModel.schema,VerseStylingModel.schema, ReferenceModel.schema, HistoryModel.schema,BookmarksListModel.schema,HighlightsModel.schema,VerseMetadataModel.schema,bookNameList.schema] });
 				// console.log('create db:', db.path)
 			} catch (err) {
 			console.log("error in getItem"+err)
@@ -263,6 +263,7 @@ class DbHelper {
 
 	}
 	async queryBookmark(langName,verCode,bId){
+		console.log("languagge version ",langName,verCode)
 
 		let realm = await this.getRealm()
 
@@ -468,9 +469,9 @@ class DbHelper {
 				realm.write(() => {
 						for(var i=0;i<bookmodel.length;i++){
 						realm.create('BookModel', bookmodel[i])
-						bookIdList.push(bookmodel[i].bookId)
+						bookIdList.push({bookId:bookmodel[i].bookId,bookName:bookmodel[i].bookName,bookNumber:bookmodel[i].bookNumber})
 						}
-						resultsB[0].bookNameList = bookIdList
+					resultsB[0].bookNameList = bookIdList
 					resultsB[0].downloaded = true;
 				})
 			}

@@ -20,6 +20,12 @@ import StudyHelp from '../screens/StudyHelp/'
 
 import Hints from '../screens/Hints/Hints'
 import BackupRestore from '../screens/backup/BackupRestore'
+import Reset from '../screens/backup/Reset'
+import Register from '../screens/backup/Register'
+import Login from '../screens/backup/Login'
+
+
+
 import DrawerScreen from '../screens/DrawerScreen/DrawerScreen'
 import Bible from '../screens/Bible'
 import LanguageList from '../screens/LanguageList'
@@ -61,6 +67,9 @@ const NavStack = createStackNavigator(
 
        },
       BackupRestore: {screen: BackupRestore },
+      Reset:{screen: Reset},
+      Login:{screen: Login},
+      Register:{screen: Register},
       SelectionTab:{screen:SelectionTab,
         navigationOptions: { headerTitle:"Select Chapter" }
       },

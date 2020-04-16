@@ -40,6 +40,8 @@ import Dictionary from '../StudyHelp/Dictionary/'
 import MainHeader from '../../components/MainHeader'
 import {Card,CardItem,Content,Body,Header,Container, Button,Right,Left,Title} from 'native-base'
 import BibleChapter from './component/BibleChapter';
+import firebase from 'react-native-firebase'
+
 
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
@@ -153,12 +155,16 @@ class Bible extends Component {
       message:'',
       status:false,
       modalVisible: false,
-      arrLayout:[]
+      arrLayout:[],
+
+      initializing:true,
+      user:''
       //modal value for showing chapter grid 
     }
 
     this.getSelectedReferences = this.getSelectedReferences.bind(this)
     this.onBookmarkPress = this.onBookmarkPress.bind(this)
+    this.unsubscriber = null
     // this.getReference = this.getReference.bind(this)
     this.alertPresent
     this.pinchDiff = 0
@@ -204,6 +210,14 @@ class Bible extends Component {
     this.styles = styles(nextProps.colorFile, nextProps.sizeFile);  
   }
   async componentDidMount(){
+    this.unsubscriber = firebase.auth().onAuthStateChanged((user)=>{
+      if (!user) {
+        return this.props.navigation.navigate('Login');
+      }
+      this.setState({user})
+      if (this.state.initializing) {this.setState({initializing:false})}
+    })
+    
     this.gestureResponder = createResponder({
       onStartShouldSetResponder: (evt, gestureState) => true,
       onStartShouldSetResponderCapture: (evt, gestureState) => true,
@@ -653,7 +667,9 @@ this.setState({audio:false})
   }
  
   componentWillUnmount(){
-
+    if (this.unsubscriber) {
+      this.unsubscriber();
+    }
       var time =  new Date()
       DbQueries.addHistory(item.sourceId,item.languageName,item.languageCode, 
       item.versionCode, this.props.bookId, this.state.currentVisibleChapter, item.downloaded, time)

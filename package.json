@@ -58,7 +58,7 @@
     "eslint": "5.15.3",
     "jest": "^24.7.1",
     "jest-serializer-enzyme": "^1.0.0",
-    "jetifier": "^1.6.4",
+    "jetifier": "^1.6.5",
     "metro-react-native-babel-preset": "0.53.1",
     "react-addons-test-utils": "^15.6.2",
     "react-devtools": "^3.2.1",
