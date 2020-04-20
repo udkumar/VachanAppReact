@@ -69,7 +69,7 @@ export default class Register extends Component {
                     />
                     </View>
                     <View style={{alignItems: 'center', justifyContent: 'center' }}>
-                    <Text onPress={() => {this.props.navigation.navigate('Login');}}>Already a user?</Text>
+                    <Text onPress={()=>this.props.navigation.navigate('Login')}>Already a user?</Text>
                     </View>
                  
                 </View>

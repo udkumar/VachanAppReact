@@ -22,27 +22,7 @@ const persistConfig = {
     storage: AsyncStorage,
     whitelist: ['updateVersion','updateStyling'],
   };
-
-//   const versionPersistConfig = {
-//     key: 'updateVersion',
-//     storage: AsyncStorage,
-//     blacklist: ['parallelContentType', 'parallelContentLanguage', 'parallelContentLanguageCode', 'parallelContentVersion', 'parallelContentVersionCode', 'parallelContentDownloaded']
-// };
-
-// const stylingPersistConfig = {
-//     key: 'updateStyling',
-//     storage: AsyncStorage,
-//     blacklist: ['colorFile','sizeFile','verseInLine','fontFamily'],
-// };
-
 const reducer = persistReducer(persistConfig, rootReducer);
-// const store = createStore(reducer);
-
-// const persistedReducer = persistReducer(persistConfig, combineReducers({
-//     updateStyling: persistReducer(stylingPersistConfig, updateStylingReducer),
-//     updateVersion: persistReducer(versionPersistConfig, UpdateVersionReducer)
-// }));
-
 
 const store = createStore(
     reducer,
@@ -58,21 +38,21 @@ class RNRedux extends Component{
     //     // await this.setInitialValue()
     //       SplashScreen.hide()
     //     }
-    async componentDidMount() {
-          // var email = await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.BackupRestoreEmail, "")
-          // this.setState({email})
-          var config = {
-            apiKey: "AIzaSyDUc9nH-YlnKD9YmJ8oisBfcAbUZh-6wg0",
-            authDomain: "vachan-go.firebaseapp.com",
-            databaseURL: "https://vachan-go.firebaseapp.com",
-            projectId: "vachan-go",
-            storageBucket: "vachan-go.appspot.com",
-             messagingSenderId: "486797934259"
-           };
-          firebase.initializeApp(config);
-            // var email = await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.BackupRestoreEmail, "")
-            // this.setState({email})          
-    }
+    // async componentDidMount() {
+    //       // var email = await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.BackupRestoreEmail, "")
+    //       // this.setState({email})
+    //       var config = {
+    //         apiKey: "AIzaSyDUc9nH-YlnKD9YmJ8oisBfcAbUZh-6wg0",
+    //         authDomain: "vachan-go.firebaseapp.com",
+    //         databaseURL: "https://vachan-go.firebaseapp.com",
+    //         projectId: "vachan-go",
+    //         storageBucket: "vachan-go.appspot.com",
+    //          messagingSenderId: "486797934259"
+    //        };
+    //       firebase.initializeApp(config);
+    //         // var email = await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.BackupRestoreEmail, "")
+    //         // this.setState({email})          
+    // }
 
     render(){
     return <Provider store={store}>

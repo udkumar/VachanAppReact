@@ -1,12 +1,18 @@
 import React, {Component} from 'react';
-import { StyleSheet, ActivityIndicator, View, Text, Alert,TextInput,TouchableOpacity,Button} from 'react-native';
+import { StyleSheet, ActivityIndicator, View, Text, Alert,TextInput,TouchableOpacity,Button,BackHandler} from 'react-native';
 // import { Button } from 'native-base';
 // import auth from '@react-native-firebase/auth';
 import firebase from 'react-native-firebase'
+import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants';
+import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
+
 
 export default class Login extends Component {
-    constructor(){
-        super()
+    // static navigationOptions = {
+    //     header: null,
+    //     };
+    constructor(props){
+        super(props)
         this.state = {
             email:'',
             password:'',
@@ -15,13 +21,15 @@ export default class Login extends Component {
     }
 
     login = async() => {
-        this.setState({showLoading:true});
+        this.setState({showLoading:true})
         try {
             const doLogin = await firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password);
             this.setState({showLoading:false})
             if(doLogin.user) {
-                console.log("User ",doLogin.user)
-                this.props.navigation.navigate('Bible');
+                console.log("doLogin.user  ",doLogin.user)
+                AsyncStorageUtil.setItem(AsyncStorageConstants.Keys.BackupRestoreEmail,doLogin.user)
+                // console.log("User ",doLogin.user)
+                this.props.navigation.navigate('ProfilePage')
             }
         } catch (e) {
             this.setState({showLoading:false});
@@ -30,10 +38,35 @@ export default class Login extends Component {
             );
         }
     }
+    // handleAndroidBack(){
+    //     // console.log('back press'+Actions.currentScene)
+    //       BackHandler.exitApp()
+    //       return true;
+    // }
+    async componentDidMount(){
+        this.setState({showLoading:true})
+        var email = await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.BackupRestoreEmail)
+        // console.log("email ",email)
+        //  if(email ==='' ){
+        //     return 
+        //   }
+        // this.props.navigation.navigate('ProfilePage')
+        this.setState({showLoading:false,email:email})
+        // BackHandler.addEventListener('hardwareBackPress', this.handleAndroidBack)
+    }
+    // componentWillUnmount(){
+    //     BackHandler.removeEventListener('hardwareBackPress', this.handleAndroidBack)
+    // }
     render(){
         return (
             <View style={styles.container}>
                 <View style={styles.formContainer}>
+                    {/* <View style={styles.activity}>
+                    {
+                    this.state.showLoading &&
+                    <ActivityIndicator size="large" color="#0000ff" />
+                    }
+                        </View> */}
                     <View style={{alignItems: 'center', justifyContent: 'center'}}>
                         <Text style={{ fontSize: 28, height: 50  }}>Please Login!</Text>
                     </View>
@@ -65,13 +98,13 @@ export default class Login extends Component {
                     <View style={{ alignItems: 'flex-end', justifyContent: 'flex-end' }}>
                         <Text onPress={()=>this.props.navigation.navigate('Reset')}>Forgot Password?</Text>
                     </View>
+                    {/* <View style={{ alignItems: 'flex-end', justifyContent: 'flex-end' }}>
+                        <Text onPress={()=>this.props.navigation.navigate('Bible')}>Use as a Guest</Text>
+                    </View> */}
                     <View style={{ alignItems: 'flex-end', justifyContent: 'flex-end' }}>
                         <Text onPress={()=>this.props.navigation.navigate('Register')}>Not a user?</Text>
                     </View>
-                    {/* {this.state.showLoading &&
-                        <View style={styles.activity}>
-                            <ActivityIndicator size="large" color="#0000ff" />
-                        </View>} */}
+                    
                 </View>
             </View>
         )

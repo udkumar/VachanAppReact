@@ -9,13 +9,16 @@ import {AsyncStorageConstants} from './app/utils/AsyncStorageConstants'
 import SplashScreen from 'react-native-splash-screen'
 import {connect} from 'react-redux'
 import {fetchAllContent} from './app/store/action/'
+// import isSignedIn from './app/routes/auth'
 
 class App extends Component {
     constructor(props){
         super(props)
         console.log("props value APP PAGE ",props)
         this.state = {
-          isloading:false
+          isloading:false,
+          signedIn: false,
+          checkedSignIn: false
         }
       }
     
@@ -72,13 +75,33 @@ class App extends Component {
         }
       }
     
-    componentDidMount(){
+    async componentDidMount(){
+      // isSignedIn()
+      // .then(res => {
+      //   this.setState({ signedIn: res, checkedSignIn: true })
+      // })
+      // .catch(err => alert("An error occurred"));
+      // AsyncStorage.removeItem('notiReg')
+       var email = await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.BackupRestoreEmail, "")
+        this.setState({email})          
+    //  if (email ==='' || email !=null){
+    //   return 
+    //  }
+      setTimeout(() => {  
+         SplashScreen.hide()
+      }, 800)
+
       this.props.fetchAllContent()
         SplashScreen.hide()
     }
     render() {
-      console.log("PROPS IN APP NAVIGATOR ",this.props)
-        return <AppNavigator  />
+      // const Layout = AppNavigator(this.state.signedIn)
+      // if (!this.state.checkedSignIn) {
+      //   return null;
+      // }
+  
+      // console.log("PROPS IN APP NAVIGATOR ",this.props)
+        return <AppNavigator/>
     }
   }
 const mapDispatchToProps = dispatch =>{

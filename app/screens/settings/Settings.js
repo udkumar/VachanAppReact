@@ -164,7 +164,7 @@ class Setting extends Component {
                 />
               </ListItem> */}
               <ListItem>
-              <TouchableOpacity  style={[{flexDirection:'row'}]} onPress={()=>this.props.navigation.navigate('BackupRestore')}>              
+              <TouchableOpacity  style={[{flexDirection:'row'}]} onPress={()=>this.props.navigation.navigate('Login')}>              
                   <Icon name='settings-backup-restore' size={24} style={this.styles.cardItemIconCustom} />
                   <Text style={this.styles.textStyle}>Backup and Restore</Text>
               </TouchableOpacity>

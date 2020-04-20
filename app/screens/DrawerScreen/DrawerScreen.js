@@ -8,10 +8,44 @@ import {connect} from 'react-redux'
 // import auth from 'react-native-firebase';
 import firebase from 'react-native-firebase'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil'
+import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
+
+
 
 
 class DrawerScreen extends Component {
-  
+  constructor(props){
+    super(props)
+    this.unsubscriber = null
+    this.state = {
+      initializing:true,
+      user:''
+    }
+  }
+
+  onLogin=()=>{
+    if (this.state.initializing){this.setState({initializing:false})}
+    this.unsubscriber = firebase.auth().onAuthStateChanged((user)=>{
+      this.setState({user})
+      if (!user) {
+        this.props.navigation.navigate('ProfilePage') 
+      }
+      else{
+        console.log("user  ",user._user.email)
+        this.setState({user})
+        this.props.navigation.navigate('ProfilePage')
+      }
+    })
+  }
+  async componentDidMount(){
+    var email = await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.BackupRestoreEmail)
+    this.setState({email})
+  }
+  // componentWillUnmount(){
+  //   if(this.unsubscriber) {
+  //     this.unsubscriber();
+  //   }
+  // }
   render () {
     const valueProps  = this.props.navigation.state.routes[0].index == 1 ? (this.props.navigation.state.routes[0].routes[1].params ? this.props.navigation.state.routes[0].routes[1].params.photorUl : null) : null
  
@@ -35,18 +69,15 @@ class DrawerScreen extends Component {
 
       {icon:'settings',pressIcon:'Settings'},
     ]
-    logOut=()=>{
-      firebase.auth().signOut()
-      AsyncStorageUtil.removeItem(AsyncStorageConstants.Keys.BackupRestoreEmail)
-    }
+    
     return (
       <ScrollView style={{flex:1}}> 
           <View style={styles.headerContainer}>
                 <ImageBackground source={require('../../assets/headerbook.jpeg')} style={{flex: 1, width: 280, justifyContent: 'center'}} >
-                    <Text style={styles.headerText}>Header Portion</Text>
                      <Image source={{uri:valueProps}}
                      style={{width: 100, height: 100, borderRadius: 150/2, marginLeft: 120}}
                    />  
+                    <Text onPress={this.onLogin} style={styles.headerText}>Login/Sign Up</Text>
                 </ImageBackground>
             </View>
         {
@@ -68,21 +99,6 @@ class DrawerScreen extends Component {
               </TouchableOpacity>
           )
         }
-        <TouchableOpacity 
-                onPress={this.logOut}
-                style={{
-                  flex:1,
-                    flexDirection:"row",
-                    padding:8,
-                    borderWidth: 0.3,
-                    borderColor: '#d6d7da'
-                }}>
-                  {/* <Icon name={iconName.icon} size={20} style={{paddingRight:16}}/> */}
-                  <Text style={{fontSize:16}}>
-                    Log Out
-                  </Text>
-        </TouchableOpacity>
-      
       </ScrollView>
     );
   }

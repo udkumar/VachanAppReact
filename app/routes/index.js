@@ -23,6 +23,7 @@ import BackupRestore from '../screens/backup/BackupRestore'
 import Reset from '../screens/backup/Reset'
 import Register from '../screens/backup/Register'
 import Login from '../screens/backup/Login'
+import ProfilePage from '../screens/backup/ProfilePage'
 
 
 
@@ -67,9 +68,7 @@ const NavStack = createStackNavigator(
 
        },
       BackupRestore: {screen: BackupRestore },
-      Reset:{screen: Reset},
-      Login:{screen: Login},
-      Register:{screen: Register},
+    
       SelectionTab:{screen:SelectionTab,
         navigationOptions: { headerTitle:"Select Chapter" }
       },
@@ -89,6 +88,11 @@ const NavStack = createStackNavigator(
       Highlights:{screen:Highlights},
       NotePage:{screen:NotePage},
       Infographics:{screen:Infographics},
+      Login:{screen: Login},
+      Register:{screen: Register},
+      Reset:{screen: Reset},
+      ProfilePage:{screen:ProfilePage}
+
      
   },
   
@@ -126,24 +130,32 @@ const DrawerNavigate = createDrawerNavigator({
 },
 );
 
-const MenuIcon = (navigation) => {
-      console.log("navigation of drawer "+JSON.stringify(navigation))
-      return (
-          <Icon 
-            name="menu"  
-            color="#fff"
-            onPress={() => {navigation.navigate('DrawerToggle'),console.log("menu on press")}}
-            style={{marginHorizontal:8,fontSize:20}}
-          />
-      );
-    // return <Icon name="keyboard-arrow-lefte"  Size={38}/>
-   
-}
+// const SignedOut = createStackNavigator({
+//       Login:{screen: Login},
+//       Register:{screen: Register},
+//       Reset:{screen: Reset},
 
+// }) 
 
 const SwitchNavigator = createSwitchNavigator({
   DrawerNavigate:DrawerNavigate
   });
   
   export const AppNavigator = createAppContainer(SwitchNavigator);
+
+  // export const AppNavigator = (signedIn = false) => createAppContainer(
+  //   createSwitchNavigator(
+  //     {
+  //       SignedIn: {
+  //         screen: DrawerNavigate
+  //       },
+  //       SignedOut: {
+  //         screen: SignedOut
+  //       }
+  //     },
+  //     {
+  //       initialRouteName: signedIn ? "SignedIn" : "SignedOut"
+  //     }
+  //   )
+  // )
 

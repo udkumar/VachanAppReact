@@ -25,7 +25,6 @@ export default class Reset extends Component {
 
         } catch (e) {
             this.setState({showLoading:false})
-
             Alert.alert(
                 e.message
             );
@@ -49,7 +48,7 @@ export default class Reset extends Component {
                     </View>
                     <View style={styles.subContainer}>
                     <Button
-                        onPress={() => this.reset}
+                        onPress={this.reset}
                         style={styles.textInput}
                         title="Reset"
                         color="#841584"
@@ -63,7 +62,7 @@ export default class Reset extends Component {
                     </View>
                     <View style={styles.subContainer}>
                     <Button
-                        onPress={() => this.props.navigation.navigate('Login')}
+                        onPress={()=>this.props.navigation.navigate('Login')}
                         style={styles.textInput}
                         title="Back to Login"
                         color="#841584"
