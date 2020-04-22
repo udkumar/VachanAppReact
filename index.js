@@ -14,13 +14,11 @@ import rootReducer from './app/store/reducer/'
 // import UpdateVersionReducer from './app/store/reducer/updateVersionReducer'
 
 const sagaMiddleware = createSagaMiddleware()
-
-
-const persistConfig = {
+  const persistConfig = {
     // Root?
     key: 'root',
     storage: AsyncStorage,
-    whitelist: ['updateVersion','updateStyling'],
+    whitelist: ['updateVersion','updateStyling','userInfo'],
   };
 const reducer = persistReducer(persistConfig, rootReducer);
 

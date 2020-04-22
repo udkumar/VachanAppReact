@@ -14,6 +14,7 @@ export const AsyncStorageConstants = {
         BookId:'book_id',
         BookName:'book_name',
         BackupRestoreEmail:'backup_restore_email',
+        UserId:'user_id',
         ChapterNumber:"chapter_number",
         BookNumber:"book_number",
         SourceId:"source_id",

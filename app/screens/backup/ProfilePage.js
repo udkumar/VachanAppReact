@@ -10,10 +10,14 @@ import AsyncStorageUtil from '../../utils/AsyncStorageUtil'
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
 import Login from './Login';
 import firebase from 'react-native-firebase';
+import {connect} from 'react-redux'
+import {userInfo} from '../../store/action/'
 
-export default class ProfilePage extends Component {
+
+ class ProfilePage extends Component {
     constructor(props){
         super(props)
+        console.log("props ",props)
         this.unsubscriber = null
         this.state = {
           initializing:true,
@@ -47,11 +51,13 @@ export default class ProfilePage extends Component {
     logOut=()=>{
         console.log("logout ")
         firebase.auth().signOut()
-        AsyncStorageUtil.removeItem(AsyncStorageConstants.Keys.BackupRestoreEmail)
+
+        // AsyncStorageUtil.removeItem(AsyncStorageConstants.Keys.BackupRestoreEmail)
+        this.props.userInfo({email:null,uid:null,userName:''})
         this.setState({user:null})
     }
     render() {
-      console.log("user ",this.state.user)
+      console.log("user email ",this.props.email,this.props.uid)
     if(!this.state.user){
         return <Login/>
     }
@@ -133,3 +139,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#00BFFF",
   },
 });
+
+const mapStateToProps = state =>{
+  return{
+      email:state.userInfo.email,
+      uid:state.userInfo.uid,
+      userName:state.userInfo.userName
+  }
+}
+const mapDispatchToProps = dispatch =>{
+  return {
+   userInfo:(payload)=>dispatch(userInfo(payload))
+  }
+}
+
+export  default connect(mapStateToProps,mapDispatchToProps)(ProfilePage)

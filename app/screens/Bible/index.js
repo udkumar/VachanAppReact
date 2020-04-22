@@ -199,7 +199,6 @@ class Bible extends Component {
     }
   }
   componentWillReceiveProps(nextProps,prevState){
-    console.log("verseInLine ",nextProps.colorFile,prevState.colorFile)
     this.setState({
       colorFile:nextProps.colorFile,
       sizeFile:nextProps.sizeFile,
@@ -512,22 +511,77 @@ this.setState({audio:false})
   }
   return false
 }
+
+getUniqueId() {
+  console.log("substring ",this.s4)
+
+  return this.s4() + this.s4() + '-' + this.s4() + '-' + this.s4() + '-' 
+      + this.s4() + '-' + this.s4() + this.s4() + this.s4();
+}
+
+s4() {
+  return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+}
   //add book mark from header icon 
-  onBookmarkPress(isbookmark){
-    console.log("isbookmark",isbookmark)
+  async onBookmarkPress(isbookmark){
       this.props.navigation.setParams({isBookmark:!isbookmark}) 
-        //ON BOOKMARK PPRESS VALIE IS ALREADY BOOKMARKED TOGGLE IT
+      // var emailId = await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.BackupRestoreEmail)
+      // console.log("email id on bookmark ",emailId)
+      var userId = firebase.auth().currentUser;
+      // var key1 = firebase.database().ref('users/').push().key
+      // console.log("user email ",key1)
+      // var commentsRef = firebase.database().ref('users/');
+      //   commentsRef.on('child_added', function(data) {
+      //   console.log("child added ",data)
+      //   // addCommentElement(postElement, data.key, data.val().text, data.val().author);
+      // });
+      //custom object
+      // User user=new User();
+
+    
+      // var newPostRef = firebase.database().ref('users/'+userId.uid)
+      
+      firebase.database().ref('users/'+"bookmarks/"+this.state.currentVisibleChapter).set({
+          "bookId":this.props.bookId,
+          "chapterNumber":this.state.currentVisibleChapter,
+          "languageName":this.props.language,
+          "versionCode":this.props.versionCode
+      }, function(error) {
+        if (error) {
+            console.log("Some error is there on back up - ",error)
+          // The write failed...
+        } else {
+            console.log("Data saved successfully ")
+          // Data saved successfully!
+        }
+      });
+      // firebase.database().ref().child("users").child('bookmarks').push({"bookId":this.props.bookId,"chapterNumber":this.state.currentVisibleChapter,
+      //     "languageName":this.props.language,
+      //     "versionCode":this.props.versionCode
+      //   });
+      // var ref = firebase.database().ref("users")
+      // ref.once("bookmarks", function(snapshot) {
+      //   console.log("snapshot")
+      //   snapshot.forEach(function(message) {
+      //     // console.log("fetch data ",message);
+      //     console.log("fetch data ");
+
+      //   });
+      // });
+      //ON BOOKMARK PPRESS VALUE IS ALREADY BOOKMARKED TOGGLE IT
+
       if(isbookmark === false){
         this.setState({
           bookmarksList:this.state.bookmarksList.concat({"bookId":this.props.bookId,"chapterNumber":this.state.currentVisibleChapter})
         })
-        DbQueries.updateBookmarkInBook(this.props.language,this.props.versionCode,this.props.bookId,this.state.currentVisibleChapter,true);
+
+        // DbQueries.updateBookmarkInBook(this.props.language,this.props.versionCode,this.props.bookId,this.state.currentVisibleChapter,true);
       }
       else{
         //add bookmark
         for(var i=0; i<=this.state.bookmarksList.length-1; i++){
           if(this.state.bookmarksList[i].chapterNumber == this.state.currentVisibleChapter && this.state.bookmarksList[i].bookId == this.props.bookId) {
-            DbQueries.updateBookmarkInBook(this.props.language,this.props.versionCode,this.props.bookId,this.state.currentVisibleChapter,false);
+            // DbQueries.updateBookmarkInBook(this.props.language,this.props.versionCode,this.props.bookId,this.state.currentVisibleChapter,false);
             // this.setState({
             this.state.bookmarksList.splice(i, 1)
             // })
@@ -712,7 +766,7 @@ updateData = ()=>{
 }
 
   render() {
-    console.log("chapter content book...  ",this.state.chapterContent)
+    // console.log("chapter content book...  ",this.state.chapterContent)
     return(
     <View  style={this.styles.container}>
       {this.state.isLoading &&

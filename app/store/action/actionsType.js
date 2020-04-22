@@ -1,4 +1,3 @@
-
 export const EDIT_NOTE = 'edit_note';
 export const DELETE_NOTE = 'delete_note';
 export const UPDATE_VERSION = 'update_version';
@@ -71,3 +70,5 @@ export const ALL_LANGUAGE_FAILURE = 'all_language_failure'
 export const FETCH_PARALLEL_BIBLE = 'fetch_parallel_bible'; 
 export const PARALLEL_BIBLE_SUCCESS = 'parallel_bible_success'; 
 export const PARALLEL_BIBLE_FAILURE = 'parallel_bible_failure';
+
+export const USER_INFO ='user_info'

@@ -14,9 +14,9 @@ import fetchAudioReducer from './apiFetchReducer/fetchAudioReducer'
 import fetchContentReducer from './apiFetchReducer/fetchContentReducer'
 import parallelBibleReducer from './apiFetchReducer/parallelBibleReducer'
 import downloadedContent from './apiFetchReducer/downloadedContentReducer'
+import userInfo from './UserInfoReducer'
 
-
- const rootReducer = combineReducers({
+const rootReducer = combineReducers({
     editNote: editNoteReducer,
     updateVersion:updateVersionReducer,
     updateStyling:updateStylingReducer,
@@ -28,7 +28,8 @@ import downloadedContent from './apiFetchReducer/downloadedContentReducer'
     audioFetch:fetchAudioReducer,
     contents:fetchContentReducer,
     parallel:parallelBibleReducer,
-    downloadedBible:downloadedContent
+    downloadedBible:downloadedContent,
+    userInfo:userInfo
 })
 
 export default  rootReducer
