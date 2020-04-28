@@ -207,62 +207,61 @@ class Bible extends Component {
     this.styles = styles(nextProps.colorFile, nextProps.sizeFile);  
   }
   async componentDidMount(){
-   
-    
-    this.gestureResponder = createResponder({
-      onStartShouldSetResponder: (evt, gestureState) => true,
-      onStartShouldSetResponderCapture: (evt, gestureState) => true,
-      onMoveShouldSetResponder: (evt, gestureState) => true,
-      onMoveShouldSetResponderCapture: (evt, gestureState) => true,
-      onResponderGrant: (evt, gestureState) => {},
-      onResponderMove: (evt, gestureState) => {
-        let thumbSize = this.state.thumbSize;
-        if (gestureState.pinch && gestureState.previousPinch) {
-          thumbSize *= (gestureState.pinch / gestureState.previousPinch)
-          let currentDate = new Date().getTime()
-          let diff = currentDate - this.pinchTime
-          console.log("time diff : " + diff + " prev diff : " + this.pinchDiff)
-          if (diff > this.pinchDiff) {
-              console.log("gesture pinch diff = " + (gestureState.pinch - gestureState.previousPinch))
-             if (gestureState.pinch - gestureState.previousPinch > 5) {
-                // large
-                console.log("large")
-                this.props.screenProps.changeSizeByOne(1)              
-            } else if (gestureState.previousPinch - gestureState.pinch > 5) {
-                console.log("small")
-                // small
-                this.props.screenProps.changeSizeByOne(-1)              
-            }
-          }
-          this.pinchDiff = diff
-          this.pinchTime = currentDate
-        }
-        let {left, top} = this.state;
-        left += (gestureState.moveX - gestureState.previousMoveX);
-        top += (gestureState.moveY - gestureState.previousMoveY);
-        this.setState({
-          gestureState: {
-            ...gestureState
-          },
-          left, top, thumbSize
-        })  
-      },
-      onResponderTerminationRequest: (evt, gestureState) => true,
-      onResponderRelease: (evt, gestureState) => {
-        this.setState({
-          gestureState: {
-            ...gestureState
-          }
-        })
-      },
-      onResponderTerminate: (evt, gestureState) => {},
+    console.log("props in bible page ",this.props.email)
+    // this.gestureResponder = createResponder({
+    //   onStartShouldSetResponder: (evt, gestureState) => true,
+    //   onStartShouldSetResponderCapture: (evt, gestureState) => true,
+    //   onMoveShouldSetResponder: (evt, gestureState) => true,
+    //   onMoveShouldSetResponderCapture: (evt, gestureState) => true,
+    //   onResponderGrant: (evt, gestureState) => {},
+    //   onResponderMove: (evt, gestureState) => {
+    //     let thumbSize = this.state.thumbSize;
+    //     if (gestureState.pinch && gestureState.previousPinch) {
+    //       thumbSize *= (gestureState.pinch / gestureState.previousPinch)
+    //       let currentDate = new Date().getTime()
+    //       let diff = currentDate - this.pinchTime
+    //       console.log("time diff : " + diff + " prev diff : " + this.pinchDiff)
+    //       if (diff > this.pinchDiff) {
+    //           console.log("gesture pinch diff = " + (gestureState.pinch - gestureState.previousPinch))
+    //          if (gestureState.pinch - gestureState.previousPinch > 5) {
+    //             // large
+    //             console.log("large")
+    //             this.props.screenProps.changeSizeByOne(1)              
+    //         } else if (gestureState.previousPinch - gestureState.pinch > 5) {
+    //             console.log("small")
+    //             // small
+    //             this.props.screenProps.changeSizeByOne(-1)              
+    //         }
+    //       }
+    //       this.pinchDiff = diff
+    //       this.pinchTime = currentDate
+    //     }
+    //     let {left, top} = this.state;
+    //     left += (gestureState.moveX - gestureState.previousMoveX);
+    //     top += (gestureState.moveY - gestureState.previousMoveY);
+    //     this.setState({
+    //       gestureState: {
+    //         ...gestureState
+    //       },
+    //       left, top, thumbSize
+    //     })  
+    //   },
+    //   onResponderTerminationRequest: (evt, gestureState) => true,
+    //   onResponderRelease: (evt, gestureState) => {
+    //     this.setState({
+    //       gestureState: {
+    //         ...gestureState
+    //       }
+    //     })
+    //   },
+    //   onResponderTerminate: (evt, gestureState) => {},
       
-      onResponderSingleTapConfirmed: (evt, gestureState) => {
-        console.log('onResponderSingleTapConfirmed...' + JSON.stringify(gestureState));
-      },
-      moveThreshold: 2,
-      debug: false
-    })
+    //   onResponderSingleTapConfirmed: (evt, gestureState) => {
+    //     console.log('onResponderSingleTapConfirmed...' + JSON.stringify(gestureState));
+    //   },
+    //   moveThreshold: 2,
+    //   debug: false
+    // })
     this.props.navigation.setParams({
       visibleParallelView:false,
       modalVisible:false,
@@ -323,7 +322,6 @@ class Bible extends Component {
   }
 
   updateLangVer=async(item)=>{
-    console.log('UPDATE VERSION ',item)
     var time =  new Date()
     DbQueries.addHistory(item.sourceId,item.languageName,item.languageCode, 
     item.versionCode, this.props.bookId, this.state.currentVisibleChapter, item.downloaded, time)
@@ -358,7 +356,7 @@ class Bible extends Component {
 
   async getChapter(){
     try{
-      console.log(" get chapter ",this.props.downloaded)
+      // console.log(" get chapter ",this.props.downloaded)
       if(this.props.downloaded){
         this.getDownloadedContent()
         }else{
@@ -473,30 +471,40 @@ this.setState({audio:false})
   }
 
   async getBookMarks(){
-    // console.log(" ",this.props.language,this.props.versionCode,this.props.bookId,this.state.currentVisibleChapter)
-    let model = await  DbQueries.queryBookmark(this.props.language,this.props.versionCode,this.props.bookId)
-    console.log("BOOK MARKS ......MODEL ",model) 
-    if(model != null){
-    console.log("BOOK MARKS ......MODEL not null",model) 
-      for(var i = 0; i<=model.length-1;i++){
-      this.setState({bookmarksList:this.state.bookmarksList.concat({"bookId":model[i].bookId,
-      "chapterNumber":model[i].chapterNumber})},()=>{
-        this.props.navigation.setParams({isBookmark:this.isBookmark()})
-      })
-    }
+    if(this.props.email){
+      var userId = firebase.auth().currentUser;
+      var starCountRef = firebase.database().ref("users"+userId.uid+"/"+"sourceId/"+this.props.sourceId+"/"+"bookmarks");
+        starCountRef.on('value', function(snapshot) {
+          console.log("value ",snapshot.val())
+          // updateStarCount(postElement, snapshot.val());
+        });
     }
     else{
-        this.setState({bookmarksList:[]})
-        this.props.navigation.setParams({isBookmark:this.isBookmark()})
+    // console.log(" ",this.props.language,this.props.versionCode,this.props.bookId,this.state.currentVisibleChapter)
+    var model = await  DbQueries.queryBookmark(this.props.sourceId,this.props.bookId)
+    console.log("BOOK MARKS ......MODEL",model) 
+    if (model == null) {
+           console.log(" model null")   
+    }
+    else{
+      if(model.length > 0){
+        for(var i = 0; i<=model.length-1;i++){
+        this.setState({bookmarksList:this.state.bookmarksList.concat({"bookId":model[i].bookId,
+        "chapterNumber":model[i].chapterNumber})},()=>{
+          this.props.navigation.setParams({isBookmark:this.isBookmark()})
+        })
+      }
+      }
+    }
     }
   }
 
   isBookmark(){
   if(this.state.bookmarksList.length > 0){
     let isBookmark = false
+        // console.log("BOOKMARK LIST ",this.state.bookmarksList[i])
           for(var i = 0; i < this.state.bookmarksList.length;i++){
             console.log("BOOKMARK LIST ",this.state.bookmarksList[i])
-            console.log("current visible chapter ",this.state.currentVisibleChapter, this.props.bookId)
             if(this.state.bookmarksList[i].bookId == this.props.bookId && this.state.bookmarksList[i].chapterNumber == this.state.currentVisibleChapter){
               isBookmark = true
             }
@@ -524,71 +532,51 @@ s4() {
 }
   //add book mark from header icon 
   async onBookmarkPress(isbookmark){
-      this.props.navigation.setParams({isBookmark:!isbookmark}) 
-      // var emailId = await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.BackupRestoreEmail)
-      // console.log("email id on bookmark ",emailId)
-      var userId = firebase.auth().currentUser;
-      // var key1 = firebase.database().ref('users/').push().key
-      // console.log("user email ",key1)
-      // var commentsRef = firebase.database().ref('users/');
-      //   commentsRef.on('child_added', function(data) {
-      //   console.log("child added ",data)
-      //   // addCommentElement(postElement, data.key, data.val().text, data.val().author);
-      // });
-      //custom object
-      // User user=new User();
-
-    
-      // var newPostRef = firebase.database().ref('users/'+userId.uid)
-      
-      firebase.database().ref('users/'+"bookmarks/"+this.state.currentVisibleChapter).set({
-          "bookId":this.props.bookId,
-          "chapterNumber":this.state.currentVisibleChapter,
-          "languageName":this.props.language,
-          "versionCode":this.props.versionCode
-      }, function(error) {
-        if (error) {
-            console.log("Some error is there on back up - ",error)
-          // The write failed...
-        } else {
-            console.log("Data saved successfully ")
-          // Data saved successfully!
-        }
-      });
-      // firebase.database().ref().child("users").child('bookmarks').push({"bookId":this.props.bookId,"chapterNumber":this.state.currentVisibleChapter,
-      //     "languageName":this.props.language,
-      //     "versionCode":this.props.versionCode
-      //   });
-      // var ref = firebase.database().ref("users")
-      // ref.once("bookmarks", function(snapshot) {
-      //   console.log("snapshot")
-      //   snapshot.forEach(function(message) {
-      //     // console.log("fetch data ",message);
-      //     console.log("fetch data ");
-
-      //   });
-      // });
-      //ON BOOKMARK PPRESS VALUE IS ALREADY BOOKMARKED TOGGLE IT
-
+    if(this.props.email){
+     
+      // this.props.navigation.setParams({isBookmark:!isbookmark}) 
+      var userId =  firebase.auth().currentUser
+      // firebase.database().ref("users"+userId.uid+"/"+"sourceId/"+this.props.sourceId+"/"+"bookmarks").push(
+      //   {"chapterNumber":this.state.currentVisibleChapter},
+      //   function(error){
+      //   if (error) {
+      //       console.log("Some error is there on back up - ",error)
+      //     // The write failed...
+      //   } else {
+      //       console.log("Data saved successfully ")
+      //     // Data saved successfully!
+      //   }
+      // })
+      var starCountRef = firebase.database().ref("users"+userId.uid+"/"+"sourceId/"+this.props.sourceId+"/"+"bookmarks");
+        starCountRef.on('child_changed', function(snapshot) {
+          console.log("value ",snapshot.val())
+          var data = snapshot.val()
+          data.push({"chapterNumber":this.state.currentVisibleChapter,"bookid":this.props.bookId})
+          // updateStarCount(postElement, snapshot.val());
+        })
+      // var ref = firebase.database().ref("users");
+      // ref.on('child_changed', function(snapshot){
+      // var changedUser = snapshot.val()
+      // document.getElementById(changedUser.id).classList.toggle('active')
+      // })
+    }
+    else{
       if(isbookmark === false){
         this.setState({
           bookmarksList:this.state.bookmarksList.concat({"bookId":this.props.bookId,"chapterNumber":this.state.currentVisibleChapter})
         })
-
-        // DbQueries.updateBookmarkInBook(this.props.language,this.props.versionCode,this.props.bookId,this.state.currentVisibleChapter,true);
+        DbQueries.updateBookmarkInBook(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter,true);
       }
       else{
         //add bookmark
         for(var i=0; i<=this.state.bookmarksList.length-1; i++){
           if(this.state.bookmarksList[i].chapterNumber == this.state.currentVisibleChapter && this.state.bookmarksList[i].bookId == this.props.bookId) {
-            // DbQueries.updateBookmarkInBook(this.props.language,this.props.versionCode,this.props.bookId,this.state.currentVisibleChapter,false);
-            // this.setState({
+            DbQueries.updateBookmarkInBook(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter,false);
             this.state.bookmarksList.splice(i, 1)
-            // })
           }
         }
       }
-    // })
+    }
   }
 
 
@@ -678,8 +666,7 @@ s4() {
         for( var i=0; i<arr.length-1; i++ ) {
         if ( arr[i].verseNumber == arr[i+1].verseNumber ){
           arr.splice(i+1,1)
-        }
-        }
+        }}
         }
     } else {
       // remove highlight
@@ -941,6 +928,10 @@ const mapStateToProps = state =>{
     colorFile:state.updateStyling.colorFile,
     verseInLine:state.updateStyling.verseInLine,
     close:state.updateSplitScreen.close,
+
+    email:state.userInfo.email,
+
+
 
     // fetchedData:state.versionFetch,
     // chapterContent:state.versionFetch.chapterContent,

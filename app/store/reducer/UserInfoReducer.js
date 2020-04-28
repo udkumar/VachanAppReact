@@ -4,9 +4,9 @@ const initialState = {
    email:null,
    uid:null,
    userName:'',
+   phoneNumber:''
    
 }
-
 function UserInfoReducer(state=initialState,action){
     switch(action.type) {
         case USER_INFO:
@@ -17,7 +17,6 @@ function UserInfoReducer(state=initialState,action){
             userName:action.payload.userName,
             phoneNumber:action.payload.phoneNumber
         }
-    
         default: 
         return state
     }

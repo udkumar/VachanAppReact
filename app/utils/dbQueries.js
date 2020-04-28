@@ -58,11 +58,15 @@ class DbQueries {
     }
 
    
-    updateBookmarkInBook(langName,verCode,bId,chapterNumber, isBookmark) {
-        DbHelper.updateBookmarkInBook(langName,verCode,bId,chapterNumber, isBookmark);
+    updateBookmarkInBook(sourceId,bId,chapterNumber, isBookmark) {
+        DbHelper.updateBookmarkInBook(sourceId,bId,chapterNumber, isBookmark);
     }
-    queryBookmark(langName,verCode,bId){
-        return DbHelper.queryBookmark(langName,verCode,bId);
+    queryBookmark(sourceId,bId){
+        return DbHelper.queryBookmark(sourceId,bId);
+    }
+    deleteBookmark(){
+        return DbHelper.deleteBookmark();
+
     }
   
 

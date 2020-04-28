@@ -5,6 +5,7 @@ import { StyleSheet, ActivityIndicator, View, Text, Alert,TextInput,TouchableOpa
 import firebase from 'react-native-firebase'
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants';
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
+import DbQueries from '../../utils/dbQueries'
 import {userInfo} from '../../store/action/'
 import {connect} from 'react-redux'
 
@@ -17,8 +18,8 @@ import {connect} from 'react-redux'
     constructor(props){
         super(props)
         this.state = {
-            email:this.props.email,
-            password:'',
+            email:'neetuyadav@test.com',
+            password:'neetuyadav',
             showLoading:''
         }
     }
@@ -28,10 +29,39 @@ import {connect} from 'react-redux'
         try {
             const doLogin = await firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password);
             this.setState({showLoading:false})
-            if(doLogin.user) {
-                this.prop.userInfo({email:doLogin.user._user.email,uid:doLogin.user._user.uid,userName:doLogin.user._user.displayName,phoneNumber:doLogin.user._user.phoneNumber})
-                // console.log("User ",doLogin.user)
-                this.props.navigation.navigate('ProfilePage')
+            if(doLogin.user){
+                this.props.userInfo({email:doLogin.user._user.email,uid:doLogin.user._user.uid,userName:doLogin.user._user.displayName,phoneNumber:doLogin.user._user.phoneNumber})
+                let model = await  DbQueries.queryBookmark(null,null,null)
+                console.log("model ",model)
+                if (model == null) {
+                  
+                }
+                else{
+                    var userId =  firebase.auth().currentUser
+                  if(model.length > 0){
+                    // console.log("book marked ",model)
+                    var bookmarks = []
+                    for(var i=0;i<model.length;i++){
+                        // bookmarks.push
+                    }
+
+                    firebase.database().ref("users"+userId.uid+"/"+"sourceId/"+model[i].sourceId+"/"+"bookmarks").push(
+                        {"chapterNumber":model[i].chapterNumber},
+                        function(error){
+                        if (error) {
+                            console.log("Some error is there on back up - ",error)
+                          // The write failed...
+                        } else {
+                            DbQueries.deleteBookmark()
+                            console.log("Data saved successfully ")
+                          // Data saved successfully!
+                        }
+                      })
+                  
+                  }
+
+                }
+                
             }
         } catch (e) {
             this.setState({showLoading:false});
@@ -48,7 +78,7 @@ import {connect} from 'react-redux'
  
     // componentWillUnmount(){
     //     BackHandler.removeEventListener('hardwareBackPress', this.handleAndroidBack)
-    // }
+    //  }
     render(){
         return (
             <View style={styles.container}>
@@ -151,6 +181,9 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state =>{
     return{
+        language: state.updateVersion.language,
+        versionCode:state.updateVersion.versionCode,
+
         email:state.userInfo.email,
         uid:state.userInfo.uid,
         userName:state.userInfo.userName,

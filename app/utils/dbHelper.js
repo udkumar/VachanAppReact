@@ -15,6 +15,7 @@ import HighlightsModel from '../models/HighlightsModel';
 import HistoryModel from '../models/HistoryModel';
 import VerseMetadataModel from '../models/VerseMetadataModel';
 import bookNameList from '../models/bookNameList';
+import BookmarksBookId from '../models/BookmarksBookId'
 
 import {
 	Platform,
@@ -28,13 +29,13 @@ class DbHelper {
     async getRealm() {
     	try {
     		return await Realm.open({
-				schemaVersion: 4,
+				schemaVersion: 9,
 				deleteRealmIfMigrationNeeded: true, 
 				path:
 					Platform.OS === 'ios'
 					? RNFS.MainBundlePath + '/vachanApp.realm'
 					: RNFS.DocumentDirectoryPath + '/vachanApp.realm',
-				schema: [LanguageModel.schema, VersionModel.schema, BookModel.schema, ChapterModel.schema, VerseModel.schema, NoteModel.schema, NoteStylingModel.schema,VerseStylingModel.schema, ReferenceModel.schema, HistoryModel.schema,BookmarksListModel.schema,HighlightsModel.schema,VerseMetadataModel.schema,bookNameList.schema] });
+				schema: [LanguageModel.schema, VersionModel.schema, BookModel.schema, ChapterModel.schema, VerseModel.schema, NoteModel.schema, NoteStylingModel.schema,VerseStylingModel.schema, ReferenceModel.schema, HistoryModel.schema,BookmarksListModel.schema,HighlightsModel.schema,VerseMetadataModel.schema,bookNameList.schema,BookmarksBookId.schema] });
 				// console.log('create db:', db.path)
 			} catch (err) {
 			console.log("error in getItem"+err)
@@ -235,61 +236,108 @@ class DbHelper {
 
 	
 
-	async updateBookmarkInBook(langName,verCode,bId,cNum, isBookmark) {
-		console.log(" langName,verCode,bId,cNum, isBookmark) ",langName,verCode,bId,cNum, isBookmark)
+	async updateBookmarkInBook(sourceId,bId,cNum, isBookmark) {
+		console.log(" langName,verCode,bId,cNum, isBookmark) ",bId,cNum, isBookmark)
 		let realm = await this.getRealm();
 		if(realm){
-			realm.write(() => {
-			let chapter = realm.objects('BookmarksListModel').filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" &&  bookId == "' + bId + '" && chapterNumber == "'+cNum+'"')
-			console.log("book mark chappter ",chapter)
+			var source = parseInt(sourceId)
+			let sourcedata = realm.objects('BookmarksListModel').filtered('sourceId=="'+source+'"')
 			if(isBookmark){
-			console.log("do book mark chappter ",)
-				if(Object.keys(chapter).length == 0){
-				console.log("chaper already present ",)
-					realm.create('BookmarksListModel',{
-						bookId:bId,
-						chapterNumber:cNum,
-						versionCode:verCode,
-						languageName:langName
-					})
-				}
+				realm.write(() => {
+					if(Object.keys(sourcedata).length == 0){
+					let bookmarks = realm.create('BookmarksListModel', {sourceId:source, bookmarksBookId: []});
+							bookmarks.bookmarksBookId.push({bookId: bId,  chapterNumber:[cNum]})
+							// bookmarks.bookmarksBookId[0].chapterNumber.push(cNum)
+								console.log(" add chapter ")
+					}
+					else{
+						var addToBook = sourcedata[0].bookmarksBookId.filtered('bookId=="'+bId+'"')
+						if(Object.keys(addToBook).length == 0){
+							console.log(" not bookid ",JSON.stringify(addToBook))
+								sourcedata[0].bookmarksBookId.push({bookId:bId,chapterNumber:[cNum]})
+								// sourcedata[0].bookmarksBookId[0].chapterNumber.push(cNum)
+							}
+							else{
+							console.log(" not chapter ",JSON.stringify(addToBook))
+								if(addToBook[0].chapterNumber.indexOf(cNum) == -1){
+									addToBook[0].chapterNumber.push(cNum)
+								}
+							}
+					}
+				})
 			}
 			else{
-			// let bookmarkData = realm.objects('BookmarksListModel').filtered('chapterNumber = $0', cNum)
-			realm.delete(chapter); 
+				var addToBook = sourcedata[0].bookmarksBookId.filtered('bookId=="'+bId+'"')
+				if(addToBook[0].chapterNumber.indexOf(cNum) > -1){
+					realm.write(() => {
+						addToBook[0].chapterNumber.splice(addToBook[0].chapterNumber.indexOf(cNum), 1)
+						})
+					console.log("nothing to delete ")
+				}
+				
 			}
-			})
 		}
 
 	}
-	async queryBookmark(langName,verCode,bId){
-		console.log("languagge version ",langName,verCode)
+	async queryBookmark(sourceId,bId){
+		// console.log("languagge version ",langName,verCode)
 
 		let realm = await this.getRealm()
 
 			if (realm){
 				let result1 = realm.objects("BookmarksListModel");
-				if(bId == null){
-					let bookmarksList = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" ')
-					// if(object.keys())
-					if(Object.keys(bookmarksList).length > 0){
-						return bookmarksList
+				// console.log("BOOKMARKS FROM DB chapter number id ",JSON.stringify(result1[0].bookmarksBookId[0].chapterNumber))
+				// console.log("BOOKMARKS FROM DB book id",result1[0].bookmarksBookId[0].bookId)
+
+				 if(sourceId === null  && bId === null){
+					console.log(" all null having value ",result1)
+					if(Object.keys(result1).length > 0){
+						return result1
 					}
 					else{
 						return null
 					}
 				}
+				// else if(sourceId != null && bId == null){
+				// 	let bookmarksList = result1.filtered('sourceId == "' + sourceId + '"')
+				// 	console.log("bookmarks match source id ",bookmarksList.length)
+
+				// 	// if(object.keys())
+				// 	if(Object.keys(bookmarksList).length > 0){
+				// 		return bookmarksList
+				// 	}
+				// 	else{
+				// 		return null
+				// 	}
+				// }
 				else{
-					let bookmarks = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId =="' + bId + '"')
-					if(Object.keys(bookmarks).length>0){
-						return bookmarks
+					let bookmarks = result1.filtered('sourceId == "' + sourceId + '"')
+					if(bookmarks.length == 0){
+					console.log("bookmarks data ",bookmarks.length)
+					}else{
+						let bookmarksId = bookmarks[0].bookmarksBookId
+						let res = bookmarksId.filtered('bookId==[c] "' + bId + '"')
+						console.log("bookmarks match chapter ",JSON.stringify(res.length))
+						if(Object.keys(res).length>0){
+							return res
+						}
+						else{
+							return null
+						}
 					}
-					else{
-						return null
-					}
+					
 				}
 			}
 	}
+	async deleteBookmark(){
+		let realm = await this.getRealm();
+		if(realm){
+		realm.write(() => {
+			let bookmarkList = realm.objects('BookmarksListModel')
+			realm.delete(bookmarkList); 
+		})
+		}
+		}
 	async queryNotes() {
 		let realm = await this.getRealm();
     	if (realm) {

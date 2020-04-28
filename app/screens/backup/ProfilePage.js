@@ -17,7 +17,6 @@ import {userInfo} from '../../store/action/'
  class ProfilePage extends Component {
     constructor(props){
         super(props)
-        console.log("props ",props)
         this.unsubscriber = null
         this.state = {
           initializing:true,
@@ -36,11 +35,7 @@ import {userInfo} from '../../store/action/'
             this.setState({user:user._user.email,userData:user})
           }
 
-        //   else{
-        //     console.log("user  ",user._user.email)
-        //     this.setState({user:user._user.email})
-        //     return this.props.navigation.navigate('Bible')
-        //   }
+        
         })
     }
     componentWillUnmount(){
@@ -49,17 +44,15 @@ import {userInfo} from '../../store/action/'
           }  
     }
     logOut=()=>{
-        console.log("logout ")
         firebase.auth().signOut()
-
         // AsyncStorageUtil.removeItem(AsyncStorageConstants.Keys.BackupRestoreEmail)
         this.props.userInfo({email:null,uid:null,userName:''})
         this.setState({user:null})
     }
+
     render() {
-      console.log("user email ",this.props.email,this.props.uid)
     if(!this.state.user){
-        return <Login/>
+        return <Login navigation={this.props.navigation}/>
     }
     return (
       <View style={styles.container}>

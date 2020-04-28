@@ -18,6 +18,8 @@ import {updateVersionBook} from '../../store/action/'
 import {getBookNameFromMapping,getBookChaptersFromMapping,getBookNumOfVersesFromMapping} from '../../utils/UtilFunctions';
 Dimensions.get('window').width
 import {connect} from 'react-redux'
+import firebase from 'react-native-firebase'
+
 
 class BookMarks extends Component {
   static navigationOptions = {
@@ -60,6 +62,7 @@ class BookMarks extends Component {
       isLoading:false,
       languageName:this.props.languageName,
       versionCode:this.props.versionCode,
+      sourceId:this.props.sourceId,
       bookId:this.props.bookId
     }
     
@@ -68,10 +71,17 @@ class BookMarks extends Component {
   }
 
   async componentDidMount() {
+    var userId = firebase.auth().currentUser;
+
+    var starCountRef = firebase.database().ref('users/' + userId.uid + '/bookmarks');
+      starCountRef.on('value', function(snapshot) {
+        console.log("value ",snapshot.val())
+        // updateStarCount(postElement, snapshot.val());
+      });
     this.getBookMarks()  
   } 
   async getBookMarks(){
-    let model = await  DbQueries.queryBookmark(this.state.languageName,this.state.versionCode,null,null)
+    let model = await  DbQueries.queryBookmark(this.state.sourceId,null,null)
     if (model == null) {
       
     }
@@ -101,12 +111,12 @@ class BookMarks extends Component {
 
     
   async onBookmarkRemove(id,chapterNum){
-  await DbQueries.updateBookmarkInBook(this.state.languageName,this.state.versionCode,id,chapterNum,false);
+  await DbQueries.updateBookmarkInBook(this.state.sourceId,id,chapterNum,false);
       index = this.state.bookmarksList.findIndex(chapInd => chapInd.chapterNumber ===this.state.currentVisibleChapter);
       for(var i = 0; i<=this.state.bookmarksList.length;i++ ){
         if(this.state.bookmarksList[i].chapterNumber == chapterNum && this.state.bookmarksList[i].bookId == id ){
           this.props.navigation.setParams({isBookmark:false }) 
-          await DbQueries.updateBookmarkInBook(this.state.languageName,this.state.versionCode,id,chapterNum,false);
+          await DbQueries.updateBookmarkInBook(this.state.sourceId,id,chapterNum,false);
           this.state.bookmarksList.splice(index, 1)
           this.setState({bookmarksList:this.state.bookmarksList.splice(index, 1),isBookmark:false})
         } 
@@ -156,6 +166,8 @@ const mapStateToProps = state =>{
   return{
     languageName: state.updateVersion.language,
     versionCode: state.updateVersion.versionCode,
+    sourceId: state.updateVersion.sourceId,
+
     bookId:state.updateVersion.bookId,
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,

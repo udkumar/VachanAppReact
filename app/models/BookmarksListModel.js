@@ -7,9 +7,13 @@ export default class BookmarksListModel extends Realm.Object {}
 BookmarksListModel.schema = {
     name: 'BookmarksListModel',
     properties: {
-        bookId:'string',
-        chapterNumber:'int',
-        versionCode:'string',
-        languageName:'string'
+        sourceId:'int',
+        bookmarksBookId:'BookmarksBookId[]',
+        // versionCode:'string',
+        // languageName:'string',
+        // bookId:'string',
+        // chapterNumber:'int',
+        
+        // sourceId:'int',
     }
 };
