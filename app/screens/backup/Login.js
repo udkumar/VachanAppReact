@@ -34,30 +34,33 @@ import {connect} from 'react-redux'
                 let model = await  DbQueries.queryBookmark(null,null,null)
                 console.log("model ",model)
                 if (model == null) {
-                  
                 }
                 else{
                     var userId =  firebase.auth().currentUser
                   if(model.length > 0){
                     // console.log("book marked ",model)
-                    var bookmarks = []
+                    // var bookmarks = []
                     for(var i=0;i<model.length;i++){
-                        // bookmarks.push
-                    }
+                        // var bookbarkDb = firebase.database().ref("users"+userId.uid+"/"+"sourceId/"+model[i].sourceId+"/"+"bookmarks")
+                        // var sourceId = model[i].sourceId 
+                        // for(var j=0;j<model[i].bookmarksBookId.length;j++){
+                        //     var bookmarkDb = firebase.database().ref("users/"+userId.uid+"/"+"sourceId/"+sourceId+"/"+"bookmarks/"+"bookId/"+model[i].bookmarksBookId[j].bookId)
+                        //     bookmarkDb.push({
+                        //         // bookId:model[i].bookmarksBookId[j].bookId,
+                        //         chapterNumber:model[i].bookmarksBookId[j].chapterNumber
+                        //     })
+                        // }
+                        for(var j=0;j<model[i].bookmarksBookId.length;j++){
+                        var firebaseRef = firebase.database().ref("users/"+userId.uid+"/"+model[i].sourceId+"/bookmarks/"+model[i].bookmarksBookId[j].bookId);
 
-                    firebase.database().ref("users"+userId.uid+"/"+"sourceId/"+model[i].sourceId+"/"+"bookmarks").push(
-                        {"chapterNumber":model[i].chapterNumber},
-                        function(error){
-                        if (error) {
-                            console.log("Some error is there on back up - ",error)
-                          // The write failed...
-                        } else {
-                            DbQueries.deleteBookmark()
-                            console.log("Data saved successfully ")
-                          // Data saved successfully!
+                        for(var k=0;k<model[i].bookmarksBookId[j].chapterNumber.length;k++){
+                            firebaseRef.push({
+                                chapterNumber:model[i].bookmarksBookId[j].chapterNumber[k]
+                            })
                         }
-                      })
-                  
+                      
+                    }
+                    }
                   }
 
                 }
