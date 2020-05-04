@@ -498,6 +498,7 @@ this.setState({audio:false})
       var userId = firebase.auth().currentUser;
       var firebaseRef = firebase.database().ref("users/"+userId.uid+"/"+this.props.sourceId+"/bookmarks/"+this.props.bookId)
       firebaseRef.on('value', (snapshot)=>{
+        console.log("book marks lisr ",snapshot.val())
         var bookmarksList = [];
         if(snapshot.val() != null){
           snapshot.forEach((todo) => {

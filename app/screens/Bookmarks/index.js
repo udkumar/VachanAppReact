@@ -70,21 +70,26 @@ class BookMarks extends Component {
     // this.refreshData = this.refreshData.bind(this)
   }
 
-  async componentDidMount() {
+  componentDidMount(){
     var userId = firebase.auth().currentUser;
-    var starCountRef = firebase.database().ref('users/' + userId.uid + '/bookmarks');
-      starCountRef.on('value', function(snapshot) {
+    var starCountRef = firebase.database().ref('users/' + userId.uid +"/"+this.props.sourceId+"/"+"bookmarks")
+      starCountRef.on('value', (snapshot)=> {
         console.log("value ",snapshot.val())
-        // updateStarCount(postElement, snapshot.val());
+  
+        this.setState({
+          bookmarksList:snapshot.val()
+        })
       })
-    this.getBookMarks()  
+    // this.getBookMarks()  
   } 
   async getBookMarks(){
+    // console.log(" book marks",this.props.email)
     if(this.props.emai){
+      console.log(" found email ")
       var userId = firebase.auth().currentUser;
       var firebaseRef = firebase.database().ref("users/"+userId.uid+"/"+this.props.sourceId+"/bookmarks/")
       firebaseRef.on('value', (snapshot)=>{
-        console.log("bookid ",snapshot.val())
+        console.log("book marks ",snapshot.val())
         // var bookmarksList = [];
         // if(snapshot.val() != null){
         //   snapshot.forEach((todo) => {
@@ -97,13 +102,13 @@ class BookMarks extends Component {
     })
     }
     else{
-      let model = await  DbQueries.queryBookmark(this.state.sourceId,null,null)
+      let model = await  DbQueries.queryBookmark(this.state.sourceId,null)
       if (model == null) {
         
       }
       else{
         if(model.length > 0){
-          console.log("book marked ",model)
+          // console.log("book marked ",model)
           this.setState({bookmarksList:model})
          
         }
@@ -142,9 +147,10 @@ class BookMarks extends Component {
   }
 
   render() {
+    console.log(" book list ",this.state.bookmarksList)
     return (
         <View style={this.styles.container}>
-        <FlatList
+        {/* <FlatList
           data={this.state.bookmarksList}
           contentContainerStyle={this.state.bookmarksList.length === 0 && this.styles.centerEmptySet}
           // getItemLayout={this.getItemLayout}
@@ -174,7 +180,7 @@ class BookMarks extends Component {
             </View>
           }
           extraData={this.props}
-        />
+        /> */}
         </View>
     );
   }
