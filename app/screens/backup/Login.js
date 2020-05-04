@@ -38,28 +38,35 @@ import {connect} from 'react-redux'
                 else{
                     var userId =  firebase.auth().currentUser
                   if(model.length > 0){
-                    // console.log("book marked ",model)
-                    // var bookmarks = []
                     for(var i=0;i<model.length;i++){
-                        // var bookbarkDb = firebase.database().ref("users"+userId.uid+"/"+"sourceId/"+model[i].sourceId+"/"+"bookmarks")
-                        // var sourceId = model[i].sourceId 
-                        // for(var j=0;j<model[i].bookmarksBookId.length;j++){
-                        //     var bookmarkDb = firebase.database().ref("users/"+userId.uid+"/"+"sourceId/"+sourceId+"/"+"bookmarks/"+"bookId/"+model[i].bookmarksBookId[j].bookId)
-                        //     bookmarkDb.push({
-                        //         // bookId:model[i].bookmarksBookId[j].bookId,
-                        //         chapterNumber:model[i].bookmarksBookId[j].chapterNumber
-                        //     })
-                        // }
                         for(var j=0;j<model[i].bookmarksBookId.length;j++){
                         var firebaseRef = firebase.database().ref("users/"+userId.uid+"/"+model[i].sourceId+"/bookmarks/"+model[i].bookmarksBookId[j].bookId);
-
                         for(var k=0;k<model[i].bookmarksBookId[j].chapterNumber.length;k++){
                             firebaseRef.push({
                                 chapterNumber:model[i].bookmarksBookId[j].chapterNumber[k]
                             })
                         }
-                      
                     }
+                    }
+                  }
+                }
+                let highlightModel = await  DbQueries.queryHighlights(null,null)
+                console.log("model ",highlightModel)
+                if (highlightModel == null) {
+                }
+                else{
+                    // var userId =  firebase.auth().currentUser
+                  if(highlightModel.length > 0){
+                    for(var i=0;i<highlightModel.length;i++){
+                        console.log("highlightModel ",highlightModel.length)
+                    //     for(var j=0;j<highlightModel[i].highlightsBookId.length;j++){
+                    //     var firebaseRef = firebase.database().ref("users/"+userId.uid+"/"+model[i].sourceId+"/bookmarks/"+model[i].highlightsBookId[j].bookId);
+                    //     for(var k=0;k<highlightModel[i].highlightsBookId[j].chapterNumber.length;k++){
+                    //         firebaseRef.push({
+                    //             chapterNumber:highlightModel[i].highlightsBookId[j].chapterNumber[k]
+                    //         })
+                    //     }
+                    // }
                     }
                   }
 

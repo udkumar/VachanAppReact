@@ -16,26 +16,24 @@ import HistoryModel from '../models/HistoryModel';
 import VerseMetadataModel from '../models/VerseMetadataModel';
 import bookNameList from '../models/bookNameList';
 import BookmarksBookId from '../models/BookmarksBookId'
+import HighlightsBookId from '../models/HighlightsBookId'
 
 import {
 	Platform,
 } from 'react-native';
-import { lang } from 'moment';
-import { constColors } from './colors';
 var RNFS = require('react-native-fs');
 
 class DbHelper {
-
     async getRealm() {
     	try {
     		return await Realm.open({
-				schemaVersion: 9,
+				schemaVersion: 10,
 				deleteRealmIfMigrationNeeded: true, 
 				path:
 					Platform.OS === 'ios'
 					? RNFS.MainBundlePath + '/vachanApp.realm'
 					: RNFS.DocumentDirectoryPath + '/vachanApp.realm',
-				schema: [LanguageModel.schema, VersionModel.schema, BookModel.schema, ChapterModel.schema, VerseModel.schema, NoteModel.schema, NoteStylingModel.schema,VerseStylingModel.schema, ReferenceModel.schema, HistoryModel.schema,BookmarksListModel.schema,HighlightsModel.schema,VerseMetadataModel.schema,bookNameList.schema,BookmarksBookId.schema] });
+				schema: [LanguageModel.schema, VersionModel.schema, BookModel.schema, ChapterModel.schema, VerseModel.schema, NoteModel.schema, NoteStylingModel.schema,VerseStylingModel.schema, ReferenceModel.schema, HistoryModel.schema,BookmarksListModel.schema,HighlightsModel.schema,VerseMetadataModel.schema,bookNameList.schema,BookmarksBookId.schema,HighlightsBookId.schema] });
 				// console.log('create db:', db.path)
 			} catch (err) {
 			console.log("error in getItem"+err)
@@ -106,13 +104,12 @@ class DbHelper {
 		}
 		return null;
 	}
-	async queryHighlights(langName, verCode, bookId){
+	async queryHighlights(sourceId, bookId){
 		let realm = await this.getRealm();
 		if (realm){
 			var result1 = realm.objects("HighlightsModel");
-			if(bookId == null ){
-				let highlightList = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '"' )
-				if(Object.keys(highlightList).length > 0){
+			if(bookId == null  && sourceId == null){
+				if(Object.keys(result1).length > 0){
 					return highlightList
 				}
 				else{
@@ -120,12 +117,19 @@ class DbHelper {
 				}
 			}
 			else{
-				let highlight = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId ==[c]   "' + bookId + '"' )
-				if(Object.keys(highlight).length > 0){
-					return highlight
-				}
-				else{
-					return null
+				let highlightList = result1.filtered('sourceId == "' + sourceId + '"')
+				if(highlightList.length == 0){
+				console.log("bookmarks data ",highlightList.length)
+				}else{
+					let bookmarksId = highlightList[0].highlightsBookId
+					let res = bookmarksId.filtered('bookId==[c] "' + bId + '"')
+					console.log("bookmarks match chapter ",JSON.stringify(res.length))
+					if(Object.keys(res).length>0){
+						return res
+					}
+					else{
+						return null
+					}
 				}
 			}
 			
@@ -286,9 +290,6 @@ class DbHelper {
 
 			if (realm){
 				let result1 = realm.objects("BookmarksListModel");
-				// console.log("BOOKMARKS FROM DB chapter number id ",JSON.stringify(result1[0].bookmarksBookId[0].chapterNumber))
-				// console.log("BOOKMARKS FROM DB book id",result1[0].bookmarksBookId[0].bookId)
-
 				 if(sourceId === null  && bId === null){
 					console.log(" all null having value ",result1)
 					if(Object.keys(result1).length > 0){
@@ -298,18 +299,6 @@ class DbHelper {
 						return null
 					}
 				}
-				// else if(sourceId != null && bId == null){
-				// 	let bookmarksList = result1.filtered('sourceId == "' + sourceId + '"')
-				// 	console.log("bookmarks match source id ",bookmarksList.length)
-
-				// 	// if(object.keys())
-				// 	if(Object.keys(bookmarksList).length > 0){
-				// 		return bookmarksList
-				// 	}
-				// 	else{
-				// 		return null
-				// 	}
-				// }
 				else{
 					let bookmarks = result1.filtered('sourceId == "' + sourceId + '"')
 					if(bookmarks.length == 0){

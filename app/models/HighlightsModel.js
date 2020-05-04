@@ -6,10 +6,12 @@ export default class HighlightsModel extends Realm.Object {}
     HighlightsModel.schema = {
     name: 'HighlightsModel',
     properties: {
-        languageName:'string',
-        versionCode:'string',
-        bookId:'string',
-        chapterNumber:'int',
-        verseNumber:'string'
+        sourceId:'int',
+        highlightsBookId:'HighlightsBookId[]',
+        // languageName:'string',
+        // versionCode:'string',
+        // bookId:'string',
+        // chapterNumber:'int',
+        // verseNumber:'string'
     }
 }

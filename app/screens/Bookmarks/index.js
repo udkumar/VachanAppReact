@@ -72,26 +72,44 @@ class BookMarks extends Component {
 
   async componentDidMount() {
     var userId = firebase.auth().currentUser;
-
     var starCountRef = firebase.database().ref('users/' + userId.uid + '/bookmarks');
       starCountRef.on('value', function(snapshot) {
         console.log("value ",snapshot.val())
         // updateStarCount(postElement, snapshot.val());
-      });
+      })
     this.getBookMarks()  
   } 
   async getBookMarks(){
-    let model = await  DbQueries.queryBookmark(this.state.sourceId,null,null)
-    if (model == null) {
-      
+    if(this.props.emai){
+      var userId = firebase.auth().currentUser;
+      var firebaseRef = firebase.database().ref("users/"+userId.uid+"/"+this.props.sourceId+"/bookmarks/")
+      firebaseRef.on('value', (snapshot)=>{
+        console.log("bookid ",snapshot.val())
+        // var bookmarksList = [];
+        // if(snapshot.val() != null){
+        //   snapshot.forEach((todo) => {
+        //     bookmarksList.push({key:todo.key,chapterNumber:todo.val().chapterNumber})
+        //   })
+        //   this.setState({
+        //     bookmarksList
+        // })
+        // }
+    })
     }
     else{
-      if(model.length > 0){
-        console.log("book marked ",model)
-        this.setState({bookmarksList:model})
-       
+      let model = await  DbQueries.queryBookmark(this.state.sourceId,null,null)
+      if (model == null) {
+        
+      }
+      else{
+        if(model.length > 0){
+          console.log("book marked ",model)
+          this.setState({bookmarksList:model})
+         
+        }
       }
     }
+
   }
   navigateToBible(item){
     console.log("bible bookmark  ",item)
@@ -167,6 +185,7 @@ const mapStateToProps = state =>{
     languageName: state.updateVersion.language,
     versionCode: state.updateVersion.versionCode,
     sourceId: state.updateVersion.sourceId,
+    email:state.userInfo.email,
 
     bookId:state.updateVersion.bookId,
     sizeFile:state.updateStyling.sizeFile,
