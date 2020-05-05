@@ -40,12 +40,13 @@ import {connect} from 'react-redux'
                   if(model.length > 0){
                     for(var i=0;i<model.length;i++){
                         for(var j=0;j<model[i].bookmarksBookId.length;j++){
-                        var firebaseRef = firebase.database().ref("users/"+userId.uid+"/"+model[i].sourceId+"/bookmarks/"+model[i].bookmarksBookId[j].bookId);
-                        for(var k=0;k<model[i].bookmarksBookId[j].chapterNumber.length;k++){
-                            firebaseRef.push({
-                                chapterNumber:model[i].bookmarksBookId[j].chapterNumber[k]
-                            })
-                        }
+                        var firebaseRef = firebase.database().ref("users/"+userId.uid+"/bookmarks/"+model[i].sourceId+"/"+model[i].bookmarksBookId[j].bookId);
+                        firebaseRef.set(model[i].bookmarksBookId[j].chapterNumber)
+                        // for(var k=0;k<model[i].bookmarksBookId[j].chapterNumber.length;k++){
+                        //     firebaseRef.push({
+                        //         chapterNumber:model[i].bookmarksBookId[j].chapterNumber[k]
+                        //     })
+                        // }
                     }
                     }
                   }

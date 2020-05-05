@@ -357,16 +357,16 @@ class Bible extends Component {
   async getChapter(){
     try{
       // console.log(" get chapter ",this.props.downloaded)
+      this.props.navigation.setParams({
+        isBookmark:this.isBookmark()
+      })
       if(this.props.downloaded){
         this.getDownloadedContent()
         }else{
           var content = await APIFetch.getChapterContent(this.props.sourceId, this.props.bookId, this.state.currentVisibleChapter)
           this.setState({chapterContent:content.chapterContent.verses,error:null,isLoading:false,currentVisibleChapter:this.state.currentVisibleChapter})
         }
-        this.props.navigation.setParams({
-          
-          isBookmark:this.isBookmark()
-        })
+       
     }
     catch(error){
       this.setState({error:error,isLoading:false,chapterContent:[]})
@@ -460,7 +460,7 @@ this.setState({audio:false})
       var userId = firebase.auth().currentUser;
       var firebaseRef = firebase.database().ref("users/"+userId.uid+"/"+this.props.sourceId+"/highlights/"+this.props.bookId)
       firebaseRef.on('value', (snapshot)=>{
-        console.log("highlights ",snapshot)
+        // console.log("highlights ",snapshot)
         var HightlightedVerseArray = [];
         if(snapshot.val() != null){
           snapshot.forEach((todo) => {
@@ -496,17 +496,12 @@ this.setState({audio:false})
   async getBookMarks(){
     if(this.props.email){
       var userId = firebase.auth().currentUser;
-      var firebaseRef = firebase.database().ref("users/"+userId.uid+"/"+this.props.sourceId+"/bookmarks/"+this.props.bookId)
+      var firebaseRef = firebase.database().ref("users/"+userId.uid+"/bookmarks/"+this.props.sourceId+"/"+this.props.bookId);
+      // var firebaseRef = firebase.database().ref("users/"+userId.uid+"/"+this.props.sourceId+"/bookmarks/"+this.props.bookId)
       firebaseRef.on('value', (snapshot)=>{
         console.log("book marks lisr ",snapshot.val())
-        var bookmarksList = [];
         if(snapshot.val() != null){
-          snapshot.forEach((todo) => {
-            bookmarksList.push({key:todo.key,chapterNumber:todo.val().chapterNumber})
-          })
-          this.setState({
-            bookmarksList
-        })
+        this.setState({bookmarksList:snapshot.val()})
         }
       })
     }
@@ -520,8 +515,7 @@ this.setState({audio:false})
     else{
       if(model.length > 0){
         for(var i = 0; i<=model.length-1;i++){
-        this.setState({bookmarksList:this.state.bookmarksList.concat({"bookId":model[i].bookId,
-        "chapterNumber":model[i].chapterNumber})},()=>{
+        this.setState({bookmarksList:[...this.state.bookmarksList,this.state.currentVisibleChapter]},()=>{
           this.props.navigation.setParams({isBookmark:this.isBookmark()})
         })
       }
@@ -533,14 +527,13 @@ this.setState({audio:false})
   isBookmark(){
   if(this.state.bookmarksList.length > 0){
     let isBookmark = false
-        // console.log("BOOKMARK LIST ",this.state.bookmarksList[i])
+        console.log("BOOKMARK LIST ",this.state.bookmarksList[i])
           for(var i = 0; i < this.state.bookmarksList.length;i++){
             console.log("BOOKMARK LIST ",this.state.bookmarksList[i])
-            if(this.state.bookmarksList[i].bookId == this.props.bookId && this.state.bookmarksList[i].chapterNumber == this.state.currentVisibleChapter){
+            if(this.state.bookmarksList[i] == this.state.currentVisibleChapter){
               isBookmark = true
             }
           }
-          console.log(console.log("IS BOOKMARK FUNCITON CALL ",isBookmark))
           if(!isBookmark){
             return false
           }
@@ -548,67 +541,75 @@ this.setState({audio:false})
             return true
           }
   }
-  return false
+  // return false
 }
-
-getUniqueId() {
-  console.log("substring ",this.s4)
-
-  return this.s4() + this.s4() + '-' + this.s4() + '-' + this.s4() + '-' 
-      + this.s4() + '-' + this.s4() + this.s4() + this.s4();
-}
-
-s4() {
-  return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-}
-
 
   //add book mark from header icon 
    onBookmarkPress(isbookmark){
+     console.log("isbookmark ",isbookmark)
     if(this.props.email){
-      var duplicate = false
-      var userId =  firebase.auth().currentUser
-        var firebaseRef = firebase.database().ref("users").child(userId.uid).child(this.props.sourceId).child("bookmarks").child(this.props.bookId);
-        console.log(" bookmark list length",this.state.bookmarksList.length)
-        if(this.state.bookmarksList.length == 0){
-          var key = firebaseRef.push({chapterNumber:this.state.currentVisibleChapter}).key
-          console.log("KEY",key)
+      // || this.state.bookmarksList.indexOf(a)===-1
+          var newBookmarks = isbookmark
+          ? this.state.bookmarksList.filter((a) => a !== this.state.currentVisibleChapter )
+          : this.state.bookmarksList.concat(this.state.currentVisibleChapter)
+          console.log(" book mark list ",newBookmarks)
+          var userId =  firebase.auth().currentUser
+          var firebaseRef = firebase.database().ref("users/"+userId.uid+"/bookmarks/"+this.props.sourceId+"/"+this.props.bookId);
+          firebaseRef.set(newBookmarks)
           this.setState({
-            bookmarksList: [...this.state.bookmarksList, {key:key,chapterNumber:this.state.currentVisibleChapter}]
-          })
-        }
-        else{
-          for(var i=0;i<=this.state.bookmarksList.length-1;i++){
-            if(this.state.bookmarksList[i].chapterNumber === this.state.currentVisibleChapter){
-              var atomicUpdate = {}
-              const deleteKey = this.state.bookmarksList[i].key
-              atomicUpdate[deleteKey] = null
-              firebaseRef.update(atomicUpdate)
-              this.state.bookmarksList.splice(i, 1)
-              duplicate = true
-            }
+            bookmarksList:newBookmarks
+          },()=>{
+            this.props.navigation.setParams({isBookmark:this.isBookmark()})
           }
-          if(duplicate == false){
-            var key = firebaseRef.push({chapterNumber:this.state.currentVisibleChapter}).key
-            console.log("KEY",key)
-            this.setState({
-              bookmarksList: [...this.state.bookmarksList, {key:key,chapterNumber:this.state.currentVisibleChapter}]
-            })
-          }
-        }
+          )
+      
+      //     if(this.state.bookmarksList.length == 0){
+    //       this.setState({
+    //         bookmarksList: [...this.state.bookmarksList, this.state.currentVisibleChapter]
+    //       },()=>{
+    //         var list = this.state.bookmarksList
+    //       firebaseRef.set(list)
+    //       })
+    //     }
+    //     else{
+        
+    //       for(var i=0;i<=this.state.bookmarksList.length-1;i++){
+    //         if(this.state.bookmarksList[i] === this.state.currentVisibleChapter){
+    //           console.log("duplicate chapter ", this.state.bookmarksList[i])
+
+    //           var atomicUpdate = {}
+    //           const deleteKey = i
+    //           atomicUpdate[deleteKey] = null
+    //           console.log("duplicate ",atomicUpdate[deleteKey])
+    //           firebaseRef.update(atomicUpdate)
+    //           this.state.bookmarksList.splice(i, 1)
+    //           duplicate = true
+    //         }
+    //       }
+    //       console.log("duplicate ",duplicate)
+    //       if(duplicate == false){
+    //         this.setState({
+    //           bookmarksList: [...this.state.bookmarksList, this.state.currentVisibleChapter]
+    //         },()=>{
+    //           var list = this.state.bookmarksList
+    //           firebaseRef.set(list)
+
+    //         })
+    //       }
+    //     }
 
     }
     else{
       if(isbookmark === false){
         this.setState({
-          bookmarksList:this.state.bookmarksList.concat({"bookId":this.props.bookId,"chapterNumber":this.state.currentVisibleChapter})
+          bookmarksList:[...this.state.bookmarksList,this.state.currentVisibleChapter]
         })
         DbQueries.updateBookmarkInBook(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter,true);
       }
       else{
         //add bookmark
         for(var i=0; i<=this.state.bookmarksList.length-1; i++){
-          if(this.state.bookmarksList[i].chapterNumber == this.state.currentVisibleChapter && this.state.bookmarksList[i].bookId == this.props.bookId) {
+          if(this.state.bookmarksList[i] == this.state.currentVisibleChapter) {
             DbQueries.updateBookmarkInBook(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter,false);
             this.state.bookmarksList.splice(i, 1)
           }
@@ -814,7 +815,7 @@ updateData = ()=>{
 }
 
   render() {
-    console.log("bookmark list ",this.state.bookmarksList[0])
+    console.log("bookmark list ",this.state.bookmarksList)
 
     return(
     <View  style={this.styles.container}>

@@ -72,33 +72,31 @@ class BookMarks extends Component {
 
   componentDidMount(){
     var userId = firebase.auth().currentUser;
-    var starCountRef = firebase.database().ref('users/' + userId.uid +"/"+this.props.sourceId+"/"+"bookmarks")
-      starCountRef.on('value', (snapshot)=> {
+    var firebaseRef = firebase.database().ref("users/"+userId.uid+"/bookmarks/"+this.props.sourceId);
+
+    firebaseRef.on('value', (snapshot)=> {
         console.log("value ",snapshot.val())
-  
-        this.setState({
-          bookmarksList:snapshot.val()
-        })
+        if(snapshot.val() !=null){
+          this.setState({
+            bookmarksList:snapshot.val()
+          })
+        }
+        
       })
     // this.getBookMarks()  
   } 
   async getBookMarks(){
-    // console.log(" book marks",this.props.email)
+    console.log(" data email and source id",this.props.email,this.props.sourceId)
     if(this.props.emai){
       console.log(" found email ")
       var userId = firebase.auth().currentUser;
-      var firebaseRef = firebase.database().ref("users/"+userId.uid+"/"+this.props.sourceId+"/bookmarks/")
+      var firebaseRef = firebase.database().ref("users/"+userId.uid+"/"+"/bookmarks/"+this.props.sourceId)
       firebaseRef.on('value', (snapshot)=>{
         console.log("book marks ",snapshot.val())
-        // var bookmarksList = [];
-        // if(snapshot.val() != null){
-        //   snapshot.forEach((todo) => {
-        //     bookmarksList.push({key:todo.key,chapterNumber:todo.val().chapterNumber})
-        //   })
-        //   this.setState({
-        //     bookmarksList
-        // })
-        // }
+        this.setState({
+              bookmarksList:[...this.state.bookmarksList]
+          })
+
     })
     }
     else{
