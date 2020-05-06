@@ -9,7 +9,9 @@ export const extraSmallFont = {
         emptyIconSize: 34,
         settingsIcon:18,
         chevronIconSize:36,
-        bottomBarText:10
+        bottomBarText:10,
+
+        lineHeight:22,
         
         
 };
@@ -22,7 +24,10 @@ export const smallFont = {
         emptyIconSize:38,
         settingsIcon:22,
         chevronIconSize:40,
-        bottomBarText:12
+        bottomBarText:12,
+
+        lineHeight:26,
+
                 
 };
 
@@ -34,7 +39,10 @@ export const mediumFont = {
         emptyIconSize: 42,
         settingsIcon:26,
         chevronIconSize:44,
-        bottomBarText:14
+        bottomBarText:14,
+
+        lineHeight:30,
+
         
         
 }
@@ -46,7 +54,10 @@ export const largeFont = {
         emptyIconSize: 46,
         settingsIcon:30,
         chevronIconSize:48,
-        bottomBarText:16
+        bottomBarText:16,
+
+        lineHeight:34,
+
         
         
 };
@@ -59,7 +70,10 @@ export const extraLargeFont = {
         emptyIconSize: 50,
         settingsIcon:34,
         chevronIconSize:42,
-        bottomBarText:16
+        bottomBarText:16,
+
+        lineHeight:38,
+
                 
 };
 

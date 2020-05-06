@@ -287,23 +287,28 @@ class DbHelper {
 		// console.log("languagge version ",langName,verCode)
 
 		let realm = await this.getRealm()
-
+			// source id null  or bid null or both null 
 			if (realm){
 				let result1 = realm.objects("BookmarksListModel");
-				 if(sourceId === null  && bId === null){
-					console.log(" all null having value ",result1)
-					if(Object.keys(result1).length > 0){
-						return result1
-					}
-					else{
-						return null
+				let bookmarks = result1.filtered('sourceId == "' + sourceId + '"')
+				 if(sourceId === null && bId === null){
+						if(Object.keys(result1).length > 0){
+							return result1
+						}
+						else{
+							return null
+						}
+					 
+				}
+				else if(bId === null){
+					if(bookmarks.length > 0){
+						let bookmarksId = bookmarks[0].bookmarksBookId
+						return bookmarksId
 					}
 				}
 				else{
-					let bookmarks = result1.filtered('sourceId == "' + sourceId + '"')
-					if(bookmarks.length == 0){
-					console.log("bookmarks data ",bookmarks.length)
-					}else{
+					if(bookmarks.length > 0){
+					// console.log("bookmarks data ",bookmarks.length)
 						let bookmarksId = bookmarks[0].bookmarksBookId
 						let res = bookmarksId.filtered('bookId==[c] "' + bId + '"')
 						console.log("bookmarks match chapter ",JSON.stringify(res.length))

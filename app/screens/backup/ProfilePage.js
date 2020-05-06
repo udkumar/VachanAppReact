@@ -12,6 +12,8 @@ import Login from './Login';
 import firebase from 'react-native-firebase';
 import {connect} from 'react-redux'
 import {userInfo} from '../../store/action/'
+import DbQueries from '../../utils/dbQueries'
+
 
 
  class ProfilePage extends Component {
@@ -48,6 +50,8 @@ import {userInfo} from '../../store/action/'
         // AsyncStorageUtil.removeItem(AsyncStorageConstants.Keys.BackupRestoreEmail)
         this.props.userInfo({email:null,uid:null,userName:''})
         this.setState({user:null})
+        DbQueries.deleteBookmark()
+        
     }
 
     render() {

@@ -61,49 +61,54 @@ class VerseView extends Component {
     let isSelect = this.has(this.props.selectedReferences, obj)
     // console.log("is selected ",isSelect)
     let isHighlight = this.isHighlight()
-    // console.log("is highlighted verseArray ",this.props.HightlightedVerse)
-
-    
-    // const BackgroundColorConfig = this.Animation.interpolate(
-    //   {
-    //       inputRange: [ 0, 1 ],
-    //       outputRange: [ '#3F51B5', '#fff', ]
-
-    //   });
-
+      if(this.props.verseData.number == 1){
+        // console.log("this.props.verseData.number")
         return (
-          // <Animated.Text onPress={() => {this.onPress()}} 
           <Text style ={this.props.styles.textStyle} onPress={() => {this.onPress()}} 
-
-          // style={{
-            // backgroundColor: (this.props.verseSelected == this.props.verseData.number) ?  BackgroundColorConfig : '#fff'
-            // }}
+          >
+          <Text style={this.props.styles.verseChapterNumber}>
+        {this.props.chapterNumber}{" "}
+          </Text>
+        <Text style={ [isSelect && isHighlight 
+                ? this.props.styles.verseTextSelectedHighlighted 
+                : !isSelect && !isHighlight 
+                ? this.props.styles.verseTextNotSelectedNotHighlighted
+                : !isSelect && isHighlight
+                ? this.props.styles.verseTextNotSelectedHighlighted
+                : this.props.styles.verseTextSelectedNotHighlighted,
+              ]}
+                >
+          {/* {this.getResultText(this.props.verseData.text)} */}
+         {this.props.verseData.text}
+        </Text>         
+          </Text>
+        )
+      }
+        return (
+          <Text style ={this.props.styles.textStyle} onPress={() => {this.onPress()}} 
             >
-            <Text style={this.props.styles.verseNumber} >
+            <Text style={this.props.styles.verseNumber}>
               {this.props.verseData.number}{" "}
             </Text>
-            <Text style={ [isSelect && isHighlight 
+            <Text style={[isSelect && isHighlight 
                     ? this.props.styles.verseTextSelectedHighlighted 
                     : !isSelect && !isHighlight 
                     ? this.props.styles.verseTextNotSelectedNotHighlighted
                     : !isSelect && isHighlight
                     ? this.props.styles.verseTextNotSelectedHighlighted
-                    : this.props.styles.verseTextSelectedNotHighlighted]}
+                    : this.props.styles.verseTextSelectedNotHighlighted,
+                  ]}
                     >
-              {/* {this.getResultText(this.props.verseData.text)} */}
               {this.props.verseData.text}
             </Text>         
           </Text>
-          // {/* </Animated.Text> */}
-
-
-        );
-     
+        )
   }
 }
 
 const mapStateToProps = state =>{
   return{
+
     // chapterNumber:state.updateVersion.chapterNumber,
     bookId:state.updateVersion.bookId,
     verseNumber:state.updateVersion.verseNumber,

@@ -18,8 +18,8 @@ import {connect} from 'react-redux'
     constructor(props){
         super(props)
         this.state = {
-            email:'neetuyadav@test.com',
-            password:'neetuyadav',
+            email:'revant@gmail.com',
+            password:'123456',
             showLoading:''
         }
     }
@@ -31,7 +31,7 @@ import {connect} from 'react-redux'
             this.setState({showLoading:false})
             if(doLogin.user){
                 this.props.userInfo({email:doLogin.user._user.email,uid:doLogin.user._user.uid,userName:doLogin.user._user.displayName,phoneNumber:doLogin.user._user.phoneNumber})
-                let model = await  DbQueries.queryBookmark(null,null,null)
+                let model = await  DbQueries.queryBookmark(null,null)
                 console.log("model ",model)
                 if (model == null) {
                 }

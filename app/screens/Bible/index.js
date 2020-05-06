@@ -497,30 +497,30 @@ this.setState({audio:false})
     if(this.props.email){
       var userId = firebase.auth().currentUser;
       var firebaseRef = firebase.database().ref("users/"+userId.uid+"/bookmarks/"+this.props.sourceId+"/"+this.props.bookId);
-      // var firebaseRef = firebase.database().ref("users/"+userId.uid+"/"+this.props.sourceId+"/bookmarks/"+this.props.bookId)
+      console.log(" logged in ")
       firebaseRef.on('value', (snapshot)=>{
-        console.log("book marks lisr ",snapshot.val())
         if(snapshot.val() != null){
-        this.setState({bookmarksList:snapshot.val()})
-        }
+          
+        this.setState({bookmarksList:snapshot.val()},
+        ()=> this.props.navigation.setParams({isBookmark:this.isBookmark()}) )}
       })
     }
     else{
+      console.log("not logged in")
     // console.log(" ",this.props.language,this.props.versionCode,this.props.bookId,this.state.currentVisibleChapter)
     var model = await  DbQueries.queryBookmark(this.props.sourceId,this.props.bookId)
-    console.log("BOOK MARKS ......MODEL",model) 
-    if (model == null) {
-           console.log(" model null")   
+    if (model != null) {
+           if(model.length > 0){
+            var chapterList = []
+            for(var i = 0; i<=model[0].chapterNumber.length-1;i++){
+            chapterList.push(model[0].chapterNumber[i])
+          }
+          this.setState({bookmarksList:chapterList},()=>{
+            this.props.navigation.setParams({isBookmark:this.isBookmark()})
+          })
+          } 
     }
-    else{
-      if(model.length > 0){
-        for(var i = 0; i<=model.length-1;i++){
-        this.setState({bookmarksList:[...this.state.bookmarksList,this.state.currentVisibleChapter]},()=>{
-          this.props.navigation.setParams({isBookmark:this.isBookmark()})
-        })
-      }
-      }
-    }
+
     }
   }
 
@@ -541,11 +541,12 @@ this.setState({audio:false})
             return true
           }
   }
-  // return false
+  return false
 }
 
   //add book mark from header icon 
-   onBookmarkPress(isbookmark){
+   onBookmarkPress=(isbookmark)=>{
+     
      console.log("isbookmark ",isbookmark)
     if(this.props.email){
       // || this.state.bookmarksList.indexOf(a)===-1
@@ -562,48 +563,19 @@ this.setState({audio:false})
             this.props.navigation.setParams({isBookmark:this.isBookmark()})
           }
           )
-      
-      //     if(this.state.bookmarksList.length == 0){
-    //       this.setState({
-    //         bookmarksList: [...this.state.bookmarksList, this.state.currentVisibleChapter]
-    //       },()=>{
-    //         var list = this.state.bookmarksList
-    //       firebaseRef.set(list)
-    //       })
-    //     }
-    //     else{
-        
-    //       for(var i=0;i<=this.state.bookmarksList.length-1;i++){
-    //         if(this.state.bookmarksList[i] === this.state.currentVisibleChapter){
-    //           console.log("duplicate chapter ", this.state.bookmarksList[i])
-
-    //           var atomicUpdate = {}
-    //           const deleteKey = i
-    //           atomicUpdate[deleteKey] = null
-    //           console.log("duplicate ",atomicUpdate[deleteKey])
-    //           firebaseRef.update(atomicUpdate)
-    //           this.state.bookmarksList.splice(i, 1)
-    //           duplicate = true
-    //         }
-    //       }
-    //       console.log("duplicate ",duplicate)
-    //       if(duplicate == false){
-    //         this.setState({
-    //           bookmarksList: [...this.state.bookmarksList, this.state.currentVisibleChapter]
-    //         },()=>{
-    //           var list = this.state.bookmarksList
-    //           firebaseRef.set(list)
-
-    //         })
-    //       }
-    //     }
-
     }
     else{
-      if(isbookmark === false){
+
+      var newBookmarks = isbookmark
+      ? this.state.bookmarksList.filter((a) => a !== this.state.currentVisibleChapter )
+      : this.state.bookmarksList.concat(this.state.currentVisibleChapter)
         this.setState({
-          bookmarksList:[...this.state.bookmarksList,this.state.currentVisibleChapter]
+          bookmarksList:newBookmarks
+        },()=>{
+          this.props.navigation.setParams({isBookmark:this.isBookmark()})
         })
+
+      if(isbookmark === false){
         DbQueries.updateBookmarkInBook(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter,true);
       }
       else{
@@ -611,11 +583,13 @@ this.setState({audio:false})
         for(var i=0; i<=this.state.bookmarksList.length-1; i++){
           if(this.state.bookmarksList[i] == this.state.currentVisibleChapter) {
             DbQueries.updateBookmarkInBook(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter,false);
-            this.state.bookmarksList.splice(i, 1)
+            // this.state.bookmarksList.splice(i, 1)
           }
         }
       }
     }
+
+
   }
 
 
@@ -815,8 +789,6 @@ updateData = ()=>{
 }
 
   render() {
-    console.log("bookmark list ",this.state.bookmarksList)
-
     return(
     <View  style={this.styles.container}>
       {this.state.isLoading &&
@@ -846,7 +818,6 @@ updateData = ()=>{
             </Header>
           }
           {/* <View>
-        <Text>{this.state.currentVisibleChapter}</Text>
           </View> */}
               <FlatList
                 data={this.state.chapterContent }

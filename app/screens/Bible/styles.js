@@ -140,20 +140,24 @@ export const styles =(colorFile, sizeFile) =>{
     },
     verseChapterNumber:{
         fontSize:sizeFile.titleText,
-        // fontWeight:'bold'
+        color:colorFile.textColor,
+        fontWeight:'bold'
     },
     verseTextSelectedHighlighted:{
         backgroundColor:colorFile.highlightColor,
         textDecorationLine: 'underline',
+        lineHeight:sizeFile.lineHeight
     },
     verseTextNotSelectedNotHighlighted:{
-        
+        lineHeight: sizeFile.lineHeight
     },
     verseTextNotSelectedHighlighted:{
         backgroundColor:colorFile.highlightColor,
+        lineHeight: sizeFile.lineHeight
     },
     verseTextSelectedNotHighlighted:{
         textDecorationLine: 'underline',
+        lineHeight: sizeFile.lineHeight
     },
     textStyle:{
         color:colorFile.textColor,

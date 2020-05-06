@@ -70,50 +70,48 @@ class BookMarks extends Component {
     // this.refreshData = this.refreshData.bind(this)
   }
 
-  componentDidMount(){
-    var userId = firebase.auth().currentUser;
-    var firebaseRef = firebase.database().ref("users/"+userId.uid+"/bookmarks/"+this.props.sourceId);
+  async componentDidMount(){
+    if(this.props.email){
+      console.log("logged in ")
 
-    firebaseRef.on('value', (snapshot)=> {
-        console.log("value ",snapshot.val())
-        if(snapshot.val() !=null){
-          this.setState({
-            bookmarksList:snapshot.val()
-          })
-        }
-        
-      })
-    // this.getBookMarks()  
-  } 
-  async getBookMarks(){
-    console.log(" data email and source id",this.props.email,this.props.sourceId)
-    if(this.props.emai){
-      console.log(" found email ")
       var userId = firebase.auth().currentUser;
-      var firebaseRef = firebase.database().ref("users/"+userId.uid+"/"+"/bookmarks/"+this.props.sourceId)
-      firebaseRef.on('value', (snapshot)=>{
-        console.log("book marks ",snapshot.val())
-        this.setState({
-              bookmarksList:[...this.state.bookmarksList]
-          })
-
-    })
+      var firebaseRef = firebase.database().ref("users/"+userId.uid+"/bookmarks/"+this.props.sourceId);
+  
+      firebaseRef.on('value', (snapshot)=> {
+        // { gen: [ 4, 7, 5, 2, 3 ], deu: [ 10, 11, 12, 14 ] }
+        var data=[]
+          var list = snapshot.val()
+          if(snapshot.val() !=null){
+            for(var key in list){
+              data.push({bookId:key,chapterNumber:list[key]})
+            }
+            this.setState({
+              bookmarksList:data
+            })
+          }
+        })
     }
     else{
       let model = await  DbQueries.queryBookmark(this.state.sourceId,null)
-      if (model == null) {
-        
-      }
-      else{
+      console.log(" not logged in ",model)
+        // { bookId: 'deu',chapterNumber: { '0': 10, '1': 11, '2': 12, '3': 14 } }
+      if (model != null) {
         if(model.length > 0){
-          // console.log("book marked ",model)
-          this.setState({bookmarksList:model})
-         
+          var data =[]
+          for(var i=0;i<=model.length-1;i++){
+          var chapters =[]
+            data.push({bookId:model[i].bookId,chapterNumber:chapters})
+            for(var key in model[i].chapterNumber){
+              chapters.push(model[i].chapterNumber[key])
+            }
+          }
+          this.setState({bookmarksList:data})
         }
       }
+      
     }
-
-  }
+  } 
+  
   navigateToBible(item){
     console.log("bible bookmark  ",item)
     this.props.updateVersionBook({
@@ -132,53 +130,92 @@ class BookMarks extends Component {
 
     
   async onBookmarkRemove(id,chapterNum){
-  await DbQueries.updateBookmarkInBook(this.state.sourceId,id,chapterNum,false);
-      index = this.state.bookmarksList.findIndex(chapInd => chapInd.chapterNumber ===this.state.currentVisibleChapter);
-      for(var i = 0; i<=this.state.bookmarksList.length;i++ ){
-        if(this.state.bookmarksList[i].chapterNumber == chapterNum && this.state.bookmarksList[i].bookId == id ){
-          this.props.navigation.setParams({isBookmark:false }) 
-          await DbQueries.updateBookmarkInBook(this.state.sourceId,id,chapterNum,false);
-          this.state.bookmarksList.splice(index, 1)
-          this.setState({bookmarksList:this.state.bookmarksList.splice(index, 1),isBookmark:false})
-        } 
-      }
+
+    if(this.props.email){
+      var data =  this.state.bookmarksList
+      data.filter((a,i) => {
+          if(a.bookId == id ){
+              a.chapterNumber.filter((b,j) => {
+              if(b == chapterNum){
+                var userId = firebase.auth().currentUser
+                var firebaseRef = firebase.database().ref("users/"+userId.uid+"/bookmarks/"+this.props.sourceId+"/"+id);
+                if(a.chapterNumber.length == 1){
+                  console.log(" i ",i)
+                  data.splice(i,1)
+                  firebaseRef.remove()
+                  return
+                  // firebaseRef.set(a.chapterNumber)
+                }
+                else{
+                   a.chapterNumber.splice(j,1)
+                }
+                firebaseRef.set(a.chapterNumber)
+              }
+              
+            })
+          }
+        })
+        this.setState({bookmarksList:data})
+    }
+    else{
+      await DbQueries.updateBookmarkInBook(this.state.sourceId,id,chapterNum,false);
+      var data =  this.state.bookmarksList
+      data.filter((a,i) => {
+          if(a.bookId == id ){
+              a.chapterNumber.filter((b,j) => {
+              if(b == chapterNum){
+                if(a.chapterNumber.length == 1){
+                  console.log(" i ",i)
+                   data.splice(i,1)
+                }
+                else{
+                   a.chapterNumber.splice(j,1)
+                }
+              }
+            })
+          }
+        })
+        this.setState({bookmarksList:data})
+    }
+  
   }
 
   render() {
     console.log(" book list ",this.state.bookmarksList)
     return (
         <View style={this.styles.container}>
-        {/* <FlatList
-          data={this.state.bookmarksList}
-          contentContainerStyle={this.state.bookmarksList.length === 0 && this.styles.centerEmptySet}
-          // getItemLayout={this.getItemLayout}
-          renderItem={({item, index}) => 
-            <TouchableOpacity style={this.styles.bookmarksView}
-              onPress = { ()=> {this.navigateToBible(item)}}
-              >
-
-              <Text style={this.styles.bookmarksText}>
-              {getBookNameFromMapping(item.bookId,this.props.languageName)} {":"} {item.chapterNumber}
-              </Text>
+         {this.state.bookmarksList.length > 0 &&
+         <FlatList
+         data={this.state.bookmarksList}
+         contentContainerStyle={this.state.bookmarksList.length === 0 && this.styles.centerEmptySet}
+         renderItem={({item, index}) => 
+           <View>{
+             item.chapterNumber.length > 0 &&
+             item.chapterNumber.map(e=>
+              <TouchableOpacity style={this.styles.bookmarksView} onPress = { ()=> {this.navigateToBible(item)}} >
+              <Text style={this.styles.bookmarksText}>{getBookNameFromMapping(item.bookId,this.props.languageName)} {":"} {e}</Text>
               <Icon name='delete-forever' style={this.styles.iconCustom}   
-                onPress={() => {this.onBookmarkRemove(item.bookId,item.chapterNumber)} } 
+                onPress={() => {this.onBookmarkRemove(item.bookId,e)} } 
               />
-          
-            </TouchableOpacity>
-          }
-          ListEmptyComponent={
-            <View style={this.styles.emptyMessageContainer}>
-            <Icon name="collections-bookmark" style={this.styles.emptyMessageIcon}/>
-              <Text
-                style={this.styles.messageEmpty}
-              >
-               No Bookmark added
-              </Text>
-              
-            </View>
-          }
-          extraData={this.props}
-        /> */}
+              </TouchableOpacity>
+            )}
+           </View>
+         }
+         ListEmptyComponent={
+           <View style={this.styles.emptyMessageContainer}>
+           <Icon name="collections-bookmark" style={this.styles.emptyMessageIcon}/>
+             <Text
+               style={this.styles.messageEmpty}
+             >
+              No Bookmark added
+             </Text>
+             
+           </View>
+         }
+         extraData={this.props}
+       />
+         } 
+        
         </View>
     );
   }
