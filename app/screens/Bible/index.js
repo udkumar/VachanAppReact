@@ -41,6 +41,7 @@ import MainHeader from '../../components/MainHeader'
 import {Card,CardItem,Content,Body,Header,Container, Button,Right,Left,Title} from 'native-base'
 import BibleChapter from './component/BibleChapter';
 import firebase from 'react-native-firebase'
+import { array } from 'prop-types';
 
 
 const height = Dimensions.get('window').height;
@@ -169,23 +170,6 @@ class Bible extends Component {
     this.pinchTime = new Date().getTime()
     this.styles = styles(this.props.colorFile, this.props.sizeFile);    
   }
-  // static getDerivedStateFromProps(nextProps, prevState) {
-  //   console.log("NEXT PROPS ",nextProps)
-  //     return{
-  //       colorFile:nextProps.colorFile,
-  //       sizeFile:nextProps.sizeFile,
-  //       totalVerses:nextProps.totalVerses,
-  //       totalChapters:nextProps.totalChapters,
-  //       languageName:nextProps.language,
-  //       versionCode:nextProps.versionCode,
-  //       bookId:nextProps.bookId,
-  //       bookName:getBookNameFromMapping(nextProps.bookId,nextProps.language),
-  //       sourceId:nextProps.sourceId,
-  //       downloaded:nextProps.downloaded,
-  //       currentVisibleChapter:nextProps.chapterNumber,
-  //   }
-  // }
-
   scrollToVerse(verseNumber){
     if(this.state.arrLayout.length > 0){
     console.log("SCROLL TO ........  ",this.state.arrLayout, " ",this.state.arrLayout[verseNumber],"  ",verseNumber)
@@ -274,9 +258,8 @@ class Bible extends Component {
       // toggleModal:this.setState({modalVisible:!this.state.modalVisible}),
     })
     this.subs = this.props.navigation.addListener("didFocus", () =>{
-    // console.log("IS DOWNLOADED ",this.props.downloaded,this.state.currentVisibleChapter,this.props.bookId)
-    this.setState({isLoading:true,currentVisibleChapter:this.props.chapterNumber,bookId:this.props.bookId},()=>{
-    console.log("IS DOWNLOADED ",this.props.downloaded,this.state.currentVisibleChapter,this.props.bookId)
+    this.setState({isLoading:true,bookId:this.props.bookId,currentVisibleChapter:this.props.chapterNumber},()=>{
+    console.log("IS DOWNLOADED ",this.props.sourceId,this.props.downloaded,this.state.currentVisibleChapter,this.props.bookId)
       this.getChapter()
       this.audioComponentUpdate()
       this.getHighlights()
@@ -291,6 +274,16 @@ class Bible extends Component {
         numOfChapter:this.props.totalChapters,
         numOfVerse:this.props.totalVerses
       })
+      this.props.updateVersionBook({
+        bookId:this.props.bookId,
+        bookName:getBookNameFromMapping(this.props.bookId,this.props.language),
+        chapterNumber:this.state.currentVisibleChapter,
+        totalChapters:this.props.totalChapters,
+        totalVerses:this.props.totalVerses,
+        verseNumber:this.state.verseNumber
+      })
+      this.props.updateVersion({language:this.props.language,languageCode:this.props.languageCode,
+      versionCode:this.props.versionCode,sourceId:this.props.sourceId,downloaded:this.props.downloaded})
       this.setState({isLoading:false})
     })
    
@@ -325,14 +318,15 @@ class Bible extends Component {
     var time =  new Date()
     DbQueries.addHistory(item.sourceId,item.languageName,item.languageCode, 
     item.versionCode, this.props.bookId, this.state.currentVisibleChapter, item.downloaded, time)
-    this.props.updateVersion({language:item.languageName,languageCode:item.languageCode,
-      versionCode:item.versionCode,sourceId:item.sourceId,downloaded:item.downloaded})
+    // this.props.updateVersion({language:item.languageName,languageCode:item.languageCode,
+    //   versionCode:item.versionCode,sourceId:item.sourceId,downloaded:item.downloaded})
     this.props.navigation.setParams({
       languageName:item.languageName,
       versionCode:item.versionCode,
       bookName:getBookNameFromMapping(this.props.bookId,item.languageName).length > 8 ? getBookNameFromMapping(this.props.bookId,item.languageName).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,item.languageName),
+      // chapterNumber:this.state.currentVisibleChapter
     })
-
+    // this.getBookMarks()
   }
 
   async getDownloadedContent(){
@@ -366,7 +360,6 @@ class Bible extends Component {
           var content = await APIFetch.getChapterContent(this.props.sourceId, this.props.bookId, this.state.currentVisibleChapter)
           this.setState({chapterContent:content.chapterContent.verses,error:null,isLoading:false,currentVisibleChapter:this.state.currentVisibleChapter})
         }
-       
     }
     catch(error){
       this.setState({error:error,isLoading:false,chapterContent:[]})
@@ -404,7 +397,17 @@ class Bible extends Component {
                   console.log("fetch content",content)
                   this.setState({chapterContent:content.chapterContent.verses,isLoading:false,currentVisibleChapter:this.state.currentVisibleChapter})
             }
-            // this.updateBookmark()
+            this.props.updateVersionBook({
+              bookId:this.props.bookId,
+              bookName:getBookNameFromMapping(this.props.bookId,this.props.language),
+              chapterNumber:this.state.currentVisibleChapter,
+              totalChapters:this.props.totalChapters,
+              totalVerses:this.props.totalVerses,
+              verseNumber:this.state.verseNumber
+            })
+            this.props.updateVersion({language:this.props.language,languageCode:this.props.languageCode,
+            versionCode:this.props.versionCode,sourceId:this.props.sourceId,downloaded:this.props.downloaded})
+            this.getHighlights()
           }
           catch(error) {
             this.setState({isLoading:false,error:error,chapterContent:[]})
@@ -458,34 +461,33 @@ this.setState({audio:false})
   async getHighlights(){
     if(this.props.email){
       var userId = firebase.auth().currentUser;
-      var firebaseRef = firebase.database().ref("users/"+userId.uid+"/"+this.props.sourceId+"/highlights/"+this.props.bookId)
+      var firebaseRef = firebase.database().ref("users/"+userId.uid+"/highlights/"+this.props.sourceId+"/"+this.props.bookId+"/"+this.state.currentVisibleChapter)
       firebaseRef.on('value', (snapshot)=>{
-        // console.log("highlights ",snapshot)
-        var HightlightedVerseArray = [];
+        console.log("highlights ",snapshot.val())
+        // var HightlightedVerseArray = [];
         if(snapshot.val() != null){
-          snapshot.forEach((todo) => {
-            // this.state.HightlightedVerseArray.concat({"bookId":model2[i].bookId,
-            HightlightedVerseArray.push({
-            key:todo.key,
-            chapterNumber:todo.val().chapterNumber,
-            verseNumber:todo.val().verseNumber
-            })
-          })
           this.setState({
-            HightlightedVerseArray
+            HightlightedVerseArray: [{chapterNumber:this.state.currentVisibleChapter,verses:snapshot.val()}]
+        })
+        }
+        else{
+          this.setState({
+            HightlightedVerseArray: []
         })
         }
       })
     }
     else{
-      let model2 = await  DbQueries.queryHighlights(this.props.sourceId,this.props.bookId)
+      let model2 = await  DbQueries.queryHighlights(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter)
+      // console.log(" MODEL HIGHLIGHT ",model2[0])
+      var highlights = []
       if(model2 !=null){
-        for(var i = 0; i<=model2.length-1;i++){
-          this.setState({HightlightedVerseArray:this.state.HightlightedVerseArray.concat({"bookId":model2[i].bookId,
-          "chapterNumber":model2[i].chapterNumber,
-          "verseNumber":model2[i].verseNumber})
-        })
-      }
+        var verses = []
+        for(var i = 0; i<=model2[0].verseNumber.length-1;i++){
+          verses.push(model2[0].verseNumber[i])
+        }
+        highlights.push({chapterNumber:model2[0].chapterNumber,verses:verses})
+        this.setState({HightlightedVerseArray:highlights})
       }
       else{
         this.setState({HightlightedVerseArray:[]})
@@ -494,15 +496,21 @@ this.setState({audio:false})
   }
 
   async getBookMarks(){
+    console.log(" source id ",this.props.sourceId,"book id ",this.props.bookId)
     if(this.props.email){
       var userId = firebase.auth().currentUser;
       var firebaseRef = firebase.database().ref("users/"+userId.uid+"/bookmarks/"+this.props.sourceId+"/"+this.props.bookId);
-      console.log(" logged in ")
+      // this.state.bookmarksList = []
       firebaseRef.on('value', (snapshot)=>{
-        if(snapshot.val() != null){
-          
+      console.log(" logged in ",snapshot.val())
+        if(snapshot.val() === null){
+          this.setState({bookmarksList:[]},
+        ()=> this.props.navigation.setParams({isBookmark:this.isBookmark()}))
+        }
+        else{
         this.setState({bookmarksList:snapshot.val()},
-        ()=> this.props.navigation.setParams({isBookmark:this.isBookmark()}) )}
+        ()=> this.props.navigation.setParams({isBookmark:this.isBookmark()}))
+        }
       })
     }
     else{
@@ -546,14 +554,14 @@ this.setState({audio:false})
 
   //add book mark from header icon 
    onBookmarkPress=(isbookmark)=>{
-     
      console.log("isbookmark ",isbookmark)
     if(this.props.email){
       // || this.state.bookmarksList.indexOf(a)===-1
           var newBookmarks = isbookmark
           ? this.state.bookmarksList.filter((a) => a !== this.state.currentVisibleChapter )
           : this.state.bookmarksList.concat(this.state.currentVisibleChapter)
-          console.log(" book mark list ",newBookmarks)
+          // console.log(" book mark list ",newBookmarks)
+          console.log(" book mark ",newBookmarks)
           var userId =  firebase.auth().currentUser
           var firebaseRef = firebase.database().ref("users/"+userId.uid+"/bookmarks/"+this.props.sourceId+"/"+this.props.bookId);
           firebaseRef.set(newBookmarks)
@@ -617,10 +625,11 @@ this.setState({audio:false})
       for (let item of this.state.selectedReferenceSet) {
           let tempVal = item.split('_')
           for(var i=0; i<=this.state.HightlightedVerseArray.length-1; i++ ){
-              if (this.state.HightlightedVerseArray[i].verseNumber == JSON.parse(tempVal[2]) && this.state.HightlightedVerseArray[i].chapterNumber ==JSON.parse(tempVal[0]) && this.state.HightlightedVerseArray[i].bookId == this.props.bookId  ) {
+            for(var j=0; j<=this.state.HightlightedVerseArray[i].verses.length-1; j++ ){
+              if(this.state.HightlightedVerseArray[i].verses[j] == JSON.parse(tempVal[2]) && this.state.HightlightedVerseArray[i].chapterNumber ==JSON.parse(tempVal[0])){
                 highlightCount++
               }
-              
+            }
           }
       }
       this.setState({showBottomBar: this.state.selectedReferenceSet.length > 0 ? true : false, bottomHighlightText: selectedCount == highlightCount ?  false : true})
@@ -660,62 +669,62 @@ this.setState({audio:false})
     this.setState({selectedReferenceSet: [], showBottomBar: false})
   }
   onbackNote=()=>{
-
     console.log("onback nothing in bible page")
   }
-  //after selected reference do highlight 
-  doHighlight = async () => {
-  if (this.state.bottomHighlightText == true) {
-    if(this.props.email){
-      var userId = firebase.auth().currentUser;
-      var firebaseRef = firebase.database().ref("users/"+userId.uid+"/"+this.props.sourceId+"/highlights/"+this.props.bookId)
-      for (let item of this.state.selectedReferenceSet){
-        var duplicate = false
-        let tempVal = item.split('_')
-        for(var i=0;i<=this.state.HightlightedVerseArray.length-1;i++){
-          if(this.state.HightlightedVerseArray[i].chapterNumber === this.state.currentVisibleChapter && this.state.HightlightedVerseArray[i].verseNumber === JSON.parse(tempVal[2])){
-            var atomicUpdate = {}
-            const deleteKey = this.state.HightlightedVerseArray[i].key
-            atomicUpdate[deleteKey] = null
-            firebaseRef.update(atomicUpdate)
-            this.state.HightlightedVerseArray.splice(i, 1)
-            duplicate = true
+
+  doHighlight = async() => {
+    if(this.state.HightlightedVerseArray.length == 0){
+          var verses =  []
+        for (let item of this.state.selectedReferenceSet){
+          let tempVal = item.split('_')
+          console.log("SELECTED ITEM ",tempVal[2])
+          verses.push(JSON.parse(tempVal[2]))
+          if(this.props.email == null){
+            await DbQueries.updateHighlightsInVerse(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter, tempVal[2], true)
           }
         }
-        if(duplicate == false){
-          var key = firebaseRef.push({chapterNumber:this.state.currentVisibleChapter,verseNumber:JSON.parse(tempVal[2])}).key
-          this.setState({
-            HightlightedVerseArray: [...this.state.HightlightedVerseArray, {key:key,chapterNumber:this.state.currentVisibleChapter,verseNumber:JSON.stringify(tempVal[2])}]
-          })
+        if(this.props.email){
+          var userId = firebase.auth().currentUser;
+          var firebaseRef = firebase.database().ref("users/"+userId.uid+"/highlights/"+this.props.sourceId+"/"+this.props.bookId+"/"+this.state.currentVisibleChapter)
+          firebaseRef.set(verses)
         }
-        }
-      }
+        this.setState({HightlightedVerseArray:[...this.state.HightlightedVerseArray, {chapterNumber:this.state.currentVisibleChapter,verses:verses}]})
+    }
     else{
-      var arr = []
       for (let item of this.state.selectedReferenceSet){
         let tempVal = item.split('_')
-        await DbQueries.updateHighlightsInVerse( this.props.language, this.props.versionCode,this.props.bookId,this.state.currentVisibleChapter, tempVal[2], true)
-        var highlightArr = this.state.HightlightedVerseArray
-        highlightArr.push({"bookId":this.props.bookId,"chapterNumber":this.state.currentVisibleChapter,"verseNumber":JSON.parse(tempVal[2])})
-        var arr = highlightArr.sort( function( a, b){ return a.verseNumber - b.verseNumber; } );
-        for( var i=0; i<arr.length-1; i++ ) {
-        if ( arr[i].verseNumber == arr[i+1].verseNumber ){
-          arr.splice(i+1,1)
-        }}
-        }
-    }
-  } 
-  else {
-    for (let item of this.state.selectedReferenceSet){
-      let tempVal = item.split('_')
-      for(var i=0; i<=this.state.HightlightedVerseArray.length-1; i++){
-        if(this.state.HightlightedVerseArray[i].chapterNumber == JSON.parse(tempVal[0]) && this.state.HightlightedVerseArray[i].verseNumber == JSON.parse(tempVal[2]) &&  this.state.HightlightedVerseArray[i].bookId == this.props.bookId) {
-          await DbQueries.updateHighlightsInVerse(this.props.language, this.props.versionCode,this.props.bookId,this.state.currentVisibleChapter, tempVal[2],false)
-          this.state.HightlightedVerseArray.splice(i, 1)
-        }
+        var highlights = this.state.HightlightedVerseArray
+        highlights.forEach(async(a)=>{
+          console.log("value a ",a)
+          if(a.chapterNumber === this.state.currentVisibleChapter){
+            var index =  a.verses.indexOf(JSON.parse(tempVal[2]))
+            if(this.state.bottomHighlightText){
+              if(index === -1){
+                a.verses.push(JSON.parse(tempVal[2]))
+                if(this.props.email==null){
+                  await DbQueries.updateHighlightsInVerse(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter, tempVal[2], true)
+                }
+              }
+            }
+            else{
+              a.verses.splice(index,1)
+              if(this.props.email == null){
+
+                await DbQueries.updateHighlightsInVerse(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter, tempVal[2], false)
+              }
+            }
+          }
+        })
       }
-    }
-  }
+      if(this.props.email){
+        var userId = firebase.auth().currentUser;
+        var firebaseRef = firebase.database().ref("users/"+userId.uid+"/highlights/"+this.props.sourceId+"/"+this.props.bookId+"/"+this.state.currentVisibleChapter)
+        firebaseRef.set(this.state.HightlightedVerseArray[0].verses)
+        console.log(" email check ",this.state.HightlightedVerseArray)
+      }
+      }
+       
+
   this.setState({ selectedReferenceSet: [], showBottomBar: false})
 }
 
@@ -736,35 +745,21 @@ this.setState({audio:false})
   }
  
   componentWillUnmount(){
-   
+    console.log(" boook un mount ")
       var time =  new Date()
       DbQueries.addHistory(item.sourceId,item.languageName,item.languageCode, 
       item.versionCode, this.props.bookId, this.state.currentVisibleChapter, item.downloaded, time)
-      
-      this.props.updateVersionBook({
-        bookId:this.props.bookId,
-        bookName:getBookNameFromMapping(this.props.bookId,this.props.language),
-        chapterNumber:this.state.currentVisibleChapter,
-        totalChapters:this.props.totalChapters,
-        totalVerses:this.props.totalVerses,
-        verseNumber:this.state.verseNumber
-      })
-
-      this.props.updateVersion({language:this.props.language,languageCode:this.props.languageCode,
-      versionCode:this.props.versionCode,sourceId:this.props.sourceId,downloaded:this.props.downloaded})
       this.subs.remove();
   }
 
   _keyExtractor = (item, index) => item.number;
 
- 
   onScroll=(event)=> {
     var currentOffset = event.nativeEvent.contentOffset.y;
     var direction = currentOffset > this.state.offset ? 'down' : 'up';
     this.setState({offset:currentOffset,direction:direction})
     console.log(direction)
   }
-
 
   toggleParallelView(value){
     this.props.navigation.setParams({visibleParallelView:value})
@@ -789,6 +784,7 @@ updateData = ()=>{
 }
 
   render() {
+    console.log("source id ",this.props.sourceId)
     return(
     <View  style={this.styles.container}>
       {this.state.isLoading &&

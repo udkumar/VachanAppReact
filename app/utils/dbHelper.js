@@ -104,63 +104,86 @@ class DbHelper {
 		}
 		return null;
 	}
-	async queryHighlights(sourceId, bookId){
+	async queryHighlights(sourceId, bId,cNum){
 		let realm = await this.getRealm();
 		if (realm){
-			var result1 = realm.objects("HighlightsModel");
-			if(bookId == null  && sourceId == null){
-				if(Object.keys(result1).length > 0){
-					return highlightList
+			let result1 = realm.objects("HighlightsModel");
+				let highlights = result1.filtered('sourceId == "' + sourceId + '"')
+				 if(sourceId === null && bId === null && cNum ===null){
+						if(Object.keys(result1).length > 0){
+							return result1
+						}
+						else{
+							return null
+						}
+				}
+				if(bId === null && cNum === null){
+					if(highlights.length > 0){
+						let	highlightsId = highlights[0].highlightsBookId
+						return highlightsId
+					}
 				}
 				else{
-					return null
+					if(highlights.length > 0){
+							let bookmarksId = highlights[0].highlightsBookId
+							let res = bookmarksId.filtered('bookId==[c] "' + bId + '"&& chapterNumber==[c] "' + cNum + '"')
+							// let res = bookmarksId.filtered('bookId==[c] "' + bId + '"')
+							console.log("bookmarks match chapter ",JSON.stringify(res.length))
+							if(Object.keys(res).length>0){
+								return res
+							}
+							else{
+								return null
+							}
+						}
 				}
-			}
-			else{
-				let highlightList = result1.filtered('sourceId == "' + sourceId + '"')
-				if(highlightList.length == 0){
-				console.log("bookmarks data ",highlightList.length)
-				}else{
-					let bookmarksId = highlightList[0].highlightsBookId
-					let res = bookmarksId.filtered('bookId==[c] "' + bId + '"')
-					console.log("bookmarks match chapter ",JSON.stringify(res.length))
-					if(Object.keys(res).length>0){
-						return res
-					}
-					else{
-						return null
-					}
-				}
-			}
-			
 		}
 				
 	}
-	async updateHighlightsInVerse(langName, verCode, bId, cNum, vNum, isHighlight){
+	async updateHighlightsInVerse(sourceId, bId, chapterNumber, verseNumber, isHighlight){
 		let realm = await this.getRealm()
-		let  result1= realm.objects('HighlightsModel');
-		let highlight = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" &&  bookId == "' + bId + '" && chapterNumber == "'+cNum+'" && verseNumber == "'+vNum+'"')
-		// console.log("LANG CODE "+langName+"bVER CODE "+verCode+" BID "+bId+" CNUM "+cNum+" VNUM "+vNum+" ISHIGHLIGHT "+isHighlight)
+		var source = parseInt(sourceId)
+		let sourcedata = realm.objects('HighlightsModel').filtered('sourceId=="'+source+'"')
+		let vNum = parseInt(verseNumber)
+		let cNum = parseInt(chapterNumber)
 		if (realm) {
-			realm.write(() => {
-				if(isHighlight == true){
-				if(Object.keys(highlight).length === 0){
-				console.log("highlight length",Object.keys(highlight).length)
-				console.log("highlight ",highlight)
-
-					realm.create('HighlightsModel', {
-						languageName: langName,
-						versionCode: verCode,
-						bookId: bId,
-						chapterNumber: cNum,
-						verseNumber: vNum
-					})
-				}
-				}
-				else{
-					realm.delete(highlight); 
-				}
+			if(isHighlight){
+				realm.write(() => {
+					if(Object.keys(sourcedata).length == 0){
+						console.log("SOURCE ID NOT PRESENT   ",)
+					let bookmarks = realm.create('HighlightsModel', {sourceId:source, highlightsBookId: []});
+							bookmarks.highlightsBookId.push({bookId: bId,  chapterNumber:cNum, verseNumber:[vNum]})
+					}
+					else{
+						console.log("SOURCE ID PRESENT   ",)
+						var addToBook = sourcedata[0].highlightsBookId.filtered('bookId==[c]"'+bId+'"&& chapterNumber==[c]"'+cNum+'"')
+						console.log(" not bookid ",JSON.stringify(addToBook))
+						if(Object.keys(addToBook).length == 0){
+						console.log("	BOOK ID PRESENT   ",)
+							console.log(" not bookid ",JSON.stringify(addToBook))
+								sourcedata[0].highlightsBookId.push({bookId:bId,chapterNumber:cNum,verseNumber:[vNum]})
+								// sourcedata[0].highlightsBookId[0].chapterNumber.push(cNum)
+						}
+						else{
+						console.log("	BOOK ID PRESENT   ",)
+						console.log(" not chapter ",JSON.stringify(addToBook))
+							if(addToBook[0].verseNumber.indexOf(vNum) == -1){
+								addToBook[0].verseNumber.push(vNum)
+							}
+						}
+					}
 				})
+			}
+			else{
+				var addToBook = sourcedata[0].highlightsBookId.filtered('bookId==[c]"'+bId+'"&& chapterNumber==[c]"'+cNum+'"')
+				console.log("delete ",addToBook[0])
+				
+				if(addToBook[0].verseNumber.indexOf(vNum) > -1){
+					realm.write(() => {
+						addToBook[0].verseNumber.splice(addToBook[0].verseNumber.indexOf(vNum), 1)
+						})
+				}
+			}
 		}
 
 		

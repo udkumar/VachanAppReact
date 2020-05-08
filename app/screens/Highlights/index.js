@@ -16,6 +16,8 @@ import {getBookNameFromMapping,getBookChaptersFromMapping,getBookNumOfVersesFrom
 import { highlightstyle } from './styles'
 import {connect} from 'react-redux'
 import {updateVersionBook} from '../../store/action/'
+import firebase from 'react-native-firebase'
+
 
 class HighLights extends Component {
   static navigationOptions = {
@@ -60,60 +62,136 @@ class HighLights extends Component {
       }
   }
   }
-  removeHighlight = async( chapterNum,verseNum)=>{
-    for(var i=0; i<=this.state.HightlightedVerseArray.length-1; i++){
-      if(this.state.HightlightedVerseArray[i].chapterNumber == chapterNum && this.state.HightlightedVerseArray[i].verseNumber == verseNum){
-        this.state.HightlightedVerseArray.splice(i, 1)
-        await DbQueries.updateHighlightsInVerse(this.props.languageName, this.props.versionCode,this.props.bookId,chapterNum,verseNum,false)
-        this.setState({HightlightedVerseArray:this.state.HightlightedVerseArray})
-      }
-    }
+  removeHighlight = async(id,chapterNum,verseNum)=>{
+    var data =  this.state.HightlightedVerseArray
+    if(this.props.email){
+    data.forEach((a,i) => {
+        if(a.bookId == id && a.chapterNumber ==chapterNum){
+            a.verseNumber.forEach((b,j) => {
+            if(b == verseNum){
+              var userId = firebase.auth().currentUser
+              var firebaseRef = firebase.database().ref("users/"+userId.uid+"/highlights/"+this.props.sourceId+"/"+id);
+              if(a.verseNumber.length == 1){
+                console.log(" i ",j)
+                data.splice(j,1)
+                firebaseRef.remove()
+                return
+              }
+              else{
+                 a.verseNumber.splice(j,1)
+              }
+              firebaseRef.set(a.verseNumber)
+            }
+            
+          })
+        }
+      })
+      this.setState({HightlightedVerseArray:data})
+  }
+  else{
+    await DbQueries.updateBookmarkInBook(this.state.sourceId,id,chapterNum,verseNum,false);
+    data.forEach((a,i) => {
+        if(a.bookId == id && a.chapterNumber ){
+            a.verseNumber.forEach((b,j) => {
+            if(b == verseNum){
+              if(a.verseNumber.length == 1){
+                console.log(" i ",i)
+                 data.splice(i,1)
+              }
+              else{
+                 a.verseNumber.splice(j,1)
+              }
+            }
+          })
+        }
+      })
+      this.setState({HightlightedVerseArray:data})
+  }
   }
   componentDidMount(){
-    this.getHighlights()
+    if(this.props.email){
+      var userId = firebase.auth().currentUser;
+      var firebaseRef = firebase.database().ref("users/"+userId.uid+"/highlights/"+this.props.sourceId);
+      firebaseRef.on('value', (snapshot)=> {
+        console.log("VALUE HIGHLIGHTS ",snapshot.val())
+        var highlights = snapshot.val()
+        var array = []
+        if(highlights != null){
+          for(var key in highlights){
+            for(var val in highlights[key]){
+              array.push({bookId:key,chapterNumber:val,verseNumber:highlights[key][val]})
+
+            }
+          }
+          this.setState({HightlightedVerseArray:array})
+        }
+        })
+    }
+    else{
+      // let model2 = await  DbQueries.queryHighlights(sourceId,null,null)
+      // console.log("verse number ")
+      // if(model2  != null ){
+    //     if(model2.length > 0){
+    //       console.log("model  ",model2)
+    //       for(var i = 0; i<=model2.length-1;i++){
+    //         this.setState({
+    //           HightlightedVerseArray:[...this.state.HightlightedVerseArray,model2[i]]
+    //         })
+    //       }
+    //     }
+    // }
+    }
+    // this.getHighlights()
   }
-  navigateToBible=(item)=>{
+  navigateToBible=(bId,chapterNum,verseNum)=>{
     console.log("item HIGHIGHTS ",item)
     this.props.updateVersionBook({
-      bookId:item.bookId, 
-      bookName:getBookNameFromMapping(item.bookId,item.languageName),
-      chapterNumber:item.chapterNumber,
-      totalChapters:getBookChaptersFromMapping(item.bookId),
-      totalVerses:getBookNumOfVersesFromMapping(item.bookId,item.chapterNumber),
-      verseNumber:item.verseNumber
+      bookId:bId, 
+      bookName:getBookNameFromMapping(bId,this.props.languageName),
+      chapterNumber:chapterNum,
+      totalChapters:getBookChaptersFromMapping(bId),
+      totalVerses:getBookNumOfVersesFromMapping(bId,chapterNum),
+      verseNumber:verseNum
     })
     this.props.navigation.navigate("Bible")
   }
   render() {
-    console.log("langugueg name "+this.props.languageName)
+    console.log("langugueg name ",this.state.HightlightedVerseArray)
     return (
       <View style={this.styles.container}>
+      {this.state.HightlightedVerseArray.length > 0 &&
       <FlatList
-      contentContainerStyle={this.state.HightlightedVerseArray.length === 0 && this.styles.centerEmptySet}
       data={this.state.HightlightedVerseArray}
+      contentContainerStyle={this.state.HightlightedVerseArray.length === 0 && this.styles.centerEmptySet}
+      renderItem={({item, index}) => 
+        <View>{
+          item.verseNumber.length > 0 &&
+          item.verseNumber.map(e=>
+           <TouchableOpacity style={this.styles.bookmarksView} onPress = { ()=> {this.navigateToBible(item.bookId,item.chapterNumber,e)}} >
+           <Text style={this.styles.bookmarksText}>{getBookNameFromMapping(item.bookId,this.props.languageName)}  {":"} {item.chapterNumber} {":"} {e}</Text>
+           <Icon name='delete-forever' style={this.styles.iconCustom}   
+             onPress={() => {this.removeHighlight(item.bookId,item.chapterNumber,e)} } 
+           />
+           </TouchableOpacity>
+         )}
+        </View>
+      }
       ListEmptyComponent={
         <View style={this.styles.emptyMessageContainer}>
-        <Icon name="border-color" style={this.styles.emptyMessageIcon}/>
+        <Icon name="collections-bookmark" style={this.styles.emptyMessageIcon}/>
           <Text
             style={this.styles.messageEmpty}
           >
-           No reference highlighted</Text>
-        </View>
-       
-        }
-      // getItemLayout={this.getItemLayout}
-      renderItem={({item, index}) =>
-      <TouchableOpacity style={this.styles.highlightsView}
-        onPress = {()=>this.navigateToBible(item)}
-      >
-         <Text style={this.styles.hightlightsText}>
-          {getBookNameFromMapping(item.bookId,item.languageName)} {':'} {item.chapterNumber} {':'} {item.verseNumber}
+           No Bookmark added
           </Text>
-        <Icon name='delete-forever' style={this.styles.iconCustom}  onPress={() => {this.removeHighlight(item.chapterNumber,item.verseNumber)}} />
-      </TouchableOpacity>
-    }
-      />
-      </View>
+          
+        </View>
+      }
+      extraData={this.props}
+    />
+      } 
+     
+     </View>
     );
   }
 }
@@ -123,6 +201,10 @@ const mapStateToProps = state =>{
     languageName: state.updateVersion.language,
     versionCode:state.updateVersion.versionCode,
     bookId:state.updateVersion.bookId,
+    sourceId: state.updateVersion.sourceId,
+    email:state.userInfo.email,
+
+
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
   }

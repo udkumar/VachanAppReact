@@ -31,8 +31,8 @@ class DbQueries {
         return DbHelper.queryInVerseText(verCode, langName, text);
     }
     //for api data 
-    queryHighlights(sourceId, bookId) {
-            return DbHelper.queryHighlights(sourceId, bookId);
+    queryHighlights(sourceId, bookId,cNum) {
+            return DbHelper.queryHighlights(sourceId, bookId,cNum);
     }
 
   
@@ -53,8 +53,8 @@ class DbQueries {
     //     return DbHelper.queryVersion(langName,versCode)
     // }
 
-    updateHighlightsInVerse(LangName, verCode, bookId, chapterNumber, verseNumber, isHighlight) {
-        DbHelper.updateHighlightsInVerse(LangName, verCode, bookId, chapterNumber, verseNumber, isHighlight);
+    updateHighlightsInVerse(sourceId, bookId, chapterNumber, verseNumber, isHighlight) {
+        DbHelper.updateHighlightsInVerse(sourceId, bookId, chapterNumber, verseNumber, isHighlight);
     }
 
    

@@ -4,7 +4,9 @@ import PropTypes from 'prop-types';
 import {ScrollView, Text, View, StyleSheet,ImageBackground,TouchableOpacity,Image} from 'react-native';
 import { DrawerActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialIcons'
+
 import {connect} from 'react-redux'
+
 // import auth from 'react-native-firebase';
 import firebase from 'react-native-firebase'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil'
@@ -53,7 +55,7 @@ class DrawerScreen extends Component {
       // {icon:'local-library',pressIcon:'Home',},
       {icon:'info',pressIcon:'About'},
       {icon:'bookmark',pressIcon:'BookMarks'},
-      {icon:'highlight',pressIcon:'Highlights'},
+      {icon:'border-color',pressIcon:'Highlights'},
       {icon:'note',pressIcon:'Notes'},
       {icon:'history',pressIcon:'History'},
       // {icon:'insert-comment',pressIcon:'Commentary'},
