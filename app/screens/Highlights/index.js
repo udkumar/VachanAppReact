@@ -52,75 +52,58 @@ class HighLights extends Component {
     if(model2  == null ){
     }
     else{
-      if(model2.length > 0){
-        console.log("model  ",model2)
-        for(var i = 0; i<=model2.length-1;i++){
-          this.setState({
-            HightlightedVerseArray:[...this.state.HightlightedVerseArray,model2[i]]
-          })
-        }
-      }
+
   }
   }
-  removeHighlight = async(id,chapterNum,verseNum)=>{
+  removeHighlight = (id,chapterNum,verseNum)=>{
     var data =  this.state.HightlightedVerseArray
+      index = -1
+      data.forEach((a,i) => {
+            if(a.bookId == id && a.chapterNumber == chapterNum){
+            a.verseNumber.forEach(async(b,j) => {
+            if(b == verseNum){
+              if(this.props.email == null){
+                await DbQueries.updateHighlightsInVerse(this.props.sourceId,id,chapterNum,verseNum, false)
+              }
+              if(a.verseNumber.length == 1){
+                if(this.props.emai){
+                  var userId = firebase.auth().currentUser;
+                  var firebaseRef = firebase.database().ref("users/"+userId.uid+"/highlights/"+this.props.sourceId+"/"+id+"/"+chapterNum)
+                  firebaseRef.remove()
+                }
+                data.splice(i,1)
+              }
+              else{
+                a.verseNumber.splice(j,1)
+                index = i
+              }
+            }
+          })
+         
+        }
+    })
     if(this.props.email){
-    data.forEach((a,i) => {
-        if(a.bookId == id && a.chapterNumber ==chapterNum){
-            a.verseNumber.forEach((b,j) => {
-            if(b == verseNum){
-              var userId = firebase.auth().currentUser
-              var firebaseRef = firebase.database().ref("users/"+userId.uid+"/highlights/"+this.props.sourceId+"/"+id);
-              if(a.verseNumber.length == 1){
-                console.log(" i ",j)
-                data.splice(j,1)
-                firebaseRef.remove()
-                return
-              }
-              else{
-                 a.verseNumber.splice(j,1)
-              }
-              firebaseRef.set(a.verseNumber)
-            }
-            
-          })
-        }
-      })
-      this.setState({HightlightedVerseArray:data})
+    var verses = firebase.database().ref("users/"+userId.uid+"/highlights/"+this.props.sourceId+"/"+id)
+    var updates = {}
+    console.log(" index ",index)
+    if(index !=-1){
+      updates[chapterNum] = data[index].verseNumber
+      verses.update(updates)
+    }
   }
-  else{
-    await DbQueries.updateBookmarkInBook(this.state.sourceId,id,chapterNum,verseNum,false);
-    data.forEach((a,i) => {
-        if(a.bookId == id && a.chapterNumber ){
-            a.verseNumber.forEach((b,j) => {
-            if(b == verseNum){
-              if(a.verseNumber.length == 1){
-                console.log(" i ",i)
-                 data.splice(i,1)
-              }
-              else{
-                 a.verseNumber.splice(j,1)
-              }
-            }
-          })
-        }
-      })
-      this.setState({HightlightedVerseArray:data})
+  this.setState({HightlightedVerseArray:data})
   }
-  }
-  componentDidMount(){
+  async componentDidMount(){
     if(this.props.email){
       var userId = firebase.auth().currentUser;
-      var firebaseRef = firebase.database().ref("users/"+userId.uid+"/highlights/"+this.props.sourceId);
-      firebaseRef.on('value', (snapshot)=> {
-        console.log("VALUE HIGHLIGHTS ",snapshot.val())
+      var firebaseRef = firebase.database().ref("users/"+userId.uid+"/highlights/"+this.props.sourceId+"/");
+      firebaseRef.once('value', (snapshot)=> {
         var highlights = snapshot.val()
         var array = []
         if(highlights != null){
           for(var key in highlights){
             for(var val in highlights[key]){
               array.push({bookId:key,chapterNumber:val,verseNumber:highlights[key][val]})
-
             }
           }
           this.setState({HightlightedVerseArray:array})
@@ -128,23 +111,24 @@ class HighLights extends Component {
         })
     }
     else{
-      // let model2 = await  DbQueries.queryHighlights(sourceId,null,null)
-      // console.log("verse number ")
-      // if(model2  != null ){
-    //     if(model2.length > 0){
-    //       console.log("model  ",model2)
-    //       for(var i = 0; i<=model2.length-1;i++){
-    //         this.setState({
-    //           HightlightedVerseArray:[...this.state.HightlightedVerseArray,model2[i]]
-    //         })
-    //       }
-    //     }
-    // }
+      let model2 = await  DbQueries.queryHighlights(this.props.sourceId,null,null)
+      if(model2  != null ){
+          var highlights=[]
+          for(var i = 0; i<=model2.length-1;i++){
+            var verses =[]
+            for(var key in model2[i].verseNumber){
+              // console.log("VERSE NUMBER   ",)
+              verses.push(model2[i].verseNumber[key])
+            }
+           highlights.push({bookId:model2[i].bookId,chapterNumber:model2[i].chapterNumber,verseNumber:verses})
+          }
+          this.setState({HightlightedVerseArray:highlights})
+    }
     }
     // this.getHighlights()
   }
   navigateToBible=(bId,chapterNum,verseNum)=>{
-    console.log("item HIGHIGHTS ",item)
+    // console.log("item HIGHIGHTS ",item)
     this.props.updateVersionBook({
       bookId:bId, 
       bookName:getBookNameFromMapping(bId,this.props.languageName),

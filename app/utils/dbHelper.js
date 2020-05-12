@@ -104,12 +104,11 @@ class DbHelper {
 		}
 		return null;
 	}
-	async queryHighlights(sourceId, bId,cNum){
+	async queryHighlights(sourceId, bId, cNum){
 		let realm = await this.getRealm();
 		if (realm){
 			let result1 = realm.objects("HighlightsModel");
-				let highlights = result1.filtered('sourceId == "' + sourceId + '"')
-				 if(sourceId === null && bId === null && cNum ===null){
+				 if(sourceId == null && bId == null && cNum == null){
 						if(Object.keys(result1).length > 0){
 							return result1
 						}
@@ -117,13 +116,16 @@ class DbHelper {
 							return null
 						}
 				}
-				if(bId === null && cNum === null){
+				if(bId == null && cNum == null){
+					let highlights = result1.filtered('sourceId == "' + sourceId + '"')
+
 					if(highlights.length > 0){
 						let	highlightsId = highlights[0].highlightsBookId
 						return highlightsId
 					}
 				}
 				else{
+				let highlights = result1.filtered('sourceId == "' + sourceId + '"')
 					if(highlights.length > 0){
 							let bookmarksId = highlights[0].highlightsBookId
 							let res = bookmarksId.filtered('bookId==[c] "' + bId + '"&& chapterNumber==[c] "' + cNum + '"')
@@ -295,11 +297,11 @@ class DbHelper {
 			}
 			else{
 				var addToBook = sourcedata[0].bookmarksBookId.filtered('bookId=="'+bId+'"')
+				console.log("nothing to delete ",addToBook[0].chapterNumber.indexOf(cNum))
 				if(addToBook[0].chapterNumber.indexOf(cNum) > -1){
 					realm.write(() => {
 						addToBook[0].chapterNumber.splice(addToBook[0].chapterNumber.indexOf(cNum), 1)
 						})
-					console.log("nothing to delete ")
 				}
 				
 			}
@@ -313,8 +315,7 @@ class DbHelper {
 			// source id null  or bid null or both null 
 			if (realm){
 				let result1 = realm.objects("BookmarksListModel");
-				let bookmarks = result1.filtered('sourceId == "' + sourceId + '"')
-				 if(sourceId === null && bId === null){
+				 if(sourceId == null && bId == null){
 						if(Object.keys(result1).length > 0){
 							return result1
 						}
@@ -323,13 +324,15 @@ class DbHelper {
 						}
 					 
 				}
-				else if(bId === null){
+				else if(bId == null){
+				let bookmarks = result1.filtered('sourceId == "' + sourceId + '"')
 					if(bookmarks.length > 0){
 						let bookmarksId = bookmarks[0].bookmarksBookId
 						return bookmarksId
 					}
 				}
 				else{
+				let bookmarks = result1.filtered('sourceId == "' + sourceId + '"')
 					if(bookmarks.length > 0){
 					// console.log("bookmarks data ",bookmarks.length)
 						let bookmarksId = bookmarks[0].bookmarksBookId
@@ -351,7 +354,10 @@ class DbHelper {
 		if(realm){
 		realm.write(() => {
 			let bookmarkList = realm.objects('BookmarksListModel')
+			let highlights = realm.objects('HighlightsModel')
 			realm.delete(bookmarkList); 
+			realm.delete(highlights); 
+
 		})
 		}
 		}

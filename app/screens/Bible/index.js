@@ -300,14 +300,14 @@ class Bible extends Component {
     this.props.navigation.setParams({
       bookId:item.bookId,
       bookName:getBookNameFromMapping(item.bookId,this.props.language).length > 8 ? getBookNameFromMapping(item.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(item.bookId,this.props.language),
-      currentChapter:item.chapterNumber,
+      currentChapter:JSON.parse(item.chapterNumber),
       numOfChapter:item.totalChapters,
       numOfVerse:item.totalVerses
     })
     this.props.updateVersionBook({
       bookId:item.bookId,
       bookName:item.bookName,
-      chapterNumber:item.chapterNumber,
+      chapterNumber:JSON.parse(item.chapterNumber),
       totalChapters:item.totalChapters,
       totalVerses:item.totalVerses,
       verseNumber:item.verseNumber
@@ -367,15 +367,17 @@ class Bible extends Component {
   }
 
   queryBookFromAPI = async(val)=>{
-    // console.log("query book ",this.props.downloaded,this.props.language,this.props.sourceId,this.props.totalChapters,this.props.totalVerses)
-    this.setState({isLoading:true,currentVisibleChapter: val != null ? this.state.currentVisibleChapter + val : this.state.currentVisibleChapter,error:null },async()=>{
-          try{
+    console.log("val ",val)
+    console.log("query book ",this.state.currentVisibleChapter+val)
+    this.setState({isLoading:true,currentVisibleChapter: val != null ? this.state.currentVisibleChapter  + val : this.state.currentVisibleChapter,error:null },async()=>{
+
+      try{
             this.props.navigation.setParams({
               languageName:this.props.language,
               versionCode:this.props.versionCode,
               bookId:this.props.bookId,
               bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
-              currentChapter:this.state.currentVisibleChapter,
+              currentChapter:JSON.parse(this.state.currentVisibleChapter),
               numOfChapter:this.props.totalChapters,
               numOfVerse:this.props.totalVerses,
               isBookmark:this.isBookmark()
@@ -400,7 +402,7 @@ class Bible extends Component {
             this.props.updateVersionBook({
               bookId:this.props.bookId,
               bookName:getBookNameFromMapping(this.props.bookId,this.props.language),
-              chapterNumber:this.state.currentVisibleChapter,
+              chapterNumber:JSON.parse(this.state.currentVisibleChapter),
               totalChapters:this.props.totalChapters,
               totalVerses:this.props.totalVerses,
               verseNumber:this.state.verseNumber
@@ -683,6 +685,7 @@ this.setState({audio:false})
             await DbQueries.updateHighlightsInVerse(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter, tempVal[2], true)
           }
         }
+        console.log("VERSES  ",verses)
         if(this.props.email){
           var userId = firebase.auth().currentUser;
           var firebaseRef = firebase.database().ref("users/"+userId.uid+"/highlights/"+this.props.sourceId+"/"+this.props.bookId+"/"+this.state.currentVisibleChapter)
@@ -695,7 +698,7 @@ this.setState({audio:false})
         let tempVal = item.split('_')
         var highlights = this.state.HightlightedVerseArray
         highlights.forEach(async(a)=>{
-          console.log("value a ",a)
+          // console.log("VERSE a ",a)
           if(a.chapterNumber === this.state.currentVisibleChapter){
             var index =  a.verses.indexOf(JSON.parse(tempVal[2]))
             if(this.state.bottomHighlightText){
@@ -709,7 +712,6 @@ this.setState({audio:false})
             else{
               a.verses.splice(index,1)
               if(this.props.email == null){
-
                 await DbQueries.updateHighlightsInVerse(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter, tempVal[2], false)
               }
             }
@@ -784,7 +786,6 @@ updateData = ()=>{
 }
 
   render() {
-    console.log("source id ",this.props.sourceId)
     return(
     <View  style={this.styles.container}>
       {this.state.isLoading &&

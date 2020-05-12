@@ -76,7 +76,7 @@ class BookMarks extends Component {
 
       var userId = firebase.auth().currentUser;
       var firebaseRef = firebase.database().ref("users/"+userId.uid+"/bookmarks/"+this.props.sourceId);
-      firebaseRef.on('value', (snapshot)=> {
+      firebaseRef.once('value', (snapshot)=> {
         // { gen: [ 4, 7, 5, 2, 3 ], deu: [ 10, 11, 12, 14 ] }
         var data=[]
           var list = snapshot.val()

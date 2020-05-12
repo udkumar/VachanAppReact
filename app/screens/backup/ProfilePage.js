@@ -47,7 +47,6 @@ import DbQueries from '../../utils/dbQueries'
     }
     logOut=()=>{
         firebase.auth().signOut()
-        // AsyncStorageUtil.removeItem(AsyncStorageConstants.Keys.BackupRestoreEmail)
         this.props.userInfo({email:null,uid:null,userName:''})
         this.setState({user:null})
         DbQueries.deleteBookmark()
@@ -64,7 +63,7 @@ import DbQueries from '../../utils/dbQueries'
           <Image style={styles.avatar} source={{uri: 'https://bootdey.com/img/Content/avatar/avatar6.png'}}/>
           <View style={styles.body}>
             <View style={styles.bodyContent}>
-              <Text style={styles.name}>{this.state.userData.email}</Text>
+              <Text style={styles.name}>{this.state.user}</Text>
               <Text style={styles.info}>UX Designer / Mobile developer</Text>
               <Text style={styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis, omittam deseruisse consequuntur ius an,</Text>
               

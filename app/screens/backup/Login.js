@@ -20,7 +20,7 @@ import {connect} from 'react-redux'
         this.state = {
             email:'revant@gmail.com',
             password:'123456',
-            showLoading:''
+            showLoading:false
         }
     }
 
@@ -30,66 +30,13 @@ import {connect} from 'react-redux'
             const doLogin = await firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password);
             this.setState({showLoading:false})
             if(doLogin.user){
-                this.props.userInfo({email:doLogin.user._user.email,uid:doLogin.user._user.uid,userName:doLogin.user._user.displayName,phoneNumber:doLogin.user._user.phoneNumber})
-                let model = await  DbQueries.queryBookmark(null,null)
-                console.log("model ",model)
-                if (model == null) {
-                }
-                else{
-                    var userId =  firebase.auth().currentUser
-                  if(model.length > 0){
-                    for(var i=0;i<model.length;i++){
-                        for(var j=0;j<model[i].bookmarksBookId.length;j++){
-                        var firebaseRef = firebase.database().ref("users/"+userId.uid+"/bookmarks/"+model[i].sourceId+"/"+model[i].bookmarksBookId[j].bookId);
-                        firebaseRef.set(model[i].bookmarksBookId[j].chapterNumber)
-                        // for(var k=0;k<model[i].bookmarksBookId[j].chapterNumber.length;k++){
-                        //     firebaseRef.push({
-                        //         chapterNumber:model[i].bookmarksBookId[j].chapterNumber[k]
-                        //     })
-                        // }
-                    }
-                    }
-                  }
-                }
-                let highlightModel = await  DbQueries.queryHighlights(null,null)
-                console.log("model ",highlightModel)
-                if (highlightModel == null) {
-                }
-                else{
-                    // var userId =  firebase.auth().currentUser
-                  if(highlightModel.length > 0){
-                    for(var i=0;i<highlightModel.length;i++){
-                        console.log("highlightModel ",highlightModel.length)
-                    //     for(var j=0;j<highlightModel[i].highlightsBookId.length;j++){
-                    //     var firebaseRef = firebase.database().ref("users/"+userId.uid+"/"+model[i].sourceId+"/bookmarks/"+model[i].highlightsBookId[j].bookId);
-                    //     for(var k=0;k<highlightModel[i].highlightsBookId[j].chapterNumber.length;k++){
-                    //         firebaseRef.push({
-                    //             chapterNumber:highlightModel[i].highlightsBookId[j].chapterNumber[k]
-                    //         })
-                    //     }
-                    // }
-                    }
-                  }
-
-                }
-                
+                this.props.userInfo({email:doLogin.user._user.email,uid:doLogin.user._user.uid,userName:doLogin.user._user.displayName,phoneNumber:null})
             }
         } catch (e) {
+            console.log(" ERROR  ",e)
             this.setState({showLoading:false});
-            Alert.alert(
-                e.message
-            );
         }
     }
-    // handleAndroidBack(){
-    //     // console.log('back press'+Actions.currentScene)
-    //       BackHandler.exitApp()
-    //       return true;
-    // }
- 
-    // componentWillUnmount(){
-    //     BackHandler.removeEventListener('hardwareBackPress', this.handleAndroidBack)
-    //  }
     render(){
         return (
             <View style={styles.container}>
@@ -121,7 +68,7 @@ import {connect} from 'react-redux'
                     </View>
                     <View style={styles.subContainer}>
                     <Button
-                        onPress={() => this.login()}
+                        onPress={this.login}
                         style={styles.textInput}
                         title="Login"
                         color="#841584"
