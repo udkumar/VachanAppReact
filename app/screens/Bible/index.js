@@ -272,7 +272,8 @@ class Bible extends Component {
         bookId:this.props.bookId,
         audio:this.state.audio,
         numOfChapter:this.props.totalChapters,
-        numOfVerse:this.props.totalVerses
+        numOfVerse:this.props.totalVerses,
+        isBookmark:this.isBookmark()
       })
       this.props.updateVersionBook({
         bookId:this.props.bookId,
