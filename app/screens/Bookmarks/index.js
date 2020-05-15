@@ -111,15 +111,15 @@ class BookMarks extends Component {
     }
   } 
   
-  navigateToBible(item){
+  navigateToBible(bookId,chapter){
     console.log("bible bookmark  ",item)
     this.props.updateVersionBook({
-      bookId:item.bookId, 
-      bookName:getBookNameFromMapping(item.bookId,item.languageName),
-      chapterNumber:item.chapterNumber,
-      totalChapters:getBookChaptersFromMapping(item.bookId),
-      totalVerses:getBookNumOfVersesFromMapping(item.bookId,item.chapterNumber),
-      verseNumber:item.verseNumber
+      bookId:bookId, 
+      bookName:getBookNameFromMapping(item.bookId,this.props.languageName),
+      chapterNumber:chapter,
+      totalChapters:getBookChaptersFromMapping(bookId),
+      totalVerses:getBookNumOfVersesFromMapping(bookId,chapter),
+      // verseNumber:verseNumber
     })
     this.props.navigation.navigate("Bible")
   }
@@ -191,7 +191,7 @@ class BookMarks extends Component {
            <View>{
              item.chapterNumber.length > 0 &&
              item.chapterNumber.map(e=>
-              <TouchableOpacity style={this.styles.bookmarksView} onPress = { ()=> {this.navigateToBible(item)}} >
+              <TouchableOpacity style={this.styles.bookmarksView} onPress = { ()=> {this.navigateToBible(item.bookId,e)}} >
               <Text style={this.styles.bookmarksText}>{getBookNameFromMapping(item.bookId,this.props.languageName)} {":"} {e}</Text>
               <Icon name='delete-forever' style={this.styles.iconCustom}   
                 onPress={() => {this.onBookmarkRemove(item.bookId,e)} } 

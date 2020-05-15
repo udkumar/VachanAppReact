@@ -124,7 +124,7 @@ class BibleChapter extends Component {
                             <Text style={this.styles.verseNumber} >
                             {verse.number}{" "}
                             </Text>
-                            <Text style={{fontFamily:'NotoSans-Regular'}}
+                            <Text style={this.styles.textString}
                             >
                             {verse.text}
                         </Text>         

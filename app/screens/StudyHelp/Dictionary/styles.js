@@ -50,6 +50,18 @@ export const styles =(colorFile, sizeFile) =>{
             color:colorFile.textColor,
             fontSize:sizeFile.contentText,
         },
+        textString:{
+            fontSize:sizeFile.contentText,
+            color:colorFile.textColor,
+            fontWeight:'normal',
+            lineHeight:sizeFile.lineHeight
+        },
+        scrollViewModal:{
+            margin:12,
+            padding:12,
+            flex:1,
+            backgroundColor:colorFile.backgroundColor
+        },
         textDescription:{
             color:colorFile.textColor,
             fontSize:sizeFile.contentText,

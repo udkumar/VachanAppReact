@@ -101,7 +101,7 @@ const NavStack = createStackNavigator(
     // headerMode: 'none',
     defaultNavigationOptions: {
       headerStyle: {
-          backgroundColor: "#3F51B5",
+          backgroundColor: "#3E4095",
           elevation: 0,
           shadowOpacity: 0,
           height:40

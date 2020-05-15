@@ -133,7 +133,7 @@ class Commentary extends Component {
               <Text style={this.styles.commentaryHeading}>Chapter Intro</Text> :
               <Text style={this.styles.commentaryHeading}>Verse Number : {item.verse}</Text> 
               )} 
-          <Text style={this.styles.commentaryText}>{convertToText(item.text)}</Text>
+          <Text style={this.styles.textString}>{convertToText(item.text)}</Text>
           </View>
         )}
         ListFooterComponent={<View style={{height:40,marginBottom:40}}></View>}

@@ -161,17 +161,17 @@ class Dictionary extends Component {
          visible={this.state.modalVisibleDictionary}>
          <TouchableWithoutFeedback
            style={this.styles.dictionaryModal} 
-           onPressOut={()=>this.setState({modalVisibleDictionary:false})} 
+          //  onPressOut={()=>this.setState({modalVisibleDictionary:false})} 
            >
          <View style={this.styles.dictionaryModalView}>
-          <View style={{width:'70%'}}>
-          <Icon name='cancel' size={28} color={'#ff'} style={{position:'absolute',top:-20,right:-20}}/>
-           <Card>
-             <CardItem><Text >Description: {this.state.wordDescription.definition}</Text></CardItem>
-             <CardItem><Text >Keywrod: {this.state.wordDescription.keyword}</Text></CardItem>
-             {this.state.wordDescription.seeAlso !='' && <CardItem><Text >See Also: {this.state.wordDescription.seeAlso}</Text></CardItem>}
-           </Card>
-         </View>
+          <View style={{width:'70%',height:'70%'}}>
+          <Icon name='cancel'  onPress={()=>this.setState({modalVisibleDictionary:false})}  size={28} color={'#ff'} style={{position:'absolute',top:-20,right:-20}}/>
+             <ScrollView style={ this.styles.scrollViewModal }>
+             <Text style={this.styles.textString}>Description: {this.state.wordDescription.definition}</Text>
+             <Text  style={this.styles.textString}>Keywrod: {this.state.wordDescription.keyword}</Text>
+             {this.state.wordDescription.seeAlso !='' && <Text  style={this.styles.textString}>See Also: {this.state.wordDescription.seeAlso}</Text>}
+             </ScrollView>
+            </View>
          </View>
          </TouchableWithoutFeedback>
        </Modal>

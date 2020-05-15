@@ -36,7 +36,7 @@ const SelectionTabStack = createMaterialTopTabNavigator(
         inactiveTintColor:'#000',
         swipeEnabled:false,
         tabBarOptions: {
-            labelStyle: { fontSize: 16,margin:0,padding:0,color:"#3F51B5" },
+            labelStyle: { fontSize: 16,margin:0,padding:0,color:"#3E4095" },
             // showIcon: true,
             // showLabel: true,
             // activeTintColor: '#3F51B5',
@@ -48,7 +48,7 @@ const SelectionTabStack = createMaterialTopTabNavigator(
                 height:36
             },
             indicatorStyle: {
-                backgroundColor: '#3F51B5',
+                backgroundColor: '#3E4095',
             },
         },
       

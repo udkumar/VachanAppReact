@@ -42,7 +42,12 @@ export const styles =(colorFile, sizeFile) =>{
         // fontFamily:fontfamily, 
         fontWeight:'100'
     },
-
+    textString:{
+        fontSize:sizeFile.contentText,
+        color:colorFile.textColor,
+        fontWeight:'normal',
+        lineHeight:sizeFile.lineHeight
+    },
    
     IconFloatingStyle:{
         position: 'absolute',

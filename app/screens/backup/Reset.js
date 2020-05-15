@@ -51,7 +51,7 @@ export default class Reset extends Component {
                         onPress={this.reset}
                         style={styles.textInput}
                         title="Reset"
-                        color="#841584"
+                        color="#3E4095 "
                         // accessibilityLabel="Learn more about this purple button"
                     />
                     {/* <TouchableOpacity success 
@@ -65,7 +65,7 @@ export default class Reset extends Component {
                         onPress={()=>this.props.navigation.navigate('Login')}
                         style={styles.textInput}
                         title="Back to Login"
-                        color="#841584"
+                        color="#3E4095"
                         // accessibilityLabel="Learn more about this purple button"
                     />
                     {/* <TouchableOpacity  

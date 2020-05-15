@@ -12,7 +12,7 @@
       android:name=".MainApplication"
       android:label="@string/app_name"
       android:hardwareAccelerated="false" 
-      android:icon="@mipmap/ic_autographa_go"
+      android:icon="@mipmap/bcs_old_favicon"
       android:allowBackup="false"
       android:theme="@style/AppTheme"
       android:largeHeap="true"

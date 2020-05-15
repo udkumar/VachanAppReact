@@ -26,7 +26,7 @@ import Player from '../../screens/Bible/Navigate/Audio/Player';
 import {getResultText} from '../../utils/UtilFunctions';
 import {getBookNameFromMapping,getBookChaptersFromMapping,getBookNumOfVersesFromMapping} from '../../utils/UtilFunctions';
 import APIFetch from '../../utils/APIFetch'
-import {fetchDownloadedVersionContent,fetchVersionLanguage,fetchVersionContent,queryDownloadedBook,updateVersionBook,updateVersion} from '../../store/action/'
+import {fetchAudioUrl,fetchVersionLanguage,fetchVersionContent,queryDownloadedBook,updateVersionBook,updateVersion} from '../../store/action/'
 import SelectContent from '../Bible/component/SelectContent'
 import SelectBottomTabBar from '../Bible/component/SelectBottomTabBar'
 import ChapterNdAudio from '../Bible/component/ChapterNdAudio'
@@ -140,7 +140,7 @@ class Bible extends Component {
       showBottomBar: false,
       bookmarksList: [],
       isBookmark: false,
-      currentVisibleChapter:this.props.chapterNumber,
+      currentVisibleChapter:JSON.parse(this.props.chapterNumber),
       bookNumber:this.props.bookNumber,
       selectedReferenceSet: [],
       verseInLine: this.props.verseInLine,
@@ -264,6 +264,7 @@ class Bible extends Component {
       this.audioComponentUpdate()
       this.getHighlights()
       this.getBookMarks()
+      this.fetchAudio()
       this.props.navigation.setParams({
         bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
         currentChapter:this.state.currentVisibleChapter,
@@ -411,6 +412,7 @@ class Bible extends Component {
             this.props.updateVersion({language:this.props.language,languageCode:this.props.languageCode,
             versionCode:this.props.versionCode,sourceId:this.props.sourceId,downloaded:this.props.downloaded})
             this.getHighlights()
+            this.fetchAudio()
           }
           catch(error) {
             this.setState({isLoading:false,error:error,chapterContent:[]})
@@ -419,7 +421,14 @@ class Bible extends Component {
     })
 }
 
-
+fetchAudio=()=>{
+  this.props.fetchAudioUrl({
+    languageCode:this.props.languageCode,
+    versionCode:this.props.versionCode,
+    bookId:this.props.bookId,
+    chapter:this.state.currentVisibleChapter
+  })
+}
 toggleAudio=()=>{
   if(this.state.audio){
     this.setState({status:!this.state.status})
@@ -983,7 +992,7 @@ const mapDispatchToProps = dispatch =>{
     fetchVersionContent:(payload)=>dispatch(fetchVersionContent(payload)),
     updateVersion: (payload)=>dispatch(updateVersion(payload)),
     queryDownloadedBook:(payload)=>dispatch(queryDownloadedBook(payload)),
-    // fetchAudioUrl:(payload)=>dispatch(fetchAudioUrl(payload)),
+    fetchAudioUrl:(payload)=>dispatch(fetchAudioUrl(payload)),
     updateVersionBook: (value)=>dispatch(updateVersionBook(value)),
     // fetchDownloadedVersionContent:(payload)=>dispatch(fetchDownloadedVersionContent(payload))
   }

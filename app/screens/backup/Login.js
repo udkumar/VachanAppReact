@@ -71,7 +71,7 @@ import {connect} from 'react-redux'
                         onPress={this.login}
                         style={styles.textInput}
                         title="Login"
-                        color="#841584"
+                        color="#3E4095"
                     />
                      
                     </View>

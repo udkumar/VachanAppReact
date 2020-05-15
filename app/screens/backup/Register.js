@@ -64,7 +64,7 @@ export default class Register extends Component {
                         onPress={()=>this.register}
                         style={styles.textInput}
                         title="Register"
-                        color="#841584"
+                        color="#3E4095"
                         // accessibilityLabel="Learn more about this purple button"
                     />
                     </View>

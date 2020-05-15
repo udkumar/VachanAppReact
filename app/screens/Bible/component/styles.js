@@ -29,7 +29,7 @@ export const styles =(colorFile, sizeFile) =>{
         bottom:0,
         width: width, 
         height: 62, 
-        backgroundColor:'#3F51B5',
+        backgroundColor:'#3E4095 ',
         flexDirection:'row',
         justifyContent:'center'
 
@@ -46,12 +46,12 @@ export const styles =(colorFile, sizeFile) =>{
     bottomOptionText:{
         textAlign:'center',
         color:'white',   
-        fontSize:sizeFile.bottomBarText 
+        fontSize:16
 
     },
     bottomOptionIcon:{
         alignSelf:'center',
-        fontSize:sizeFile.iconSize 
+        fontSize:16 
     },
     bottomOptionSeparator:{
         width: 1,
@@ -62,6 +62,13 @@ export const styles =(colorFile, sizeFile) =>{
     VerseText:{
         // fontFamily:fontfamily, 
         fontWeight:'100'
+    },
+
+    textString:{
+        fontSize:sizeFile.contentText,
+        color:colorFile.textColor,
+        fontWeight:'normal',
+        lineHeight:sizeFile.lineHeight
     },
     bottomBarParallelPrevView:{
         position:'absolute', 

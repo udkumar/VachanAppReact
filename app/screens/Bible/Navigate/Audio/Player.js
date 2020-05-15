@@ -3,7 +3,8 @@ import {
   View,
   Text,
   StatusBar,
-  ToastAndroid
+  ToastAndroid,
+  ActivityIndicator
 } from 'react-native';
 import SeekBar from './SeekBar';
 import Controls from './Controls';
@@ -83,47 +84,54 @@ class Player extends Component {
       }), 0);
     } */
   }
-componentDidMount(){
-  this.props.fetchAudioUrl({
-    languageCode:this.props.languageCode,
-    versionCode:this.props.versionCode,
-    bookId:this.props.bookId,
-    chapter:this.props.chapter
-  })
-}
+// componentDidMount(){
+//   this.props.fetchAudioUrl({
+//     languageCode:this.props.languageCode,
+//     versionCode:this.props.versionCode,
+//     bookId:this.props.bookId,
+//     chapter:this.props.chapter
+//   })
+// }
   render() {
-    console.log("PORP   URL .....",this.props.url)
+    console.log("PORP   URL .....",this.props.loading,this.props.audioURL)
     const track = this.state.audioFile;
     return (
-      <View style={this.styles.container}>
+      <View style={{flex:1}}>
         {/* <SeekBar
           onSeek={this.seek.bind(this)}
           trackLength={this.state.totalLength}
           onSlidingStart={() => this.setState({paused: true})}
           currentPosition={this.state.currentPosition} /> */}
-          <Controls
-          styles={this.styles}
-          onPressRepeat={() => this.setState({repeatOn : !this.state.repeatOn})}
-          repeatOn={this.state.repeatOn}
-          // shuffleOn={this.state.shuffleOn}
-          // forwardDisabled={this.state.selectedTrack === this.props.tracks.length - 1}
-          onPressShuffle={() => this.setState({shuffleOn: !this.state.shuffleOn})}
-          onPressPlay={() => this.setState({paused: false})}
-          onPressPause={() => this.setState({paused: true})}
-          onBack={this.onBack.bind(this)}
-          onForward={this.onForward.bind(this)}
-          paused={this.state.paused}/>
-        <Video source={{uri: this.props.audioURL}} // Can be a URL or a local file.
-          ref="audioElement"
-          paused={this.state.paused}               // Pauses playback entirely.
-          resizeMode="cover"           // Fill the whole screen at aspect ratio.
-          repeat={false}                // Repeat forever.
-          onLoadStart={this.loadStart} // Callback when video starts to load
-          onLoad={this.setDuration.bind(this)}    // Callback when video loads
-          onProgress={this.setTime.bind(this)}    // Callback every ~250ms with currentTime
-          onEnd={this.onEnd}           // Callback when playback finishes
-          onError={this.videoError}    // Callback when video cannot be loaded
-          style={this.styles.audioElement} />
+          {
+            this.props.loading ? <ActivityIndicator style={{alignItems: 'center',justifyContent: 'center',}} size="large" color="#3E4095"/> 
+            :
+            <View style={this.styles.container}>
+            <Controls
+            styles={this.styles}
+            onPressRepeat={() => this.setState({repeatOn : !this.state.repeatOn})}
+            repeatOn={this.state.repeatOn}
+            // shuffleOn={this.state.shuffleOn}
+            // forwardDisabled={this.state.selectedTrack === this.props.tracks.length - 1}
+            onPressShuffle={() => this.setState({shuffleOn: !this.state.shuffleOn})}
+            onPressPlay={() => this.setState({paused: false})}
+            onPressPause={() => this.setState({paused: true})}
+            onBack={this.onBack.bind(this)}
+            onForward={this.onForward.bind(this)}
+            paused={this.state.paused}/>
+          <Video source={{uri: this.props.audioURL}} // Can be a URL or a local file.
+            ref="audioElement"
+            paused={this.state.paused}               // Pauses playback entirely.
+            resizeMode="cover"           // Fill the whole screen at aspect ratio.
+            repeat={false}                // Repeat forever.
+            onLoadStart={this.loadStart} // Callback when video starts to load
+            onLoad={this.setDuration.bind(this)}    // Callback when video loads
+            onProgress={this.setTime.bind(this)}    // Callback every ~250ms with currentTime
+            onEnd={this.onEnd}           // Callback when playback finishes
+            onError={this.videoError}    // Callback when video cannot be loaded
+            style={this.styles.audioElement} />
+          </View>
+          
+          }
       </View>
     );
   }
@@ -134,6 +142,8 @@ componentDidMount(){
 const mapStateToProps = state =>{
   return{
     audioURL:state.audioFetch.url,
+    loading:state.audioFetch.loading,
+
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
   }

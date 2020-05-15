@@ -19,6 +19,18 @@ export const styles =(colorFile, sizeFile) =>{
     chapterList:{
         margin:16
     },
+    sectionHeading:{
+        fontSize:sizeFile.titleText,
+        color:'#3E4095',
+        fontWeight:'normal',
+        lineHeight:sizeFile.lineHeight
+    },
+    textString:{
+        fontSize:sizeFile.contentText,
+        color:colorFile.textColor,
+        fontWeight:'normal',
+        lineHeight:sizeFile.lineHeight
+    },
     footerComponent:{
         height:64,
         marginBottom:4
@@ -58,7 +70,7 @@ export const styles =(colorFile, sizeFile) =>{
     },
     bottomOptionIcon:{
         alignSelf:'center',
-        fontSize:sizeFile.iconSize 
+        fontSize:16 
     },
     bottomOptionSeparator:{
         width: 1,

@@ -68,7 +68,7 @@ import DbQueries from '../../utils/dbQueries'
               <Text style={styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis, omittam deseruisse consequuntur ius an,</Text>
               
               <TouchableOpacity onPress={this.logOut} style={styles.buttonContainer}>
-                <Text>LOG OUT</Text>  
+                <Text style={{color:"#fff"}}>LOG OUT</Text>  
               </TouchableOpacity>              
              
             </View>
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     marginBottom:20,
     width:250,
     borderRadius:30,
-    backgroundColor: "#00BFFF",
+    backgroundColor: "#3E4095",
   },
 });
 
