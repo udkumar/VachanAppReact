@@ -826,7 +826,8 @@ updateData = ()=>{
           }
           {/* <View>
           </View> */}
-              <FlatList
+          <ScrollView>
+          <FlatList
                 data={this.state.chapterContent }
                 contentContainerStyle={{flexGrow:1,margin:16}}
                 extraData={this.state}
@@ -852,6 +853,8 @@ updateData = ()=>{
                 // ListFooterComponentStyle={}
 
               />
+          </ScrollView>
+            
               {/* <View style={{marginBottom:20}}/> */}
           {
             this.state.chapterContent.length > 0 &&

@@ -23,7 +23,8 @@ export const styles =(colorFile, sizeFile) =>{
         fontSize:sizeFile.titleText,
         color:'#3E4095',
         fontWeight:'normal',
-        lineHeight:sizeFile.lineHeight
+        lineHeight:sizeFile.lineHeight,
+        paddingVertical:4
     },
     textString:{
         fontSize:sizeFile.contentText,

@@ -29,7 +29,7 @@ export const styles =(colorFile, sizeFile) =>{
         bottom:0,
         width: width, 
         height: 62, 
-        backgroundColor:'#3E4095 ',
+        // backgroundColor:'#3E4095',
         flexDirection:'row',
         justifyContent:'center'
 
@@ -67,6 +67,13 @@ export const styles =(colorFile, sizeFile) =>{
     textString:{
         fontSize:sizeFile.contentText,
         color:colorFile.textColor,
+        fontWeight:'normal',
+        lineHeight:sizeFile.lineHeight,
+        paddingVertical:4
+    },
+    sectionHeading:{
+        fontSize:sizeFile.titleText,
+        color:'#3E4095',
         fontWeight:'normal',
         lineHeight:sizeFile.lineHeight
     },
@@ -119,9 +126,10 @@ export const styles =(colorFile, sizeFile) =>{
     },
     verseChapterNumber:{
         fontSize:sizeFile.titleText,
-        
-        //fontFamily:fontfamily,fontSize:22,
+        color:colorFile.textColor,
+        fontWeight:'bold'
     },
+  
     verseTextSelectedHighlighted:{
         backgroundColor:colorFile.highlightColor,
         textDecorationLine: 'underline',

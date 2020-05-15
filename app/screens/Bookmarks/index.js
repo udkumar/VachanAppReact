@@ -107,15 +107,13 @@ class BookMarks extends Component {
           this.setState({bookmarksList:data})
         }
       }
-      
     }
   } 
   
   navigateToBible(bookId,chapter){
-    console.log("bible bookmark  ",item)
     this.props.updateVersionBook({
       bookId:bookId, 
-      bookName:getBookNameFromMapping(item.bookId,this.props.languageName),
+      bookName:getBookNameFromMapping(bookId,this.props.languageName),
       chapterNumber:chapter,
       totalChapters:getBookChaptersFromMapping(bookId),
       totalVerses:getBookNumOfVersesFromMapping(bookId,chapter),

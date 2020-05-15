@@ -3,6 +3,7 @@ import {
   Text,
   View,
   ScrollView,
+  TouchableOpacity,
   FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -23,7 +24,7 @@ class BibleChapter extends Component {
         super(props)
         this.styles = styles(this.props.colorFile, this.props.sizeFile);    
         this.state={
-            currentParallelViewChapter:this.props.currentChapter,
+            currentParallelViewChapter:JSON.parse(this.props.currentChapter),
             id:this.props.id,
             bookName:this.props.bookName,
             totalChapters:this.props.totalChapters,
@@ -115,12 +116,30 @@ class BibleChapter extends Component {
                     </TouchableOpacity>
                     </View>
                 :
-                  <ScrollView showsVerticalScrollIndicator={false} ref={(ref) => { this.scrollViewRef = ref; }} >
+                <ScrollView showsVerticalScrollIndicator={false} ref={(ref) => { this.scrollViewRef = ref; }} >
                 <View style={this.styles.chapterList}>
                     {this.props.parallelBible.map((verse, index) => 
                     <View>
+                        {verse.number == 1 ? 
+                        <Text letterSpacing={24}
+                        style={this.styles.verseWrapperText}>
+                        <Text style={this.styles.sectionHeading}>
+                            {verse.metadata ? (verse.metadata[0].section && verse.metadata[0].section.text+"\n"): null }
+                        </Text>
+                        <Text style={this.styles.verseChapterNumber} >
+                        {this.state.currentParallelViewChapter}{" "}
+                        </Text>
+                        <Text style={this.styles.textString}
+                        >
+                        {verse.text}
+                    </Text>         
+                    </Text>
+                        :
                         <Text letterSpacing={24}
                             style={this.styles.verseWrapperText}>
+                                <Text style={this.styles.sectionHeading}>
+                            {verse.metadata ? (verse.metadata[0].section && verse.metadata[0].section.text+"\n"): null }
+                                </Text>
                             <Text style={this.styles.verseNumber} >
                             {verse.number}{" "}
                             </Text>
@@ -129,7 +148,8 @@ class BibleChapter extends Component {
                             {verse.text}
                         </Text>         
                         </Text>
-                        {index == this.props.parallelBible.length - 1  && ( this.props.showBottomBar ? <View style={{height:64, marginBottom:4}} />: null ) }
+                        }
+                    {index == this.props.parallelBible.length - 1  && ( this.props.showBottomBar ? <View style={{height:64, marginBottom:4}} />: null ) }
                     </View>
                     )}
                 </View>

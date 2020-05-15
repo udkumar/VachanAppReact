@@ -72,7 +72,7 @@ class VerseView extends Component {
           >
             <Text style={this.props.styles.sectionHeading}>
               {this.props.verseData.metadata ? (this.props.verseData.metadata[0].section && this.props.verseData.metadata[0].section.text+"\n"): null }
-              </Text>
+            </Text>
           <Text style={this.props.styles.verseChapterNumber}>
         {this.props.chapterNumber}{" "}
           </Text>
