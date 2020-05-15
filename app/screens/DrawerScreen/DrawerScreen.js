@@ -58,6 +58,8 @@ class DrawerScreen extends Component {
       {icon:'border-color',pressIcon:'Highlights'},
       {icon:'note',pressIcon:'Notes'},
       {icon:'history',pressIcon:'History'},
+      {icon:'search',pressIcon:'Search'},
+
       // {icon:'insert-comment',pressIcon:'Commentary'},
       // {icon:'image',pressIcon:'Infographics'},
 

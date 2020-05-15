@@ -4,6 +4,7 @@ const Constants = require('./constants')
 
 
 export function getBookNameFromMapping(id,language) {
+    console.log("get book name ",id,language)
         var obj = id_name_map.id_name_map;
         for (var key in obj) {
             if (obj.hasOwnProperty(key)) {
@@ -31,6 +32,7 @@ export function getBookNameFromMapping(id,language) {
   
 
 export function getBookNumberFromMapping(id) {
+    console.log(" book id ",id)
     var obj = id_name_map.id_name_map;
     for (var key in obj) {
         if (obj.hasOwnProperty(key)) {

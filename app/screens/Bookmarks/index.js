@@ -109,7 +109,6 @@ class BookMarks extends Component {
       }
     }
   } 
-  
   navigateToBible(bookId,chapter){
     this.props.updateVersionBook({
       bookId:bookId, 

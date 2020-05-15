@@ -319,7 +319,7 @@ class Bible extends Component {
   updateLangVer=async(item)=>{
     var time =  new Date()
     DbQueries.addHistory(item.sourceId,item.languageName,item.languageCode, 
-    item.versionCode, this.props.bookId, this.state.currentVisibleChapter, item.downloaded, time)
+    item.versionCode, this.props.bookId, JSON.parse(this.state.currentVisibleChapter), item.downloaded, time)
     // this.props.updateVersion({language:item.languageName,languageCode:item.languageCode,
     //   versionCode:item.versionCode,sourceId:item.sourceId,downloaded:item.downloaded})
     this.props.navigation.setParams({
@@ -371,7 +371,7 @@ class Bible extends Component {
   queryBookFromAPI = async(val)=>{
     console.log("val ",val)
     console.log("query book ",this.state.currentVisibleChapter+val)
-    this.setState({isLoading:true,currentVisibleChapter: val != null ? this.state.currentVisibleChapter  + val : this.state.currentVisibleChapter,error:null },async()=>{
+    this.setState({isLoading:true,currentVisibleChapter: val != null ? JSON.parse(this.state.currentVisibleChapter)  + val : this.state.currentVisibleChapter,error:null },async()=>{
 
       try{
             this.props.navigation.setParams({

@@ -68,28 +68,17 @@ class DbHelper {
 		return null;
 	}
 
-	async queryBooksWithCode(verCode: string, langCode: string, bookId?: string, text?: string) {
+	async queryBooksWithCode(verCode: string, langCode: string, text?: string) {
 		let realm = await this.getRealm();
     	if (realm) {
-			let result = realm.objectForPrimaryKey("LanguageModel", langCode);
-			if (result) {
-				let resultsA = result.versionModels;
-				resultsA = resultsA.filtered('versionCode ==[c] "' + verCode + '"');
+				let resultsA = realm.objects("BookModel")
+				console.log("result a ",JSON.stringify(resultsA))
 				if (resultsA.length > 0) {
-					let resultsB = resultsA[0].bookModels;				
-					if (bookId) {
-						resultsB = resultsB.filtered('bookId ==[c] "' + bookId + '"');
-						return resultsB;
-					}
-					if (text) {
-						 resultsB = resultsB.filtered('bookName CONTAINS[c] "' + text + '"').sorted("bookNumber");
-						 return resultsB
-						}
-					return resultsB.sorted("bookNumber");
+					var resultsB = resultsA.filtered('languageName ==[c] "' + langCode + '" && versionCode ==[c] "' + verCode + '" && bookName CONTAINS[c] "'+text+'"').sorted("bookNumber");
+					console.log(" result a ",resultsB.length)
+					return resultsB[0].bookId
 				}
 				return null;
-			}
-			return null;
 		}
 		return null;
 	}
@@ -97,10 +86,27 @@ class DbHelper {
 	async queryInVerseText(verCode: string, langName: string, text: string) {
 		let realm = await this.getRealm();
     	if (realm) {
-			let result1 = realm.objects("VerseModel");
-			result1 = result1.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '"');
-			result1 = result1.filtered('text CONTAINS[c] "' + text + '"');
-			return result1;
+			let resultsA = realm.objects("BookModel")
+			var resultsB = resultsA.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '"');
+			if(resultsB.length > 0){
+				var textValue =[]
+				for(var i =0;i<=resultsB.length-1;i++){
+					// var bookId = bookIdresultsB[i].bookName
+					for(var j =0; j<=resultsB[i].chapters.length-1;j++){
+						var matchedStr = resultsB[i].chapters[j].verses.filtered('text CONTAINS[c] "' + text + '"')
+						if(Object.keys(matchedStr).length > 0){
+							textValue.push({
+								bookId:resultsB[i].bookId,
+								chapterNumber:resultsB[i].chapters[j].chapterNumber,
+								verseNumber: matchedStr[0].number,
+								text:matchedStr[0].text,
+								})
+						}
+					}
+				}
+				console.log(" verse in ",textValue)
+				return textValue
+			}
 		}
 		return null;
 	}

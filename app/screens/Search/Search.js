@@ -30,7 +30,8 @@ class Search extends Component {
   static navigationOptions = ({navigation}) =>{
       const { params = {} } = navigation.state;
       return {
-        headerTitle: (
+        
+        headerTitle:(
           <TextInput
             placeholder="Search"
             underlineColorAndroid = 'transparent'
@@ -56,7 +57,7 @@ class Search extends Component {
       searchedResult:[],
       activeTab:SearchResultTypes.ALL,
       isLoading:false,
-      text:'',
+      text:'उत्पत्ति',
       tabsData:[],
       languageName:this.props.languageName,
       versionCode:this.props.versionCode,
@@ -72,24 +73,24 @@ class Search extends Component {
   onSearchText(){
     this.setState({isLoading: true, searchedResult:[], tabsData:[]}, async () => {
       let searchResultByBookName = await DbQueries.querySearchBookWithName(this.state.versionCode, this.state.languageName,this.state.text);
-      if(searchResultByBookName && searchResultByBookName.length >0 ){
-        var refList = [];
-        for(var i = 0; i < searchResultByBookName.length ;i++ ){
-          let reference = { bookId:searchResultByBookName[i].bookId,
+      // console.log("SEARCHED  RESULT",searchResultByBookName)
+      if(searchResultByBookName){
+      console.log("SEARCHED  RESULT",searchResultByBookName)
+
+        // var refList = [];
+        // bookId:resultsB[i].bookId,chapterNumber:resultsB[i].chapters[j].chapterNumber,verses:matchedStr
+        let reference = [{ 
+            bookId:searchResultByBookName,
             chapterNumber:1,
-            verseNumber:"1",
-            versionCode:this.state.versionCode,
-            languageName:this.state.languageName,
-            type: 'v',
-            text: '',
-            highlighted: 'false' 
-          }
-          refList.push(reference);
-        }
-        this.setState({searchedResult: refList})
-        this.addRefListToTab(refList)
+            verseNumber:'1',
+						text:'',
+          }]
+          // refList.push(reference);
+        this.setState({searchedResult: reference})
+        this.addRefListToTab(reference)
       }
       let searchResultByVerseText = await DbQueries.querySearchVerse(this.state.versionCode, this.state.languageName,this.state.text)
+      console.log("searchResultByVerseText  ",searchResultByVerseText)
       if (searchResultByVerseText &&  searchResultByVerseText.length >0) {
         this.setState({searchedResult:[...this.state.searchedResult, ...searchResultByVerseText]})
         this.addRefListToTab(searchResultByVerseText)
@@ -166,8 +167,8 @@ class Search extends Component {
   }
 
   onTextChange = (text) =>{
-    this.props.navigation.setParams({text: text})
-    this.setState({text})
+    this.props.navigation.setParams({text:'उत्पत्ति'})
+    this.setState({text:'उत्पत्ति'})
   }
   
   componentDidMount() {
@@ -220,10 +221,10 @@ class Search extends Component {
     return (
       <TouchableOpacity style={this.styles.searchedDataContainer} 
         onPress={()=>this.props.navigation.navigate('Book', {bookId: item.bookId, 
-          bookName: getBookNameFromMapping(item.bookId,this.props.languageName), 
+          bookName: getBookNameFromMapping(item.bookId,this.state.languageName), 
           chapterNumber: item.chapterNumber, verseNumber: item.verseNumber})}>
         <Text style={this.styles.searchedData}> 
-          {getBookNameFromMapping(item.bookId,this.props.languageName)} {item.chapterNumber} : {item.verseNumber} 
+          {getBookNameFromMapping(item.bookId,this.state.languageName)} {item.chapterNumber} : {item.verseNumber} 
         </Text>
         <Text style={this.styles.textStyle}>{getResultText(item.text)}</Text>
       </TouchableOpacity>

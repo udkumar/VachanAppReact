@@ -24,7 +24,7 @@ class DbQueries {
     }
 
     querySearchBookWithName(verCode: string, langName: string, text: string) {
-        return DbHelper.queryBooksWithCode(verCode, langName, null, text);        
+        return DbHelper.queryBooksWithCode(verCode, langName, text);        
     }
 
     querySearchVerse(verCode: string, langName: string, text: string) {
