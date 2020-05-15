@@ -77,7 +77,7 @@ export const noteStyle =(colorFile, sizeFile) =>{
     subContainer:{
         justifyContent:'space-between',
         flexDirection:'row',
-         alignItems:'center',
+        alignItems:'center',
         marginHorizontal:8,
         marginVertical:16
     },

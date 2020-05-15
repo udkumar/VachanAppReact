@@ -18,8 +18,8 @@ import {connect} from 'react-redux'
     constructor(props){
         super(props)
         this.state = {
-            email:'revant@gmail.com',
-            password:'123456',
+            email:'',
+            password:'',
             showLoading:false
         }
     }

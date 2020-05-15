@@ -57,7 +57,7 @@ class Search extends Component {
       searchedResult:[],
       activeTab:SearchResultTypes.ALL,
       isLoading:false,
-      text:'उत्पत्ति',
+      text:'',
       tabsData:[],
       languageName:this.props.languageName,
       versionCode:this.props.versionCode,
@@ -167,8 +167,8 @@ class Search extends Component {
   }
 
   onTextChange = (text) =>{
-    this.props.navigation.setParams({text:'उत्पत्ति'})
-    this.setState({text:'उत्पत्ति'})
+    this.props.navigation.setParams({text:''})
+    this.setState({text:''})
   }
   
   componentDidMount() {

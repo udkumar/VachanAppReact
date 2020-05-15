@@ -657,7 +657,8 @@ this.setState({audio:false})
       let tempVal = item.split('_')
       const verseNumber =  tempVal[2].toString()
       let refModel = {
-        bookId: id, bookName: name, 
+        bookId: id, 
+        bookName: name, 
         chapterNumber: parseInt(tempVal[0]), 
         verseNumber: verseNumber, 
         verseText:tempVal[3],
@@ -666,8 +667,9 @@ this.setState({audio:false})
       };
       refList.push(refModel)
     }
-    this.props.navigation.navigate('EditNote', {
-      
+    // let res = await DbQueries.queryNotes();
+    // console.log("QWERY NOTES ",res)
+    this.props.navigation.navigate('EditNote',{
         referenceList: refList,
         // getReference:refList,
         // bookId:id,

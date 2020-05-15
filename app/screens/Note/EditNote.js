@@ -45,7 +45,7 @@ class EditNote extends Component {
     this.state = {
         noteIndex: this.props.navigation.state.params.noteIndex,
         noteObject:this.props.navigation.state.params.noteObject,
-        noteBody: this.props.navigation.state.params.noteIndex == -1 ? '' : this.props.navigation.state.params.noteObject.body == '' ? '' : JSON.parse(this.props.navigation.state.params.noteObject.body),
+        noteBody: this.props.navigation.state.params.noteIndex == -1 ? '' : this.props.navigation.state.params.noteObject.body == '' ? '' : this.props.navigation.state.params.noteObject.body,
         referenceList:this.props.navigation.state.params.noteIndex == -1 
           ? [] 
           : this.props.navigation.state.params.referenceList,
@@ -309,12 +309,12 @@ class EditNote extends Component {
     return (
      <ScrollView style={this.styles.containerEditNote}>
       <View style={this.styles.subContainer}>
-      {this.state.isLoading &&
+      {/* {this.state.isLoading &&
         <Spinner
         visible={this.state.isLoading}
         textContent={'Loading...'}
         // textStyle={styles.spinnerTextStyle}
-        />}
+        />} */}
         {this.state.referenceList.length == 0 
           ? 
           <Text style={this.styles.tapButton}>Tap button to add references</Text> 
