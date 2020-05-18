@@ -298,7 +298,7 @@ class Bible extends Component {
   getReference = async(item)=>{
     this.scrollToVerse(item.verseNumber)
     var time =  new Date()
-    DbQueries.addHistory(this.props.sourceId,this.props.language,this.props.languageCode, this.props.versionCode, item.bookId, item.chapterNumber, this.props.downloaded, time)
+    DbQueries.addHistory(this.props.sourceId,this.props.language,this.props.languageCode, this.props.versionCode, item.bookId,JSON.parse(item.chapterNumber), this.props.downloaded, time)
     this.props.navigation.setParams({
       bookId:item.bookId,
       bookName:getBookNameFromMapping(item.bookId,this.props.language).length > 8 ? getBookNameFromMapping(item.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(item.bookId,this.props.language),

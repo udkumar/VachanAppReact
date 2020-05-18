@@ -76,10 +76,9 @@ class Search extends Component {
       // console.log("SEARCHED  RESULT",searchResultByBookName)
       if(searchResultByBookName){
       console.log("SEARCHED  RESULT",searchResultByBookName)
-
         // var refList = [];
         // bookId:resultsB[i].bookId,chapterNumber:resultsB[i].chapters[j].chapterNumber,verses:matchedStr
-        let reference = [{ 
+        let reference = [{
             bookId:searchResultByBookName,
             chapterNumber:1,
             verseNumber:'1',
@@ -167,8 +166,8 @@ class Search extends Component {
   }
 
   onTextChange = (text) =>{
-    this.props.navigation.setParams({text:''})
-    this.setState({text:''})
+    this.props.navigation.setParams({text:text})
+    this.setState({text:text})
   }
   
   componentDidMount() {

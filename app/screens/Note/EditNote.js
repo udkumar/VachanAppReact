@@ -57,10 +57,10 @@ class EditNote extends Component {
 
     this.styles = noteStyle(props.colorFile, props.sizeFile);   
     
-    this.getReference = this.getReference.bind(this)
-    this.openReference = this.openReference.bind(this)
-    this.deleteReference = this.deleteReference.bind(this)
-    this.onChangeText = this.onChangeText.bind(this)
+    // this.getReference = this.getReference.bind(this)
+    // this.openReference = this.openReference.bind(this)
+    // this.deleteReference = this.deleteReference.bind(this)
+    // this.onChangeText = this.onChangeText.bind(this)
 
     this.getHtml = this.getHtml.bind(this);
     this.setFocusHandlers = this.setFocusHandlers.bind(this);
@@ -278,7 +278,7 @@ class EditNote extends Component {
    
   }
 
-  onAddVersePress() {
+  onAddVersePress=()=> {
     this.props.navigation.navigate('SelectionTab', {
       getReference: this.getReference,
       parallelContent:false,
@@ -291,7 +291,7 @@ class EditNote extends Component {
     })
   }
   
-  openReference(index) {
+  openReference=(index)=> {
     // todo open reference in RV page
     var list = this.state.referenceList
     var item = list[index]
@@ -299,7 +299,7 @@ class EditNote extends Component {
       chapterNumber: item.chapterNumber, verseNumber: item.verseNumber})
   }
 
-  deleteReference(index) {
+  deleteReference=(index)=> {
     let referenceList = [...this.state.referenceList]
     referenceList.splice(index, 1);
     this.setState({referenceList})
@@ -321,12 +321,12 @@ class EditNote extends Component {
           : 
           <FlowLayout style={this.styles.tapButton} ref="flow" 
             dataValue={this.state.referenceList} 
-            openReference={(index) => {this.openReference(index)}} 
-            deleteReference={(index) => {this.deleteReference(index)}}
+            openReference={(index) => this.openReference(index)} 
+            deleteReference={(index) => this.deleteReference(index)}
             styles={this.styles}
           />
         }
-        <Icon name="add-circle" style={this.styles.addIconCustom} size={28} color="gray" onPress={()=> {this.onAddVersePress()}} />
+        <Icon name="add-circle" style={this.styles.addIconCustom} size={28} color="gray" onPress={()=> this.onAddVersePress} />
       </View>
       
       <View style={this.styles.textEditorView}>
@@ -339,7 +339,6 @@ class EditNote extends Component {
           initialContentHTML={this.state.noteBody}
           editorInitializedCallback={() => this.onEditorInitialized()}
         />
-
         <RichTextToolbar
           ref={(r)=>this.toolbar = r}
           getEditor={() => this.richtext}

@@ -40,7 +40,7 @@ export const styles =(colorFile, sizeFile) =>{
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            // backgroundColor:colorFile.backgroundColor
+            backgroundColor:'#eee'
 
         },
         cardStyle:{
