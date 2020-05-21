@@ -76,7 +76,9 @@ class DbHelper {
 				if (resultsA.length > 0) {
 					var resultsB = resultsA.filtered('languageName ==[c] "' + langCode + '" && versionCode ==[c] "' + verCode + '" && bookName CONTAINS[c] "'+text+'"').sorted("bookNumber");
 					console.log(" result a ",resultsB.length)
-					return resultsB[0].bookId
+					if(resultsB.length>0){
+						return resultsB[0].bookId
+					}
 				}
 				return null;
 		}

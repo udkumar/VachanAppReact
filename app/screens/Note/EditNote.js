@@ -45,14 +45,15 @@ class EditNote extends Component {
     this.state = {
         noteIndex: this.props.navigation.state.params.noteIndex,
         noteObject:this.props.navigation.state.params.noteObject,
-        noteBody: this.props.navigation.state.params.noteIndex == -1 ? '' : this.props.navigation.state.params.noteObject.body == '' ? '' : this.props.navigation.state.params.noteObject.body,
+        noteBody: this.props.navigation.state.params.noteIndex == -1 ? '' : this.props.navigation.state.params.noteObject  ?  this.props.navigation.state.params.noteObject.body : '',
         referenceList:this.props.navigation.state.params.noteIndex == -1 
           ? [] 
           : this.props.navigation.state.params.referenceList,
         // todo here fix reference list
         referenceList2: this.props.navigation.state.params.referenceList ,
         isLoading:false,
-        verseText:''
+        verseText:'',
+        contentBody:''
     }
 
     this.styles = noteStyle(props.colorFile, props.sizeFile);   
@@ -88,18 +89,18 @@ class EditNote extends Component {
   saveNote = async () =>{
     var time =  new Date()
     console.log("time "+time)
-    var contentBody = await this.getHtml()
+    // var contentBody = await this.getHtml()
 
-    if (contentBody == '' && this.state.referenceList.length == 0) {
+    if (this.state.contentBody == '' && this.state.referenceList.length == 0) {
       if(this.state.noteIndex != -1){
         // delete note
         this.props.navigation.state.params.onDelete(this.state.noteIndex, this.state.noteObject.createdTime)
       }
     } else {
-      console.log("add new note ",contentBody)
-      await DbQueries.addOrUpdateNote(this.state.noteIndex, contentBody, 
+      console.log("add new note ",this.state.contentBody)
+      await DbQueries.addOrUpdateNote(this.state.noteIndex, this.state.contentBody, 
       this.state.noteIndex == -1 ? time : this.state.noteObject.createdTime, time, this.state.referenceList);
-      this.props.navigation.state.params.onbackNote(this.state.referenceList,contentBody)
+      this.props.navigation.state.params.onbackNote(this.state.referenceList,this.state.contentBody)
     }
     this.props.navigation.dispatch(NavigationActions.back())
     // this.props.navigation.pop()
@@ -118,17 +119,17 @@ class EditNote extends Component {
   }
 
   onBack = async () =>{
-    var contentBody = await this.getHtml()
+    // var contentBody = await this.getHtml()
       if (this.state.noteIndex == -1) {
-        console.log("content body on back "+contentBody)
-        if (contentBody != '' || this.state.referenceList.length > 0) {
+        console.log("content body on back "+this.state.contentBody)
+        if (this.state.contentBody != '' || this.state.referenceList.length > 0) {
           console.log("if content body is not empty ")
           this.showAlert();
           return
         }
       } 
       else {
-        if(contentBody !== this.props.navigation.state.params.noteObject.body 
+        if(this.state.contentBody !== this.props.navigation.state.params.noteObject.body 
             || !this.checkRefArrayEqual()){
               console.log("changes to content body changes ")
             this.showAlert();
@@ -319,17 +320,21 @@ class EditNote extends Component {
           ? 
           <Text style={this.styles.tapButton}>Tap button to add references</Text> 
           : 
-          <FlowLayout style={this.styles.tapButton} ref="flow" 
+          <FlowLayout style={this.styles.tapButton} 
+          // ref="flow" 
             dataValue={this.state.referenceList} 
             openReference={(index) => this.openReference(index)} 
             deleteReference={(index) => this.deleteReference(index)}
             styles={this.styles}
           />
         }
-        <Icon name="add-circle" style={this.styles.addIconCustom} size={28} color="gray" onPress={()=> this.onAddVersePress} />
+        <Icon name="add-circle" style={this.styles.addIconCustom} size={28} color="gray" onPress={this.onAddVersePress} />
       </View>
-      
-      <View style={this.styles.textEditorView}>
+      <TextInput
+      placeholder='note body'
+      onChangeText={(text)=>this.setState({contentBody:text})}
+      />
+      {/* <View style={this.styles.textEditorView}>
 
         <RichTextEditor
           style={this.styles.richTextEditor}
@@ -352,7 +357,7 @@ class EditNote extends Component {
             actions.insertOrderedList
           ]}
         />
-      </View>
+      </View> */}
 
      </ScrollView> 
     )

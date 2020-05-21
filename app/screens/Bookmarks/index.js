@@ -90,24 +90,24 @@ class BookMarks extends Component {
           }
         })
     }
-    else{
-      let model = await  DbQueries.queryBookmark(this.state.sourceId,null)
-      console.log(" not logged in ",model)
-        // { bookId: 'deu',chapterNumber: { '0': 10, '1': 11, '2': 12, '3': 14 } }
-      if (model != null) {
-        if(model.length > 0){
-          var data =[]
-          for(var i=0;i<=model.length-1;i++){
-          var chapters =[]
-            data.push({bookId:model[i].bookId,chapterNumber:chapters})
-            for(var key in model[i].chapterNumber){
-              chapters.push(model[i].chapterNumber[key])
-            }
-          }
-          this.setState({bookmarksList:data})
-        }
-      }
-    }
+    // else{
+    //   let model = await  DbQueries.queryBookmark(this.state.sourceId,null)
+    //   console.log(" not logged in ",model)
+    //     // { bookId: 'deu',chapterNumber: { '0': 10, '1': 11, '2': 12, '3': 14 } }
+    //   if (model != null) {
+    //     if(model.length > 0){
+    //       var data =[]
+    //       for(var i=0;i<=model.length-1;i++){
+    //       var chapters =[]
+    //         data.push({bookId:model[i].bookId,chapterNumber:chapters})
+    //         for(var key in model[i].chapterNumber){
+    //           chapters.push(model[i].chapterNumber[key])
+    //         }
+    //       }
+    //       this.setState({bookmarksList:data})
+    //     }
+    //   }
+    // }
   } 
   navigateToBible(bookId,chapter){
     this.props.updateVersionBook({
@@ -153,26 +153,26 @@ class BookMarks extends Component {
         })
         this.setState({bookmarksList:data})
     }
-    else{
-      await DbQueries.updateBookmarkInBook(this.state.sourceId,id,chapterNum,false);
-      var data =  this.state.bookmarksList
-      data.filter((a,i) => {
-          if(a.bookId == id ){
-              a.chapterNumber.filter((b,j) => {
-              if(b == chapterNum){
-                if(a.chapterNumber.length == 1){
-                  console.log(" i ",i)
-                   data.splice(i,1)
-                }
-                else{
-                   a.chapterNumber.splice(j,1)
-                }
-              }
-            })
-          }
-        })
-        this.setState({bookmarksList:data})
-    }
+    // else{
+    //   await DbQueries.updateBookmarkInBook(this.state.sourceId,id,chapterNum,false);
+    //   var data =  this.state.bookmarksList
+    //   data.filter((a,i) => {
+    //       if(a.bookId == id ){
+    //           a.chapterNumber.filter((b,j) => {
+    //           if(b == chapterNum){
+    //             if(a.chapterNumber.length == 1){
+    //               console.log(" i ",i)
+    //                data.splice(i,1)
+    //             }
+    //             else{
+    //                a.chapterNumber.splice(j,1)
+    //             }
+    //           }
+    //         })
+    //       }
+    //     })
+    //     this.setState({bookmarksList:data})
+    // }
   
   }
 

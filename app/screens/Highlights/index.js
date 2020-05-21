@@ -62,9 +62,9 @@ class HighLights extends Component {
             if(a.bookId == id && a.chapterNumber == chapterNum){
             a.verseNumber.forEach(async(b,j) => {
             if(b == verseNum){
-              if(this.props.email == null){
-                await DbQueries.updateHighlightsInVerse(this.props.sourceId,id,chapterNum,verseNum, false)
-              }
+              // if(this.props.email == null){
+              //   await DbQueries.updateHighlightsInVerse(this.props.sourceId,id,chapterNum,verseNum, false)
+              // }
               if(a.verseNumber.length == 1){
                 if(this.props.emai){
                   var userId = firebase.auth().currentUser;
@@ -82,7 +82,7 @@ class HighLights extends Component {
          
         }
     })
-    if(this.props.email){
+    // if(this.props.email){
     var verses = firebase.database().ref("users/"+userId.uid+"/highlights/"+this.props.sourceId+"/"+id)
     var updates = {}
     console.log(" index ",index)
@@ -90,7 +90,7 @@ class HighLights extends Component {
       updates[chapterNum] = data[index].verseNumber
       verses.update(updates)
     }
-  }
+  // }
   this.setState({HightlightedVerseArray:data})
   }
   async componentDidMount(){
@@ -110,21 +110,21 @@ class HighLights extends Component {
         }
         })
     }
-    else{
-      let model2 = await  DbQueries.queryHighlights(this.props.sourceId,null,null)
-      if(model2  != null ){
-          var highlights=[]
-          for(var i = 0; i<=model2.length-1;i++){
-            var verses =[]
-            for(var key in model2[i].verseNumber){
-              // console.log("VERSE NUMBER   ",)
-              verses.push(model2[i].verseNumber[key])
-            }
-           highlights.push({bookId:model2[i].bookId,chapterNumber:model2[i].chapterNumber,verseNumber:verses})
-          }
-          this.setState({HightlightedVerseArray:highlights})
-    }
-    }
+    // else{
+    //   let model2 = await  DbQueries.queryHighlights(this.props.sourceId,null,null)
+    //   if(model2  != null ){
+    //       var highlights=[]
+    //       for(var i = 0; i<=model2.length-1;i++){
+    //         var verses =[]
+    //         for(var key in model2[i].verseNumber){
+    //           // console.log("VERSE NUMBER   ",)
+    //           verses.push(model2[i].verseNumber[key])
+    //         }
+    //        highlights.push({bookId:model2[i].bookId,chapterNumber:model2[i].chapterNumber,verseNumber:verses})
+    //       }
+    //       this.setState({HightlightedVerseArray:highlights})
+    // }
+    // }
     // this.getHighlights()
   }
   navigateToBible=(bId,chapterNum,verseNum)=>{

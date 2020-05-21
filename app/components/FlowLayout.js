@@ -46,7 +46,9 @@ export default class FlowLayout extends Component {
 		let items = this.props.dataValue.map((value, position) => {
 			return (
 				<View key={position}>
-                    <FlowView  ref ={this.props.dataValue[position]} text={value} 
+					<FlowView 
+					//  ref ={this.props.dataValue[position]} 
+					text={value} 
                         onDeleteClick={()=>{
                             this.props.deleteReference(position);
                         }}

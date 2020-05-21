@@ -194,27 +194,27 @@ class Search extends Component {
     })
   }
 
-  ListEmptyComponent = () => {
-    return (
-      <View style={this.styles.ListEmptyContainer}>
-        { this.state.isLoading == false && this.state.tabsData == null 
-          ? <Text>No Result Found</Text>
-          : null
-        }
-      </View>
-    )
-  }
+  // ListEmptyComponent = () => {
+  //   return (
+  //     <View style={this.styles.ListEmptyContainer}>
+  //       { this.state.isLoading == false 
+  //         ? <Text>No Result Found</Text>
+  //         : null
+  //       }
+  //     </View>
+  //   )
+  // }
 
-  ListFooterComponent = () => {
-    return(
-      <View>
-        { this.state.isLoading 
-          ? <Text>Loading...</Text>
-          : null
-        }
-      </View>
-    )
-  }
+  // ListFooterComponent = () => {
+  //   return(
+  //     <View>
+  //       { this.state.isLoading 
+  //         ? <Text>Loading...</Text>
+  //         : null
+  //       }
+  //     </View>
+  //   )
+  // }
 
   searchedData = ({item,index}) => {
     return (
@@ -239,13 +239,16 @@ class Search extends Component {
           activeTab={this.state.activeTab}
         />
         <Text style={this.styles.textLength}>{text}</Text>
-        <FlatList
-          ref={ref => this.elementIndex = ref}
-          data={this.state.tabsData}
-          renderItem={this.searchedData}
-          ListEmptyComponent={this.ListEmptyComponent}
-          ListFooterComponent={this.ListFooterComponent}
-        />
+        {this.state.tabsData.length > 0 && 
+         <FlatList
+         ref={ref => this.elementIndex = ref}
+         data={this.state.tabsData}
+         renderItem={this.searchedData}
+        //  ListEmptyComponent={this.ListEmptyComponent}
+        //  ListFooterComponent={this.ListFooterComponent}
+       />
+        }
+       
       </View>
     )
   }

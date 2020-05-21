@@ -490,20 +490,21 @@ this.setState({audio:false})
       })
     }
     else{
-      let model2 = await  DbQueries.queryHighlights(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter)
-      // console.log(" MODEL HIGHLIGHT ",model2[0])
-      var highlights = []
-      if(model2 !=null){
-        var verses = []
-        for(var i = 0; i<=model2[0].verseNumber.length-1;i++){
-          verses.push(model2[0].verseNumber[i])
-        }
-        highlights.push({chapterNumber:model2[0].chapterNumber,verses:verses})
-        this.setState({HightlightedVerseArray:highlights})
-      }
-      else{
-        this.setState({HightlightedVerseArray:[]})
-      }
+      console.log("please login")
+      // let model2 = await  DbQueries.queryHighlights(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter)
+      // // console.log(" MODEL HIGHLIGHT ",model2[0])
+      // var highlights = []
+      // if(model2 !=null){
+      //   var verses = []
+      //   for(var i = 0; i<=model2[0].verseNumber.length-1;i++){
+      //     verses.push(model2[0].verseNumber[i])
+      //   }
+      //   highlights.push({chapterNumber:model2[0].chapterNumber,verses:verses})
+      //   this.setState({HightlightedVerseArray:highlights})
+      // }
+      // else{
+      //   this.setState({HightlightedVerseArray:[]})
+      // }
     }
   }
 
@@ -528,18 +529,18 @@ this.setState({audio:false})
     else{
       console.log("not logged in")
     // console.log(" ",this.props.language,this.props.versionCode,this.props.bookId,this.state.currentVisibleChapter)
-    var model = await  DbQueries.queryBookmark(this.props.sourceId,this.props.bookId)
-    if (model != null) {
-           if(model.length > 0){
-            var chapterList = []
-            for(var i = 0; i<=model[0].chapterNumber.length-1;i++){
-            chapterList.push(model[0].chapterNumber[i])
-          }
-          this.setState({bookmarksList:chapterList},()=>{
-            this.props.navigation.setParams({isBookmark:this.isBookmark()})
-          })
-          } 
-    }
+    // var model = await  DbQueries.queryBookmark(this.props.sourceId,this.props.bookId)
+    // if (model != null) {
+    //        if(model.length > 0){
+    //         var chapterList = []
+    //         for(var i = 0; i<=model[0].chapterNumber.length-1;i++){
+    //         chapterList.push(model[0].chapterNumber[i])
+    //       }
+    //       this.setState({bookmarksList:chapterList},()=>{
+    //         this.props.navigation.setParams({isBookmark:this.isBookmark()})
+    //       })
+    //       } 
+    // }
 
     }
   }
@@ -585,28 +586,28 @@ this.setState({audio:false})
           )
     }
     else{
+      alert("please login")
+    //   var newBookmarks = isbookmark
+    //   ? this.state.bookmarksList.filter((a) => a !== this.state.currentVisibleChapter )
+    //   : this.state.bookmarksList.concat(this.state.currentVisibleChapter)
+    //     this.setState({
+    //       bookmarksList:newBookmarks
+    //     },()=>{
+    //       this.props.navigation.setParams({isBookmark:this.isBookmark()})
+    //     })
 
-      var newBookmarks = isbookmark
-      ? this.state.bookmarksList.filter((a) => a !== this.state.currentVisibleChapter )
-      : this.state.bookmarksList.concat(this.state.currentVisibleChapter)
-        this.setState({
-          bookmarksList:newBookmarks
-        },()=>{
-          this.props.navigation.setParams({isBookmark:this.isBookmark()})
-        })
-
-      if(isbookmark === false){
-        DbQueries.updateBookmarkInBook(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter,true);
-      }
-      else{
-        //add bookmark
-        for(var i=0; i<=this.state.bookmarksList.length-1; i++){
-          if(this.state.bookmarksList[i] == this.state.currentVisibleChapter) {
-            DbQueries.updateBookmarkInBook(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter,false);
-            // this.state.bookmarksList.splice(i, 1)
-          }
-        }
-      }
+    //   if(isbookmark === false){
+    //     DbQueries.updateBookmarkInBook(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter,true);
+    //   }
+    //   else{
+    //     //add bookmark
+    //     for(var i=0; i<=this.state.bookmarksList.length-1; i++){
+    //       if(this.state.bookmarksList[i] == this.state.currentVisibleChapter) {
+    //         DbQueries.updateBookmarkInBook(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter,false);
+    //         // this.state.bookmarksList.splice(i, 1)
+    //       }
+    //     }
+    //   }
     }
 
 
@@ -687,56 +688,55 @@ this.setState({audio:false})
   }
 
   doHighlight = async() => {
-    if(this.state.HightlightedVerseArray.length == 0){
-          var verses =  []
-        for (let item of this.state.selectedReferenceSet){
-          let tempVal = item.split('_')
-          console.log("SELECTED ITEM ",tempVal[2])
-          verses.push(JSON.parse(tempVal[2]))
-          if(this.props.email == null){
-            await DbQueries.updateHighlightsInVerse(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter, tempVal[2], true)
-          }
-        }
-        console.log("VERSES  ",verses)
-        if(this.props.email){
-          var userId = firebase.auth().currentUser;
-          var firebaseRef = firebase.database().ref("users/"+userId.uid+"/highlights/"+this.props.sourceId+"/"+this.props.bookId+"/"+this.state.currentVisibleChapter)
-          firebaseRef.set(verses)
-        }
-        this.setState({HightlightedVerseArray:[...this.state.HightlightedVerseArray, {chapterNumber:this.state.currentVisibleChapter,verses:verses}]})
-    }
-    else{
+    if(this.props.email){
+      if(this.state.HightlightedVerseArray.length == 0){
+        var verses =  []
       for (let item of this.state.selectedReferenceSet){
         let tempVal = item.split('_')
-        var highlights = this.state.HightlightedVerseArray
-        highlights.forEach(async(a)=>{
-          // console.log("VERSE a ",a)
-          if(a.chapterNumber === this.state.currentVisibleChapter){
-            var index =  a.verses.indexOf(JSON.parse(tempVal[2]))
-            if(this.state.bottomHighlightText){
-              if(index === -1){
-                a.verses.push(JSON.parse(tempVal[2]))
-                if(this.props.email==null){
-                  await DbQueries.updateHighlightsInVerse(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter, tempVal[2], true)
-                }
-              }
-            }
-            else{
-              a.verses.splice(index,1)
-              if(this.props.email == null){
-                await DbQueries.updateHighlightsInVerse(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter, tempVal[2], false)
-              }
-            }
-          }
-        })
+        console.log("SELECTED ITEM ",tempVal[2])
+        verses.push(JSON.parse(tempVal[2]))
+        // if(this.props.email == null){
+        //   await DbQueries.updateHighlightsInVerse(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter, tempVal[2], true)
+        // }
       }
-      if(this.props.email){
+      console.log("VERSES  ",verses)
         var userId = firebase.auth().currentUser;
         var firebaseRef = firebase.database().ref("users/"+userId.uid+"/highlights/"+this.props.sourceId+"/"+this.props.bookId+"/"+this.state.currentVisibleChapter)
-        firebaseRef.set(this.state.HightlightedVerseArray[0].verses)
-        console.log(" email check ",this.state.HightlightedVerseArray)
-      }
-      }
+        firebaseRef.set(verses)
+      this.setState({HightlightedVerseArray:[...this.state.HightlightedVerseArray, {chapterNumber:this.state.currentVisibleChapter,verses:verses}]})
+  }
+  else{
+    for (let item of this.state.selectedReferenceSet){
+      let tempVal = item.split('_')
+      var highlights = this.state.HightlightedVerseArray
+      highlights.forEach(async(a)=>{
+        // console.log("VERSE a ",a)
+        if(a.chapterNumber === this.state.currentVisibleChapter){
+          var index =  a.verses.indexOf(JSON.parse(tempVal[2]))
+          if(this.state.bottomHighlightText){
+            if(index === -1){
+              a.verses.push(JSON.parse(tempVal[2]))
+              // if(this.props.email==null){
+              //   await DbQueries.updateHighlightsInVerse(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter, tempVal[2], true)
+              // }
+            }
+          }
+          else{
+            a.verses.splice(index,1)
+            // if(this.props.email == null){
+              // await DbQueries.updateHighlightsInVerse(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter, tempVal[2], false)
+            // }
+          }
+        }
+      })
+    }
+      var userId = firebase.auth().currentUser;
+      var firebaseRef = firebase.database().ref("users/"+userId.uid+"/highlights/"+this.props.sourceId+"/"+this.props.bookId+"/"+this.state.currentVisibleChapter)
+      firebaseRef.set(this.state.HightlightedVerseArray[0].verses)
+      console.log(" email check ",this.state.HightlightedVerseArray)
+    }
+    }
+
        
 
   this.setState({ selectedReferenceSet: [], showBottomBar: false})
