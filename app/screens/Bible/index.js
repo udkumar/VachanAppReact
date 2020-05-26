@@ -157,6 +157,7 @@ class Bible extends Component {
       status:false,
       modalVisible: false,
       arrLayout:[],
+      notesList:[]
 
      
       //modal value for showing chapter grid 
@@ -264,6 +265,7 @@ class Bible extends Component {
       this.audioComponentUpdate()
       this.getHighlights()
       this.getBookMarks()
+      this.getNotes()
       this.fetchAudio()
       this.props.navigation.setParams({
         bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
@@ -412,6 +414,7 @@ class Bible extends Component {
             this.props.updateVersion({language:this.props.language,languageCode:this.props.languageCode,
             versionCode:this.props.versionCode,sourceId:this.props.sourceId,downloaded:this.props.downloaded})
             this.getHighlights()
+            this.getNotes()
             this.fetchAudio()
           }
           catch(error) {
@@ -491,20 +494,6 @@ this.setState({audio:false})
     }
     else{
       console.log("please login")
-      // let model2 = await  DbQueries.queryHighlights(this.props.sourceId,this.props.bookId,this.state.currentVisibleChapter)
-      // // console.log(" MODEL HIGHLIGHT ",model2[0])
-      // var highlights = []
-      // if(model2 !=null){
-      //   var verses = []
-      //   for(var i = 0; i<=model2[0].verseNumber.length-1;i++){
-      //     verses.push(model2[0].verseNumber[i])
-      //   }
-      //   highlights.push({chapterNumber:model2[0].chapterNumber,verses:verses})
-      //   this.setState({HightlightedVerseArray:highlights})
-      // }
-      // else{
-      //   this.setState({HightlightedVerseArray:[]})
-      // }
     }
   }
 
@@ -528,23 +517,29 @@ this.setState({audio:false})
     }
     else{
       console.log("not logged in")
-    // console.log(" ",this.props.language,this.props.versionCode,this.props.bookId,this.state.currentVisibleChapter)
-    // var model = await  DbQueries.queryBookmark(this.props.sourceId,this.props.bookId)
-    // if (model != null) {
-    //        if(model.length > 0){
-    //         var chapterList = []
-    //         for(var i = 0; i<=model[0].chapterNumber.length-1;i++){
-    //         chapterList.push(model[0].chapterNumber[i])
-    //       }
-    //       this.setState({bookmarksList:chapterList},()=>{
-    //         this.props.navigation.setParams({isBookmark:this.isBookmark()})
-    //       })
-    //       } 
-    // }
-
     }
   }
-
+getNotes(){
+  if(this.props.email){
+    var userId = firebase.auth().currentUser;
+    var firebaseRef = firebase.database().ref("users/"+userId.uid+"/notes/"+this.props.sourceId+"/"+this.props.bookId+"/"+this.state.currentVisibleChapter);
+    // this.state.bookmarksList = []
+    firebaseRef.on('value', (snapshot)=>{
+    console.log("NOTES LIST  ",snapshot.val())
+      if(snapshot.val() === null){
+        this.setState({notesList:[]})
+      } 
+      else{
+        this.setState({
+          notesList:snapshot.val()
+        })
+      }
+    })
+  }
+  else{
+    console.log("not logged in")
+  }
+}
   isBookmark(){
   if(this.state.bookmarksList.length > 0){
     let isBookmark = false
@@ -650,37 +645,44 @@ this.setState({audio:false})
   }
   
   addToNotes = () => {
-    let refList = []
-    let id = this.props.bookId
-    let name = getBookNameFromMapping(this.props.bookId,this.props.language)
-    for (let item of this.state.selectedReferenceSet) {
-
-      let tempVal = item.split('_')
-      const verseNumber =  tempVal[2].toString()
-      let refModel = {
-        bookId: id, 
-        bookName: name, 
-        chapterNumber: parseInt(tempVal[0]), 
-        verseNumber: verseNumber, 
-        verseText:tempVal[3],
-        versionCode: this.props.versionCode, 
-        languageName: this.props.language,
-      };
-      refList.push(refModel)
+    if(this.props.email){
+      let refList = []
+      let id = this.props.bookId
+      let name = getBookNameFromMapping(this.props.bookId,this.props.language)
+      for (let item of this.state.selectedReferenceSet) {
+  
+        let tempVal = item.split('_')
+        const verseNumber =  tempVal[2].toString()
+        let refModel = {
+          bookId: id, 
+          bookName: name, 
+          chapterNumber: parseInt(tempVal[0]), 
+          verseNumber: verseNumber, 
+          verseText:tempVal[3],
+          versionCode: this.props.versionCode, 
+          languageName: this.props.language,
+        };
+        refList.push(refModel)
+      }
+      // let res = await DbQueries.queryNotes();
+      // console.log("QWERY NOTES ",res)
+      this.props.navigation.navigate('EditNote',{
+          referenceList: refList,
+          notesList:this.state.notesList,
+          // getReference:refList,
+          // bookId:id,
+          onbackNote:this.onbackNote,
+          // chapterNumber:this.state.currentVisibleChapter,
+          // totalVerses:getBookNumOfVersesFromMapping(id,this.state.currentVisibleChapter),
+          // totalChapters:getBookChaptersFromMapping(id),
+          noteIndex:-1,
+          // noteObject:''
+      })
     }
-    // let res = await DbQueries.queryNotes();
-    // console.log("QWERY NOTES ",res)
-    this.props.navigation.navigate('EditNote',{
-        referenceList: refList,
-        // getReference:refList,
-        // bookId:id,
-        onbackNote:this.onbackNote,
-        // chapterNumber:this.state.currentVisibleChapter,
-        // totalVerses:getBookNumOfVersesFromMapping(id,this.state.currentVisibleChapter),
-        // totalChapters:getBookChaptersFromMapping(id),
-        noteIndex:-1,
-        // noteObject:''
-    })
+    else{
+      alert("please logiin")
+    }
+  
     this.setState({selectedReferenceSet: [], showBottomBar: false})
   }
   onbackNote=()=>{
@@ -843,9 +845,10 @@ updateData = ()=>{
                       styles = {this.styles}
                       selectedReferences = {this.state.selectedReferenceSet}
                       getSelection = {(verseIndex, chapterNumber, verseNumber,text) => {
-                        this.props.navigation.getParam("visibleParallelView")== false && this.getSelectedReferences(verseIndex, chapterNumber, verseNumber,text)  }}
+                        this.props.navigation.getParam("visibleParallelView")== false && this.getSelectedReferences(verseIndex, chapterNumber, verseNumber,text)}}
                               
                       HightlightedVerse = {this.state.HightlightedVerseArray}
+                      notesList={this.state.notesList}
                       chapterNumber ={this.state.currentVisibleChapter}
                       showBottomBar={this.state.showBottomBar}
                   />

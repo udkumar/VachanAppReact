@@ -15,6 +15,7 @@ const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 import DbQueries from '../../utils/dbQueries'
 import {connect} from 'react-redux'
+import firebase from 'react-native-firebase'
 
 
 import { noteStyle } from './styles.js';
@@ -82,12 +83,26 @@ class Note extends Component {
   }
 
   async queryDb() {
-    let res = await DbQueries.queryNotes();
-    console.log("NOTES RESULTS ............",res)
-    if(res==null){
-      return
+    if(this.props.email){
+      var userId = firebase.auth().currentUser;
+      var firebaseRef = firebase.database().ref("users/"+userId.uid+"/notes/"+this.props.sourceId);
+      // this.state.bookmarksList = []
+      firebaseRef.on('value', (snapshot)=>{
+      console.log("NOTES LIST  ",snapshot.val())
+      console.log("NOTES   ",snapshot)
+        if(snapshot.val() === null){
+          this.setState({notesData:[]})
+        } 
+        else{
+          this.setState({
+            notesList:notesData.val()
+          })
+        }
+      })
     }
-    this.setState({notesData: res})
+    else{
+      console.log("not logged in")
+    }
   }
 
   
@@ -97,7 +112,7 @@ class Note extends Component {
       newNote: this.createNewNote,
       updateNote:this.updateNote
     })
-      this.queryDb()
+      
   }
 
   // openNoteContent = ()=>{
@@ -116,8 +131,9 @@ class Note extends Component {
   //   this.props.navigation.navigate("NotePage",{notesData:this.state.notesData})
   // }
   renderItem = ({item,index})=>{
+    
     // console.log("item reference ",item.references[0].verseNumber)
-    console.log("item reference ",item.references)
+    console.log("item reference ",item)
 
     // TODO fix max lines in WEBVIEW
     var date = new Date(item.modifiedTime);
@@ -130,23 +146,23 @@ class Note extends Component {
     var strParse1 = strParse.replace('&nbsp', ' ')
     var bodyText = strParse1 == '' ? 'No additional text' : strParse1
     
-    return(
-    <TouchableOpacity style={this.styles.noteContent}
-        onPress={()=>{this.props.navigation.navigate("NotePage",{note:item.references,bodyText:bodyText,createdTime:item.createdTime,queryDb:this.queryDb,noteObject:item,noteIndex:index,bookId:this.props.bookId})}}>
-      <Card>
-      <CardItem style={this.styles.cardItemStyle}>
-        <View style={this.styles.notesContentView}> 
-          <Text style={this.styles.noteFontCustom} numberOfLines={2}>{bodyText}</Text>
-          <View style={this.styles.noteCardItem}>
-            <Text style={this.styles.noteFontCustom}>{dateFormate}</Text>
-            <Icon name="delete-forever" style={this.styles.deleteIon} onPress={()=>this.onDelete(index, item.createdTime)}/>
-          </View>
-        </View>
-        </CardItem>
+  //   return(
+  //   <TouchableOpacity style={this.styles.noteContent}
+  //       onPress={()=>{this.props.navigation.navigate("NotePage",{note:item.references,bodyText:bodyText,createdTime:item.createdTime,queryDb:this.queryDb,noteObject:item,noteIndex:index,bookId:this.props.bookId})}}>
+  //     <Card>
+  //     <CardItem style={this.styles.cardItemStyle}>
+  //       <View style={this.styles.notesContentView}> 
+  //         <Text style={this.styles.noteFontCustom} numberOfLines={2}>{bodyText}</Text>
+  //         <View style={this.styles.noteCardItem}>
+  //           <Text style={this.styles.noteFontCustom}>{dateFormate}</Text>
+  //           <Icon name="delete-forever" style={this.styles.deleteIon} onPress={()=>this.onDelete(index, item.createdTime)}/>
+  //         </View>
+  //       </View>
+  //       </CardItem>
         
-      </Card>
-    </TouchableOpacity>
-   )
+  //     </Card>
+  //   </TouchableOpacity>
+  //  )
  }
 
   render() {
@@ -174,6 +190,8 @@ const mapStateToProps = state =>{
   return{
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
+    sourceId:state.updateVersion.sourceId,
+    email:state.userInfo.email,
   }
 }
 

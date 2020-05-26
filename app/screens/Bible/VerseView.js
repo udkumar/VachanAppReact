@@ -7,6 +7,8 @@ import {
 } from 'react-native';
 const Constants = require('../../utils/constants')
 import {connect} from 'react-redux'
+import Icon from 'react-native-vector-icons/MaterialIcons'
+
 // import { styles } from './styles.js';
 
 
@@ -55,9 +57,18 @@ class VerseView extends Component {
           return true
           }
       }
-
-     
     }
+    return false
+  }
+  isNoted(){
+    // for(var i = 0 ;i<=this.props.notesList.length-1; i++ ){
+    //   for(var j = 0 ;j<=this.props.notesList[i].verses.length-1; j++ ){
+    //     if(this.props.notesList[i].verses[j] == this.props.verseData.number){
+    //       console.log(" NOTE VERSE ",this.props.notesList[i].verses[j])
+    //       return true
+    //       }
+    //   }
+    // }
     return false
   }
   render() {
@@ -65,11 +76,11 @@ class VerseView extends Component {
     let isSelect = this.has(this.props.selectedReferences, obj)
     // console.log("is selected ",isSelect)
     let isHighlight = this.isHighlight()
+    let isNoted = this.isNoted()
       if(this.props.verseData.number == 1){
         // console.log("this.props.verseData.number")
         return (
-          <Text style ={this.props.styles.textStyle} onPress={() => {this.onPress()}} 
-          >
+          <Text style ={this.props.styles.textStyle} onPress={() => {this.onPress()}}  >
             <Text style={this.props.styles.sectionHeading}>
               {this.props.verseData.metadata ? (this.props.verseData.metadata[0].section && this.props.verseData.metadata[0].section.text+"\n"): null }
             </Text>
@@ -108,9 +119,10 @@ class VerseView extends Component {
                     ? this.props.styles.verseTextNotSelectedHighlighted
                     : this.props.styles.verseTextSelectedNotHighlighted,
                   ]}
-                    >
-              {this.props.verseData.text}
-            </Text>         
+              >
+              {this.props.verseData.text} 
+            </Text>   
+            {isNoted ? <Icon name="note" size={20} style={{padding:8}} /> :null} 
           </Text>
         )
   }

@@ -25,6 +25,8 @@ import DbQueries from '../../utils/dbQueries'
 import APIFetch from '../../utils/APIFetch'
 import {connect} from 'react-redux'
 import Spinner from 'react-native-loading-spinner-overlay';
+import firebase from 'react-native-firebase'
+
 
 
 
@@ -87,23 +89,34 @@ class EditNote extends Component {
   }
 
   saveNote = async () =>{
-    var time =  new Date()
-    console.log("time "+time)
-    // var contentBody = await this.getHtml()
-
-    if (this.state.contentBody == '' && this.state.referenceList.length == 0) {
-      if(this.state.noteIndex != -1){
-        // delete note
-        this.props.navigation.state.params.onDelete(this.state.noteIndex, this.state.noteObject.createdTime)
-      }
-    } else {
-      console.log("add new note ",this.state.contentBody)
-      await DbQueries.addOrUpdateNote(this.state.noteIndex, this.state.contentBody, 
-      this.state.noteIndex == -1 ? time : this.state.noteObject.createdTime, time, this.state.referenceList);
-      this.props.navigation.state.params.onbackNote(this.state.referenceList,this.state.contentBody)
-    }
-    this.props.navigation.dispatch(NavigationActions.back())
-    // this.props.navigation.pop()
+      var time =  new Date()
+      console.log("time "+time)
+      // var contentBody = await this.getHtml()
+      if ( this.state.referenceList.length == 0) {
+        if(this.state.noteIndex != -1){
+          // delete note
+          this.props.navigation.state.params.onDelete(this.state.noteIndex, this.state.noteObject.createdTime)
+        }
+      }else{
+        if(this.state.contentBody == ''){
+          alert(" notes should not be empty")
+        }
+        else{
+          var firebaseRef = firebase.database().ref("users/"+this.props.uid+"/notes/"+this.props.sourceId+"/"+this.props.bookId)
+          var verses = []
+          for(var i = 0;i<=this.state.referenceList.length-1;i++){
+            verses.push(JSON.parse(this.state.referenceList[i].verseNumber))
+          }
+          var updates = {}
+          updates[this.props.chapterNumber] = this.props.navigation.state.params.notesList.concat({createdTime:this.state.noteIndex == -1 ? time : this.state.noteObject.createdTime,  
+            modifiedTime:time, 
+            body: this.state.contentBody,
+            verses:verses})
+            firebaseRef.update(updates)
+          this.props.navigation.state.params.onbackNote(this.state.referenceList,this.state.contentBody)
+          this.props.navigation.dispatch(NavigationActions.back())
+        }
+        }
   }
 
   showAlert() {
@@ -279,18 +292,18 @@ class EditNote extends Component {
    
   }
 
-  onAddVersePress=()=> {
-    this.props.navigation.navigate('SelectionTab', {
-      getReference: this.getReference,
-      parallelContent:false,
-      bookId:this.props.bookId,
-      // bookName:this.props.navigation.state.params.bookName,
-      chapterNumber:this.props.chapterNumber,
-      totalVerses:this.props.totalVerses,
-      totalChapters:this.props.totalChapters,
-      // verseNumber:this.props.navigation.state.params.verseNumber
-    })
-  }
+  // onAddVersePress=()=> {
+  //   this.props.navigation.navigate('SelectionTab', {
+  //     getReference: this.getReference,
+  //     parallelContent:false,
+  //     bookId:this.props.bookId,
+  //     // bookName:this.props.navigation.state.params.bookName,
+  //     chapterNumber:this.props.chapterNumber,
+  //     totalVerses:this.props.totalVerses,
+  //     totalChapters:this.props.totalChapters,
+  //     // verseNumber:this.props.navigation.state.params.verseNumber
+  //   })
+  // }
   
   openReference=(index)=> {
     // todo open reference in RV page
@@ -328,7 +341,7 @@ class EditNote extends Component {
             styles={this.styles}
           />
         }
-        <Icon name="add-circle" style={this.styles.addIconCustom} size={28} color="gray" onPress={this.onAddVersePress} />
+        {/* <Icon name="add-circle" style={this.styles.addIconCustom} size={28} color="gray" onPress={this.onAddVersePress} /> */}
       </View>
       <TextInput
       placeholder='note body'
@@ -413,6 +426,8 @@ const mapStateToProps = state =>{
     versionCode:state.updateVersion.versionCode,
     sourceId:state.updateVersion.sourceId,
 
+    email:state.userInfo.email,
+    uid:state.userInfo.uid,
 
     chapterNumber:state.updateVersion.chapterNumber,
     totalChapters:state.updateVersion.totalChapters,

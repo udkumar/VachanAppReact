@@ -16,11 +16,11 @@ export default class Register extends Component {
             showLoading:''
         }
     }
-    register = async() => {
+    register = () => {
         this.setState({showLoading:true});
-
+            console.log("do register ")
         try {
-            const doRegister = await firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password);
+            const doRegister =  firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password);
             this.setState({showLoading:false});
             if(doRegister.user) {
                 console.log("doRegister ",doRegister.user)
