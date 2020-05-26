@@ -82,20 +82,19 @@ class Note extends Component {
     // this.queryDb()
   }
 
-  async queryDb() {
+  queryDb() {
     if(this.props.email){
       var userId = firebase.auth().currentUser;
       var firebaseRef = firebase.database().ref("users/"+userId.uid+"/notes/"+this.props.sourceId);
       // this.state.bookmarksList = []
       firebaseRef.on('value', (snapshot)=>{
       console.log("NOTES LIST  ",snapshot.val())
-      console.log("NOTES   ",snapshot)
         if(snapshot.val() === null){
           this.setState({notesData:[]})
         } 
         else{
           this.setState({
-            notesList:notesData.val()
+            notesList:snapshot.val()
           })
         }
       })
@@ -112,7 +111,7 @@ class Note extends Component {
       newNote: this.createNewNote,
       updateNote:this.updateNote
     })
-      
+      this.queryDb()
   }
 
   // openNoteContent = ()=>{
