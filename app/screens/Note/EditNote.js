@@ -92,6 +92,8 @@ class EditNote extends Component {
       var time =  new Date()
       console.log("time "+time)
       // var contentBody = await this.getHtml()
+      
+      var firebaseRef = firebase.database().ref("users/"+this.props.uid+"/notes/"+this.props.sourceId+"/"+this.props.bookId)
       if ( this.state.referenceList.length == 0) {
         if(this.state.noteIndex != -1){
           // delete note
@@ -102,17 +104,30 @@ class EditNote extends Component {
           alert(" notes should not be empty")
         }
         else{
-          var firebaseRef = firebase.database().ref("users/"+this.props.uid+"/notes/"+this.props.sourceId+"/"+this.props.bookId)
           var verses = []
           for(var i = 0;i<=this.state.referenceList.length-1;i++){
             verses.push(JSON.parse(this.state.referenceList[i].verseNumber))
           }
-          var updates = {}
-          updates[this.props.chapterNumber] = this.props.navigation.state.params.notesList.concat({createdTime:this.state.noteIndex == -1 ? time : this.state.noteObject.createdTime,  
-            modifiedTime:time, 
-            body: this.state.contentBody,
-            verses:verses})
+          var notesArray = []
+          if(this.props.navigation.state.params.notesList.length == 0){
+            console.log(" value ",this.props.chapterNumber)
+          var firstNote = firebase.database().ref("users/"+this.props.uid+"/notes/"+this.props.sourceId+"/"+this.props.bookId+"/"+this.props.chapterNumber)
+            notesArray = {
+              createdTime:this.state.noteIndex == -1 ? time : this.state.noteObject.createdTime,  
+              modifiedTime:time, 
+              body: this.state.contentBody,
+              verses:verses
+          }
+          firstNote.set(notesArray)
+          }else{
+            this.props.navigation.state.params.notesList.push({createdTime:this.state.noteIndex == -1 ? time : this.state.noteObject.createdTime,  
+              modifiedTime:time, 
+              body: this.state.contentBody,
+              verses:verses})
+            var updates = {}
+            updates[this.props.chapterNumber] = this.props.navigation.state.params.notesList
             firebaseRef.update(updates)
+          }
           this.props.navigation.state.params.onbackNote(this.state.referenceList,this.state.contentBody)
           this.props.navigation.dispatch(NavigationActions.back())
         }
@@ -320,6 +335,7 @@ class EditNote extends Component {
   }
 
   render() {
+    console.log(" note list ",this.props.navigation.state.params.notesList)
     return (
      <ScrollView style={this.styles.containerEditNote}>
       <View style={this.styles.subContainer}>

@@ -523,16 +523,22 @@ getNotes(){
   if(this.props.email){
     var userId = firebase.auth().currentUser;
     var firebaseRef = firebase.database().ref("users/"+userId.uid+"/notes/"+this.props.sourceId+"/"+this.props.bookId+"/"+this.state.currentVisibleChapter);
-    // this.state.bookmarksList = []
-    firebaseRef.on('value', (snapshot)=>{
-    console.log("NOTES LIST  ",snapshot.val())
+    this.state.notesList = []
+    firebaseRef.once('value', (snapshot)=>{
       if(snapshot.val() === null){
         this.setState({notesList:[]})
       } 
       else{
-        this.setState({
-          notesList:snapshot.val()
-        })
+        if(Array.isArray(snapshot.val())){
+          this.setState({notesList:snapshot.val()})
+        }
+        else{
+          this.setState({
+            notesList:[snapshot.val()]
+          })
+        }
+        
+        
       }
     })
   }
@@ -800,6 +806,7 @@ updateData = ()=>{
 }
 
   render() {
+    console.log(" note list in edit page ",this.state.notesList)
     return(
     <View  style={this.styles.container}>
       {this.state.isLoading &&

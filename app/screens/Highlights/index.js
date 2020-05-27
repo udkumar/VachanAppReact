@@ -149,7 +149,7 @@ class HighLights extends Component {
       contentContainerStyle={this.state.HightlightedVerseArray.length === 0 && this.styles.centerEmptySet}
       renderItem={({item, index}) => 
         <View>{
-          item.verseNumber.length > 0 &&
+          item.verseNumber  &&
           item.verseNumber.map(e=>
            <TouchableOpacity style={this.styles.bookmarksView} onPress = { ()=> {this.navigateToBible(item.bookId,item.chapterNumber,e)}} >
            <Text style={this.styles.bookmarksText}>{getBookNameFromMapping(item.bookId,this.props.languageName)}  {":"} {item.chapterNumber} {":"} {e}</Text>

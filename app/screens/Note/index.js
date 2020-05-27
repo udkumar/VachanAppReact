@@ -85,10 +85,10 @@ class Note extends Component {
   queryDb() {
     if(this.props.email){
       var userId = firebase.auth().currentUser;
-      var firebaseRef = firebase.database().ref("users/"+userId.uid+"/notes/"+this.props.sourceId);
+      var firebaseRef = firebase.database().ref("users/"+userId.uid+"/notes/"+this.props.sourceId+"/")
       // this.state.bookmarksList = []
-      firebaseRef.on('value', (snapshot)=>{
-      console.log("NOTES LIST  ",snapshot.val())
+      firebaseRef.once('value', (snapshot)=>{
+        console.log(" NOTES LIST ",snapshot.val())
         if(snapshot.val() === null){
           this.setState({notesData:[]})
         } 
