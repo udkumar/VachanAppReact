@@ -655,10 +655,11 @@ getNotes(){
       let refList = []
       let id = this.props.bookId
       let name = getBookNameFromMapping(this.props.bookId,this.props.language)
+      var verses = []
       for (let item of this.state.selectedReferenceSet) {
   
         let tempVal = item.split('_')
-        const verseNumber =  tempVal[2].toString()
+        const verseNumber =  JSON.parse(tempVal[2])
         let refModel = {
           bookId: id, 
           bookName: name, 
@@ -669,20 +670,21 @@ getNotes(){
           languageName: this.props.language,
         };
         refList.push(refModel)
+        verses.push(verseNumber)
       }
       // let res = await DbQueries.queryNotes();
       // console.log("QWERY NOTES ",res)
       this.props.navigation.navigate('EditNote',{
           referenceList: refList,
           notesList:this.state.notesList,
-          // getReference:refList,
-          // bookId:id,
+          bcvRef:{
+          bookId: id, 
+          chapterNumber:this.state.currentVisibleChapter,
+          verses:verses
+          },
+          contentBody:'',
           onbackNote:this.onbackNote,
-          // chapterNumber:this.state.currentVisibleChapter,
-          // totalVerses:getBookNumOfVersesFromMapping(id,this.state.currentVisibleChapter),
-          // totalChapters:getBookChaptersFromMapping(id),
           noteIndex:-1,
-          // noteObject:''
       })
     }
     else{

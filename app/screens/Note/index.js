@@ -19,6 +19,8 @@ import firebase from 'react-native-firebase'
 
 
 import { noteStyle } from './styles.js';
+import { array } from 'prop-types';
+import { ScrollView } from 'react-native-gesture-handler';
 
 var moment = require('moment');
 
@@ -65,15 +67,28 @@ class Note extends Component {
     })
   };
 
-  onDelete(index, time) {
-    console.log("index in delete function "+index)
-    if (index == -1) {
-      return;
-    }
-    DbQueries.deleteNote(time)
-    let notesData = [...this.state.notesData]
-    notesData.splice(index, 1)
-    this.setState({notesData})
+  onDelete(createdTime,body,k,l) {
+    var userId = firebase.auth().currentUser;
+    var data = this.state.notesData
+    data.forEach((a,i) => {
+      if( i == k ){
+        console.log("A ",a.notes.length)
+        a.notes.forEach((b,j)=>{
+          if(b.body == body && j==l && createdTime == b.createdTime){
+            var firebaseRef = firebase.database().ref("users/"+userId.uid+"/notes/"+this.props.sourceId+"/"+a.bookId)
+            a.notes.splice(j,1)
+            var updates = {}
+            updates[a.chapterNumber] = a.notes
+            firebaseRef.update(updates)
+          }
+        })
+        console.log("A after splice",a.notes.length)
+
+      }
+      
+     
+    })
+    this.setState({notesData:data})
   }
 
   async onRefresh(noteIndex, noteBody, crTime, moTime, refList) {
@@ -82,19 +97,25 @@ class Note extends Component {
     // this.queryDb()
   }
 
-  queryDb() {
+  queryDb(){
     if(this.props.email){
       var userId = firebase.auth().currentUser;
       var firebaseRef = firebase.database().ref("users/"+userId.uid+"/notes/"+this.props.sourceId+"/")
-      // this.state.bookmarksList = []
       firebaseRef.once('value', (snapshot)=>{
-        console.log(" NOTES LIST ",snapshot.val())
         if(snapshot.val() === null){
           this.setState({notesData:[]})
         } 
         else{
+          var arr =[]
+          var notes = snapshot.val()
+          for(var bookKey in notes){
+            for(var chapterKey in notes[bookKey]){
+              arr.push({bookId:bookKey,chapterNumber:chapterKey,notes:Array.isArray(notes[bookKey][chapterKey]) ? notes[bookKey][chapterKey] : [notes[bookKey][chapterKey]]})
+            }
+          }
+          console.log( " notes data ",arr)
           this.setState({
-            notesList:snapshot.val()
+            notesData:arr
           })
         }
       })
@@ -129,47 +150,59 @@ class Note extends Component {
   // }
   //   this.props.navigation.navigate("NotePage",{notesData:this.state.notesData})
   // }
-  renderItem = ({item,index})=>{
-    
-    // console.log("item reference ",item.references[0].verseNumber)
-    console.log("item reference ",item)
-
-    // TODO fix max lines in WEBVIEW
-    var date = new Date(item.modifiedTime);
-    console.log("render : "+ item.modifiedTime + " == " + date)
-    dateFormate =  date.getHours() < 24  ? moment(item.modifiedTime).fromNow() : moment(item.modifiedTime).format('DD-MMM');  
-    console.log("format date "+dateFormate)
-
-    var jparse = item.body == '' ? '' : JSON.parse(item.body)
+  bodyText(text){
+    var jparse = text == '' ? '' : text
     var strParse = jparse.replace(/<(?:.|\n)*?>/gm, '');
     var strParse1 = strParse.replace('&nbsp', ' ')
-    var bodyText = strParse1 == '' ? 'No additional text' : strParse1
-    
-  //   return(
-  //   <TouchableOpacity style={this.styles.noteContent}
-  //       onPress={()=>{this.props.navigation.navigate("NotePage",{note:item.references,bodyText:bodyText,createdTime:item.createdTime,queryDb:this.queryDb,noteObject:item,noteIndex:index,bookId:this.props.bookId})}}>
-  //     <Card>
-  //     <CardItem style={this.styles.cardItemStyle}>
-  //       <View style={this.styles.notesContentView}> 
-  //         <Text style={this.styles.noteFontCustom} numberOfLines={2}>{bodyText}</Text>
-  //         <View style={this.styles.noteCardItem}>
-  //           <Text style={this.styles.noteFontCustom}>{dateFormate}</Text>
-  //           <Icon name="delete-forever" style={this.styles.deleteIon} onPress={()=>this.onDelete(index, item.createdTime)}/>
-  //         </View>
-  //       </View>
-  //       </CardItem>
-        
-  //     </Card>
-  //   </TouchableOpacity>
-  //  )
+    return strParse1 == '' ? 'No additional text' : strParse1
+  }
+  dateFormate(modifiedTime){
+    var date = new Date(modifiedTime);
+    return date.getHours() < 24  ? moment(modifiedTime).fromNow() : moment(modifiedTime).format('DD-MMM');  
+  }
+  renderItem = ({item,index})=>{
+    return(
+      item.notes && item.notes.map((val,j) =>
+          <TouchableOpacity style={this.styles.noteContent}
+          onPress={()=>{this.props.navigation.navigate("EditNote",{
+            bcvRef:{
+              bookId:item.bookId, 
+              chapterNumber:item.chapterNumber,
+              verses:val.verses
+              }, 
+            notesList:item.notes,
+            contentBody:this.bodyText(val.body),
+            // noteObject:item.notes,
+            onbackNote:this.queryDb,
+            noteIndex:j,
+          })}}>
+        <Card>
+        <CardItem style={this.styles.cardItemStyle}>
+          <View style={this.styles.notesContentView}> 
+            <Text style={this.styles.noteFontCustom} numberOfLines={2}>{this.bodyText(val.body)}</Text>
+            <View style={this.styles.noteCardItem}>
+              <Text style={this.styles.noteFontCustom}>{this.dateFormate(val.modifiedTime)}</Text>
+              <Icon name="delete-forever" style={this.styles.deleteIon} onPress={()=>this.onDelete(val.createdTime,val.body,index,j)}/>
+            </View>
+          </View>
+          </CardItem>
+          
+        </Card>
+      </TouchableOpacity>
+    // )
+      )
+    )
  }
 
   render() {
+    console.log(" NOTES DATA ",this.state.notesData)
     return (
       <View style={this.styles.container}>
+        {this.state.notesData.length > 0 &&
+      <ScrollView>
       <FlatList
-        contentContainerStyle={this.state.notesData.length === 0 
-          ? this.styles.centerEmptySet: this.styles.noteFlatlistCustom}
+        // contentContainerStyle={this.state.notesData.length === 0 
+        //   ? this.styles.centerEmptySet: this.styles.noteFlatlistCustom}
         data={this.state.notesData}
         renderItem={this.renderItem}
         ListEmptyComponent={
@@ -180,6 +213,8 @@ class Note extends Component {
           </TouchableOpacity>
         }
       />
+      </ScrollView>
+      }
       </View>
     );
   }

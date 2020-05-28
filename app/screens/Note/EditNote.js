@@ -44,27 +44,16 @@ class EditNote extends Component {
 
   constructor(props){
     super(props);
+    console.log(" props in EDIT PAGE ",this.props.navigation.state.params)
     this.state = {
         noteIndex: this.props.navigation.state.params.noteIndex,
-        noteObject:this.props.navigation.state.params.noteObject,
-        noteBody: this.props.navigation.state.params.noteIndex == -1 ? '' : this.props.navigation.state.params.noteObject  ?  this.props.navigation.state.params.noteObject.body : '',
-        referenceList:this.props.navigation.state.params.noteIndex == -1 
-          ? [] 
-          : this.props.navigation.state.params.referenceList,
-        // todo here fix reference list
-        referenceList2: this.props.navigation.state.params.referenceList ,
+        noteObject:this.props.navigation.state.params.notesList,
+        // notesList:
+        bcvRef:this.props.navigation.state.params.bcvRef,
         isLoading:false,
-        verseText:'',
-        contentBody:''
+        contentBody:this.props.navigation.state.params.contentBody
     }
-
-    this.styles = noteStyle(props.colorFile, props.sizeFile);   
-    
-    // this.getReference = this.getReference.bind(this)
-    // this.openReference = this.openReference.bind(this)
-    // this.deleteReference = this.deleteReference.bind(this)
-    // this.onChangeText = this.onChangeText.bind(this)
-
+    this.styles = noteStyle(props.colorFile, props.sizeFile);  
     this.getHtml = this.getHtml.bind(this);
     this.setFocusHandlers = this.setFocusHandlers.bind(this);
   }
@@ -91,46 +80,50 @@ class EditNote extends Component {
   saveNote = async () =>{
       var time =  new Date()
       console.log("time "+time)
-      // var contentBody = await this.getHtml()
+      var firebaseRef = firebase.database().ref("users/"+this.props.uid+"/notes/"+this.props.sourceId+"/"+this.state.bcvRef.bookId)
       
-      var firebaseRef = firebase.database().ref("users/"+this.props.uid+"/notes/"+this.props.sourceId+"/"+this.props.bookId)
-      if ( this.state.referenceList.length == 0) {
-        if(this.state.noteIndex != -1){
-          // delete note
-          this.props.navigation.state.params.onDelete(this.state.noteIndex, this.state.noteObject.createdTime)
-        }
-      }else{
         if(this.state.contentBody == ''){
           alert(" notes should not be empty")
         }
         else{
-          var verses = []
-          for(var i = 0;i<=this.state.referenceList.length-1;i++){
-            verses.push(JSON.parse(this.state.referenceList[i].verseNumber))
+          var edit = firebase.database().ref("users/"+this.props.uid+"/notes/"+this.props.sourceId+"/"+this.state.bcvRef.bookId+"/"+this.state.bcvRef.chapterNumber)
+          console.log(" noteObject  ",this.state.noteObject,this.state.noteIndex)
+          if(this.state.noteIndex != -1  ){
+            var updates = {}
+            updates["/"+this.state.noteIndex] = {
+            createdTime:time,  
+            modifiedTime:time, 
+            body: this.state.contentBody,
+            verses:this.state.bcvRef.verses
+            }
+            edit.update(updates)
           }
-          var notesArray = []
-          if(this.props.navigation.state.params.notesList.length == 0){
-            console.log(" value ",this.props.chapterNumber)
-          var firstNote = firebase.database().ref("users/"+this.props.uid+"/notes/"+this.props.sourceId+"/"+this.props.bookId+"/"+this.props.chapterNumber)
-            notesArray = {
+          else{
+            if(this.state.noteObject.length == 0){
+              console.log(" value ",this.props.chapterNumber)
+            var firstNote = firebase.database().ref("users/"+this.props.uid+"/notes/"+this.props.sourceId+"/"+this.state.bcvRef.bookId+"/"+this.state.bcvRef.chapterNumber)
+            
+            firstNote.set({
               createdTime:this.state.noteIndex == -1 ? time : this.state.noteObject.createdTime,  
               modifiedTime:time, 
               body: this.state.contentBody,
-              verses:verses
-          }
-          firstNote.set(notesArray)
-          }else{
-            this.props.navigation.state.params.notesList.push({createdTime:this.state.noteIndex == -1 ? time : this.state.noteObject.createdTime,  
+              verses:this.state.bcvRef.verses
+            })
+            }else{
+              console.log(" NOTE OBJECT  ",this.state.noteObject)
+              var notesArray = this.state.noteObject.concat({
+              createdTime:this.state.noteIndex == -1 ? time : this.state.noteObject.createdTime,  
               modifiedTime:time, 
               body: this.state.contentBody,
-              verses:verses})
-            var updates = {}
-            updates[this.props.chapterNumber] = this.props.navigation.state.params.notesList
-            firebaseRef.update(updates)
+              verses:this.state.bcvRef.verses})
+              var updates = {}
+              updates[this.state.bcvRef.chapterNumber] = notesArray
+              firebaseRef.update(updates)
+            }
           }
-          this.props.navigation.state.params.onbackNote(this.state.referenceList,this.state.contentBody)
+     
+          this.props.navigation.state.params.onbackNote([],this.state.contentBody)
           this.props.navigation.dispatch(NavigationActions.back())
-        }
         }
   }
 
@@ -147,18 +140,16 @@ class EditNote extends Component {
   }
 
   onBack = async () =>{
-    // var contentBody = await this.getHtml()
       if (this.state.noteIndex == -1) {
         console.log("content body on back "+this.state.contentBody)
-        if (this.state.contentBody != '' || this.state.referenceList.length > 0) {
+        if (this.state.contentBody != '' ) {
           console.log("if content body is not empty ")
           this.showAlert();
           return
         }
       } 
       else {
-        if(this.state.contentBody !== this.props.navigation.state.params.noteObject.body 
-            || !this.checkRefArrayEqual()){
+        if(this.state.contentBody !== this.props.navigation.state.params.noteObject.body){
               console.log("changes to content body changes ")
             this.showAlert();
           return
@@ -168,174 +159,42 @@ class EditNote extends Component {
     this.props.navigation.dispatch(NavigationActions.back())
   }
 
-  checkRefArrayEqual() {
-    let initArray = this.props.navigation.state.params.noteObject.references;
-    let nowArray = this.state.referenceList;
-    if (initArray.length != nowArray.length) {
-      return false;
-    }
-    for (var i=0; i<initArray.length; i++) {
-      if (initArray[i].bookId != nowArray[i].bookId ||
-          initArray[i].bookName != nowArray[i].bookName ||
-          initArray[i].chapterNumber != nowArray[i].chapterNumber ||
-          initArray[i].verseNumber != nowArray[i].verseNumber) {
-            return false;
-      }
-    }
-    return true;
-  }
+  // checkRefArrayEqual() {
+  //   let initArray = this.props.navigation.state.params.noteObject.references;
+  //   let nowArray = this.state.referenceList;
+  //   if (initArray.length != nowArray.length) {
+  //     return false;
+  //   }
+  //   for (var i=0; i<initArray.length; i++) {
+  //     if (initArray[i].bookId != nowArray[i].bookId ||
+  //         initArray[i].bookName != nowArray[i].bookName ||
+  //         initArray[i].chapterNumber != nowArray[i].chapterNumber ||
+  //         initArray[i].verseNumber != nowArray[i].verseNumber) {
+  //           return false;
+  //     }
+  //   }
+  //   return true;
+  // }
 
   componentDidMount() {
     this.props.navigation.setParams({ handleAdd: this.saveNote})
     this.props.navigation.setParams({ handleBack: this.onBack})
-    // this.subs = this.props.navigation.addListener("didFocus", () =>{
-    //   // this.getReference(item)
-      this.addRef2()
-
-    // })
   }
-  // componentWillUnmount(){
-  //     this.subs.remove();
-  // }
-  onChangeText = (text)=>{
-    this.setState({noteBody:text})
-  }
-
-  checkIfReferencePresent(id, name, cNum, vNum) {
-    let referenceList = [...this.state.referenceList]
-    for(var i = 0; i < referenceList.length; i++) {
-      let ref = referenceList[i];
-      if (ref.bookId == id && ref.bookName == name && ref.chapterNumber == cNum && ref.verseNumber == vNum) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  addRef2() {
-    if (this.state.referenceList2) {
-      if (this.state.noteIndex == -1) {
-        this.setState({referenceList: this.state.referenceList2})
-      } else {
-        let referenceList = [...this.state.referenceList]        
-        for (var i=0; i<this.state.referenceList2.length; i++) {
-          let item = this.state.referenceList2[i]
-          const verseNumber = item.verseNumber.toString()
-          if (!this.checkIfReferencePresent(item.bookId, item.bookName, item.chapterNumber,verseNumber)) {
-            referenceList.push(item)
-          }
-        }
-        this.setState({referenceList})
-      }
-    }
-  }
-  async getDownloadedContent(item){
-    this.setState({isLoading:true})
-    //later change it to write query for getting text from realm
-      var content = await DbQueries.queryTextForNote(this.props.language,this.props.versionCode,item.bookId,item.chapterNumber,item.verseNumber) 
-      // console.log("content ",content)
-      if(content  !=null){
-        //  content
-        this.setState({
-          verseText:content,
-        })
-      }
-      else{
-        alert("not abel to fetch book from db")
-      }
-      
-}
-   getChapter=async(item)=>{
-    try{
-      // console.log("notes making ",this.props.downloaded,item)
-      if(this.props.downloaded){
-         await this.getDownloadedContent(item)
-        }else{
-          var content = await APIFetch.getChapterContent(this.props.sourceId, item.bookId, item.chapterNumber)
-          // if(content.length >0 && content.success){
-          //  content.chapterContent.verses[item.verseNumber-1].text
-          // }
-          this.setState({verseText:content.chapterContent.verses[item.verseNumber-1].text})
-      }
-    }
-    catch(error){
-      this.setState({error:error,isLoading:false,chapterContent:[]})
-    }
-  }
-
-
-  getReference = (item) => {
-    console.log("get reference ",item)
-    // if(item)
-    if (this.checkIfReferencePresent(item.bookId, item.bookName, item.chapterNumber, item.verseNumber)) {
-      return;
-    }
-    try{
-      this.setState({isLoading:true},async()=>{
-      console.log(" verse text ",await this.getChapter(item))
-      await this.getChapter(item)        
-      // let response =  await APIFetch.getChapterContent(this.props.sourceId,item.bookId,item.chapterNumber)
-        // console.log("SOURCE ID ",this.props.sourceId,"BOOK ID ",item.bookId,"Chapter number",item.chapterNumber)
-        // if(response.length != 0){
-        //   console.log("res -------",response)
-    
-        //   if(response.success == false){
-    
-        //     alert("response success false")
-        //   }else{
-          // console.log("verse text",this.state.verseText)
-            let refModel = {
-              bookId:item.bookId, 
-              bookName:item.bookName, 
-              chapterNumber: item.chapterNumber, 
-              verseNumber: item.verseNumber.toString(), 
-              verseText:this.state.verseText,
-              versionCode: this.props.versionCode, 
-              languageName: this.props.language
-            };
-            let referenceList = [...this.state.referenceList]
-            referenceList.push(refModel)
-            this.setState({referenceList,isLoading:false})
-          // }
-        // }
-      })
- 
-  }
-    catch(error){
-      console.log(error)
-    }
-   
-  }
-
-  // onAddVersePress=()=> {
-  //   this.props.navigation.navigate('SelectionTab', {
-  //     getReference: this.getReference,
-  //     parallelContent:false,
-  //     bookId:this.props.bookId,
-  //     // bookName:this.props.navigation.state.params.bookName,
-  //     chapterNumber:this.props.chapterNumber,
-  //     totalVerses:this.props.totalVerses,
-  //     totalChapters:this.props.totalChapters,
-  //     // verseNumber:this.props.navigation.state.params.verseNumber
-  //   })
-  // }
   
   openReference=(index)=> {
-    // todo open reference in RV page
-    var list = this.state.referenceList
-    var item = list[index]
-    this.props.navigation.navigate('Bible', {bookId: item.bookId, bookName: item.bookName, 
-      chapterNumber: item.chapterNumber, verseNumber: item.verseNumber})
+   
+    console.log(" bcv ref open ref",this.state.bcvRef)
+    this.props.navigation.navigate('Bible', {bookId: this.state.bcvRef.bookId, 
+      chapterNumber: this.state.bcvRef.chapterNumber, verseNumber: this.state.bcvRef.verses[index]})
   }
 
   deleteReference=(index)=> {
-    let referenceList = [...this.state.referenceList]
-    referenceList.splice(index, 1);
-    this.setState({referenceList})
+    this.state.bcvRef.verses.splice(index, 1);
+    this.setState({bcvRef})
   }
 
   render() {
-    console.log(" note list ",this.props.navigation.state.params.notesList)
+    // console.log(" note list ",this.props.navigation.state.params.notesList)
     return (
      <ScrollView style={this.styles.containerEditNote}>
       <View style={this.styles.subContainer}>
@@ -345,22 +204,24 @@ class EditNote extends Component {
         textContent={'Loading...'}
         // textStyle={styles.spinnerTextStyle}
         />} */}
-        {this.state.referenceList.length == 0 
+        {this.state.bcvRef 
           ? 
-          <Text style={this.styles.tapButton}>Tap button to add references</Text> 
-          : 
           <FlowLayout style={this.styles.tapButton} 
           // ref="flow" 
-            dataValue={this.state.referenceList} 
+            dataValue={this.state.bcvRef} 
             openReference={(index) => this.openReference(index)} 
             deleteReference={(index) => this.deleteReference(index)}
             styles={this.styles}
           />
+          : 
+          <Text style={this.styles.tapButton}>Tap button to add references</Text> 
+         
         }
         {/* <Icon name="add-circle" style={this.styles.addIconCustom} size={28} color="gray" onPress={this.onAddVersePress} /> */}
       </View>
       <TextInput
       placeholder='note body'
+      value={this.state.contentBody}
       onChangeText={(text)=>this.setState({contentBody:text})}
       />
       {/* <View style={this.styles.textEditorView}>
