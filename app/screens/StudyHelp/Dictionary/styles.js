@@ -40,7 +40,7 @@ export const styles =(colorFile, sizeFile) =>{
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor:'#eee'
+            // backgroundColor:'#eee'
 
         },
         cardStyle:{
@@ -60,6 +60,8 @@ export const styles =(colorFile, sizeFile) =>{
             margin:12,
             padding:12,
             flex:1,
+            borderColor:'#3E4095',
+            borderWidth:1,
             backgroundColor:colorFile.backgroundColor
         },
         textDescription:{

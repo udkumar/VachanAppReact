@@ -93,6 +93,7 @@ export const noteStyle =(colorFile, sizeFile) =>{
         fontSize:sizeFile.titleText
     },
     emptyMessageContainer:{
+        flex:1,
         alignItems:'center',
         flexDirection:'column',
         justifyContent:'center'

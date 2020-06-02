@@ -17,13 +17,14 @@ export default class Reset extends Component {
         }
     }
 
-    reset = async() => {
+    reset = () => {
         this.setState({showLoading:true})
         try {
-            await firebase.auth().sendPasswordResetEmail(this.state.email);
+            firebase.auth().sendPasswordResetEmail(this.state.email);
             this.setState({showLoading:false})
 
         } catch (e) {
+            console.log("email reset error ",error )
             this.setState({showLoading:false})
             Alert.alert(
                 e.message
@@ -41,7 +42,7 @@ export default class Reset extends Component {
                     <TextInput
                         style={styles.textInputStyle}
                         value={this.state.email}
-                        onChangeText={email => this.setState({ email })}
+                        onChangeText={email => this.setState({email})}
                         placeholder='Email'
                         autoCapitalize='none'
                     />
@@ -54,11 +55,7 @@ export default class Reset extends Component {
                         color="#3E4095 "
                         // accessibilityLabel="Learn more about this purple button"
                     />
-                    {/* <TouchableOpacity success 
-                    onPress={() => reset()}
-                    >
-                    <Text>Reset</Text>
-                    </TouchableOpacity> */}
+                   
                     </View>
                     <View style={styles.subContainer}>
                     <Button
@@ -68,17 +65,9 @@ export default class Reset extends Component {
                         color="#3E4095"
                         // accessibilityLabel="Learn more about this purple button"
                     />
-                    {/* <TouchableOpacity  
-                    onPress={() => this.props.navigation.navigate('Login')}
-                    >
-                        <Text>Back to Login</Text>
-                    </TouchableOpacity> */}
+                   
                     </View>
-                    {/* {this.state.showLoading &&
-                        <View style={styles.activity}>
-                            <ActivityIndicator size="large" color="#0000ff" />
-                        </View>
-                    } */}
+                    
                 </View>
             </View>
         )

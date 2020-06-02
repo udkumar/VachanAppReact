@@ -8,7 +8,7 @@ import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import DbQueries from '../../utils/dbQueries'
 import {userInfo} from '../../store/action/'
 import {connect} from 'react-redux'
-
+import Spinner from 'react-native-loading-spinner-overlay';
 
 
  class Login extends Component {
@@ -31,9 +31,17 @@ import {connect} from 'react-redux'
             this.setState({showLoading:false})
             if(doLogin.user){
                 this.props.userInfo({email:doLogin.user._user.email,uid:doLogin.user._user.uid,userName:doLogin.user._user.displayName,phoneNumber:null})
+                this.props.navigation.navigate('Bible')
             }
         } catch (e) {
+            if(e.code === 'auth/wrong-password'){
+                Alert.alert("Wrong password")
+            }
+            if(e.code ==='auth/user-not-found'){
+                Alert.alert("User Not Found")
+            }
             console.log(" ERROR  ",e)
+            // console.log(" ERROR  ",Object.values(e))
             this.setState({showLoading:false});
         }
     }
@@ -41,12 +49,11 @@ import {connect} from 'react-redux'
         return (
             <View style={styles.container}>
                 <View style={styles.formContainer}>
-                    {/* <View style={styles.activity}>
-                    {
-                    this.state.showLoading &&
-                    <ActivityIndicator size="large" color="#0000ff" />
-                    }
-                        </View> */}
+                {this.state.showLoading &&
+                        <Spinner
+                        visible={true}
+                        // textContent={'Loading...'}
+                    />}
                     <View style={{alignItems: 'center', justifyContent: 'center'}}>
                         <Text style={{ fontSize: 28, height: 50  }}>Please Login!</Text>
                     </View>
@@ -75,9 +82,9 @@ import {connect} from 'react-redux'
                     />
                      
                     </View>
-                    <View style={{ alignItems: 'flex-end', justifyContent: 'flex-end' }}>
+                    {/* <View style={{ alignItems: 'flex-end', justifyContent: 'flex-end' }}>
                         <Text onPress={()=>this.props.navigation.navigate('Reset')}>Forgot Password?</Text>
-                    </View>
+                    </View> */}
                     {/* <View style={{ alignItems: 'flex-end', justifyContent: 'flex-end' }}>
                         <Text onPress={()=>this.props.navigation.navigate('Bible')}>Use as a Guest</Text>
                     </View> */}

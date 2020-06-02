@@ -27,7 +27,7 @@ var moment = require('moment');
 class Note extends Component {
 
   static navigationOptions = ({navigation}) => ({
-    headerTitle: 'My Content',
+    headerTitle: 'Notes',
     // headerRight:(
     //   <TouchableOpacity style={{margin:8}} onPress={() => navigation.state.params.newNote(-1)}>
     //      <Icon name="note-add" size={24} color="#fff"/>
@@ -66,9 +66,8 @@ class Note extends Component {
   //   })
   // };
 
-  onDelete(createdTime,body,k,l) {
-    var data = this.state.notesData
-
+  onDelete=(createdTime,body,k,l) =>{
+    var data =  [...this.state.notesData]
     data.forEach((a,i) => {
     var firebaseRef = firebase.database().ref("users/"+this.props.uid+"/notes/"+this.props.sourceId+"/"+a.bookId)
       if( i == k ){
@@ -88,8 +87,6 @@ class Note extends Component {
               }
             }
           })
-        console.log("A after splice",a.notes.length)
-
       }
     })
     this.setState({notesData:data})
@@ -196,7 +193,7 @@ class Note extends Component {
     console.log(" NOTES DATA ",this.state.notesData)
     return (
       <View style={this.styles.container}>
-        {this.state.notesData.length > 0 &&
+        {this.state.notesData.length > 0 ?
       <ScrollView>
       <FlatList
         // contentContainerStyle={this.state.notesData.length === 0 
@@ -212,6 +209,16 @@ class Note extends Component {
         // }
       />
       </ScrollView>
+      :
+        <View style={this.styles.emptyMessageContainer}>
+        <Icon name="note-add" style={this.styles.emptyMessageIcon}/>
+          <Text
+            style={this.styles.messageEmpty}
+          >
+           No Note added
+          </Text>
+          
+        </View>
       }
       </View>
     );

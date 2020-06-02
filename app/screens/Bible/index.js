@@ -927,8 +927,6 @@ const mapStateToProps = state =>{
     email:state.userInfo.email,
     userId:state.userInfo.uid,
 
-
-
     // fetchedData:state.versionFetch,
     // chapterContent:state.versionFetch.chapterContent,
     // error:state.versionFetch.error,

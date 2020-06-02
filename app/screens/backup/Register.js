@@ -4,6 +4,7 @@ import { StyleSheet, ActivityIndicator, View, Text, Alert,TextInput,TouchableOpa
 // import {Button} from 'native-base'
 // import auth from '@react-native-firebase/auth';
 import firebase from 'react-native-firebase'
+import Spinner from 'react-native-loading-spinner-overlay';
 
 
 
@@ -16,28 +17,38 @@ export default class Register extends Component {
             showLoading:''
         }
     }
-    register = () => {
+    register=()=>{
         this.setState({showLoading:true});
             console.log("do register ")
         try {
             const doRegister =  firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password);
             this.setState({showLoading:false});
+            console.log("doRegister ",doRegister.user)
             if(doRegister.user) {
                 console.log("doRegister ",doRegister.user)
-                this.props.navigation.navigate('Bible');
+                this.props.navigation.navigate('Bible')
             }
-        } catch (e) {
+            else{
+                Alert.alert("user already Present")
+            }
+        }catch(e) {
             this.setState({showLoading:false});
-
-            Alert.alert(
-                e.message
-            );
+            console.log("Error found ",e)
+            Alert.alert(e)
         }
     }
     render(){
         return (
             <View style={styles.container}>
+                
                 <View style={styles.formContainer}>
+                    {/* {
+                    this.state.showLoading &&
+                        <Spinner
+                        visible={true}
+                        // textContent={'Loading...'}
+                    />
+                    } */}
                     <View style={{alignItems: 'center', justifyContent: 'center' }}>
                         <Text style={{ fontSize: 28, height: 50 }}>Register Here!</Text>
                     </View>
@@ -61,7 +72,7 @@ export default class Register extends Component {
                     </View>
                     <View style={styles.subContainer}>
                     <Button
-                        onPress={()=>this.register}
+                        onPress={this.register}
                         style={styles.textInput}
                         title="Register"
                         color="#3E4095"

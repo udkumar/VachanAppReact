@@ -125,7 +125,7 @@ class HighLights extends Component {
     console.log("langugueg name ",this.state.HightlightedVerseArray)
     return (
       <View style={this.styles.container}>
-      {this.state.HightlightedVerseArray.length > 0 &&
+      {this.state.HightlightedVerseArray.length > 0 ?
       <FlatList
       data={this.state.HightlightedVerseArray}
       contentContainerStyle={this.state.HightlightedVerseArray.length === 0 && this.styles.centerEmptySet}
@@ -142,19 +142,19 @@ class HighLights extends Component {
          )}
         </View>
       }
-      ListEmptyComponent={
-        <View style={this.styles.emptyMessageContainer}>
-        <Icon name="collections-bookmark" style={this.styles.emptyMessageIcon}/>
-          <Text
-            style={this.styles.messageEmpty}
-          >
-           No Bookmark added
-          </Text>
-          
-        </View>
-      }
+     
       extraData={this.props}
     />
+    :
+    <View style={this.styles.emptyMessageContainer}>
+    <Icon name="collections-bookmark" style={this.styles.emptyMessageIcon}/>
+      <Text
+        style={this.styles.messageEmpty}
+      >
+       No Highlight added
+      </Text>
+      
+    </View>
       } 
      
      </View>

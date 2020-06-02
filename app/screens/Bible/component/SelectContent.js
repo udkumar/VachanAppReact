@@ -130,13 +130,13 @@ var contentType = ''
       render(){
           return(
             <View>
-
             <Modal
               animationType="fade"
               transparent={true}
               visible={this.props.visible}
               onPress={()=>{this.props.navigation.setParams({modalVisible:this.props.visible})}} 
               >
+            <View>
               <TouchableWithoutFeedback
                 style={{
                   flex: 1,
@@ -145,9 +145,10 @@ var contentType = ''
                   alignItems: 'center',
                   }} 
                 onPressOut={()=>{this.props.navigation.setParams({modalVisible:false})}} 
+                // onPress={this.onPressModal}
               >
-              <View style={{ height:'80%',width:'70%',alignSelf:'flex-end',top:40}}>
-              <Card>
+              <View style={{height:'80%',width:'70%',alignSelf:'flex-end',}}>
+              <Card style={{marginTop:40}}>
                     <Accordion 
                     dataArray={this.props.availableContents}
                     animation={true}
@@ -159,6 +160,7 @@ var contentType = ''
               </Card>
               </View>
               </TouchableWithoutFeedback>
+              </View>
             </Modal>
           
             <TouchableOpacity onPress={this.onPressModal} style={[this.props.navStyles.touchableStyleRight,{flexDirection:'row'}]}>
@@ -168,7 +170,8 @@ var contentType = ''
                   size={20} 
               /> 
             </TouchableOpacity>
-          </View>
+            </View>
+          
           )
       }
   }

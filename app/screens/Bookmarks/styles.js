@@ -23,6 +23,7 @@ export const bookStyle=(colorFile, sizeFile) =>{
         fontSize:sizeFile.iconSize
     },
     emptyMessageContainer:{
+        flex:1,
         alignItems:'center',
         flexDirection:'column',
         justifyContent:'center'

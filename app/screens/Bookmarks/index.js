@@ -175,7 +175,7 @@ class BookMarks extends Component {
     console.log(" book list ",this.state.bookmarksList)
     return (
         <View style={this.styles.container}>
-         {this.state.bookmarksList.length > 0 &&
+         {this.state.bookmarksList.length > 0 ?
          <FlatList
          data={this.state.bookmarksList}
          contentContainerStyle={this.state.bookmarksList.length === 0 && this.styles.centerEmptySet}
@@ -192,21 +192,29 @@ class BookMarks extends Component {
             )}
            </View>
          }
-         ListEmptyComponent={
-           <View style={this.styles.emptyMessageContainer}>
-           <Icon name="collections-bookmark" style={this.styles.emptyMessageIcon}/>
-             <Text
-               style={this.styles.messageEmpty}
-             >
-              No Bookmark added
-             </Text>
+        //  ListEmptyComponent={
+        //    <View style={this.styles.emptyMessageContainer}>
+        //    <Icon name="collections-bookmark" style={this.styles.emptyMessageIcon}/>
+        //      <Text
+        //        style={this.styles.messageEmpty}
+        //      >
+        //       No Bookmark added
+        //      </Text>
              
-           </View>
-         }
+        //    </View>
+        //  }
          extraData={this.props}
-       />
+       /> : 
+       <View style={this.styles.emptyMessageContainer}>
+           <Icon name="collections-bookmark" style={this.styles.emptyMessageIcon}/>
+            <Text
+             style={this.styles.messageEmpty}
+           >
+               No Bookmark added
+            </Text>
+             
+           </View> 
          } 
-        
         </View>
     );
   }
