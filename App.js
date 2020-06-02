@@ -14,7 +14,6 @@ import {fetchAllContent} from './app/store/action/'
 class App extends Component {
     constructor(props){
         super(props)
-        console.log("props value APP PAGE ",props)
         this.state = {
           isloading:false,
           signedIn: false,

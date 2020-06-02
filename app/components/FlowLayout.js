@@ -49,15 +49,15 @@ class FlowLayout extends Component {
 		let items = this.props.dataValue.verses.map((value, position) => {
 			return (
 				<View key={position}>
-				<TouchableOpacity onPress={()=>{
+				{/* <TouchableOpacity onPress={()=>{
 					this.props.openReference(position)
-				}}>
+				}}> */}
 					<View style={[styles.corner,{backgroundColor:'transparent'}]}>
 						<Text style={this.props.styles.textStyle}>{getBookNameFromMapping(this.props.dataValue.bookId,this.props.language)} {this.props.dataValue.chapterNumber}:{value}</Text>
-                        <Icon name="clear" style={this.props.styles.iconReferClose}
-                        	onPress={()=> {this.props.deleteReference(position)}} />
+                        {/* <Icon name="clear" style={this.props.styles.iconReferClose}
+                        	onPress={()=> {this.props.deleteReference(position)}} /> */}
 					</View>
-                </TouchableOpacity>
+                {/* </TouchableOpacity> */}
 
 					{/* <FlowView 
 					//  ref ={this.props.dataValue[position]} 

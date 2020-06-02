@@ -56,8 +56,10 @@ class DbQueries {
     updateHighlightsInVerse(sourceId, bookId, chapterNumber, verseNumber, isHighlight) {
         DbHelper.updateHighlightsInVerse(sourceId, bookId, chapterNumber, verseNumber, isHighlight);
     }
+    // addHighlightsInVerse(sourceId,arr){
+    //     DbHelper.addHighlightsInVerse(sourceId,arr)
+    // }
 
-   
     updateBookmarkInBook(sourceId,bId,chapterNumber, isBookmark) {
         DbHelper.updateBookmarkInBook(sourceId,bId,chapterNumber, isBookmark);
     }

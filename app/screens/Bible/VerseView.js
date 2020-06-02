@@ -49,15 +49,13 @@ class VerseView extends Component {
     return false;
   }
   isHighlight(){
-    for(var i = 0 ;i<=this.props.HightlightedVerse.length-1; i++ ){
-      for(var j = 0 ;j<=this.props.HightlightedVerse[i].verses.length-1; j++ ){
-        if(this.props.HightlightedVerse[i].verses[j] == this.props.verseData.number && this.props.chapterNumber == this.props.HightlightedVerse[i].chapterNumber){
+      for(var i = 0 ; i<=this.props.HightlightedVerse.length; i++ ){
+        if(this.props.HightlightedVerse[i] == this.props.verseData.number){
           // console.log("PROPS HIGHLIGHT ",this.props.HightlightedVerse[i])
           // console.log("PROPS  ",this.props.bookId ,"  ",this.props.chapterNumber,"  ",this.props.verseData.number)
           return true
           }
       }
-    }
     return false
   }
   isNoted(){

@@ -28,15 +28,15 @@ class Note extends Component {
 
   static navigationOptions = ({navigation}) => ({
     headerTitle: 'My Content',
-    headerRight:(
-      <TouchableOpacity style={{margin:8}} onPress={() => navigation.state.params.newNote(-1)}>
-         <Icon name="note-add" size={24} color="#fff"/>
-     </TouchableOpacity>
-    )
+    // headerRight:(
+    //   <TouchableOpacity style={{margin:8}} onPress={() => navigation.state.params.newNote(-1)}>
+    //      <Icon name="note-add" size={24} color="#fff"/>
+    //  </TouchableOpacity>
+    // )
   });
 
   constructor(props){
-    super(props);
+    super(props)
     this.state = {
       colorFile:this.props.colorFile,
       sizeFile:this.props.sizeFile,
@@ -47,60 +47,63 @@ class Note extends Component {
     
     this.queryDb = this.queryDb.bind(this)
     this.onDelete = this.onDelete.bind(this)
-    this.onRefresh = this.onRefresh.bind(this)
   }
 
  
   
-  createNewNote = (index) => {
-    this.props.navigation.navigate('EditNote',{
-      noteIndex:index, 
-      noteObject: null,
-      onDelete: this.onDelete, 
-      onRefresh: this.onRefresh, 
-      onbackNote:this.queryDb,
-      queryDb:this.queryDb,
-      referenceList:  this.props.navigation.state.params.referenceList,
-      bookId: this.props.bookId,
-      chapterNumber:1,
-      totalVerses:null
-    })
-  };
+  // createNewNote = (index) => {
+  //   this.props.navigation.navigate('EditNote',{
+  //     noteIndex:index, 
+  //     noteObject: null,
+  //     onDelete: this.onDelete, 
+  //     onRefresh: this.onRefresh, 
+  //     onbackNote:this.queryDb,
+  //     queryDb:this.queryDb,
+  //     referenceList:  this.props.navigation.state.params.referenceList,
+  //     bookId: this.props.bookId,
+  //     chapterNumber:1,
+  //     totalVerses:null
+  //   })
+  // };
 
   onDelete(createdTime,body,k,l) {
-    var userId = firebase.auth().currentUser;
     var data = this.state.notesData
+
     data.forEach((a,i) => {
+    var firebaseRef = firebase.database().ref("users/"+this.props.uid+"/notes/"+this.props.sourceId+"/"+a.bookId)
       if( i == k ){
         console.log("A ",a.notes.length)
-        a.notes.forEach((b,j)=>{
-          if(b.body == body && j==l && createdTime == b.createdTime){
-            var firebaseRef = firebase.database().ref("users/"+userId.uid+"/notes/"+this.props.sourceId+"/"+a.bookId)
-            a.notes.splice(j,1)
-            var updates = {}
-            updates[a.chapterNumber] = a.notes
-            firebaseRef.update(updates)
-          }
-        })
+          a.notes.forEach((b,j)=>{
+            if(b.body == body && j==l && createdTime == b.createdTime){
+              var updates = {}
+              if(a.notes.length == 1){
+                data.splice(i,1)
+                  updates[a.chapterNumber] = null
+                  firebaseRef.update(updates)
+              }
+              else{
+                a.notes.splice(j,1)
+                updates[a.chapterNumber] = a.notes
+                firebaseRef.update(updates)
+              }
+            }
+          })
         console.log("A after splice",a.notes.length)
 
       }
-      
-     
     })
     this.setState({notesData:data})
   }
 
-  async onRefresh(noteIndex, noteBody, crTime, moTime, refList) {
-    console.log("on refresh, text " + noteBody)
-    await DbQueries.addOrUpdateNote(noteIndex, noteBody, crTime, moTime, refList);
-    // this.queryDb()
-  }
+  // async onRefresh(noteIndex, noteBody, crTime, moTime, refList) {
+  //   console.log("on refresh, text " + noteBody)
+  //   await DbQueries.addOrUpdateNote(noteIndex, noteBody, crTime, moTime, refList);
+  //   // this.queryDb()
+  // }
 
   queryDb(){
     if(this.props.email){
-      var userId = firebase.auth().currentUser;
-      var firebaseRef = firebase.database().ref("users/"+userId.uid+"/notes/"+this.props.sourceId+"/")
+      var firebaseRef = firebase.database().ref("users/"+this.props.uid+"/notes/"+this.props.sourceId)
       firebaseRef.once('value', (snapshot)=>{
         if(snapshot.val() === null){
           this.setState({notesData:[]})
@@ -108,12 +111,14 @@ class Note extends Component {
         else{
           var arr =[]
           var notes = snapshot.val()
+          // console.log( " log Notes ",snapshot.val())
           for(var bookKey in notes){
             for(var chapterKey in notes[bookKey]){
-              arr.push({bookId:bookKey,chapterNumber:chapterKey,notes:Array.isArray(notes[bookKey][chapterKey]) ? notes[bookKey][chapterKey] : [notes[bookKey][chapterKey]]})
+              if(notes[bookKey][chapterKey] != null){
+                arr.push({bookId:bookKey,chapterNumber:chapterKey,notes:Array.isArray(notes[bookKey][chapterKey]) ? notes[bookKey][chapterKey] : [notes[bookKey][chapterKey]]})
+              }
             }
           }
-          console.log( " notes data ",arr)
           this.setState({
             notesData:arr
           })
@@ -124,14 +129,7 @@ class Note extends Component {
       console.log("not logged in")
     }
   }
-
-  
-
   componentDidMount(){
-    this.props.navigation.setParams({ 
-      newNote: this.createNewNote,
-      updateNote:this.updateNote
-    })
       this.queryDb()
   }
 
@@ -167,7 +165,7 @@ class Note extends Component {
           onPress={()=>{this.props.navigation.navigate("EditNote",{
             bcvRef:{
               bookId:item.bookId, 
-              chapterNumber:item.chapterNumber,
+              chapterNumber:item.chapterNumber , 
               verses:val.verses
               }, 
             notesList:item.notes,
@@ -205,13 +203,13 @@ class Note extends Component {
         //   ? this.styles.centerEmptySet: this.styles.noteFlatlistCustom}
         data={this.state.notesData}
         renderItem={this.renderItem}
-        ListEmptyComponent={
-          <TouchableOpacity onPress={()=>this.createNewNote(-1)} 
-            style={this.styles.emptyMessageContainer}>
-            <Icon name="note-add"  style={this.styles.emptyMessageIcon} />
-            <Text style={this.styles.messageEmpty}>Tap to create a new note</Text>
-          </TouchableOpacity>
-        }
+        // ListEmptyComponent={
+        //   <TouchableOpacity onPress={()=>this.createNewNote(-1)} 
+        //     style={this.styles.emptyMessageContainer}>
+        //     <Icon name="note-add"  style={this.styles.emptyMessageIcon} />
+        //     <Text style={this.styles.messageEmpty}>Tap to create a new note</Text>
+        //   </TouchableOpacity>
+        // }
       />
       </ScrollView>
       }
@@ -226,6 +224,8 @@ const mapStateToProps = state =>{
     colorFile:state.updateStyling.colorFile,
     sourceId:state.updateVersion.sourceId,
     email:state.userInfo.email,
+    uid:state.userInfo.uid,
+
   }
 }
 

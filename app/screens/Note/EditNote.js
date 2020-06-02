@@ -89,37 +89,28 @@ class EditNote extends Component {
           var edit = firebase.database().ref("users/"+this.props.uid+"/notes/"+this.props.sourceId+"/"+this.state.bcvRef.bookId+"/"+this.state.bcvRef.chapterNumber)
           console.log(" noteObject  ",this.state.noteObject,this.state.noteIndex)
           if(this.state.noteIndex != -1  ){
-            var updates = {}
-            updates["/"+this.state.noteIndex] = {
-            createdTime:time,  
-            modifiedTime:time, 
-            body: this.state.contentBody,
-            verses:this.state.bcvRef.verses
+            if(this.props.navigation.state.params.contentBody  != this.state.contentBody){
+              var updates = {}
+              updates["/"+this.state.noteIndex] = {
+              createdTime:time,  
+              modifiedTime:time, 
+              body: this.state.contentBody,
+              verses:this.state.bcvRef.verses
+              }
+              edit.update(updates)
             }
-            edit.update(updates)
           }
           else{
-            if(this.state.noteObject.length == 0){
-              console.log(" value ",this.props.chapterNumber)
-            var firstNote = firebase.database().ref("users/"+this.props.uid+"/notes/"+this.props.sourceId+"/"+this.state.bcvRef.bookId+"/"+this.state.bcvRef.chapterNumber)
-            
-            firstNote.set({
-              createdTime:this.state.noteIndex == -1 ? time : this.state.noteObject.createdTime,  
+            console.log("notes object ",this.state.noteObject)
+              var notesArray = this.state.noteObject.concat({
+              createdTime:time,  
               modifiedTime:time, 
               body: this.state.contentBody,
               verses:this.state.bcvRef.verses
             })
-            }else{
-              console.log(" NOTE OBJECT  ",this.state.noteObject)
-              var notesArray = this.state.noteObject.concat({
-              createdTime:this.state.noteIndex == -1 ? time : this.state.noteObject.createdTime,  
-              modifiedTime:time, 
-              body: this.state.contentBody,
-              verses:this.state.bcvRef.verses})
               var updates = {}
               updates[this.state.bcvRef.chapterNumber] = notesArray
               firebaseRef.update(updates)
-            }
           }
      
           this.props.navigation.state.params.onbackNote([],this.state.contentBody)
@@ -141,22 +132,21 @@ class EditNote extends Component {
 
   onBack = async () =>{
       if (this.state.noteIndex == -1) {
-        console.log("content body on back "+this.state.contentBody)
-        if (this.state.contentBody != '' ) {
-          console.log("if content body is not empty ")
+        if(this.state.contentBody == '' ){
+          alert("body should not be empty")
+        }
           this.showAlert();
           return
-        }
       } 
       else {
-        if(this.state.contentBody !== this.props.navigation.state.params.noteObject.body){
-              console.log("changes to content body changes ")
+        console.log("1 ",this.state.contentBody," 2 ", this.state.noteObject)
+        if(this.state.contentBody !== this.props.navigation.state.params.contentBody){
             this.showAlert();
           return
         }
+        this.props.navigation.dispatch(NavigationActions.back())
       }
       
-    this.props.navigation.dispatch(NavigationActions.back())
   }
 
   // checkRefArrayEqual() {
@@ -181,17 +171,19 @@ class EditNote extends Component {
     this.props.navigation.setParams({ handleBack: this.onBack})
   }
   
-  openReference=(index)=> {
-   
-    console.log(" bcv ref open ref",this.state.bcvRef)
-    this.props.navigation.navigate('Bible', {bookId: this.state.bcvRef.bookId, 
-      chapterNumber: this.state.bcvRef.chapterNumber, verseNumber: this.state.bcvRef.verses[index]})
-  }
+  // openReference=(index)=> {
+  //   console.log(" bcv ref open ref",this.state.bcvRef)
+  //   this.props.navigation.navigate('Bible', {bookId: this.state.bcvRef.bookId, 
+  //     chapterNumber: this.state.bcvRef.chapterNumber, verseNumber: this.state.bcvRef.verses[index]})
+  // }
 
-  deleteReference=(index)=> {
-    this.state.bcvRef.verses.splice(index, 1);
-    this.setState({bcvRef})
-  }
+  // deleteReference=(index)=> {
+  //   // if(this.state.bcvRef.verses.length == 1){
+  //   //   this.props.navigation.dispatch(NavigationActions.back())
+  //   // }
+  //   this.state.bcvRef.verses.splice(index, 1)
+  //   // this.setState({bcvRef:this.state.bcvRef})
+  // }
 
   render() {
     // console.log(" note list ",this.props.navigation.state.params.notesList)

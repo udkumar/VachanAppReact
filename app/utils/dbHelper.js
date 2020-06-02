@@ -126,10 +126,12 @@ class DbHelper {
 				}
 				if(bId == null && cNum == null){
 					let highlights = result1.filtered('sourceId == "' + sourceId + '"')
-
 					if(highlights.length > 0){
 						let	highlightsId = highlights[0].highlightsBookId
 						return highlightsId
+					}
+					else{
+						return null
 					}
 				}
 				else{
@@ -146,10 +148,25 @@ class DbHelper {
 								return null
 							}
 						}
+						else{
+							return null
+						}
 				}
 		}
 				
 	}
+	// async addHighlightsInVerse(sourceId,arr){
+	// 	console.log("sourceId,arr  ",sourceId,arr)
+	// 	let realm = await this.getRealm()
+	// 	if (realm) {
+	// 		realm.write(() => {
+	// 				var highlights = []
+	// 				highlights.push(arr)
+	// 				realm.create('HighlightsModel',highlights);
+	// 		})
+	// }
+	// }
+
 	async updateHighlightsInVerse(sourceId, bId, chapterNumber, verseNumber, isHighlight){
 		let realm = await this.getRealm()
 		var source = parseInt(sourceId)
@@ -157,12 +174,13 @@ class DbHelper {
 		let vNum = parseInt(verseNumber)
 		let cNum = parseInt(chapterNumber)
 		if (realm) {
+			// value =[]
 			if(isHighlight){
 				realm.write(() => {
 					if(Object.keys(sourcedata).length == 0){
 						console.log("SOURCE ID NOT PRESENT   ",)
-					let bookmarks = realm.create('HighlightsModel', {sourceId:source, highlightsBookId: []});
-							bookmarks.highlightsBookId.push({bookId: bId,  chapterNumber:cNum, verseNumber:[vNum]})
+					let highlights = realm.create('HighlightsModel', {sourceId:source, highlightsBookId: []});
+							highlights.highlightsBookId.push({bookId: bId,  chapterNumber:cNum, verseNumber:[vNum]})
 					}
 					else{
 						console.log("SOURCE ID PRESENT   ",)
@@ -187,10 +205,10 @@ class DbHelper {
 			else{
 				var addToBook = sourcedata[0].highlightsBookId.filtered('bookId==[c]"'+bId+'"&& chapterNumber==[c]"'+cNum+'"')
 				console.log("delete ",addToBook[0])
-				
-				if(addToBook[0].verseNumber.indexOf(vNum) > -1){
+				var index = addToBook[0].verseNumber.indexOf(vNum)
+				if(addToBook[0].verseNumber.indexOf(vNum) != -1){
 					realm.write(() => {
-						addToBook[0].verseNumber.splice(addToBook[0].verseNumber.indexOf(vNum), 1)
+						addToBook[0].verseNumber.splice(index, 1)
 						})
 				}
 			}

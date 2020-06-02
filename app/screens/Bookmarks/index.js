@@ -72,12 +72,8 @@ class BookMarks extends Component {
 
   async componentDidMount(){
     if(this.props.email){
-      console.log("logged in ")
-
-      var userId = firebase.auth().currentUser;
-      var firebaseRef = firebase.database().ref("users/"+userId.uid+"/bookmarks/"+this.props.sourceId);
+      var firebaseRef = firebase.database().ref("users/"+this.props.uid+"/bookmarks/"+this.props.sourceId);
       firebaseRef.once('value', (snapshot)=> {
-        // { gen: [ 4, 7, 5, 2, 3 ], deu: [ 10, 11, 12, 14 ] }
         var data=[]
           var list = snapshot.val()
           if(snapshot.val() !=null){
@@ -133,8 +129,7 @@ class BookMarks extends Component {
           if(a.bookId == id ){
               a.chapterNumber.filter((b,j) => {
               if(b == chapterNum){
-                var userId = firebase.auth().currentUser
-                var firebaseRef = firebase.database().ref("users/"+userId.uid+"/bookmarks/"+this.props.sourceId+"/"+id);
+                var firebaseRef = firebase.database().ref("users/"+this.props.uid+"/bookmarks/"+this.props.sourceId+"/"+id);
                 if(a.chapterNumber.length == 1){
                   console.log(" i ",i)
                   data.splice(i,1)
@@ -223,6 +218,7 @@ const mapStateToProps = state =>{
     versionCode: state.updateVersion.versionCode,
     sourceId: state.updateVersion.sourceId,
     email:state.userInfo.email,
+    uid:state.userInfo.uid,
 
     bookId:state.updateVersion.bookId,
     sizeFile:state.updateStyling.sizeFile,

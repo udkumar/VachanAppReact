@@ -67,9 +67,7 @@ class HighLights extends Component {
               // }
               if(a.verseNumber.length == 1){
                 if(this.props.emai){
-                  var userId = firebase.auth().currentUser;
-                  var firebaseRef = firebase.database().ref("users/"+userId.uid+"/highlights/"+this.props.sourceId+"/"+id+"/"+chapterNum)
-                  firebaseRef.remove()
+                  firebase.database().ref("users/"+this.props.uid+"/highlights/"+this.props.sourceId+"/"+id+"/"+chapterNum).remove()
                 }
                 data.splice(i,1)
               }
@@ -82,50 +80,34 @@ class HighLights extends Component {
          
         }
     })
-    // if(this.props.email){
-    var verses = firebase.database().ref("users/"+userId.uid+"/highlights/"+this.props.sourceId+"/"+id)
     var updates = {}
     console.log(" index ",index)
     if(index !=-1){
       updates[chapterNum] = data[index].verseNumber
-      verses.update(updates)
+      firebase.database().ref("users/"+this.props.uid+"/highlights/"+this.props.sourceId+"/"+id).update(updates)
     }
   // }
   this.setState({HightlightedVerseArray:data})
   }
   async componentDidMount(){
     if(this.props.email){
-      var userId = firebase.auth().currentUser;
-      var firebaseRef = firebase.database().ref("users/"+userId.uid+"/highlights/"+this.props.sourceId+"/");
-      firebaseRef.once('value', (snapshot)=> {
+       firebase.database().ref("/users/"+this.props.uid+"/highlights/"+this.props.sourceId+"/").once('value', (snapshot)=> {
         var highlights = snapshot.val()
+        console.log("HIGHLIGHTED VERSES ",snapshot.val())
         var array = []
         if(highlights != null){
           for(var key in highlights){
             for(var val in highlights[key]){
-              array.push({bookId:key,chapterNumber:val,verseNumber:highlights[key][val]})
+              console.log(" highlight null ",highlights[key][val])
+              if(highlights[key][val] !=null){
+                array.push({bookId:key,chapterNumber:val,verseNumber:highlights[key][val]})
+              }
             }
           }
           this.setState({HightlightedVerseArray:array})
         }
         })
     }
-    // else{
-    //   let model2 = await  DbQueries.queryHighlights(this.props.sourceId,null,null)
-    //   if(model2  != null ){
-    //       var highlights=[]
-    //       for(var i = 0; i<=model2.length-1;i++){
-    //         var verses =[]
-    //         for(var key in model2[i].verseNumber){
-    //           // console.log("VERSE NUMBER   ",)
-    //           verses.push(model2[i].verseNumber[key])
-    //         }
-    //        highlights.push({bookId:model2[i].bookId,chapterNumber:model2[i].chapterNumber,verseNumber:verses})
-    //       }
-    //       this.setState({HightlightedVerseArray:highlights})
-    // }
-    // }
-    // this.getHighlights()
   }
   navigateToBible=(bId,chapterNum,verseNum)=>{
     // console.log("item HIGHIGHTS ",item)
@@ -154,7 +136,7 @@ class HighLights extends Component {
            <TouchableOpacity style={this.styles.bookmarksView} onPress = { ()=> {this.navigateToBible(item.bookId,item.chapterNumber,e)}} >
            <Text style={this.styles.bookmarksText}>{getBookNameFromMapping(item.bookId,this.props.languageName)}  {":"} {item.chapterNumber} {":"} {e}</Text>
            <Icon name='delete-forever' style={this.styles.iconCustom}   
-             onPress={() => {this.removeHighlight(item.bookId,item.chapterNumber,e)} } 
+             onPress={() => {this.removeHighlight(item.bookId,item.chapterNumber,e)}} 
            />
            </TouchableOpacity>
          )}
@@ -187,6 +169,7 @@ const mapStateToProps = state =>{
     bookId:state.updateVersion.bookId,
     sourceId: state.updateVersion.sourceId,
     email:state.userInfo.email,
+    uid:state.userInfo.uid,
 
 
     sizeFile:state.updateStyling.sizeFile,
