@@ -19,7 +19,6 @@ import firebase from 'react-native-firebase'
 
 
 import { noteStyle } from './styles.js';
-import { array } from 'prop-types';
 import { ScrollView } from 'react-native-gesture-handler';
 
 var moment = require('moment');

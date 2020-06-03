@@ -13,63 +13,74 @@ export default class Reset extends Component {
         super(props)
         this.state ={
             email:'',
-            showLoading:''
+            isLoading:false
         }
     }
+    updateInputVal = (val, prop) => {
+        const state = this.state;
+        state[prop] = val;
+        this.setState(state);
+      }
 
     reset = () => {
-        this.setState({showLoading:true})
-        try {
-            firebase.auth().sendPasswordResetEmail(this.state.email);
-            this.setState({showLoading:false})
-
-        } catch (e) {
-            console.log("email reset error ",error )
-            this.setState({showLoading:false})
-            Alert.alert(
-                e.message
-            );
-        }
+        if(this.state.email === '' && this.state.password === '') {
+            Alert.alert('Enter details to signin!')
+          }else {
+        this.setState({
+            isLoading: true,
+        })
+        firebase.auth().sendPasswordResetEmail(this.state.email)
+        .then((onVal) =>{
+            alert('Please check your email...')
+           console.log(" on VAL RESET ",onVal)
+           this.setState({
+            isLoading: false,
+        })
+        })
+        .catch((error)=>{
+            console.log("erro ",error)
+            if(code === 'auth/user-not-found'){
+                Alert.alert(" user not found ")
+            }
+    //         if (onError.toString().contains("ERROR_USER_NOT_FOUND")) {
+    //             Alert.alert(" user not found ")
+    //         }
+    //         else if (onError.toString().contains("An internal error has occurred")) {
+    //         Alert.alert("An internal error has occurred ")
+    //    }
+        this.setState({
+            isLoading: false,
+        })
+        })
+    }
     }
     render(){
+        if(this.state.isLoading){
+            return(
+              <View style={styles.preloader}>
+                <ActivityIndicator size="large" color="#3E4095"/>
+              </View>
+            )
+          }    
         return (
-            <View style={styles.container}>
-                <View style={styles.formContainer}>
-                    <View style={{alignItems: 'center', justifyContent: 'center'}}>
-                        <Text style={{ fontSize: 28, height: 50  }}>Reset Password!</Text>
-                    </View>
-                    <View style={styles.subContainer}>
-                    <TextInput
-                        style={styles.textInputStyle}
-                        value={this.state.email}
-                        onChangeText={email => this.setState({email})}
-                        placeholder='Email'
-                        autoCapitalize='none'
-                    />
-                    </View>
-                    <View style={styles.subContainer}>
-                    <Button
-                        onPress={this.reset}
-                        style={styles.textInput}
-                        title="Reset"
-                        color="#3E4095 "
-                        // accessibilityLabel="Learn more about this purple button"
-                    />
-                   
-                    </View>
-                    <View style={styles.subContainer}>
-                    <Button
-                        onPress={()=>this.props.navigation.navigate('Login')}
-                        style={styles.textInput}
-                        title="Back to Login"
-                        color="#3E4095"
-                        // accessibilityLabel="Learn more about this purple button"
-                    />
-                   
-                    </View>
-                    
-                </View>
-            </View>
+            <View style={styles.container}>  
+            <TextInput
+            style={styles.inputStyle}
+            placeholder="Email"
+            value={this.state.email}
+            onChangeText={(val) => this.updateInputVal(val, 'email')}
+          />
+            <Button
+              color="#3E4095"
+              title="Reset Password"
+              onPress={() => this.reset()}
+            />  
+            <Text 
+            style={styles.loginText}
+            onPress={() => this.props.navigation.goBack()}>
+            Back to login
+            </Text>                           
+          </View>
         )
     }
     
@@ -79,43 +90,37 @@ export default class Reset extends Component {
 //     title: 'Reset',
 //     headerShown: false,
 // });
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        padding: 35,
+        backgroundColor: '#fff'
+      },
+      inputStyle: {
+        width: '100%',
+        marginBottom: 15,
+        paddingBottom: 15,
+        alignSelf: "center",
+        borderColor: "#ccc",
+        borderBottomWidth: 1
+      },
+    loginText: {
+      color: '#3740FE',
+      marginTop: 25,
+      textAlign: 'center'
     },
-    formContainer: {
-        flex:1,
-        alignItems:'center',
-        justifyContent:'center',
-        height: 400,
-        padding: 20
-    },
-    subContainer: {
-        marginBottom: 10,
-        // padding: 5,
-    },
-    activity: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    textInput: {
-        fontSize: 18,
-        margin: 5,
-        width: 200
-    },
-    textInputStyle:{
-        height: 40,
-        width:300, 
-        borderColor: 'gray', 
-        borderWidth: 1,
-        // marginVertical:
-    },
-})
+    preloader: {
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+      position: 'absolute',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: '#fff'
+    }
+  });
+  

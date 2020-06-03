@@ -163,13 +163,6 @@ class Setting extends Component {
                   style={this.styles.cardItemIconCustom} 
                 />
               </ListItem> */}
-              {/* <ListItem> */}
-              {/* <TouchableOpacity  style={[{flexDirection:'row'}]} onPress={()=>this.props.navigation.navigate('Login')}>              
-                  <Icon name='settings-backup-restore' size={24} style={this.styles.cardItemIconCustom} />
-                  <Text style={this.styles.textStyle}>Backup and Restore</Text>
-              </TouchableOpacity>
-              </ListItem> */}
-
               <ListItem >
               <TouchableOpacity style={[{flexDirection:'row'}]} onPress={()=>this.props.navigation.navigate('LanguageList')}>              
                   <Icon name='cloud-download' style={this.styles.cardItemIconCustom} />

@@ -19,7 +19,6 @@ import {updateContentType} from '../store/action/'
 import StudyHelp from '../screens/StudyHelp/'
 
 import Hints from '../screens/Hints/Hints'
-import BackupRestore from '../screens/backup/BackupRestore'
 import Reset from '../screens/backup/Reset'
 import Register from '../screens/backup/Register'
 import Login from '../screens/backup/Login'
@@ -67,8 +66,6 @@ const NavStack = createStackNavigator(
       Search: { screen: Search,
 
        },
-      BackupRestore: {screen: BackupRestore },
-    
       SelectionTab:{screen:SelectionTab,
         navigationOptions: { headerTitle:"Select Chapter" }
       },
