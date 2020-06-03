@@ -410,22 +410,30 @@ class Bible extends Component {
               numOfVerse:this.props.totalVerses,
               isBookmark:this.isBookmark()
             })
-            if(this.props.downloaded){
-              if(this.state.downloadedBook.length > 0){
-               this.setState({
-                chapterContent:this.state.downloadedBook[this.state.currentVisibleChapter-1].verses,
-                isLoading:false
-               })
-              }
-              else{
-                // alert("not found downloaded book")
-                this.getDownloadedContent()
-              }
+            if(this.state.connection_Status){
+              var content = await APIFetch.getChapterContent(this.props.sourceId, this.props.bookId, this.state.currentVisibleChapter)
+              console.log("fetch content",content)
+              this.setState({chapterContent:content.chapterContent.verses,isLoading:false,currentVisibleChapter:this.state.currentVisibleChapter})
             }
             else{
-                var content = await APIFetch.getChapterContent(this.props.sourceId, this.props.bookId, this.state.currentVisibleChapter)
-                  console.log("fetch content",content)
-                  this.setState({chapterContent:content.chapterContent.verses,isLoading:false,currentVisibleChapter:this.state.currentVisibleChapter})
+              console.log(" book is downloaded")
+              if(this.props.downloaded){
+                if(this.state.downloadedBook.length > 0){
+                 this.setState({
+                  chapterContent:this.state.downloadedBook[this.state.currentVisibleChapter-1].verses,
+                  isLoading:false
+                 })
+                }
+                else{
+                  this.getDownloadedContent()
+                }
+              }
+              else{
+                this.setState({
+                  isLoading:false
+                 })
+                 Alert.alert(" Please check internet Connection")
+              }
             }
             this.props.updateVersionBook({
               bookId:this.props.bookId,
@@ -776,13 +784,12 @@ getNotes(){
       this.alertPresent = true;
         if (this.state.error) {
             Alert.alert("", "Something went wrong ", [{text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
-        
           }
     }
   }
 updateData=()=>{
   // if(this.state.error){
-    this.errorMessage()
+    // this.errorMessage()
     this.queryBookFromAPI(null)
   // }
  
