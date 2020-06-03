@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   Share,
   ToastAndroid,
+  NetInfo,
   Modal,
   LayoutAnimation,
   Animated
@@ -149,7 +150,7 @@ class Bible extends Component {
       thumbSize: 100,
       left: width / 2,
       top: height / 2,
-
+      connection_Status:'',
       scrollDirection:'up',
       close:true,
       message:'',
@@ -246,6 +247,19 @@ class Bible extends Component {
     //   moveThreshold: 2,
     //   debug: false
     // })
+
+    NetInfo.isConnected.addEventListener(
+      'connectionChange',
+      this._handleConnectivityChange
+
+  );
+  NetInfo.isConnected.fetch().done((isConnected) => {
+    if(isConnected == true){
+      this.setState({connection_Status : true})
+    }else{
+      this.setState({connection_Status : false})
+    }
+  });
     this.props.navigation.setParams({
       visibleParallelView:false,
       modalVisible:false,
@@ -295,7 +309,18 @@ class Bible extends Component {
 
     
   }
-  
+  _handleConnectivityChange = (isConnected) => {
+    console.log(" handle connection")
+    if(isConnected == true)
+      {
+        this.setState({connection_Status : true})
+      }
+      else
+      {
+        this.setState({connection_Status : false})
+      }
+  };
+
   getReference = async(item)=>{
     this.scrollToVerse(item.verseNumber)
     var time =  new Date()
@@ -561,24 +586,30 @@ getNotes(){
   //add book mark from header icon 
    onBookmarkPress=(isbookmark)=>{
      console.log("isbookmark ",isbookmark)
-    if(this.props.email){
-      // || this.state.bookmarksList.indexOf(a)===-1
-          var newBookmarks = isbookmark
-          ? this.state.bookmarksList.filter((a) => a !== this.state.currentVisibleChapter )
-          : this.state.bookmarksList.concat(this.state.currentVisibleChapter)
-          // console.log(" book mark list ",newBookmarks)
-          console.log(" book mark ",newBookmarks)
-         firebase.database().ref("users/"+this.props.userId+"/bookmarks/"+this.props.sourceId+"/"+this.props.bookId).set(newBookmarks)
-          this.setState({
-            bookmarksList:newBookmarks
-          },()=>{
-            this.props.navigation.setParams({isBookmark:this.isBookmark()})
-          }
-          )
-    }
-    else{
-      alert("please login")
-    }
+     if(this.state.connection_Status){
+      if(this.props.email){
+        // || this.state.bookmarksList.indexOf(a)===-1
+            var newBookmarks = isbookmark
+            ? this.state.bookmarksList.filter((a) => a !== this.state.currentVisibleChapter )
+            : this.state.bookmarksList.concat(this.state.currentVisibleChapter)
+            // console.log(" book mark list ",newBookmarks)
+            console.log(" book mark ",newBookmarks)
+           firebase.database().ref("users/"+this.props.userId+"/bookmarks/"+this.props.sourceId+"/"+this.props.bookId).set(newBookmarks)
+            this.setState({
+              bookmarksList:newBookmarks
+            },()=>{
+              this.props.navigation.setParams({isBookmark:this.isBookmark()})
+            }
+            )
+      }
+      else{
+        alert("please login")
+      }
+     }
+     else{
+       Alert.alert("Please check your internet connecion")
+     }
+    
   }
 
 
@@ -618,45 +649,50 @@ getNotes(){
   }
   
   addToNotes = () => {
-    if(this.props.email){
-      let refList = []
-      let id = this.props.bookId
-      let name = getBookNameFromMapping(this.props.bookId,this.props.language)
-      var verses = []
-      for (let item of this.state.selectedReferenceSet) {
-  
-        let tempVal = item.split('_')
-        const verseNumber =  JSON.parse(tempVal[2])
-        let refModel = {
-          bookId: id, 
-          bookName: name, 
-          chapterNumber: parseInt(tempVal[0]), 
-          verseNumber: verseNumber, 
-          verseText:tempVal[3],
-          versionCode: this.props.versionCode, 
-          languageName: this.props.language,
-        };
-        refList.push(refModel)
-        verses.push(verseNumber)
+    if(this.state.connection_Status){
+      if(this.props.email){
+        let refList = []
+        let id = this.props.bookId
+        let name = getBookNameFromMapping(this.props.bookId,this.props.language)
+        var verses = []
+        for (let item of this.state.selectedReferenceSet) {
+    
+          let tempVal = item.split('_')
+          const verseNumber =  JSON.parse(tempVal[2])
+          let refModel = {
+            bookId: id, 
+            bookName: name, 
+            chapterNumber: parseInt(tempVal[0]), 
+            verseNumber: verseNumber, 
+            verseText:tempVal[3],
+            versionCode: this.props.versionCode, 
+            languageName: this.props.language,
+          };
+          refList.push(refModel)
+          verses.push(verseNumber)
+        }
+        // let res = await DbQueries.queryNotes();
+        // console.log("QWERY NOTES ",res)
+        this.props.navigation.navigate('EditNote',{
+            referenceList: refList,
+            notesList:this.state.notesList,
+            bcvRef:{
+            bookId: id, 
+            chapterNumber:this.state.currentVisibleChapter,
+            verses:verses
+            },
+            contentBody:'',
+            onbackNote:this.onbackNote,
+            noteIndex:-1,
+        })
       }
-      // let res = await DbQueries.queryNotes();
-      // console.log("QWERY NOTES ",res)
-      this.props.navigation.navigate('EditNote',{
-          referenceList: refList,
-          notesList:this.state.notesList,
-          bcvRef:{
-          bookId: id, 
-          chapterNumber:this.state.currentVisibleChapter,
-          verses:verses
-          },
-          contentBody:'',
-          onbackNote:this.onbackNote,
-          noteIndex:-1,
-      })
+      else{
+        alert("please logiin")
+      }
+    }else{
+      Alert.alert("Please check internet connection")
     }
-    else{
-      alert("please logiin")
-    }
+
   
     this.setState({selectedReferenceSet: [], showBottomBar: false})
   }
@@ -665,27 +701,32 @@ getNotes(){
   }
 
   doHighlight = async() => {
-    if(this.props.email){
-    var array = [...this.state.HightlightedVerseArray]
-    for (let item of this.state.selectedReferenceSet){
-      let tempVal = item.split('_')
-        var index = array.indexOf(JSON.parse(tempVal[2]))
-        if(this.state.bottomHighlightText){
-            if(index == -1){
-                array.push(JSON.parse(tempVal[2]))
+    if(this.state.connection_Status){
+      if(this.props.email){
+        var array = [...this.state.HightlightedVerseArray]
+        for (let item of this.state.selectedReferenceSet){
+          let tempVal = item.split('_')
+            var index = array.indexOf(JSON.parse(tempVal[2]))
+            if(this.state.bottomHighlightText){
+                if(index == -1){
+                    array.push(JSON.parse(tempVal[2]))
+                  }
+                  this.setState({HightlightedVerseArray:array})
               }
+            else{
+              array.splice(index,1)
               this.setState({HightlightedVerseArray:array})
+            }
           }
-        else{
-          array.splice(index,1)
-          this.setState({HightlightedVerseArray:array})
+          firebase.database().ref("users/"+this.props.userId+"/highlights/"+this.props.sourceId+"/"+this.props.bookId+"/"+this.state.currentVisibleChapter).set(array)
         }
-      }
-      firebase.database().ref("users/"+this.props.userId+"/highlights/"+this.props.sourceId+"/"+this.props.bookId+"/"+this.state.currentVisibleChapter).set(array)
+        else{
+          alert("Please login")
+        }
+    }else{
+      Alert.alert("Please check internet connection")
     }
-    else{
-      alert("Please login")
-    }
+
   this.setState({ selectedReferenceSet: [], showBottomBar: false})
 }
 
@@ -706,11 +747,15 @@ getNotes(){
   }
  
   componentWillUnmount(){
-    console.log(" boook un mount ")
       var time =  new Date()
       DbQueries.addHistory(item.sourceId,item.languageName,item.languageCode, 
       item.versionCode, this.props.bookId, this.state.currentVisibleChapter, item.downloaded, time)
       this.subs.remove();
+      NetInfo.isConnected.removeEventListener(
+        'connectionChange',
+        this._handleConnectivityChange
+ 
+    );
   }
 
   _keyExtractor = (item, index) => item.number;
@@ -728,15 +773,14 @@ getNotes(){
   errorMessage(){
     console.log("props ",this.props.error)
     if (!this.alertPresent) {
-        this.alertPresent = true;
+      this.alertPresent = true;
         if (this.state.error) {
-            Alert.alert("", "Check your internet connection", [{text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
-        } else {
-            this.alertPresent = false;
-        }
+            Alert.alert("", "Something went wrong ", [{text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
+        
+          }
     }
   }
-updateData = ()=>{
+updateData=()=>{
   // if(this.state.error){
     this.errorMessage()
     this.queryBookFromAPI(null)
@@ -745,7 +789,7 @@ updateData = ()=>{
 }
 
   render() {
-    console.log(" this.state.HightlightedVerseArray ",this.state.HightlightedVerseArray)
+    console.log(" this.state.connection ",this.state.connection_Status)
     return(
     <View  style={this.styles.container}>
       {this.state.isLoading &&
@@ -754,7 +798,7 @@ updateData = ()=>{
         textContent={'Loading...'}
         //  textStyle={styles.spinnerTextStyle}
       />}
-      {(this.state.error) ?
+      {(this.state.error != null || this.state.connection_Status == false) ?
         <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
           <TouchableOpacity 
           onPress={()=>this.updateData()}
@@ -776,7 +820,6 @@ updateData = ()=>{
           }
           {/* <View>
           </View> */}
-          <ScrollView>
           <FlatList
                 data={this.state.chapterContent }
                 contentContainerStyle={{flexGrow:1,margin:16}}
@@ -804,8 +847,6 @@ updateData = ()=>{
                 // ListFooterComponentStyle={}
 
               />
-          </ScrollView>
-            
               {/* <View style={{marginBottom:20}}/> */}
           {
             this.state.chapterContent.length > 0 &&
