@@ -113,6 +113,8 @@ const styles = StyleSheet.create({
       height: 150,
   },
   headerText: {
+    padding:8,
+    margin:8,
     color: '#fff8f8',
 },customText:{
    fontSize: 18,

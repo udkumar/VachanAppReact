@@ -4,13 +4,11 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import {Card,CardItem,Content,Body,List,ListItem,Left,Right,Accordion} from 'native-base'
 import {updateContentType,fetchAllContent} from '../../../store/action/'
 import {styles} from '../../LanguageList/styles'
-import Spinner from 'react-native-loading-spinner-overlay';
 import {connect} from 'react-redux'
 
 
 
 var contentType = ''
-
   class SelectContent extends Component {
      constructor(props){
          super(props)

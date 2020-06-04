@@ -6,12 +6,10 @@ import {
   ToastAndroid,
   ActivityIndicator
 } from 'react-native';
-import SeekBar from './SeekBar';
 import Controls from './Controls';
 import Video from 'react-native-video';
 import {connect} from 'react-redux'
-import APIFetch from '../../../../utils/APIFetch'
-import {fetchAudioUrl} from '../../../../store/action/'
+import {fetchAudioUrl} from '../../store/action'
 import {styles} from './styles'
 
 class Player extends Component {
@@ -97,11 +95,6 @@ class Player extends Component {
     const track = this.state.audioFile;
     return (
       <View style={{flex:1}}>
-        {/* <SeekBar
-          onSeek={this.seek.bind(this)}
-          trackLength={this.state.totalLength}
-          onSlidingStart={() => this.setState({paused: true})}
-          currentPosition={this.state.currentPosition} /> */}
           {
             this.props.loading ? <ActivityIndicator style={{alignItems: 'center',justifyContent: 'center',}} size="large" color="#3E4095"/> 
             :

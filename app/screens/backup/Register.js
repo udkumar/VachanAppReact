@@ -5,11 +5,14 @@ import { StyleSheet, ActivityIndicator, View, Text, Alert,TextInput,TouchableOpa
 // import {Button} from 'native-base'
 // import auth from '@react-native-firebase/auth';
 import firebase from 'react-native-firebase'
-import Spinner from 'react-native-loading-spinner-overlay';
+import {userInfo} from '../../store/action/'
+import {connect} from 'react-redux'
+
+
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
-export default class Register extends Component {
+class Register extends Component {
     constructor(props){
         super(props)
         this.state ={
@@ -41,7 +44,6 @@ export default class Register extends Component {
         .auth()
         .createUserWithEmailAndPassword(this.state.email, this.state.password)
         .then((res) => {
-         
             res.user.updateProfile({
               displayName: this.state.displayName,
               // phoneNumber:
@@ -138,6 +140,25 @@ export default class Register extends Component {
     }
     
 }
+
+const mapStateToProps = state =>{
+  return{
+      language: state.updateVersion.language,
+      versionCode:state.updateVersion.versionCode,
+
+      email:state.userInfo.email,
+      uid:state.userInfo.uid,
+      userName:state.userInfo.userName,
+      phoneNumber:state.userInfo.phoneNumber
+  }
+}
+const mapDispatchToProps = dispatch =>{
+  return {
+   userInfo:(payload)=>dispatch(userInfo(payload))
+  }
+}
+
+export  default connect(mapStateToProps,mapDispatchToProps)(Register)
 
 const styles = StyleSheet.create({
   container: {

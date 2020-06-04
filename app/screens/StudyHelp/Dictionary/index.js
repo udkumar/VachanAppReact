@@ -168,7 +168,7 @@ class Dictionary extends Component {
             />
              <ScrollView style={this.styles.scrollViewModal}>
                <Text style={this.styles.textString}>Description: {this.state.wordDescription.definition}</Text>
-                <Text  style={this.styles.textString}>Keywrod: {this.state.wordDescription.keyword}</Text>
+                <Text  style={this.styles.textString}>Keyword: {this.state.wordDescription.keyword}</Text>
                 {this.state.wordDescription.seeAlso !='' && <Text  style={this.styles.textString}>See Also: {this.state.wordDescription.seeAlso}</Text>}
                <View style={{marginBottom:8}}/>
             </ScrollView>

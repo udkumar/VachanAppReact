@@ -7,7 +7,8 @@ import {
 } from 'react-native';
 const Constants = require('../../utils/constants')
 import {connect} from 'react-redux'
-import Icon from 'react-native-vector-icons/MaterialIcons'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import { array } from 'prop-types';
 
 // import { styles } from './styles.js';
 
@@ -51,23 +52,28 @@ class VerseView extends Component {
   isHighlight(){
       for(var i = 0 ; i<=this.props.HightlightedVerse.length; i++ ){
         if(this.props.HightlightedVerse[i] == this.props.verseData.number){
-          // console.log("PROPS HIGHLIGHT ",this.props.HightlightedVerse[i])
-          // console.log("PROPS  ",this.props.bookId ,"  ",this.props.chapterNumber,"  ",this.props.verseData.number)
           return true
           }
       }
     return false
   }
   isNoted(){
-    // for(var i = 0 ;i<=this.props.notesList.length-1; i++ ){
-    //   for(var j = 0 ;j<=this.props.notesList[i].verses.length-1; j++ ){
-    //     if(this.props.notesList[i].verses[j] == this.props.verseData.number){
-    //       console.log(" NOTE VERSE ",this.props.notesList[i].verses[j])
-    //       return true
-    //       }
-    //   }
-    // }
-    return false
+    var arr =[]
+    for(var i = 0 ;i<=this.props.notesList.length-1; i++ ){
+      for(var j = 0 ;j<=this.props.notesList[i].verses.length-1; j++ ){
+        var index = arr.indexOf(this.props.notesList[i].verses[j])
+        if(index == -1){
+          arr.push(this.props.notesList[i].verses[j])
+        }
+      }
+      }
+    var value = arr.filter(v=> v == this.props.verseData.number)
+    if(value[0]){
+      return true
+    }
+    else{ 
+      return false
+    }
   }
   render() {
     let obj = this.props.chapterNumber + '_' + this.props.index + '_' + this.props.verseData.number+ '_' +this.props.verseData.text;
@@ -96,7 +102,8 @@ class VerseView extends Component {
                 >
           {/* {this.getResultText(this.props.verseData.text)} */}
          {this.props.verseData.text}
-        </Text>         
+        </Text> 
+        {isNoted ? <Icon name="note-outline" size={20} style={{padding:8}} /> :null} 
           </Text>
         )
       }
@@ -120,7 +127,7 @@ class VerseView extends Component {
               >
               {this.props.verseData.text} 
             </Text>   
-            {isNoted ? <Icon name="note" size={20} style={{padding:8}} /> :null} 
+            {isNoted ? <Icon name="note-outline" size={20} style={{padding:8}} /> :null} 
           </Text>
         )
   }

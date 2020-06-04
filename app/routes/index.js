@@ -35,10 +35,6 @@ import SelectionTab from '../screens/ReferenceSelection/'
 import BookMarks from '../screens/Bookmarks/';
 import Infographics from '../screens/StudyHelp/InfoGraphics/';
 
-import ModalForSelection from '../screens/ModalForSelection'
-
-
-
 const NavStack = createStackNavigator(
   {  
     // ModalForSelection:{

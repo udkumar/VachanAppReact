@@ -1,14 +1,9 @@
 import React, { Component } from 'react';
 import {
-  StyleSheet,
   Text,
   View,
-  Button,
   TouchableOpacity,
   FlatList,
-  TextInput,
-  ActivityIndicator,
-  Dimensions
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import DbQueries from '../../utils/dbQueries'

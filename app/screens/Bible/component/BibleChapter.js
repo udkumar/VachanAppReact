@@ -7,17 +7,12 @@ import {
   FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import VerseView from '../VerseView'
-// import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
-// import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
-import Player from '../Navigate/Audio/Player';
 import Spinner from 'react-native-loading-spinner-overlay';
-// import {getResultText} from '../../utils/UtilFunctions';
-import {getBookNameFromMapping,getBookChaptersFromMapping} from '../../../utils/UtilFunctions';
-import {selectedChapter,fetchVersionLanguage,fetchVersionContent,fetchAudioUrl,fetchParallelBible} from '../../../store/action/'
+import {getBookNameFromMapping} from '../../../utils/UtilFunctions';
+import {fetchParallelBible} from '../../../store/action/'
 import { styles } from './styles';
 import {connect} from 'react-redux'
-import {Body,Header, Button,Right,Title, Left} from 'native-base'
+import {Header, Button,Right,Title} from 'native-base'
 
 class BibleChapter extends Component {
     constructor(props){

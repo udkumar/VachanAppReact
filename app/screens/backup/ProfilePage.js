@@ -80,7 +80,7 @@ import DbQueries from '../../utils/dbQueries'
 
 const styles = StyleSheet.create({
   header:{
-    backgroundColor: "#00BFFF",
+    // backgroundColor: "#00BFFF",
     height:200,
   },
   avatar: {
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom:20,
     width:250,
-    borderRadius:30,
+    borderRadius:10,
     backgroundColor: "#3E4095",
   },
 });

@@ -149,7 +149,7 @@ export const styles =(colorFile, sizeFile) =>{
     verseNumber:{
         fontSize:sizeFile.contentText,
         color:colorFile.textColor,
-        fontWeight:'normal'
+        fontWeight:'normal',
     },
     verseChapterNumber:{
         fontSize:sizeFile.titleText,

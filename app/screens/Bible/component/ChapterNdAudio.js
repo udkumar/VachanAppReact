@@ -1,7 +1,7 @@
 import React from 'react';
 import { View} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import Player from '../Navigate/Audio/Player'
+import Player from '../../../components/Audio/Player'
 
 
 const ChapterNdAudio = ({

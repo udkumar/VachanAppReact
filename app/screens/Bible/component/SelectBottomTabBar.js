@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Modal, Text,TouchableOpacity, View, Alert} from 'react-native';
+import {Text,TouchableOpacity, View} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
 

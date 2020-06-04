@@ -2,52 +2,35 @@ import React, { Component} from 'react';
 import {
   Text,
   View,
-  ScrollView,
   FlatList,
   Alert,
-  ActivityIndicator,
   Dimensions,
-  TouchableHighlight,
   StyleSheet,
   TouchableOpacity,
   Share,
   ToastAndroid,
   NetInfo,
-  Modal,
-  LayoutAnimation,
-  Animated
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import {createResponder } from 'react-native-gesture-responder';
 import DbQueries from '../../utils/dbQueries'
 import VerseView from './VerseView'
-import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
-import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
-import Player from '../../screens/Bible/Navigate/Audio/Player';
-import {getResultText} from '../../utils/UtilFunctions';
-import {getBookNameFromMapping,getBookChaptersFromMapping,getBookNumOfVersesFromMapping} from '../../utils/UtilFunctions';
+import {getBookNameFromMapping} from '../../utils/UtilFunctions';
 import APIFetch from '../../utils/APIFetch'
 import {fetchAudioUrl,fetchVersionLanguage,fetchVersionContent,queryDownloadedBook,updateVersionBook,updateVersion} from '../../store/action/'
 import SelectContent from '../Bible/component/SelectContent'
 import SelectBottomTabBar from '../Bible/component/SelectBottomTabBar'
 import ChapterNdAudio from '../Bible/component/ChapterNdAudio'
 import Spinner from 'react-native-loading-spinner-overlay';
-// import Orientation from 'react-native-orientation';
 import { styles } from './styles.js';
 import {connect} from 'react-redux'
 import Commentary from '../StudyHelp/Commentary/'
 import Dictionary from '../StudyHelp/Dictionary/'
 
-import MainHeader from '../../components/MainHeader'
-import {Card,CardItem,Content,Body,Header,Container, Button,Right,Left,Title} from 'native-base'
+import {Header, Button,Title} from 'native-base'
 import BibleChapter from './component/BibleChapter';
 import firebase from 'react-native-firebase'
-import { array } from 'prop-types';
-
-
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
-var arrLayout = [];
 
 class Bible extends Component {
   static navigationOptions = ({navigation}) =>{
@@ -150,7 +133,7 @@ class Bible extends Component {
       thumbSize: 100,
       left: width / 2,
       top: height / 2,
-      connection_Status:'',
+      connection_Status:true,
       scrollDirection:'up',
       close:true,
       message:'',
@@ -158,31 +141,16 @@ class Bible extends Component {
       modalVisible: false,
       arrLayout:[],
       notesList:[]
-
-     
-      //modal value for showing chapter grid 
     }
 
     this.getSelectedReferences = this.getSelectedReferences.bind(this)
     this.onBookmarkPress = this.onBookmarkPress.bind(this)
-    // this.getReference = this.getReference.bind(this)
     this.alertPresent
     this.pinchDiff = 0
     this.pinchTime = new Date().getTime()
     this.styles = styles(this.props.colorFile, this.props.sizeFile);    
   }
-  scrollToVerse(verseNumber){
-    if(this.state.arrLayout.length > 0){
-    console.log("SCROLL TO ........  ",this.state.arrLayout, " ",this.state.arrLayout[verseNumber],"  ",verseNumber)
 
-      // if(this.arrLayout[this.state.verseNumber+1] == this.state.verseNumber)
-      this.scrollViewRef.scrollTo({
-        x: 0,
-        y: this.state.arrLayout[verseNumber-1],
-        // animated: true,
-      })
-    }
-  }
   componentWillReceiveProps(nextProps,prevState){
     this.setState({
       colorFile:nextProps.colorFile,
@@ -322,7 +290,7 @@ class Bible extends Component {
   };
 
   getReference = async(item)=>{
-    this.scrollToVerse(item.verseNumber)
+    // this.scrollToVerse(item.verseNumber)
     var time =  new Date()
     DbQueries.addHistory(this.props.sourceId,this.props.language,this.props.languageCode, this.props.versionCode, item.bookId,JSON.parse(item.chapterNumber), this.props.downloaded, time)
     this.props.navigation.setParams({
@@ -395,10 +363,7 @@ class Bible extends Component {
   }
 
   queryBookFromAPI = async(val)=>{
-    console.log("val ",val)
-    console.log("query book ",this.state.currentVisibleChapter+val)
     this.setState({isLoading:true,currentVisibleChapter: val != null ? JSON.parse(this.state.currentVisibleChapter)  + val : this.state.currentVisibleChapter,error:null },async()=>{
-
       try{
             this.props.navigation.setParams({
               languageName:this.props.language,
@@ -412,7 +377,6 @@ class Bible extends Component {
             })
             if(this.state.connection_Status){
               var content = await APIFetch.getChapterContent(this.props.sourceId, this.props.bookId, this.state.currentVisibleChapter)
-              console.log("fetch content",content)
               this.setState({chapterContent:content.chapterContent.verses,isLoading:false,currentVisibleChapter:this.state.currentVisibleChapter})
             }
             else{
@@ -432,7 +396,7 @@ class Bible extends Component {
                 this.setState({
                   isLoading:false
                  })
-                 Alert.alert(" Please check internet Connection")
+                 Alert.alert("Please check internet Connection")
               }
             }
             this.props.updateVersionBook({
@@ -506,70 +470,89 @@ this.setState({audio:false})
 }
 
   async getHighlights(){
-    if(this.props.email){
-      firebase.database().ref("users/"+this.props.userId+"/highlights/"+this.props.sourceId+"/"+this.props.bookId+"/"+this.state.currentVisibleChapter).on('value', (snapshot)=>{
-          console.log("highlights ",snapshot.val())
-          // var HightlightedVerseArray = [];
-          if(snapshot.val() != null){
-            this.setState({
-              HightlightedVerseArray: snapshot.val()
+    if(this.state.connection_Status){
+      if(this.props.email){
+        firebase.database().ref("users/"+this.props.userId+"/highlights/"+this.props.sourceId+"/"+this.props.bookId+"/"+this.state.currentVisibleChapter).on('value', (snapshot)=>{
+            if(snapshot.val() != null){
+              this.setState({
+                HightlightedVerseArray: snapshot.val()
+            })
+            }
+            else{
+              this.setState({
+                HightlightedVerseArray: []
+            })
+            }
           })
+      }
+      else{
+        this.setState({
+          HightlightedVerseArray:[]
+      })
+      }
+    }else{
+      this.setState({
+        HightlightedVerseArray:[]
+    })
+    // Alert.alert("Please check internet connection")
+    }
+  }
+  async getBookMarks(){
+    if(this.state.connection_Status){
+      if(this.props.email){
+        firebase.database().ref("users/"+this.props.userId+"/bookmarks/"+this.props.sourceId+"/"+this.props.bookId).once('value', (snapshot)=>{
+          if(snapshot.val() === null){
+            this.setState({bookmarksList:[]},
+          ()=> this.props.navigation.setParams({isBookmark:this.isBookmark()}))
           }
           else{
-            this.setState({
-              HightlightedVerseArray: []
-          })
+          this.setState({bookmarksList:snapshot.val()},
+          ()=> this.props.navigation.setParams({isBookmark:this.isBookmark()}))
           }
         })
-    }
-    else{
-      console.log("please login")
-    }
+      }
+      else{
+        this.setState({bookmarksList:[]},
+          ()=> this.props.navigation.setParams({isBookmark:this.isBookmark()}))
+        console.log("not logged in")
+      }
+    }else{
+      this.setState({bookmarksList:[]},
+          ()=> this.props.navigation.setParams({isBookmark:this.isBookmark()}))
+       }
   }
 
-  async getBookMarks(){
-    console.log(" source id ",this.props.sourceId,"book id ",this.props.bookId)
-    if(this.props.email){
-      firebase.database().ref("users/"+this.props.userId+"/bookmarks/"+this.props.sourceId+"/"+this.props.bookId).once('value', (snapshot)=>{
-      console.log(" logged in ",snapshot.val())
-        if(snapshot.val() === null){
-          this.setState({bookmarksList:[]},
-        ()=> this.props.navigation.setParams({isBookmark:this.isBookmark()}))
-        }
-        else{
-        this.setState({bookmarksList:snapshot.val()},
-        ()=> this.props.navigation.setParams({isBookmark:this.isBookmark()}))
-        }
-      })
-    }
-    else{
-      console.log("not logged in")
-    }
-  }
 getNotes(){
-  if(this.props.email){
-  firebase.database().ref("users/"+this.props.userId+"/notes/"+this.props.sourceId+"/"+this.props.bookId+"/"+this.state.currentVisibleChapter).once('value', (snapshot)=>{
-    this.state.notesList = []
-      if(snapshot.val() === null){
-        this.setState({notesList:[]})
-      } 
-      else{
-        if(Array.isArray(snapshot.val())){
-          this.setState({notesList:snapshot.val()})
-        }
-        else{
-          this.setState({
-            notesList:[snapshot.val()]
-          })
-        }
-        
-        
+  if(this.state.connection_Status){
+    if(this.props.email){
+      firebase.database().ref("users/"+this.props.userId+"/notes/"+this.props.sourceId+"/"+this.props.bookId+"/"+this.state.currentVisibleChapter).once('value', (snapshot)=>{
+        this.state.notesList = []
+          if(snapshot.val() === null){
+            this.setState({notesList:[]})
+          } 
+          else{
+            if(Array.isArray(snapshot.val())){
+              this.setState({notesList:snapshot.val()})
+            }
+            else{
+              this.setState({
+                notesList:[snapshot.val()]
+              })
+            }
+          }
+        })
       }
-    })
-  }
-  else{
-    console.log("not logged in")
-  }
+      else{
+        this.setState({
+          notesList:[]
+        })
+      }
+    }else{
+      this.setState({
+        notesList:[]
+      })
+      // Alert.alert("Please check internet connection")
+    }
 }
   isBookmark(){
   if(this.state.bookmarksList.length > 0){
@@ -593,7 +576,6 @@ getNotes(){
 
   //add book mark from header icon 
    onBookmarkPress=(isbookmark)=>{
-     console.log("isbookmark ",isbookmark)
      if(this.state.connection_Status){
       if(this.props.email){
         // || this.state.bookmarksList.indexOf(a)===-1
@@ -607,14 +589,15 @@ getNotes(){
               bookmarksList:newBookmarks
             },()=>{
               this.props.navigation.setParams({isBookmark:this.isBookmark()})
-            }
-            )
+            })
       }
       else{
-        alert("please login")
+        this.setState({bookmarksList:[] },()=>{this.props.navigation.setParams({isBookmark:this.isBookmark()}) })
+        Alert.alert("Please login")
       }
      }
      else{
+      this.setState({bookmarksList:[] },()=>{this.props.navigation.setParams({isBookmark:this.isBookmark()}) })
        Alert.alert("Please check your internet connecion")
      }
     
@@ -644,7 +627,7 @@ getNotes(){
       let selectedCount = this.state.selectedReferenceSet.length, highlightCount = 0;
       for (let item of this.state.selectedReferenceSet) {
           let tempVal = item.split('_')
-          for(var i=0; i<=this.state.HightlightedVerseArray.length; i++ ){
+          for(var i=0; i<=this.state.HightlightedVerseArray.length-1; i++ ){
             // for(var j=0; j<=this.state.HightlightedVerseArray[i].verses.length-1; j++ ){
               if(this.state.HightlightedVerseArray[i] == JSON.parse(tempVal[2])){
                 highlightCount++
@@ -695,7 +678,7 @@ getNotes(){
         })
       }
       else{
-        alert("please logiin")
+        Alert.alert("Please login")
       }
     }else{
       Alert.alert("Please check internet connection")
@@ -778,25 +761,8 @@ getNotes(){
   toggleParallelView(value){
     this.props.navigation.setParams({visibleParallelView:value})
   }
-  errorMessage(){
-    console.log("props ",this.props.error)
-    if (!this.alertPresent) {
-      this.alertPresent = true;
-        if (this.state.error) {
-            Alert.alert("", "Something went wrong ", [{text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
-          }
-    }
-  }
-updateData=()=>{
-  // if(this.state.error){
-    // this.errorMessage()
-    this.queryBookFromAPI(null)
-  // }
- 
-}
 
   render() {
-    console.log(" this.state.connection ",this.state.connection_Status)
     return(
     <View  style={this.styles.container}>
       {this.state.isLoading &&
@@ -808,7 +774,7 @@ updateData=()=>{
       {(this.state.error != null || this.state.connection_Status == false) ?
         <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
           <TouchableOpacity 
-          onPress={()=>this.updateData()}
+          onPress={()=>this.queryBookFromAPI(null)}
           style={{height:40,width:120,borderRadius:4,backgroundColor:'#3F51B5',
           justifyContent:'center',alignItems:'center'}}>
             <Text style={{fontSize:18,color:'#fff'}}>Reload</Text>
@@ -842,7 +808,6 @@ updateData=()=>{
                       selectedReferences = {this.state.selectedReferenceSet}
                       getSelection = {(verseIndex, chapterNumber, verseNumber,text) => {
                         this.props.navigation.getParam("visibleParallelView")== false && this.getSelectedReferences(verseIndex, chapterNumber, verseNumber,text)}}
-                              
                       HightlightedVerse = {this.state.HightlightedVerseArray}
                       notesList={this.state.notesList}
                       chapterNumber ={this.state.currentVisibleChapter}

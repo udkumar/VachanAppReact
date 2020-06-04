@@ -39,7 +39,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
           console.log('User logged-in successfully!')
           this.props.userInfo({email:res.user._user.email,uid:res.user._user.uid,
           userName:res.user._user.displayName,phoneNumber:null})
-          this.props.navigation.navigate('Bible')
+          // this.props.navigation.navigate('Bible')
           this.setState({
             isLoading: false,
             email: '', 
