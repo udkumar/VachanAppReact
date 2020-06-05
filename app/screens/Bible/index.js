@@ -376,11 +376,18 @@ class Bible extends Component {
               isBookmark:this.isBookmark()
             })
             if(this.state.connection_Status){
-              var content = await APIFetch.getChapterContent(this.props.sourceId, this.props.bookId, this.state.currentVisibleChapter)
-              this.setState({chapterContent:content.chapterContent.verses,isLoading:false,currentVisibleChapter:this.state.currentVisibleChapter})
+              try{
+                var content = await APIFetch.getChapterContent(this.props.sourceId, this.props.bookId, this.state.currentVisibleChapter)
+                this.setState({chapterContent:content.chapterContent.verses,isLoading:false,currentVisibleChapter:this.state.currentVisibleChapter})
+  
+              }
+              catch(error){
+                console.log("erorr ",error)
+                this.setState({isLoading:false,error:error,chapterContent:[]})
+              }
             }
             else{
-              console.log(" book is downloaded")
+              console.log(" book is downloaded",this.props.downloaded)
               if(this.props.downloaded){
                 if(this.state.downloadedBook.length > 0){
                  this.setState({
@@ -393,10 +400,9 @@ class Bible extends Component {
                 }
               }
               else{
-                this.setState({
-                  isLoading:false
-                 })
-                 Alert.alert("Please check internet Connection")
+              console.log("not internet no downloaded book ")
+                this.setState({ isLoading:false,error:'book not downloaded'})
+                //  Alert.alert("Please check internet Connection")
               }
             }
             this.props.updateVersionBook({
@@ -763,6 +769,7 @@ getNotes(){
   }
 
   render() {
+    console.log(" error ",this.state.error)
     return(
     <View  style={this.styles.container}>
       {this.state.isLoading &&
@@ -771,7 +778,7 @@ getNotes(){
         textContent={'Loading...'}
         //  textStyle={styles.spinnerTextStyle}
       />}
-      {(this.state.error != null || this.state.connection_Status == false) ?
+      {this.state.error !=null ?
         <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
           <TouchableOpacity 
           onPress={()=>this.queryBookFromAPI(null)}
