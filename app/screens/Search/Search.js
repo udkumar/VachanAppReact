@@ -46,7 +46,7 @@ class Search extends Component {
           />
         ),
         headerRight:(
-          <Icon name={params.text !== '' ? 'cancel' : 'search'} size={28} color="#fff" style={{marginHorizontal:8}} />
+          <Icon name={params.text !== '' ? 'cancel' : 'search'} onPress={()=>params.clearData()} size={24} color="#fff" style={{marginHorizontal:8}} />
         )
       }
   }
@@ -99,10 +99,12 @@ class Search extends Component {
   }
 
   clearData() {
-    this.props.navigation.setParams({text: ''})
-    if(this.state.text){
-      this.setState({text:""})
-    }
+    // if(this.state.text !=null){
+      this.props.navigation.setParams({text: ''})
+      if(this.state.text){
+        this.setState({text:""})
+      }
+    // }
   }
 
   addRefListToTab(list) {
