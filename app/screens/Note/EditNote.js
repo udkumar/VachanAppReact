@@ -78,7 +78,7 @@ class EditNote extends Component {
   }
 
   saveNote = async () =>{
-      var time =  new Date()
+      var time =  Date.now()
       console.log("time "+time)
       var firebaseRef = firebase.database().ref("users/"+this.props.uid+"/notes/"+this.props.sourceId+"/"+this.state.bcvRef.bookId)
       
