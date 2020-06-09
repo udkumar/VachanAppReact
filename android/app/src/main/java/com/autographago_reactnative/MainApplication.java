@@ -6,7 +6,6 @@ import com.swmansion.reanimated.ReanimatedPackage;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.github.yamill.orientation.OrientationPackage; 
 // import com.reactnativecommunity.netinfo.NetInfoPackage;
-// import com.facebook.reactnative.androidsdk.FBSDKPackage;
 import co.apptailor.googlesignin.RNGoogleSigninPackage;
 // import com.facebook.CallbackManager;
 
@@ -28,6 +27,7 @@ import io.invertase.firebase.database.RNFirebaseDatabasePackage;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 import com.github.alinz.reactnativewebviewbridge.WebViewBridgePackage;
+import com.facebook.reactnative.androidsdk.FBSDKPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -54,7 +54,6 @@ public class MainApplication extends Application implements ReactApplication {
             new ReanimatedPackage(),
             new SplashScreenReactPackage(),
             // new NetInfoPackage(),
-            // new FBSDKPackage(mCallbackManager),
             new RNGoogleSigninPackage(),
             new ReactVideoPackage(),
             new RealmReactPackage(),
@@ -69,7 +68,8 @@ public class MainApplication extends Application implements ReactApplication {
             new RNFirebaseDatabasePackage(),
             new RNFirebaseMessagingPackage(),
             new RNFirebaseNotificationsPackage(),
-            new WebViewBridgePackage()
+            new WebViewBridgePackage(),
+            new FBSDKPackage()
       );
     }
 

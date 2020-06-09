@@ -6,13 +6,12 @@ import {
   Image,
   TouchableOpacity
 } from 'react-native';
-import AsyncStorageUtil from '../../utils/AsyncStorageUtil'
-import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
 import Login from './Login';
 import firebase from 'react-native-firebase';
 import {connect} from 'react-redux'
 import {userInfo} from '../../store/action/'
 import DbQueries from '../../utils/dbQueries'
+import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin';                        
 
 
 
@@ -22,13 +21,14 @@ import DbQueries from '../../utils/dbQueries'
         this.unsubscriber = null
         this.state = {
           initializing:true,
-          user:'',
+          user:this.props.email,
           userData:''
         }
       }
-    componentDidMount(){
-        if (this.state.initializing){this.setState({initializing:false})}
-        this.unsubscriber = firebase.auth().onAuthStateChanged((user)=>{
+    async componentDidMount(){
+        if (this.state.initializing){
+          this.setState({initializing:false})}
+        this.unsubscriber  = firebase.auth().onAuthStateChanged((user)=>{
           if (!user) {
               return
             // this.props.navigation.navigate('Login')
@@ -36,9 +36,7 @@ import DbQueries from '../../utils/dbQueries'
           else{
             this.setState({user:user._user.email,userData:user})
           }
-
-        
-        })
+        })  
     }
     componentWillUnmount(){
         if(this.unsubscriber) {
@@ -47,15 +45,16 @@ import DbQueries from '../../utils/dbQueries'
     }
     logOut=()=>{
         firebase.auth().signOut()
-        this.props.userInfo({email:null,uid:null,userName:''})
+        this.props.userInfo({email:null,uid:null,userName:'',phoneNumber:null,photo:null})
         this.setState({user:null})
         DbQueries.deleteBookmark()
         
     }
-
+  
     render() {
+      console.log(" user ",this.props.email)
     if(!this.state.user){
-        return <Login navigation={this.props.navigation}/>
+        return <Login navigation={this.props.navigation} user={this.state.user}/>
     }
     return (
       <View style={styles.container}>

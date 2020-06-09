@@ -48,9 +48,8 @@ class Register extends Component {
               displayName: this.state.displayName,
               // phoneNumber:
             })
-            this.props.userInfo({email:res.user._user.email,uid:res.user._user.uid,userName:res.user._user.displayName,phoneNumber:null})
+            this.props.userInfo({email:res.user._user.email,uid:res.user._user.uid,userName:res.user._user.displayName,phoneNumber:null,photo:null})
             // this.props.navigation.navigate('Bible')
-            console.log('User registered successfully!',res)
             // this.setState({
             //   isLoading: false,
             //   displayName: '',

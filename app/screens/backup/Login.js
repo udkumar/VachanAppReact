@@ -1,9 +1,13 @@
+
 import React, {Component} from 'react';
 import { StyleSheet, ActivityIndicator, View, Text, Alert,TextInput,TouchableOpacity,Button,BackHandler} from 'react-native';
 import firebase from 'react-native-firebase'
 import {userInfo} from '../../store/action/'
 import {connect} from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin';  
+import { AccessToken, LoginManager,LoginButton } from 'react-native-fbsdk';
+
 
  class Login extends Component {
     // static navigationOptions = {
@@ -14,6 +18,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
         this.state = {
             email:'',
             password:'',
+            user:'',
             isLoading:false,
             passwordVisible:true
         }
@@ -38,14 +43,12 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
           console.log(res)
           console.log('User logged-in successfully!')
           this.props.userInfo({email:res.user._user.email,uid:res.user._user.uid,
-          userName:res.user._user.displayName,phoneNumber:null})
-          // this.props.navigation.navigate('Bible')
+          userName:res.user._user.displayName,phoneNumber:null,photo:null})
           this.setState({
             isLoading: false,
             email: '', 
             password: ''
           })
-          this.props.navigation.navigate('Dashboard')
         })
         .catch(error => {
           console.log("ERROR IN LOGIN PAGE ",error)
@@ -61,6 +64,72 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
           this.setState({isLoading:false })
         })
       }
+    }
+
+    _signInGoogle = () => {
+      GoogleSignin.signIn()
+        .then((data) => {
+          console.log(" USER GOOGLE DATA ",data)
+
+          // Create a new Firebase credential with the token
+          const credential = firebase.auth.GoogleAuthProvider.credential(data.idToken, data.accessToken);
+          // Login with the credential
+          return firebase.auth().signInWithCredential(credential);
+        })
+        .then((res) => {
+          console.log(" USER GOOGLE DATA USER",user)
+          this.props.userInfo({email:res.user._user.email,uid:res.user._user.uid,userName:res.user._user.displayName,phoneNumber:null,photo:res.user._user.photoURL})
+          // If you need to do anything with the user, do it here
+          // The user will be logged in automatically by the
+          // `onAuthStateChanged` listener we set up in App.js earlier
+        })
+        .catch((error) => {
+          const { code, message } = error;
+          console.log("ERROR ",error)
+          // For details of error codes, see the docs
+          // The message contains the default Firebase string
+          // representation of the error
+        });
+    }
+
+    signInFaceBook = () => {
+      LoginManager.logInWithReadPermissions(['public_profile', 'email'])
+        .then((result) => {
+          if (result.isCancelled) {
+            return Promise.reject(new Error('The user cancelled the request'));
+          }
+          // Retrieve the access token
+          return AccessToken.getCurrentAccessToken();
+        })
+        .then((data) => {
+          // Create a new Firebase credential with the token
+          const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken);
+          // Login with the credential
+          return firebase.auth().signInWithCredential(credential);
+        })
+        .then((user) => {
+          // If you need to do anything with the user, do it here
+          // The user will be logged in automatically by the
+          // `onAuthStateChanged` listener we set up in App.js earlier
+        })
+        .catch((error) => {
+          const { code, message } = error;
+          // For details of error codes, see the docs
+          // The message contains the default Firebase string
+          // representation of the error
+        });
+    }
+    componentDidMount(){
+      GoogleSignin.configure({
+        scopes: ['https://www.googleapis.com/auth/drive.readonly'], // what API you want to access on behalf of the user, default is email and profile
+        webClientId: '486797934259-gkdusccl094153bdj8cbugfcf5tqqb4j.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
+        offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
+        hostedDomain: '', // specifies a hosted domain restriction
+        loginHint: '', // [iOS] The user's ID, or email address, to be prefilled in the authentication UI if possible. [See docs here](https://developers.google.com/identity/sign-in/ios/api/interface_g_i_d_sign_in.html#a0a68c7504c31ab0b728432565f6e33fd)
+        forceConsentPrompt: true, // [Android] if you want to show the authorization prompt at each login.
+        // accountName: '', // [Android] specifies an account name on the device that should be used
+        // iosClientId: '<FROM DEVELOPER CONSOLE>', // [iOS] optional, if you want to specify the client ID of type iOS (otherwise, it is taken from GoogleService-Info.plist)
+      });
     }
     render(){
       if(this.state.isLoading){
@@ -99,11 +168,37 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
             onPress={() => this.props.navigation.navigate('Reset')}>
             Reset password
           </Text>  
+          <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
+          <GoogleSigninButton
+              style={{ width: 192, height: 48 }}
+              size={GoogleSigninButton.Size.Width}
+              color={GoogleSigninButton.Color.Dark}
+              onPress={this._signInGoogle}
+              disabled={this.state.isSigninInProgress} />
+               <LoginButton
+                style={{ width: 192, height: 48 }}
+                onLoginFinished={
+                  (error, result) => {
+                    if (error) {
+                      console.log("login has error: " + result.error);
+                    } else if (result.isCancelled) {
+                      console.log("login is cancelled.");
+                    } else {
+                      AccessToken.getCurrentAccessToken().then(
+                        (data) => {
+                          console.log(data.accessToken.toString())
+                        }
+                      )
+                    }
+                  }
+                }
+          onLogoutFinished={() => console.log("logout.")}/>
+          </View>
           <Text 
             style={styles.loginText}
             onPress={() => this.props.navigation.navigate('Register')}>
             Don't have account? Click here to signup
-          </Text>                          
+          </Text>  
         </View>
         )
     }
