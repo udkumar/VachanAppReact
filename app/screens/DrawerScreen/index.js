@@ -49,7 +49,7 @@ class DrawerScreen extends Component {
   //   }
   // }
   render () {
-    const valueProps  = this.props.navigation.state.routes[0].index == 1 ? (this.props.navigation.state.routes[0].routes[1].params ? this.props.navigation.state.routes[0].routes[1].params.photorUl : null) : null
+    // const valueProps  = this.props.navigation.state.routes[0].index == 1 ? (this.props.navigation.state.routes[0].routes[1].params ? this.props.navigation.state.routes[0].routes[1].params.photorUl : null) : null
  
     const iconName = [
       // {icon:'local-library',pressIcon:'Home',},
@@ -75,13 +75,22 @@ class DrawerScreen extends Component {
     ]
     
     return (
-      <ScrollView style={{flex:1}}> 
+      <ScrollView> 
           <View style={styles.headerContainer}>
-                <ImageBackground source={require('../../assets/headerbook.jpeg')} style={{flex: 1, width: 280, justifyContent: 'center'}} >
-                     <Image source={{uri:valueProps}}
-                     style={{width: 100, height: 100, borderRadius: 150/2, marginLeft: 120}}
-                   />  
-                    <Text onPress={this.onLogin} style={styles.headerText}>Login/Sign Up</Text>
+                <ImageBackground source={require('../../assets/headerbook.jpeg')} style={{flex:1,width: 280,}} >
+                    <View style={{position:'absolute',bottom:0,left:0}}>
+                    <Image
+                      style={{width: 50,height: 50,alignSelf:'center',padding:8}}
+                      source={require('../../assets/bcs_old_favicon.png')}
+                    />
+                    <TouchableOpacity style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',}}  onPress={this.onLogin}>
+                    <View style={{flexDirection:'row',padding:8,alignItems:'center',justifyContent:'center'}}>
+                    <Icon name='account-circle' size={20} color={'#fff'} style={{paddingRight:16}}/>
+                    <Text style={styles.headerText}>Login/Sign Up</Text>
+                    </View>
+                    <Icon name='chevron-right' size={20} color={'#fff'} style={{paddingRight:16}}/>
+                    </TouchableOpacity>
+                    </View>
                 </ImageBackground>
             </View>
         {
@@ -89,17 +98,25 @@ class DrawerScreen extends Component {
                 <TouchableOpacity 
                 onPress={()=>{this.props.navigation.navigate(iconName.pressIcon)}} 
                 style={{
-                  flex:1,
+                    flex:1,
                     flexDirection:"row",
+                    justifyContent:'space-between',
+                    alignItems:'center',
                     padding:8,
                     borderWidth: 0.3,
                     borderColor: '#d6d7da'
                 }}>
-                  <Icon name={iconName.icon} size={20} style={{paddingRight:16}}/>
-                  <Text 
-                    style={{fontSize:16}}>
-                    {iconName.pressIcon}
-                  </Text>
+                    <View 
+                    style={{
+                      flexDirection:"row",
+                  }}>
+                      <Icon name={iconName.icon} size={20} style={{paddingRight:16}}/>
+                      <Text 
+                        style={{fontSize:16}}>
+                        {iconName.pressIcon}
+                      </Text>
+                    </View>
+                    <Icon name='chevron-right' size={20} style={{paddingRight:16}}/>
               </TouchableOpacity>
           )
         }
@@ -113,9 +130,10 @@ const styles = StyleSheet.create({
       height: 150,
   },
   headerText: {
-    padding:8,
-    margin:8,
+    // padding:8,
     color: '#fff8f8',
+    // textDecorationLine: 'underline',
+    // lineHeight:6
 },customText:{
    fontSize: 18,
    textAlign: 'center',

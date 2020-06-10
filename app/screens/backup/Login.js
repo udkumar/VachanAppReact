@@ -1,6 +1,6 @@
 
 import React, {Component} from 'react';
-import { StyleSheet, ActivityIndicator, View, Text, Alert,TextInput,TouchableOpacity,Button,BackHandler} from 'react-native';
+import { StyleSheet, ActivityIndicator, View, Text, Alert,TextInput,TouchableOpacity,Button,Image} from 'react-native';
 import firebase from 'react-native-firebase'
 import {userInfo} from '../../store/action/'
 import {connect} from 'react-redux'
@@ -92,9 +92,10 @@ import { AccessToken, LoginManager,LoginButton } from 'react-native-fbsdk';
         });
     }
 
-    signInFaceBook = () => {
-      LoginManager.logInWithReadPermissions(['public_profile', 'email'])
+    _signInFacebook = () => {
+      LoginManager.logInWithPermissions(['public_profile', 'email'])
         .then((result) => {
+          console.log(" USER facbook result ",result)
           if (result.isCancelled) {
             return Promise.reject(new Error('The user cancelled the request'));
           }
@@ -102,12 +103,16 @@ import { AccessToken, LoginManager,LoginButton } from 'react-native-fbsdk';
           return AccessToken.getCurrentAccessToken();
         })
         .then((data) => {
+          console.log(" USER facbook DATA ",data)
+
           // Create a new Firebase credential with the token
           const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken);
           // Login with the credential
           return firebase.auth().signInWithCredential(credential);
         })
         .then((user) => {
+          console.log(" USER facbook user ",user)
+
           // If you need to do anything with the user, do it here
           // The user will be logged in automatically by the
           // `onAuthStateChanged` listener we set up in App.js earlier
@@ -140,7 +145,18 @@ import { AccessToken, LoginManager,LoginButton } from 'react-native-fbsdk';
         )
       }    
         return (
-          <View style={styles.container}>  
+          <View style={styles.container}> 
+          <View style={{alignItems:'center',justifyContent:'center'}}>
+          <Image
+            style={{width: 50,height: 50,marginVertical:16}}
+            source={require('../../assets/bcs_old_favicon.png')}
+          />
+            <Text style={{fontSize:26,color:'#3E4095',fontWeight:'bold'}}>Sign In</Text>
+          </View> 
+          <View style={{
+            flexDirection: "column",
+            justifyContent: "center",
+            }}> 
           <TextInput
             style={styles.inputStyle}
             placeholder="Email"
@@ -168,37 +184,44 @@ import { AccessToken, LoginManager,LoginButton } from 'react-native-fbsdk';
             onPress={() => this.props.navigation.navigate('Reset')}>
             Reset password
           </Text>  
+          <View style={{flexDirection:'row',marginVertical:8,alignItems:'center',justifyContent:'center'}}>
+          <View
+            style={{
+              width:'45%',
+              borderBottomColor: 'black',
+              borderBottomWidth: 1,
+            }}
+          />
+          <Text style={{margin:4,fontSize:18,fontWeight:'700'}}>Or</Text>
+          <View
+            style={{
+              width:'45%',
+              borderBottomColor: 'black',
+              borderBottomWidth: 1,
+            }}
+          />
+          </View>
           <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
-          <GoogleSigninButton
-              style={{ width: 192, height: 48 }}
-              size={GoogleSigninButton.Size.Width}
+          {/* <GoogleSigninButton
+              size={GoogleSigninButton.Size.Icon}
               color={GoogleSigninButton.Color.Dark}
               onPress={this._signInGoogle}
-              disabled={this.state.isSigninInProgress} />
-               <LoginButton
-                style={{ width: 192, height: 48 }}
-                onLoginFinished={
-                  (error, result) => {
-                    if (error) {
-                      console.log("login has error: " + result.error);
-                    } else if (result.isCancelled) {
-                      console.log("login is cancelled.");
-                    } else {
-                      AccessToken.getCurrentAccessToken().then(
-                        (data) => {
-                          console.log(data.accessToken.toString())
-                        }
-                      )
-                    }
-                  }
-                }
-          onLogoutFinished={() => console.log("logout.")}/>
+              disabled={this.state.isSigninInProgress} /> */}
+            <TouchableOpacity onPress={this._signInGoogle}>
+              <Icon name="google" size={38} color="#DB4437"/>
+            {/* <Text> Login With Google </Text>     */}
+            </TouchableOpacity>
+            <TouchableOpacity onPress={this._signInFacebook}>
+            <Icon name="facebook" size={38} color="#3b5998"/>
+              {/* <Text> Login With Facebook </Text>           */}
+            </TouchableOpacity>
           </View>
           <Text 
             style={styles.loginText}
             onPress={() => this.props.navigation.navigate('Register')}>
             Don't have account? Click here to signup
           </Text>  
+        </View>
         </View>
         )
     }
@@ -213,9 +236,9 @@ import { AccessToken, LoginManager,LoginButton } from 'react-native-fbsdk';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
+    // display: "flex",
+    // flexDirection: "column",
+    // justifyContent: "center",
     padding: 35,
     backgroundColor: '#fff'
   },

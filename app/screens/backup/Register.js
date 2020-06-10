@@ -1,6 +1,6 @@
 
 import React, {Component } from 'react';
-import { StyleSheet, ActivityIndicator, View, Text, Alert,TextInput,TouchableOpacity,Button } from 'react-native';
+import { StyleSheet, ActivityIndicator, View, Text, Alert,TextInput,Image,Button } from 'react-native';
 // import { , Input, Icon } from 'react-native-elements';
 // import {Button} from 'native-base'
 // import auth from '@react-native-firebase/auth';
@@ -90,6 +90,17 @@ class Register extends Component {
           }    
           return (
             <View style={styles.container}>  
+              <View style={{alignItems:'center',justifyContent:'center'}}>
+              <Image
+                style={{width: 50,height: 50,marginVertical:16}}
+                source={require('../../assets/bcs_old_favicon.png')}
+              />
+                <Text style={{fontSize:26,color:'#3E4095',fontWeight:'bold'}}>Sign Up</Text>
+              </View> 
+              <View style={{
+                flexDirection: "column",
+                justifyContent: "center",
+                }}> 
               <TextInput
                 style={styles.inputStyle}
                 placeholder="Name"
@@ -135,6 +146,7 @@ class Register extends Component {
                 Already Registered? Click here to login
               </Text>                          
             </View>
+            </View>
           );
     }
     
@@ -162,11 +174,7 @@ export  default connect(mapStateToProps,mapDispatchToProps)(Register)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
     padding: 35,
-    backgroundColor: '#fff'
   },
   inputStyle: {
     width: '100%',

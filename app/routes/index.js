@@ -26,7 +26,7 @@ import ProfilePage from '../screens/backup/ProfilePage'
 
 
 
-import DrawerScreen from '../screens/DrawerScreen/DrawerScreen'
+import DrawerScreen from '../screens/DrawerScreen'
 import Bible from '../screens/Bible'
 import LanguageList from '../screens/LanguageList'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -119,7 +119,8 @@ const DrawerNavigate = createDrawerNavigator({
 {
   // initialRouteName: 'Bible',
   contentComponent:DrawerScreen,
-  drawerWidth: 250
+  drawerWidth: 250,
+  overlayColor: 'rgba(52, 52, 52, 0.8)'
 },
 );
 
