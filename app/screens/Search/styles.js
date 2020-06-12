@@ -6,6 +6,7 @@ export const searchStyle =(colorFile, sizeFile) =>{
     return StyleSheet.create({
         container:{
             backgroundColor:colorFile.backgroundColor,
+            margin:8,
             flex:1
         },
         ListEmptyContainer:{
@@ -31,7 +32,9 @@ export const searchStyle =(colorFile, sizeFile) =>{
         textLength:{
             alignSelf:"center",
             color:colorFile.textColor,
-            fontSize:sizeFile.contentText
+            fontSize:sizeFile.contentText,
+            // justifyContent:'center',
+            // alignItems:'center'
         },
         headerText:{
             width:width,

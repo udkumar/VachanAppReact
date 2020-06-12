@@ -1,7 +1,9 @@
 package com.vachango;
 import android.os.Bundle;
 import android.content.Intent;
-import android.content.res.Configuration; // <--- import
+import android.content.res.Configuration; // <--- 
+// import com.imagepicker.permissions.OnImagePickerPermissionsCallback; // <- add this import
+// import com.facebook.react.modules.core.PermissionListener; // <- add this import
 
 
 import org.devio.rn.splashscreen.SplashScreen;
@@ -12,6 +14,23 @@ import com.facebook.react.ReactRootView;
 import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 
 public class MainActivity extends ReactActivity {
+  // private PermissionListener listener;
+
+  // @Override
+  // public void setPermissionListener(PermissionListener listener)
+  // {
+  //   this.listener = listener;
+  // }
+
+  // @Override
+  // public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
+  // {
+  //   if (listener != null)
+  //   {
+  //     listener.onRequestPermissionsResult(requestCode, permissions, grantResults);
+  //   }
+  //   super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+  // }
 //  @Override
 //     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 //         super.onActivityResult(requestCode, resultCode, data);
@@ -39,6 +58,7 @@ public class MainActivity extends ReactActivity {
         }
       };
     }
+
 
     @Override
       public void onConfigurationChanged(Configuration newConfig) {

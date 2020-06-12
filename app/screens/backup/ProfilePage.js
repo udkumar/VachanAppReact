@@ -14,7 +14,6 @@ import DbQueries from '../../utils/dbQueries'
 import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin';                        
 
 
-
  class ProfilePage extends Component {
     constructor(props){
         super(props)
@@ -22,7 +21,9 @@ import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin';
         this.state = {
           initializing:true,
           user:this.props.email,
-          userData:''
+          imageUrl:this.props.photo,
+          userData:'',
+          isLoading:false
         }
       }
     async componentDidMount(){
@@ -34,7 +35,13 @@ import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin';
             // this.props.navigation.navigate('Login')
           }
           else{
-            this.setState({user:user._user.email,userData:user})
+
+            console.log(" USER AUTH STATE CHANGED  ",user._user)
+            this.setState({user:user._user.email,userData:user,isLoading:false,imageUrl:user._user.photoURL})
+            this.props.userInfo({email:user._user.email,uid:user._user.uid,
+            userName:user._user.displayName,phoneNumber:null,photo:user._user.photoURL})
+            this.setState({isLoading:true})
+
           }
         })  
     }
@@ -52,20 +59,19 @@ import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin';
     }
   
     render() {
-      console.log(" user ",this.props.email)
+      console.log(" photo ",this.state.imageUrl)
     if(!this.state.user){
         return <Login navigation={this.props.navigation} user={this.state.user}/>
     }
-    return (
+    return(
       <View style={styles.container}>
           <View style={styles.header}></View>
-          <Image style={styles.avatar} source={{uri: 'https://bootdey.com/img/Content/avatar/avatar6.png'}}/>
+          <Image style={styles.avatar} source={{uri:this.state.imageUrl}}/>
           <View style={styles.body}>
             <View style={styles.bodyContent}>
               <Text style={styles.name}>{this.state.user}</Text>
-              <Text style={styles.info}>UX Designer / Mobile developer</Text>
-              <Text style={styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis, omittam deseruisse consequuntur ius an,</Text>
-              
+              {/* <Text style={styles.info}>UX Designer / Mobile developer</Text> */}
+              {/* <Text style={styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis, omittam deseruisse consequuntur ius an,</Text> */}
               <TouchableOpacity onPress={this.logOut} style={styles.buttonContainer}>
                 <Text style={{color:"#fff"}}>LOG OUT</Text>  
               </TouchableOpacity>              
@@ -139,6 +145,7 @@ const mapStateToProps = state =>{
   return{
       email:state.userInfo.email,
       uid:state.userInfo.uid,
+      photo:state.userInfo.photo,
       userName:state.userInfo.userName
   }
 }

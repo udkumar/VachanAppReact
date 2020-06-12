@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import DbQueries from '../../utils/dbQueries.js'
+import APIFetch from '../../utils/APIFetch'
 import {getBookNameFromMapping, getBookNumberFromMapping, getResultText} from '../../utils/UtilFunctions'
 const width = Dimensions.get('window').width-20;
 import SearchTab from '../../components/SearchTab/SearchTab'
@@ -59,8 +60,10 @@ class Search extends Component {
       isLoading:false,
       text:'',
       tabsData:[],
+      sourceId:this.props.sourceId,
       languageName:this.props.languageName,
       versionCode:this.props.versionCode,
+      downloaded:this.props.downloaded
     }
 
     this.onSearchText = this.onSearchText.bind(this)
@@ -72,31 +75,48 @@ class Search extends Component {
   
   onSearchText(){
     this.setState({isLoading: true, searchedResult:[], tabsData:[]}, async () => {
-      let searchResultByBookName = await DbQueries.querySearchBookWithName(this.state.versionCode, this.state.languageName,this.state.text);
-      // console.log("SEARCHED  RESULT",searchResultByBookName)
-      if(searchResultByBookName){
-      console.log("SEARCHED  RESULT",searchResultByBookName)
-        // var refList = [];
-        // bookId:resultsB[i].bookId,chapterNumber:resultsB[i].chapters[j].chapterNumber,verses:matchedStr
-        let reference = [{
-            bookId:searchResultByBookName,
-            chapterNumber:1,
-            verseNumber:'1',
-						text:'',
-          }]
-          // refList.push(reference);
-        this.setState({searchedResult: reference})
-        this.addRefListToTab(reference)
+
+      if(this.state.downloaded){
+        let searchResultByBookName = await DbQueries.querySearchBookWithName(this.state.versionCode, this.state.languageName,this.state.text);
+        // console.log("SEARCHED  RESULT",searchResultByBookName)
+        if(searchResultByBookName){
+        console.log("SEARCHED  RESULT",searchResultByBookName)
+          let reference = [{
+              bookId:searchResultByBookName,
+              chapterNumber:1,
+              verseNumber:'1',
+              text:'',
+            }]
+          this.setState({searchedResult: reference})
+          this.addRefListToTab(reference)
+        }
+        let searchResultByVerseText = await DbQueries.querySearchVerse(this.state.versionCode, this.state.languageName,this.state.text)
+        console.log("searchResultByVerseText  ",searchResultByVerseText)
+        if (searchResultByVerseText &&  searchResultByVerseText.length >0) {
+          this.setState({searchedResult:[...this.state.searchedResult, ...searchResultByVerseText]})
+          this.addRefListToTab(searchResultByVerseText)
+        }
+        this.setState({isLoading:false})
+      }else{
+        var res = await APIFetch.searchText(this.state.sourceId,this.state.text)
+        var data = []
+          if (res) {
+            for(var i=0; i<=res.result.length-1; i++){
+            // console.log("result ",res.result[i])
+                data.push({bookId:res.result[i].bookCode,
+                  chapterNumber:res.result[i].chapter,
+                  verseNumber:res.result[i].verse,
+                  text:res.result[i].text,})
+            }
+            this.setState({searchedResult:data})
+            this.addRefListToTab(data)
+          }
+          this.setState({isLoading:false})
       }
-      let searchResultByVerseText = await DbQueries.querySearchVerse(this.state.versionCode, this.state.languageName,this.state.text)
-      console.log("searchResultByVerseText  ",searchResultByVerseText)
-      if (searchResultByVerseText &&  searchResultByVerseText.length >0) {
-        this.setState({searchedResult:[...this.state.searchedResult, ...searchResultByVerseText]})
-        this.addRefListToTab(searchResultByVerseText)
-      }
-      this.setState({isLoading:false})
+     
     })
   }
+  
 
   clearData() {
     // if(this.state.text !=null){
@@ -221,9 +241,8 @@ class Search extends Component {
   searchedData = ({item,index}) => {
     return (
       <TouchableOpacity style={this.styles.searchedDataContainer} 
-        onPress={()=>this.props.navigation.navigate('Book', {bookId: item.bookId, 
-          bookName: getBookNameFromMapping(item.bookId,this.state.languageName), 
-          chapterNumber: item.chapterNumber, verseNumber: item.verseNumber})}>
+        // onPress={()=>this.props.navigation.navigate('Bible')}
+        >
         <Text style={this.styles.searchedData}> 
           {getBookNameFromMapping(item.bookId,this.state.languageName)} {item.chapterNumber} : {item.verseNumber} 
         </Text>
@@ -231,17 +250,31 @@ class Search extends Component {
       </TouchableOpacity>
     )
   }
-
+    updateLangVer=async(item)=>{
+      // this.props.updateVersion({language:item.languageName,languageCode:item.languageCode,
+        // versionCode:item.versionCode,sourceId:item.sourceId,downloaded:item.downloaded})
+        this.setState({tabsData:[],searchedResult:[],sourceId:item.sourceId,languageName:item.languageName,versionCode:item.versionCode,downloaded:item.downloaded})
+    }
   render() {
     let text = this.state.isLoading == true ? "Loading..." : this.state.tabsData.length + " search results found"
     return (
       <View style={this.styles.container}>
+        <TouchableOpacity onPress={()=>this.props.navigation.navigate('LanguageList',{updateLangVer:this.updateLangVer})} style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',margin:8}}>
+          {/* <View> */}
+            <Text  style={{fontSize:18}}>Change Bible </Text>
+          {/* </View>  */}
+          {/* <View> */}
+            <Text style={{fontSize:16,color:'#3740FE'}}>{this.state.languageName} {this.state.versionCode}</Text>
+          {/* </View> */}
+        </TouchableOpacity>
+        
+        {this.state.tabsData.length > 0 &&
+        <View>
+        <Text style={this.styles.textLength}>{text}</Text>
         <SearchTab
           toggleFunction={this.toggleButton}
           activeTab={this.state.activeTab}
         />
-        <Text style={this.styles.textLength}>{text}</Text>
-        {this.state.tabsData.length > 0 && 
          <FlatList
          ref={ref => this.elementIndex = ref}
          data={this.state.tabsData}
@@ -249,8 +282,8 @@ class Search extends Component {
         //  ListEmptyComponent={this.ListEmptyComponent}
         //  ListFooterComponent={this.ListFooterComponent}
        />
+       </View>  
         }
-       
       </View>
     )
   }
@@ -260,6 +293,8 @@ const mapStateToProps = state =>{
   return{
     languageName: state.updateVersion.language,
     versionCode:state.updateVersion.versionCode,
+    downloaded:state.updateVersion.downloaded,
+    sourceId:state.updateVersion.sourceId,
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
   }

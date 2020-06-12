@@ -263,6 +263,23 @@ var APIFetch = {
             console.log("error on getting all books ", error)
             return error;
         }
+    },
+    async searchText(sId,text){
+        try {
+            return await fetch('https://api.vachanonline.net/v1/search/'+JSON.parse(sId)+'?keyword='+text, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(ApiUtils.checkStatus)
+                .then((response) => response.json())
+                .catch(e => console.log("erorr fetching all books ", e))
+        } catch (error) {
+            console.log("error on getting search ", error)
+            return error;
+        }
     }
     
     

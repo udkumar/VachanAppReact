@@ -35,6 +35,8 @@ target 'AutographaGo_ReactNative' do
 
     pod 'RNScreens', :path => '../node_modules/react-native-screens'
 
+    pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
+
   end
 
   target 'AutographaGo_ReactNativeTests' do

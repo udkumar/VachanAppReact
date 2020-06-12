@@ -1,15 +1,16 @@
 
 import React, {Component } from 'react';
-import { StyleSheet, ActivityIndicator, View, Text, Alert,TextInput,Image,Button } from 'react-native';
+import { StyleSheet, ActivityIndicator, View, Text, ImagePicker,TextInput,Image,Button} from 'react-native';
 // import { , Input, Icon } from 'react-native-elements';
 // import {Button} from 'native-base'
 // import auth from '@react-native-firebase/auth';
 import firebase from 'react-native-firebase'
 import {userInfo} from '../../store/action/'
 import {connect} from 'react-redux'
-
+// import ImagePicker from 'react-native-image-picker';
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 
 class Register extends Component {
@@ -24,7 +25,8 @@ class Register extends Component {
             password: '',
             cpassword:'',
             passwordVisible:true,
-            isLoading: false
+            isLoading: false,
+            filePath: {},
         }
     }
     updateInputVal = (val, prop) => {
@@ -33,54 +35,88 @@ class Register extends Component {
       this.setState(state);
     }
     registerUser = () => {
-      if(this.state.email === '' && this.state.password === '') {
-        Alert.alert('Enter details to signup!')
-      } else {
-        this.setState({
-          isLoading: true,
-        })
-        if(this.state.cpassword === this.state.password){
-        firebase
-        .auth()
-        .createUserWithEmailAndPassword(this.state.email, this.state.password)
-        .then((res) => {
-            res.user.updateProfile({
-              displayName: this.state.displayName,
-              // phoneNumber:
-            })
-            this.props.userInfo({email:res.user._user.email,uid:res.user._user.uid,userName:res.user._user.displayName,phoneNumber:null,photo:null})
-            // this.props.navigation.navigate('Bible')
-            // this.setState({
-            //   isLoading: false,
-            //   displayName: '',
-            //   email: '', 
-            //   password: ''
-            // })
-          // this.props.navigation.navigate('Login')
-        })
-        .catch(error =>{
-          if(error.code === 'auth/weak-password'){
-            Alert.alert("Weak password")
+      console.log(" photo url ",this.state.filePath)
+      // if(this.state.email === '' && this.state.password === '') {
+      //   Alert.alert('Enter details to signup!')
+      // } else {
+      //   this.setState({
+      //     isLoading: true,
+      //   })
+      //   if(this.state.cpassword === this.state.password){
+      //   firebase
+      //   .auth()
+      //   .createUserWithEmailAndPassword(this.state.email, this.state.password)
+      //   .then((res) => {
+      //       res.user.updateProfile({
+      //         displayName: this.state.displayName,
+      //         // photoURL:this.state.filePath
+      //         // phoneNumber:
+      //       })
+      //       this.props.userInfo({email:res.user._user.email,uid:res.user._user.uid,userName:res.user._user.displayName,phoneNumber:null,photo:null})
+      //       // this.props.navigation.navigate('Bible')
+      //       // this.setState({
+      //       //   isLoading: false,
+      //       //   displayName: '',
+      //       //   email: '', 
+      //       //   password: ''
+      //       // })
+      //     // this.props.navigation.navigate('Login')
+      //   })
+      //   .catch(error =>{
+      //     if(error.code === 'auth/weak-password'){
+      //       Alert.alert("Weak password")
 
-          }
-          if(error.code === 'auth/email-already-in-use'){
-            Alert.alert("Email already in use")
+      //     }
+      //     if(error.code === 'auth/email-already-in-use'){
+      //       Alert.alert("Email already in use")
 
-          }
-          if(error.code === 'auth/invalid-email'){
-            Alert.alert("Invalid Email")
-          }
-          this.setState({isLoading:false })
-        })   
-      }
-      else{
-        Alert.alert("Password and confirm password donot match")
-        this.setState({isLoading:false})
-      }   
-      }
+      //     }
+      //     if(error.code === 'auth/invalid-email'){
+      //       Alert.alert("Invalid Email")
+      //     }
+      //     this.setState({isLoading:false })
+      //   })   
+      // }
+      // else{
+      //   Alert.alert("Password and confirm password donot match")
+      //   this.setState({isLoading:false})
+      // }   
+      // }
     }
+
+    chooseFile = () => {
+      var options = {
+        title: 'Select Image',
+        customButtons: [
+          { name: 'customOptionKey', title: 'Choose Photo from Custom Option' },
+        ],
+        storageOptions: {
+          skipBackup: true,
+          path: 'images',
+        },
+      };
+      ImagePicker.showImagePicker(options, response => {
+        console.log('Response = ', response);
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.error) {
+          console.log('ImagePicker Error: ', response.error);
+        } else if (response.customButton) {
+          console.log('User tapped custom button: ', response.customButton);
+          alert(response.customButton);
+        } else {
+          let source = response;
+          // You can also display the image using data:
+          // let source = { uri: 'data:image/jpeg;base64,' + response.data };
+          this.setState({
+            filePath: source,
+          });
+        }
+      });
+    };
   
     render(){
+      console.log(" FILE   ",this.state.filePath)
           if(this.state.isLoading){
             return(
               <View style={styles.preloader}>
@@ -91,10 +127,16 @@ class Register extends Component {
           return (
             <View style={styles.container}>  
               <View style={{alignItems:'center',justifyContent:'center'}}>
+              <TouchableOpacity onPress={this.chooseFile} >
               <Image
                 style={{width: 50,height: 50,marginVertical:16}}
-                source={require('../../assets/bcs_old_favicon.png')}
+                source={Object.keys(this.state.filePath).length == 0 ? require('../../assets/bcs_old_favicon.png') :{uri:this.state.filePath.uri}}
               />
+              {/* <Image
+                style={{width: 50,height: 50,marginVertical:16}}
+                source={require('../../assets/bcs_old_favicon.png')}
+              /> */}
+              </TouchableOpacity>
                 <Text style={{fontSize:26,color:'#3E4095',fontWeight:'bold'}}>Sign Up</Text>
               </View> 
               <View style={{
@@ -143,7 +185,7 @@ class Register extends Component {
               <Text 
                 style={styles.loginText}
                 onPress={() => this.props.navigation.goBack()}>
-                Already Registered? Click here to login
+                Already Registered? Click here to Sign In
               </Text>                          
             </View>
             </View>

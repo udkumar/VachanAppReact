@@ -39,8 +39,7 @@ class Bible extends Component {
           header: params.visibleParallelView && null,
           headerLeft:(
                 <View style={navStyles.headerLeftStyle}>
-                  <View style={{marginRight:10}}>
-                  <TouchableOpacity style={navStyles.touchableStyleLeft}  
+                  <TouchableOpacity style={[navStyles.touchableStyleLeft]}  
                       onPress={() =>{navigation.toggleDrawer()}}>
                     <Icon 
                         name="menu"  
@@ -48,20 +47,16 @@ class Bible extends Component {
                         size={20}
                     />
                     </TouchableOpacity>
-                  </View>
-                  <View style={{marginRight:10}}>
                     <TouchableOpacity style={navStyles.touchableStyleLeft} 
-                      onPress={() =>{navigation.navigate("SelectionTab", {getReference:params.getRef,parallelContent:false,bookId:params.bookId,chapterNumber:params.currentChapter,totalChapters:params.numOfChapter,totalVerses:params.numOfVerse})}}> 
+                      onPress={() =>{navigation.navigate("SelectionTab", 
+                      {getReference:params.getRef,parallelContent:false,bookId:params.bookId,chapterNumber:params.currentChapter,totalChapters:params.numOfChapter,totalVerses:params.numOfVerse})}}> 
                       <Text  style={navStyles.headerTextStyle}>{params.bookName}  {params.currentChapter }</Text>
                     <Icon name="arrow-drop-down" color="#fff" size={20}/>
                     </TouchableOpacity>
-                  </View>
-                  <View style={{marginRight:10}}>
-                    <TouchableOpacity onPress={() =>{{navigation.navigate("LanguageList",{updateLangVer:params.updatelangVer})}}} style={navStyles.headerLeftStyle}>
+                    <TouchableOpacity onPress={() =>{{navigation.navigate("LanguageList",{updateLangVer:params.updatelangVer})}}} style={[navStyles.headerLeftStyle]}>
                       <Text style={navStyles.headerTextStyle}>{params.languageName}  {params.versionCode}</Text>
                       <Icon name="arrow-drop-down" color="#fff" size={20}/>
                     </TouchableOpacity>
-                  </View>
                 </View>
             ), 
        
@@ -70,7 +65,7 @@ class Bible extends Component {
               backgroundColor: "#3F51B5",
               elevation: 0,
               shadowOpacity: 0,
-              height:40,
+              // height:40,
               width:params.visibleParallelView ? '50%' :'100%'
           },
             headerRight:(
@@ -312,14 +307,17 @@ class Bible extends Component {
 
   updateLangVer=async(item)=>{
     var time =  new Date()
-    DbQueries.addHistory(item.sourceId,item.languageName,item.languageCode, 
-    item.versionCode, this.props.bookId, JSON.parse(this.state.currentVisibleChapter), item.downloaded, time)
-    // this.props.updateVersion({language:item.languageName,languageCode:item.languageCode,
-    //   versionCode:item.versionCode,sourceId:item.sourceId,downloaded:item.downloaded})
+    DbQueries.addHistory(item.sourceId, item.languageName,item.languageCode, 
+    item.versionCode, this.props.bookId, JSON.parse(this.state.currentVisibleChapter), 
+    item.downloaded, time)
+
+    this.props.updateVersion({language:item.languageName,languageCode:item.languageCode,
+    versionCode:item.versionCode,sourceId:item.sourceId,downloaded:item.downloaded})
+    
     this.props.navigation.setParams({
-      languageName:item.languageName,
-      versionCode:item.versionCode,
-      bookName:getBookNameFromMapping(this.props.bookId,item.languageName).length > 8 ? getBookNameFromMapping(this.props.bookId,item.languageName).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,item.languageName),
+    languageName:item.languageName,
+    versionCode:item.versionCode,
+    bookName:getBookNameFromMapping(this.props.bookId,item.languageName).length > 8 ? getBookNameFromMapping(this.props.bookId,item.languageName).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,item.languageName),
       // chapterNumber:this.state.currentVisibleChapter
     })
     // this.getBookMarks()
@@ -802,13 +800,13 @@ getNotes(){
           </View> */}
           <FlatList
                 data={this.state.chapterContent }
-                contentContainerStyle={{flexGrow:1,margin:16}}
-                extraData={this.state}
+                contentContainerStyle={{margin:16}}
+                // extraData={this.state}
                 // showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
                 renderItem={({item, index}) => 
                   <VerseView
-                      ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
+                      // ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
                       verseData = {item}
                       index = {index}
                       styles = {this.styles}
@@ -914,6 +912,7 @@ touchableStyleRight:{
 touchableStyleLeft:{
   flexDirection:"row",
     marginLeft:10,
+    marginRight:10
 },
 headerTextStyle:{
     fontSize:16,

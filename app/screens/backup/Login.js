@@ -31,7 +31,7 @@ import { AccessToken, LoginManager,LoginButton } from 'react-native-fbsdk';
 
     login = async() => {
       if(this.state.email === '' && this.state.password === '') {
-        Alert.alert('Enter details to signin!')
+        // Alert.alert('Enter details to signin!')
       } else {
         this.setState({
           isLoading: true,
@@ -41,9 +41,9 @@ import { AccessToken, LoginManager,LoginButton } from 'react-native-fbsdk';
         .signInWithEmailAndPassword(this.state.email, this.state.password)
         .then((res) => {
           console.log(res)
-          console.log('User logged-in successfully!')
-          this.props.userInfo({email:res.user._user.email,uid:res.user._user.uid,
-          userName:res.user._user.displayName,phoneNumber:null,photo:null})
+          // console.log('User logged-in successfully!')
+          // this.props.userInfo({email:res.user._user.email,uid:res.user._user.uid,
+          // userName:res.user._user.displayName,phoneNumber:null,photo:null})
           this.setState({
             isLoading: false,
             email: '', 
@@ -69,7 +69,7 @@ import { AccessToken, LoginManager,LoginButton } from 'react-native-fbsdk';
     _signInGoogle = () => {
       GoogleSignin.signIn()
         .then((data) => {
-          console.log(" USER GOOGLE DATA ",data)
+          // console.log(" USER GOOGLE DATA ",data)
 
           // Create a new Firebase credential with the token
           const credential = firebase.auth.GoogleAuthProvider.credential(data.idToken, data.accessToken);
@@ -77,15 +77,14 @@ import { AccessToken, LoginManager,LoginButton } from 'react-native-fbsdk';
           return firebase.auth().signInWithCredential(credential);
         })
         .then((res) => {
-          console.log(" USER GOOGLE DATA USER",user)
-          this.props.userInfo({email:res.user._user.email,uid:res.user._user.uid,userName:res.user._user.displayName,phoneNumber:null,photo:res.user._user.photoURL})
+          // this.props.userInfo({email:res.user._user.email,uid:res.user._user.uid,userName:res.user._user.displayName,phoneNumber:null,photo:res.user._user.photoURL})
           // If you need to do anything with the user, do it here
           // The user will be logged in automatically by the
           // `onAuthStateChanged` listener we set up in App.js earlier
         })
         .catch((error) => {
           const { code, message } = error;
-          console.log("ERROR ",error)
+          // console.log("ERROR ",error)
           // For details of error codes, see the docs
           // The message contains the default Firebase string
           // representation of the error
@@ -95,7 +94,7 @@ import { AccessToken, LoginManager,LoginButton } from 'react-native-fbsdk';
     _signInFacebook = () => {
       LoginManager.logInWithPermissions(['public_profile', 'email'])
         .then((result) => {
-          console.log(" USER facbook result ",result)
+          // console.log(" USER facbook result ",result)
           if (result.isCancelled) {
             return Promise.reject(new Error('The user cancelled the request'));
           }
@@ -103,19 +102,12 @@ import { AccessToken, LoginManager,LoginButton } from 'react-native-fbsdk';
           return AccessToken.getCurrentAccessToken();
         })
         .then((data) => {
-          console.log(" USER facbook DATA ",data)
-
-          // Create a new Firebase credential with the token
           const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken);
           // Login with the credential
           return firebase.auth().signInWithCredential(credential);
         })
-        .then((user) => {
+        .then((res) => {
           console.log(" USER facbook user ",user)
-
-          // If you need to do anything with the user, do it here
-          // The user will be logged in automatically by the
-          // `onAuthStateChanged` listener we set up in App.js earlier
         })
         .catch((error) => {
           const { code, message } = error;
@@ -219,7 +211,7 @@ import { AccessToken, LoginManager,LoginButton } from 'react-native-fbsdk';
           <Text 
             style={styles.loginText}
             onPress={() => this.props.navigation.navigate('Register')}>
-            Don't have account? Click here to signup
+            Don't have account? Click here to Sign Up
           </Text>  
         </View>
         </View>

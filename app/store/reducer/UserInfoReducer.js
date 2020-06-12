@@ -15,7 +15,8 @@ function UserInfoReducer(state=initialState,action){
             email:action.payload.email,
             uid:action.payload.uid,
             userName:action.payload.userName,
-            phoneNumber:action.payload.phoneNumber
+            phoneNumber:action.payload.phoneNumber,
+            photo:action.payload.photo
         }
         default: 
         return state

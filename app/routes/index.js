@@ -97,7 +97,7 @@ const NavStack = createStackNavigator(
           backgroundColor: "#3E4095",
           elevation: 0,
           shadowOpacity: 0,
-          height:40
+          // height:40
       },
       headerTintColor: '#fff',
       headerTitleStyle: {
