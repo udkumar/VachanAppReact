@@ -143,7 +143,7 @@ android {
 }
  
 dependencies {
-    // implementation project(':react-native-image-picker')
+    implementation project(':react-native-image-picker')
     compile project(':react-native-webview-bridge')
     compile project(':react-native-orientation')
     implementation project(':react-native-gesture-handler')
@@ -204,4 +204,6 @@ project.afterEvaluate {
 
 
 apply plugin: 'com.google.gms.google-services'
+// apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); 
+// applyNativeModulesAppBuildGradle(project) 
 // com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true

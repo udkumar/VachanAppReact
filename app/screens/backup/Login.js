@@ -1,6 +1,6 @@
 
 import React, {Component} from 'react';
-import { StyleSheet, ActivityIndicator, View, Text, Alert,TextInput,TouchableOpacity,Button,Image} from 'react-native';
+import { StyleSheet, ActivityIndicator, View,KeyboardAvoidingView, Platform,Text, Alert,TextInput,TouchableOpacity,Button,Image} from 'react-native';
 import firebase from 'react-native-firebase'
 import {userInfo} from '../../store/action/'
 import {connect} from 'react-redux'
@@ -137,7 +137,14 @@ import { AccessToken, LoginManager,LoginButton } from 'react-native-fbsdk';
         )
       }    
         return (
-          <View style={styles.container}> 
+          <KeyboardAvoidingView
+          behavior={Platform.OS == "ios" ? "padding" : "height"}
+          style={styles.container}
+        >
+          <View>
+            <Icon name='close' size={28} style={{position:'absolute',left:0,top:0,margin:12}} onPress={()=>{this.props.navigation.pop()}}/>
+          </View>
+          <View style={{padding:35,flex:1}}> 
           <View style={{alignItems:'center',justifyContent:'center'}}>
           <Image
             style={{width: 50,height: 50,marginVertical:16}}
@@ -215,6 +222,7 @@ import { AccessToken, LoginManager,LoginButton } from 'react-native-fbsdk';
           </Text>  
         </View>
         </View>
+        </KeyboardAvoidingView>
         )
     }
 
@@ -231,7 +239,7 @@ const styles = StyleSheet.create({
     // display: "flex",
     // flexDirection: "column",
     // justifyContent: "center",
-    padding: 35,
+    // padding: 35,
     backgroundColor: '#fff'
   },
   passwordView:{

@@ -6,15 +6,13 @@ import {
   Image,
   TouchableOpacity
 } from 'react-native';
-import Login from './Login';
-import firebase from 'react-native-firebase';
 import {connect} from 'react-redux'
+import {Card,CardItem} from 'native-base'
 import {userInfo} from '../../store/action/'
-import DbQueries from '../../utils/dbQueries'
-import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin';                        
+import Login from './Login'
+import firebase from 'react-native-firebase'
 
-
- class ProfilePage extends Component {
+  class ProfilePage extends Component {
     constructor(props){
         super(props)
         this.unsubscriber = null
@@ -35,7 +33,6 @@ import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin';
             // this.props.navigation.navigate('Login')
           }
           else{
-
             console.log(" USER AUTH STATE CHANGED  ",user._user)
             this.setState({user:user._user.email,userData:user,isLoading:false,imageUrl:user._user.photoURL})
             this.props.userInfo({email:user._user.email,uid:user._user.uid,
@@ -54,30 +51,57 @@ import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin';
         firebase.auth().signOut()
         this.props.userInfo({email:null,uid:null,userName:'',phoneNumber:null,photo:null})
         this.setState({user:null})
-        DbQueries.deleteBookmark()
-        
+        // DbQueries.deleteBookmark()
     }
-  
-    render() {
-      console.log(" photo ",this.state.imageUrl)
+  render() {
+    console.log(" user photot ",this.props.photo)
     if(!this.state.user){
         return <Login navigation={this.props.navigation} user={this.state.user}/>
     }
-    return(
-      <View style={styles.container}>
-          <View style={styles.header}></View>
-          <Image style={styles.avatar} source={{uri:this.state.imageUrl}}/>
-          <View style={styles.body}>
-            <View style={styles.bodyContent}>
-              <Text style={styles.name}>{this.state.user}</Text>
-              {/* <Text style={styles.info}>UX Designer / Mobile developer</Text> */}
-              {/* <Text style={styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis, omittam deseruisse consequuntur ius an,</Text> */}
-              <TouchableOpacity onPress={this.logOut} style={styles.buttonContainer}>
-                <Text style={{color:"#fff"}}>LOG OUT</Text>  
-              </TouchableOpacity>              
-             
-            </View>
-        </View>
+    return (
+      <View style={{flex:1,backgroundColor:'#eee',margin:0}}>
+          <View style={styles.container}>
+          <Card>
+            <CardItem>
+                <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
+                <Image style={styles.avatar} source={{uri:this.props.photo !=null ? this.props.photo : 'https://bootdey.com/img/Content/avatar/avatar6.png'}}/>
+                <View>
+                <Text>{this.props.email}</Text>
+                <Text>{this.props.userName}</Text>
+                {/* <Text>{this.props.phoneNumber}</Text> */}
+                </View>
+                </View>
+            
+            </CardItem>
+            </Card>
+            <View></View>
+            <Card>
+            <CardItem header bordered>
+              <Text>NativeBase</Text>
+            </CardItem>
+            <CardItem header bordered>
+              <Text>NativeBase</Text>
+            </CardItem>
+            <CardItem header bordered>
+              <Text>NativeBase</Text>
+            </CardItem>
+            <CardItem header bordered>
+              <Text>NativeBase</Text>
+            </CardItem>
+            </Card>
+            <Card>
+            <CardItem header bordered style={{justifyContent:'center',alignItems:'center'}}>
+            <TouchableOpacity 
+            onPress={this.logOut} 
+            style={{justifyContent:'center',alignItems:'center'}}
+            // style={styles.buttonContainer}
+            >
+                <Text>LOG OUT</Text>  
+            </TouchableOpacity>          
+            </CardItem>
+            </Card>
+          </View>
+         
       </View>
     );
   }
@@ -85,8 +109,12 @@ import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin';
 
 const styles = StyleSheet.create({
   header:{
-    // backgroundColor: "#00BFFF",
+    backgroundColor: "#00BFFF",
     height:200,
+  },
+  container:{
+    // marginHorizontal:12,
+    // backgroundColor:"#eee"
   },
   avatar: {
     width: 130,
@@ -96,8 +124,8 @@ const styles = StyleSheet.create({
     borderColor: "white",
     marginBottom:10,
     alignSelf:'center',
-    position: 'absolute',
-    marginTop:130
+    // position: 'absolute',
+    // marginTop:130
   },
   name:{
     fontSize:22,
@@ -136,25 +164,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom:20,
     width:250,
-    borderRadius:10,
-    backgroundColor: "#3E4095",
+    borderRadius:30,
+    backgroundColor: "#00BFFF",
   },
 });
 
 const mapStateToProps = state =>{
-  return{
-      email:state.userInfo.email,
-      uid:state.userInfo.uid,
-      photo:state.userInfo.photo,
-      userName:state.userInfo.userName
+    return{
+        email:state.userInfo.email,
+        uid:state.userInfo.uid,
+        photo:state.userInfo.photo,
+        userName:state.userInfo.userName
+    }
   }
-}
-const mapDispatchToProps = dispatch =>{
-  return {
-   userInfo:(payload)=>dispatch(userInfo(payload))
+  const mapDispatchToProps = dispatch =>{
+    return {
+     userInfo:(payload)=>dispatch(userInfo(payload))
+    }
   }
-}
-
+  
 export  default connect(mapStateToProps,mapDispatchToProps)(ProfilePage)
-
-
+  

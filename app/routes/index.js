@@ -1,6 +1,5 @@
 // all of our routes
 import {createStackNavigator, createDrawerNavigator,createSwitchNavigator,createAppContainer} from 'react-navigation'
-import React,{Component} from 'react';
 import About from '../screens/About/About'
 import Search from '../screens/Search/Search'
 import Settings from '../screens/settings/Settings'
@@ -12,10 +11,6 @@ import History from '../screens/History/'
 import Commentary from '../screens/StudyHelp/Commentary/'
 import Dictionary from '../screens/StudyHelp/Dictionary/'
 
-import InfoGraphics from '../screens/StudyHelp/InfoGraphics/'
-import More from '../screens/StudyHelp/More/'
-import {connect} from 'react-redux'
-import {updateContentType} from '../store/action/'
 import StudyHelp from '../screens/StudyHelp/'
 
 import Hints from '../screens/Hints/Hints'
@@ -24,12 +19,9 @@ import Register from '../screens/backup/Register'
 import Login from '../screens/backup/Login'
 import ProfilePage from '../screens/backup/ProfilePage'
 
-
-
 import DrawerScreen from '../screens/DrawerScreen'
 import Bible from '../screens/Bible'
 import LanguageList from '../screens/LanguageList'
-import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import SelectionTab from '../screens/ReferenceSelection/'
 import BookMarks from '../screens/Bookmarks/';
@@ -37,13 +29,6 @@ import Infographics from '../screens/StudyHelp/InfoGraphics/';
 
 const NavStack = createStackNavigator(
   {  
-    // ModalForSelection:{
-    //   screen:ModalForSelection,
-    //   navigationOptions: {
-    //     // title: 'Home',
-    //     header: null
-    //   },
-    // },
       Bible:{
         screen:Bible,
         navigationOptions: ({ navigation }) => ({
@@ -82,9 +67,18 @@ const NavStack = createStackNavigator(
       NotePage:{screen:NotePage},
       Infographics:{screen:Infographics},
       Login:{screen: Login},
-      Register:{screen: Register},
+      Register:{screen: Register,
+        navigationOptions: () => ({
+          header:null
+        })
+      },
       Reset:{screen: Reset},
-      ProfilePage:{screen:ProfilePage}
+      ProfilePage:{
+        screen:ProfilePage,
+        navigationOptions: () => ({
+          header:null
+        })
+      }
 
      
   },

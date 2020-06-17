@@ -28,7 +28,7 @@ import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 import com.github.alinz.reactnativewebviewbridge.WebViewBridgePackage;
 import com.facebook.reactnative.androidsdk.FBSDKPackage;
-// import com.imagepicker.ImagePickerPackage;
+import com.imagepicker.ImagePickerPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -70,8 +70,8 @@ public class MainApplication extends Application implements ReactApplication {
             new RNFirebaseMessagingPackage(),
             new RNFirebaseNotificationsPackage(),
             new WebViewBridgePackage(),
-            new FBSDKPackage()
-            // new ImagePickerPackage()
+            new FBSDKPackage(),
+            new ImagePickerPackage()
       );
     }
 

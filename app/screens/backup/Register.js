@@ -1,13 +1,13 @@
 
 import React, {Component } from 'react';
-import { StyleSheet, ActivityIndicator, View, Text, ImagePicker,TextInput,Image,Button} from 'react-native';
+import { StyleSheet, ActivityIndicator, View, Text,TextInput,Image,Button,Alert,Platform,KeyboardAvoidingView} from 'react-native';
 // import { , Input, Icon } from 'react-native-elements';
 // import {Button} from 'native-base'
 // import auth from '@react-native-firebase/auth';
 import firebase from 'react-native-firebase'
 import {userInfo} from '../../store/action/'
 import {connect} from 'react-redux'
-// import ImagePicker from 'react-native-image-picker';
+import ImagePicker from 'react-native-image-picker';
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -24,7 +24,8 @@ class Register extends Component {
             email: '', 
             password: '',
             cpassword:'',
-            passwordVisible:true,
+            passwordVisible1:true,
+            passwordVisible2:true,
             isLoading: false,
             filePath: {},
         }
@@ -36,52 +37,53 @@ class Register extends Component {
     }
     registerUser = () => {
       console.log(" photo url ",this.state.filePath)
-      // if(this.state.email === '' && this.state.password === '') {
-      //   Alert.alert('Enter details to signup!')
-      // } else {
-      //   this.setState({
-      //     isLoading: true,
-      //   })
-      //   if(this.state.cpassword === this.state.password){
-      //   firebase
-      //   .auth()
-      //   .createUserWithEmailAndPassword(this.state.email, this.state.password)
-      //   .then((res) => {
-      //       res.user.updateProfile({
-      //         displayName: this.state.displayName,
-      //         // photoURL:this.state.filePath
-      //         // phoneNumber:
-      //       })
-      //       this.props.userInfo({email:res.user._user.email,uid:res.user._user.uid,userName:res.user._user.displayName,phoneNumber:null,photo:null})
-      //       // this.props.navigation.navigate('Bible')
-      //       // this.setState({
-      //       //   isLoading: false,
-      //       //   displayName: '',
-      //       //   email: '', 
-      //       //   password: ''
-      //       // })
-      //     // this.props.navigation.navigate('Login')
-      //   })
-      //   .catch(error =>{
-      //     if(error.code === 'auth/weak-password'){
-      //       Alert.alert("Weak password")
+      if(this.state.email === '' && this.state.password === '') {
+        Alert.alert('Enter details to signup!')
+      } else {
+        this.setState({
+          isLoading: true,
+        })
+        if(this.state.cpassword === this.state.password){
+        firebase
+        .auth()
+        .createUserWithEmailAndPassword(this.state.email, this.state.password)
+        .then((res) => {
+          
+            // res.user.updateProfile({
+            //   displayName: this.state.displayName,
+            //   photoURL:'https://vachan-go.firebaseapp.com/this.state.filePath.fileName',
+            //   phoneNumber:8527850073
+            // })
+            this.props.userInfo({email:res.user._user.email,uid:res.user._user.uid,userName:res.user._user.displayName,phoneNumber:null,photo:null})
+            // this.props.navigation.navigate('Bible')
+            // this.setState({
+            //   isLoading: false,
+            //   displayName: '',
+            //   email: '', 
+            //   password: ''
+            // })
+          // this.props.navigation.navigate('Login')
+        })
+        .catch(error =>{
+          if(error.code === 'auth/weak-password'){
+            Alert.alert("Weak password")
 
-      //     }
-      //     if(error.code === 'auth/email-already-in-use'){
-      //       Alert.alert("Email already in use")
+          }
+          if(error.code === 'auth/email-already-in-use'){
+            Alert.alert("Email already in use")
 
-      //     }
-      //     if(error.code === 'auth/invalid-email'){
-      //       Alert.alert("Invalid Email")
-      //     }
-      //     this.setState({isLoading:false })
-      //   })   
-      // }
-      // else{
-      //   Alert.alert("Password and confirm password donot match")
-      //   this.setState({isLoading:false})
-      // }   
-      // }
+          }
+          if(error.code === 'auth/invalid-email'){
+            Alert.alert("Invalid Email")
+          }
+          this.setState({isLoading:false })
+        })   
+      }
+      else{
+        Alert.alert("Password and confirm password donot match")
+        this.setState({isLoading:false})
+      }   
+      }
     }
 
     chooseFile = () => {
@@ -125,7 +127,14 @@ class Register extends Component {
             )
           }    
           return (
-            <View style={styles.container}>  
+            <KeyboardAvoidingView
+          behavior={Platform.OS == "ios" ? "padding" : "height"}
+          style={styles.container}
+        >
+            <View>
+            <Icon name='close' size={28} style={{position:'absolute',left:0,top:0,margin:12}} onPress={()=>{this.props.navigation.pop()}}/>
+            </View>
+            <View style={{padding:35,flex:1}}>  
               <View style={{alignItems:'center',justifyContent:'center'}}>
               <TouchableOpacity onPress={this.chooseFile} >
               <Image
@@ -162,9 +171,9 @@ class Register extends Component {
                 value={this.state.password}
                 onChangeText={(val) => this.updateInputVal(val, 'password')}
                 maxLength={15}
-                secureTextEntry={this.state.passwordVisible}
+                secureTextEntry={this.state.passwordVisible1}
               />   
-            <Icon name={this.state.passwordVisible ? 'eye-off' : 'eye'} size={24} style={{alignSelf:'flex-end',position: 'absolute', right: 10, bottom:30}} onPress={()=>this.setState({passwordVisible:!this.state.passwordVisible})}/>
+            <Icon name={this.state.passwordVisible1 ? 'eye-off' : 'eye'} size={24} style={{alignSelf:'flex-end',position: 'absolute', right: 10, bottom:30}} onPress={()=>this.setState({passwordVisible1:!this.state.passwordVisible1})}/>
             </View>
             <View>
               <TextInput
@@ -173,9 +182,9 @@ class Register extends Component {
                 value={this.state.cpassword}
                 onChangeText={(val) => this.updateInputVal(val, 'cpassword')}
                 maxLength={15}
-                secureTextEntry={this.state.passwordVisible}
+                secureTextEntry={this.state.passwordVisible2}
               />   
-            <Icon name={this.state.passwordVisible ? 'eye-off' : 'eye'} size={24} style={{alignSelf:'flex-end',position: 'absolute', right: 10, bottom:30}} onPress={()=>this.setState({passwordVisible:!this.state.passwordVisible})}/>
+            <Icon name={this.state.passwordVisible2 ? 'eye-off' : 'eye'} size={24} style={{alignSelf:'flex-end',position: 'absolute', right: 10, bottom:30}} onPress={()=>this.setState({passwordVisible2:!this.state.passwordVisible2})}/>
             </View>
               <Button
                 color="#3E4095"
@@ -189,6 +198,7 @@ class Register extends Component {
               </Text>                          
             </View>
             </View>
+          </KeyboardAvoidingView>
           );
     }
     
@@ -216,7 +226,7 @@ export  default connect(mapStateToProps,mapDispatchToProps)(Register)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 35,
+    // padding: 35,
   },
   inputStyle: {
     width: '100%',

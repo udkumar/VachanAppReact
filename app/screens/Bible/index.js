@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Share,
   ToastAndroid,
+  Modal,
   NetInfo,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -25,6 +26,8 @@ import { styles } from './styles.js';
 import {connect} from 'react-redux'
 import Commentary from '../StudyHelp/Commentary/'
 import Dictionary from '../StudyHelp/Dictionary/'
+
+import ProfilePage from '../backup/ProfilePage'
 
 import {Header, Button,Title} from 'native-base'
 import BibleChapter from './component/BibleChapter';
@@ -134,6 +137,7 @@ class Bible extends Component {
       message:'',
       status:false,
       modalVisible: false,
+      // loginModal:false,
       arrLayout:[],
       notesList:[]
     }
@@ -597,7 +601,9 @@ getNotes(){
       }
       else{
         this.setState({bookmarksList:[] },()=>{this.props.navigation.setParams({isBookmark:this.isBookmark()}) })
-        Alert.alert("Please login")
+        // this.setState({loginModal:!this.state.loginModal})
+        // Alert.alert("Please login")
+        this.props.navigation.navigate("ProfilePage")
       }
      }
      else{
@@ -682,7 +688,10 @@ getNotes(){
         })
       }
       else{
-        Alert.alert("Please login")
+        // this.setState({loginModal:!this.state.loginModal})
+        // Alert.alert("Please login")
+        this.props.navigation.navigate("ProfilePage")
+
       }
     }else{
       Alert.alert("Please check internet connection")
@@ -716,9 +725,13 @@ getNotes(){
           firebase.database().ref("users/"+this.props.userId+"/highlights/"+this.props.sourceId+"/"+this.props.bookId+"/"+this.state.currentVisibleChapter).set(array)
         }
         else{
-          alert("Please login")
+          // alert("Please login")
+          // this.setState({loginModal:!this.state.loginModal})
+        this.props.navigation.navigate("ProfilePage")
+
         }
     }else{
+
       Alert.alert("Please check internet connection")
     }
 
@@ -765,9 +778,8 @@ getNotes(){
   toggleParallelView(value){
     this.props.navigation.setParams({visibleParallelView:value})
   }
-
   render() {
-    console.log(" error ",this.state.error)
+    console.log(" login modal ",this.state.loginModal)
     return(
     <View  style={this.styles.container}>
       {this.state.isLoading &&
@@ -796,8 +808,6 @@ getNotes(){
                   </Button>
             </Header>
           }
-          {/* <View>
-          </View> */}
           <FlatList
                 data={this.state.chapterContent }
                 contentContainerStyle={{margin:16}}
@@ -887,6 +897,17 @@ getNotes(){
           </View>
         )}
         </View>}
+         
+        {/* <Modal
+        animationType="slide"
+        transparent={true}
+        visible={this.state.loginModal}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+        }}
+        > */}
+          {/* <ProfilePage navigation={this.props.navigation}  closeloginModal={()=>this.setState({loginModal:false})}/> */}
+        {/* </Modal> */}
         </View>
       )
   }
