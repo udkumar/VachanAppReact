@@ -161,7 +161,7 @@ class Dictionary extends Component {
          visible={this.state.modalVisibleDictionary}>
 
          <View style={this.styles.dictionaryModalView}>
-          <View style={{width:'70%',height:'70%',position: 'absolute', zIndex: 0 }}>
+          <View style={{width:'70%',height:'70%',position: 'absolute', zIndex: 0,}}>
             <Icon
               name='cancel' onPress={()=>this.setState({modalVisibleDictionary:false})}  
               size={28} color='#3E4095' style={{position:'absolute',right:0,zIndex: 1}}

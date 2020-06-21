@@ -24,7 +24,7 @@ export const styles =(colorFile, sizeFile) =>{
     },
     cardItemBackground:{
         backgroundColor:colorFile.backgroundColor,
-        paddingVertical:10
+        padding:10
     },
     commentaryText:{
         fontSize:sizeFile.contentText,

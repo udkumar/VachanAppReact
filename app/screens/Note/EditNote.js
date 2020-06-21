@@ -36,7 +36,7 @@ class EditNote extends Component {
     headerLeft:(<HeaderBackButton tintColor='white' onPress={()=>navigation.state.params.handleBack()}/>),
     headerRight:(
       <TouchableOpacity style={{margin:8}} onPress={()=>navigation.state.params.handleAdd()}>
-        <Text style={{fontSize:12,color:'#fff'}}>DONE</Text>
+        <Text style={{fontSize:16,color:'#fff',fontWeight:'700',marginRight:12}}>DONE</Text>
       </TouchableOpacity>
       ),
     
@@ -83,7 +83,7 @@ class EditNote extends Component {
       var firebaseRef = firebase.database().ref("users/"+this.props.uid+"/notes/"+this.props.sourceId+"/"+this.state.bcvRef.bookId)
       
         if(this.state.contentBody == ''){
-          alert(" notes should not be empty")
+          alert(" Note should not be empty")
         }
         else{
           var edit = firebase.database().ref("users/"+this.props.uid+"/notes/"+this.props.sourceId+"/"+this.state.bcvRef.bookId+"/"+this.state.bcvRef.chapterNumber)
@@ -133,7 +133,7 @@ class EditNote extends Component {
   onBack = async () =>{
       if (this.state.noteIndex == -1) {
         if(this.state.contentBody == '' ){
-          alert("body should not be empty")
+          // alert("body should not be empty")
         }
           this.showAlert();
           return
@@ -212,7 +212,8 @@ class EditNote extends Component {
         {/* <Icon name="add-circle" style={this.styles.addIconCustom} size={28} color="gray" onPress={this.onAddVersePress} /> */}
       </View>
       <TextInput
-      placeholder='note body'
+      style={{margin:8}}
+      placeholder='Enter your note here'
       value={this.state.contentBody}
       onChangeText={(text)=>this.setState({contentBody:text})}
       />
@@ -312,7 +313,6 @@ const mapStateToProps = state =>{
     
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
-    
   }
 }
 

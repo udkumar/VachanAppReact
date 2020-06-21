@@ -1,18 +1,19 @@
 
 import React, {Component} from 'react';
+import { NavigationActions, StackActions } from 'react-navigation';
 import { StyleSheet, ActivityIndicator, View,KeyboardAvoidingView, Platform,Text, Alert,TextInput,TouchableOpacity,Button,Image} from 'react-native';
 import firebase from 'react-native-firebase'
-import {userInfo} from '../../store/action/'
+import {userInfo} from '../../store/action'
 import {connect} from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin';  
 import { AccessToken, LoginManager,LoginButton } from 'react-native-fbsdk';
-
+import {styles} from './styles.js'
 
  class Login extends Component {
-    // static navigationOptions = {
-    //     header: null,
-    //     };
+    static navigationOptions = {
+        header: null,
+    };
     constructor(props){
         super(props)
         this.state = {
@@ -22,6 +23,7 @@ import { AccessToken, LoginManager,LoginButton } from 'react-native-fbsdk';
             isLoading:false,
             passwordVisible:true
         }
+        this.styles = styles(this.props.colorFile, this.props.sizeFile);  
     }
     updateInputVal = (val, prop) => {
       const state = this.state;
@@ -41,9 +43,7 @@ import { AccessToken, LoginManager,LoginButton } from 'react-native-fbsdk';
         .signInWithEmailAndPassword(this.state.email, this.state.password)
         .then((res) => {
           console.log(res)
-          // console.log('User logged-in successfully!')
-          // this.props.userInfo({email:res.user._user.email,uid:res.user._user.uid,
-          // userName:res.user._user.displayName,phoneNumber:null,photo:null})
+          this.props.navigation.navigate("Bible")
           this.setState({
             isLoading: false,
             email: '', 
@@ -131,7 +131,7 @@ import { AccessToken, LoginManager,LoginButton } from 'react-native-fbsdk';
     render(){
       if(this.state.isLoading){
         return(
-          <View style={styles.preloader}>
+          <View style={this.styles.preloader}>
             <ActivityIndicator size="large" color="#3E4095"/>
           </View>
         )
@@ -139,7 +139,7 @@ import { AccessToken, LoginManager,LoginButton } from 'react-native-fbsdk';
         return (
           <KeyboardAvoidingView
           behavior={Platform.OS == "ios" ? "padding" : "height"}
-          style={styles.container}
+          style={this.styles.container}
         >
           <View>
             <Icon name='close' size={28} style={{position:'absolute',left:0,top:0,margin:12}} onPress={()=>{this.props.navigation.pop()}}/>
@@ -157,21 +157,21 @@ import { AccessToken, LoginManager,LoginButton } from 'react-native-fbsdk';
             justifyContent: "center",
             }}> 
           <TextInput
-            style={styles.inputStyle}
+            style={this.styles.inputStyle}
             placeholder="Email"
             value={this.state.email}
             onChangeText={(val) => this.updateInputVal(val, 'email')}
           />
           <View>
           <TextInput
-            style={styles.inputStyle}
+            style={this.styles.inputStyle}
             placeholder="Password"
             value={this.state.password}
             onChangeText={(val) => this.updateInputVal(val, 'password')}
             maxLength={15}
             secureTextEntry={this.state.passwordVisible}
           />  
-          <Icon name={this.state.passwordVisible ? 'eye-off' : 'eye'} size={24} style={{alignSelf:'flex-end',position: 'absolute', right: 10, bottom:30}} onPress={()=>this.setState({passwordVisible:!this.state.passwordVisible})}/>
+          <Icon name={this.state.passwordVisible ? 'eye' : 'eye-off'} size={24} style={{alignSelf:'flex-end',position: 'absolute', right: 10, bottom:30}} onPress={()=>this.setState({passwordVisible:!this.state.passwordVisible})}/>
           </View>
           <Button
             color="#3E4095"
@@ -179,7 +179,7 @@ import { AccessToken, LoginManager,LoginButton } from 'react-native-fbsdk';
             onPress={() => this.login()}
           />   
           <Text 
-            style={styles.loginText}
+            style={this.styles.loginText}
             onPress={() => this.props.navigation.navigate('Reset')}>
             Reset password
           </Text>  
@@ -216,7 +216,7 @@ import { AccessToken, LoginManager,LoginButton } from 'react-native-fbsdk';
             </TouchableOpacity>
           </View>
           <Text 
-            style={styles.loginText}
+            style={this.styles.loginText}
             onPress={() => this.props.navigation.navigate('Register')}>
             Don't have account? Click here to Sign Up
           </Text>  
@@ -233,47 +233,6 @@ import { AccessToken, LoginManager,LoginButton } from 'react-native-fbsdk';
 //     headerShown: false,
 // });
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // display: "flex",
-    // flexDirection: "column",
-    // justifyContent: "center",
-    // padding: 35,
-    backgroundColor: '#fff'
-  },
-  passwordView:{
-    flexDirection:'row',
-    alignItems:"center",
-    justifyContent:'center',
-    marginBottom: 15,
-    paddingBottom: 15,
-    marginHorizontal:10
-  },
-  inputStyle: {
-    width: '100%',
-    marginBottom: 15,
-    paddingBottom: 15,
-    alignSelf: "center",
-    borderColor: "#ccc",
-    borderBottomWidth: 1
-  },
-  loginText: {
-    color: '#3740FE',
-    marginTop: 25,
-    textAlign: 'center'
-  },
-  preloader: {
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    position: 'absolute',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#fff'
-  }
-});
 
 const mapStateToProps = state =>{
     return{
@@ -283,7 +242,10 @@ const mapStateToProps = state =>{
         email:state.userInfo.email,
         uid:state.userInfo.uid,
         userName:state.userInfo.userName,
-        phoneNumber:state.userInfo.phoneNumber
+        phoneNumber:state.userInfo.phoneNumber,
+
+        sizeFile:state.updateStyling.sizeFile,
+        colorFile:state.updateStyling.colorFile,
     }
   }
   const mapDispatchToProps = dispatch =>{

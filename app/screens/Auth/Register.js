@@ -11,7 +11,7 @@ import ImagePicker from 'react-native-image-picker';
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-
+import {styles} from './styles.js'
 
 class Register extends Component {
     constructor(props){
@@ -29,6 +29,7 @@ class Register extends Component {
             isLoading: false,
             filePath: {},
         }
+        this.styles = styles(this.props.colorFile, this.props.sizeFile);  
     }
     updateInputVal = (val, prop) => {
       const state = this.state;
@@ -44,11 +45,15 @@ class Register extends Component {
           isLoading: true,
         })
         if(this.state.cpassword === this.state.password){
+        // firebase.auth().currentUser.sendEmailVerification({
+        //     handleCodeInApp: true,
+        //     url: 'app/email-verification',
+        //    });
         firebase
         .auth()
         .createUserWithEmailAndPassword(this.state.email, this.state.password)
-        .then((res) => {
-          
+        .then( async (res) => {
+          console.log(" CURRENT USER ",res)
             // res.user.updateProfile({
             //   displayName: this.state.displayName,
             //   photoURL:'https://vachan-go.firebaseapp.com/this.state.filePath.fileName',
@@ -121,7 +126,7 @@ class Register extends Component {
       console.log(" FILE   ",this.state.filePath)
           if(this.state.isLoading){
             return(
-              <View style={styles.preloader}>
+              <View style={this.styles.preloader}>
                 <ActivityIndicator size="large" color="#3E4095"/>
               </View>
             )
@@ -129,17 +134,20 @@ class Register extends Component {
           return (
             <KeyboardAvoidingView
           behavior={Platform.OS == "ios" ? "padding" : "height"}
-          style={styles.container}
+          style={this.styles.container}
         >
             <View>
             <Icon name='close' size={28} style={{position:'absolute',left:0,top:0,margin:12}} onPress={()=>{this.props.navigation.pop()}}/>
             </View>
             <View style={{padding:35,flex:1}}>  
               <View style={{alignItems:'center',justifyContent:'center'}}>
-              <TouchableOpacity onPress={this.chooseFile} >
+              <TouchableOpacity
+              //  onPress={this.chooseFile}
+                >
               <Image
                 style={{width: 50,height: 50,marginVertical:16}}
-                source={Object.keys(this.state.filePath).length == 0 ? require('../../assets/bcs_old_favicon.png') :{uri:this.state.filePath.uri}}
+                source={require('../../assets/bcs_old_favicon.png')}
+                // source={Object.keys(this.state.filePath).length == 0 ? require('../../assets/bcs_old_favicon.png') :{uri:this.state.filePath.uri}}
               />
               {/* <Image
                 style={{width: 50,height: 50,marginVertical:16}}
@@ -153,13 +161,13 @@ class Register extends Component {
                 justifyContent: "center",
                 }}> 
               <TextInput
-                style={styles.inputStyle}
+                style={this.styles.inputStyle}
                 placeholder="Name"
                 value={this.state.displayName}
                 onChangeText={(val) => this.updateInputVal(val, 'displayName')}
               />      
               <TextInput
-                style={styles.inputStyle}
+                style={this.styles.inputStyle}
                 placeholder="Email"
                 value={this.state.email}
                 onChangeText={(val) => this.updateInputVal(val, 'email')}
@@ -173,18 +181,18 @@ class Register extends Component {
                 maxLength={15}
                 secureTextEntry={this.state.passwordVisible1}
               />   
-            <Icon name={this.state.passwordVisible1 ? 'eye-off' : 'eye'} size={24} style={{alignSelf:'flex-end',position: 'absolute', right: 10, bottom:30}} onPress={()=>this.setState({passwordVisible1:!this.state.passwordVisible1})}/>
+            <Icon name={this.state.passwordVisible1 ? 'eye' : 'eye-off'} size={24} style={{alignSelf:'flex-end',position: 'absolute', right: 10, bottom:30}} onPress={()=>this.setState({passwordVisible1:!this.state.passwordVisible1})}/>
             </View>
             <View>
               <TextInput
-                style={styles.inputStyle}
+                style={this.styles.inputStyle}
                 placeholder="Confirm Password"
                 value={this.state.cpassword}
                 onChangeText={(val) => this.updateInputVal(val, 'cpassword')}
                 maxLength={15}
                 secureTextEntry={this.state.passwordVisible2}
               />   
-            <Icon name={this.state.passwordVisible2 ? 'eye-off' : 'eye'} size={24} style={{alignSelf:'flex-end',position: 'absolute', right: 10, bottom:30}} onPress={()=>this.setState({passwordVisible2:!this.state.passwordVisible2})}/>
+            <Icon name={this.state.passwordVisible2 ? 'eye' : 'eye-off'} size={24} style={{alignSelf:'flex-end',position: 'absolute', right: 10, bottom:30}} onPress={()=>this.setState({passwordVisible2:!this.state.passwordVisible2})}/>
             </View>
               <Button
                 color="#3E4095"
@@ -192,7 +200,7 @@ class Register extends Component {
                 onPress={() => this.registerUser()}
               />
               <Text 
-                style={styles.loginText}
+                style={this.styles.loginText}
                 onPress={() => this.props.navigation.goBack()}>
                 Already Registered? Click here to Sign In
               </Text>                          
@@ -212,7 +220,10 @@ const mapStateToProps = state =>{
       email:state.userInfo.email,
       uid:state.userInfo.uid,
       userName:state.userInfo.userName,
-      phoneNumber:state.userInfo.phoneNumber
+      phoneNumber:state.userInfo.phoneNumber,
+
+      sizeFile:state.updateStyling.sizeFile,
+      colorFile:state.updateStyling.colorFile
   }
 }
 const mapDispatchToProps = dispatch =>{
@@ -223,32 +234,3 @@ const mapDispatchToProps = dispatch =>{
 
 export  default connect(mapStateToProps,mapDispatchToProps)(Register)
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // padding: 35,
-  },
-  inputStyle: {
-    width: '100%',
-    marginBottom: 15,
-    paddingBottom: 15,
-    alignSelf: "center",
-    borderColor: "#ccc",
-    borderBottomWidth: 1
-  },
-  loginText: {
-    color: '#3740FE',
-    marginTop: 25,
-    textAlign: 'center'
-  },
-  preloader: {
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    position: 'absolute',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#fff'
-  }
-});

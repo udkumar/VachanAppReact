@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
-import {Modal, Text,TouchableOpacity,Dimensions,StyleSheet,Animated,LayoutAnimation,FlatList, View, Alert,TouchableWithoutFeedback} from 'react-native';
+import {Modal, Text,TouchableOpacity,Dimensions,StyleSheet,Animated,LayoutAnimation,FlatList,Image, View, Alert,TouchableWithoutFeedback} from 'react-native';
+import BookIcon from 'react-native-vector-icons/Foundation'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+
 import {Card,CardItem,Content,Body,List,ListItem,Left,Right,Accordion} from 'native-base'
 import {updateContentType,fetchAllContent} from '../../../store/action/'
 import {styles} from '../../LanguageList/styles'
@@ -162,11 +164,16 @@ var contentType = ''
             </Modal>
           
             <TouchableOpacity onPress={this.onPressModal} style={[this.props.navStyles.touchableStyleRight,{flexDirection:'row'}]}>
-                <Icon 
-                  name='add-circle'
+            {/* <Image
+                style={{width: 24,height: 24,color:'#fff'}}
+                source={require('../../../assets/Reference02.png')}
+                //
+            /> */}
+                <BookIcon 
+                  name='book'
                   color={"#fff"} 
-                  size={20} 
-              /> 
+                  size={24} 
+                /> 
             </TouchableOpacity>
             </View>
           

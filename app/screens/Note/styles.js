@@ -71,7 +71,8 @@ export const noteStyle =(colorFile, sizeFile) =>{
     containerEditNote:{
         flex:1, 
         flexDirection:'column', 
-        backgroundColor:colorFile.backgroundColor
+        backgroundColor:colorFile.backgroundColor,
+        margin:8
 
     },
     subContainer:{

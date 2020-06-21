@@ -34,23 +34,16 @@ class Commentary extends Component {
         this.alertPresent =false
     }
   componentDidMount(){
+    console.log(" parallelContentSourceId ",this.props.parallelContentSourceId,this.props.bookId,this.props.currentVisibleChapter)
     this.props.fetchCommentaryContent({parallelContentSourceId:this.props.parallelContentSourceId,bookId:this.props.bookId,chapter:this.props.currentVisibleChapter})
   }
-  // componentWillMount(){
-  //   this.props.fetchCommentaryContent({parallelContentSourceId:this.props.parallelContentSourceId,bookId:this.props.bookId,chapter:this.props.currentVisibleChapter})
-  // }
   componentDidUpdate(prevProps) {
     console.log(" PREV PROP ",this.props.currentVisibleChapter,prevProps.currentVisibleChapter)
     if (this.props.bookId != prevProps.bookId || prevProps.currentVisibleChapter != this.props.currentVisibleChapter) {
     this.props.fetchCommentaryContent({parallelContentSourceId:this.props.parallelContentSourceId,bookId:this.props.bookId,chapter:this.props.currentVisibleChapter})
-    // bar prop has changed
     }
-}
-  // componentDidUpdate(prevProps,prevState){
-  //   if(prevProps.bookId !== this.props.bookId || this.props.chapterNumber !==this.props.currentVisibleChapter){
-  //     this.props.fetchCommentaryContent({parallelContentSourceId:this.props.parallelContentSourceId,bookId:this.props.bookId,chapter:this.props.chapterNumber})
-  //   }
-  // }
+  }
+  
   errorMessage(){
     console.log("props ",this.props.error)
     if (!this.alertPresent) {
@@ -100,9 +93,18 @@ class Commentary extends Component {
           <Title style={{fontSize:16}}>{this.props.parallelContentVersionCode}</Title>
         </Body>
         <Right>
-        <Button transparent onPress={()=>this.props.toggleParallelView(false)}>
+        <Button transparent 
+        // onPress={this.props.commentaryFullScreen}
+        onPress={()=>this.props.toggleParallelView(false)}
+        >
           <Icon name='cancel' color={'#fff'} size={20}/>
         </Button>
+        {/* <Button transparent 
+        // onPress={this.props.commentaryFullScreen}
+        onPress={()=>this.props.toggleParallelView(false)}
+        > */}
+          {/* <Icon name='cancel' color={'#fff'} size={20}/> */}
+        {/* </Button> */}
         </Right>
       </Header>
       {
@@ -118,10 +120,7 @@ class Commentary extends Component {
       :
       <View style={{flex:1}}>
         <Text style={[this.styles.commentaryHeading,{margin:10}]}>{getBookNameFromMapping(this.props.bookId,this.props.parallelContentLanguage)} {  } {this.props.commentaryContent.chapter}</Text>
-        {this.props.commentaryContent.bookIntro  == '' ? null :
-        <View style={this.styles.cardItemBackground}>
-          <Text style={this.styles.commentaryHeading}>{convertToText(this.props.commentaryContent.bookIntro)}</Text>
-        </View>}
+        
       <FlatList
         data={this.props.commentaryContent.commentaries}
         showsVerticalScrollIndicator={false}
@@ -133,11 +132,17 @@ class Commentary extends Component {
               <Text style={this.styles.commentaryHeading}>Chapter Intro</Text> :
               <Text style={this.styles.commentaryHeading}>Verse Number : {item.verse}</Text> 
               )} 
-          <Text style={this.styles.textString}>{convertToText(item.text)}</Text>
+            <Text style={this.styles.textString}>{convertToText(item.text)}</Text>
           </View>
         )}
         ListFooterComponent={<View style={{height:40,marginBottom:40}}></View>}
-        
+        ListHeaderComponent={<View>
+          {this.props.commentaryContent.bookIntro  == '' ? null :
+            <View style={this.styles.cardItemBackground}>
+              <Text style={this.styles.commentaryHeading}>Book Intro</Text> 
+              <Text style={this.styles.textString}>{convertToText(this.props.commentaryContent.bookIntro)}</Text>
+            </View>}
+        </View>}
         // contentContainerStyle={{ paddingBottom: 20}}
         // keyExtractor={item => item.bookId}
       />

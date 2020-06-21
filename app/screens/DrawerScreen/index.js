@@ -25,20 +25,20 @@ class DrawerScreen extends Component {
     }
   }
 
-  onLogin=()=>{
-    if (this.state.initializing){this.setState({initializing:false})}
-    this.unsubscriber = firebase.auth().onAuthStateChanged((user)=>{
-      this.setState({user})
-      if (!user) {
-        this.props.navigation.navigate('ProfilePage') 
-      }
-      else{
-        console.log("user  ",user._user.email)
-        this.setState({user})
-        this.props.navigation.navigate('ProfilePage')
-      }
-    })
-  }
+  // onLogin=()=>{
+  //   if (this.state.initializing){this.setState({initializing:false})}
+  //   this.unsubscriber = firebase.auth().onAuthStateChanged((user)=>{
+  //     this.setState({user})
+  //     if (!user) {
+  //       this.props.navigation.navigate('Auth') 
+  //     }
+  //     else{
+  //       console.log("user  ",user._user.email)
+  //       this.setState({user})
+  //       this.props.navigation.navigate('Auth')
+  //     }
+  //   })
+  // }
   async componentDidMount(){
     var email = await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.BackupRestoreEmail)
     this.setState({email})
@@ -52,26 +52,14 @@ class DrawerScreen extends Component {
     // const valueProps  = this.props.navigation.state.routes[0].index == 1 ? (this.props.navigation.state.routes[0].routes[1].params ? this.props.navigation.state.routes[0].routes[1].params.photorUl : null) : null
  
     const iconName = [
-      // {icon:'local-library',pressIcon:'Home',},
-      {icon:'info',pressIcon:'About'},
       {icon:'bookmark',pressIcon:'BookMarks'},
       {icon:'border-color',pressIcon:'Highlights'},
       {icon:'note',pressIcon:'Notes'},
       {icon:'history',pressIcon:'History'},
       {icon:'search',pressIcon:'Search'},
-
-      // {icon:'insert-comment',pressIcon:'Commentary'},
-      // {icon:'image',pressIcon:'Infographics'},
-
-      // {icon:'description',pressIcon:'Articles'},
-      // {icon:'thumb-up',pressIcon:'Subscribe'},
-      // {icon:'help',pressIcon:'FAQ & Help Videos'},
-      // {icon:'comment',pressIcon:'Feedback'},
-      // {icon:'contacts',pressIcon:'Contact Us'},
-      // {icon:'account-circle',pressIcon:'Account'},
-      // {icon:}
-
       {icon:'settings',pressIcon:'Settings'},
+      {icon:'info',pressIcon:'About'},
+
     ]
     
     return (
@@ -83,7 +71,7 @@ class DrawerScreen extends Component {
                       style={{width: 50,height: 50,alignSelf:'center',padding:8}}
                       source={require('../../assets/bcs_old_favicon.png')}
                     />
-                    <TouchableOpacity style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',}}  onPress={this.onLogin}>
+                    <TouchableOpacity style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',}}  onPress={()=>{this.props.navigation.navigate('Auth')}}>
                     <View style={{flexDirection:'row',padding:8,alignItems:'center',justifyContent:'center'}}>
                     <Icon name='account-circle' size={20} color={'#fff'} style={{paddingRight:16}}/>
                     <Text style={styles.headerText}>Login/Sign Up</Text>
@@ -102,7 +90,8 @@ class DrawerScreen extends Component {
                     flexDirection:"row",
                     justifyContent:'space-between',
                     alignItems:'center',
-                    padding:8,
+                    paddingHorizontal:8,
+                    paddingVertical:12,
                     borderWidth: 0.3,
                     borderColor: '#d6d7da'
                 }}>

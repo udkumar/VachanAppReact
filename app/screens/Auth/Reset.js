@@ -4,10 +4,11 @@ import { StyleSheet, ActivityIndicator, View, Alert,TextInput,Text,TouchableOpac
 // import {Button} from 'native-base'
 // import auth from '@react-native-firebase/auth';
 import firebase from 'react-native-firebase'
+import {styles} from './styles.js'
+import {connect} from 'react-redux'
 
 
-
-export default class Reset extends Component {
+class Reset extends Component {
 
     constructor(props){
         super(props)
@@ -15,6 +16,7 @@ export default class Reset extends Component {
             email:'',
             isLoading:false
         }
+        this.styles = styles(this.props.colorFile, this.props.sizeFile);  
     }
     updateInputVal = (val, prop) => {
         const state = this.state;
@@ -31,8 +33,16 @@ export default class Reset extends Component {
         })
         firebase.auth().sendPasswordResetEmail(this.state.email)
         .then((onVal) =>{
-            alert('Please check your email...')
-           console.log(" on VAL RESET ",onVal)
+          // Alert.alert(
+          //   'Save Changes ? ',
+          //   'Do you want to save the note ',
+          //   [
+          //     {text: 'Cancel', onPress: () => {return}},
+          //     {text: 'No', onPress: () => { this.props.navigation.dispatch(NavigationActions.back()) }},
+          //     {text: 'Yes', onPress: () => this.saveNote()},
+          //   ],
+          // )
+            alert('We will attempt to send a reset password email to '+ this.state.email +'\n'+"Click the email to Continue")
            this.setState({
             isLoading: false,
         })
@@ -57,15 +67,19 @@ export default class Reset extends Component {
     render(){
         if(this.state.isLoading){
             return(
-              <View style={styles.preloader}>
+              <View style={this.styles.preloader}>
                 <ActivityIndicator size="large" color="#3E4095"/>
               </View>
             )
           }    
         return (
-            <View style={styles.container}>  
+            <View style={[this.styles.container],{display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            padding: 35,}}>  
+            <Text style={{lineHeight:24}}>Enter your email address and we'll send a link to reset your password.</Text>
             <TextInput
-            style={styles.inputStyle}
+            style={this.styles.inputStyle}
             placeholder="Email"
             value={this.state.email}
             onChangeText={(val) => this.updateInputVal(val, 'email')}
@@ -76,7 +90,7 @@ export default class Reset extends Component {
               onPress={() => this.reset()}
             />  
             <Text 
-            style={styles.loginText}
+            style={this.styles.loginText}
             onPress={() => this.props.navigation.goBack()}>
             Back to login
             </Text>                           
@@ -90,37 +104,23 @@ export default class Reset extends Component {
 //     title: 'Reset',
 //     headerShown: false,
 // });
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        padding: 35,
-        backgroundColor: '#fff'
-      },
-      inputStyle: {
-        width: '100%',
-        marginBottom: 15,
-        paddingBottom: 15,
-        alignSelf: "center",
-        borderColor: "#ccc",
-        borderBottomWidth: 1
-      },
-    loginText: {
-      color: '#3740FE',
-      marginTop: 25,
-      textAlign: 'center'
-    },
-    preloader: {
-      left: 0,
-      right: 0,
-      top: 0,
-      bottom: 0,
-      position: 'absolute',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: '#fff'
-    }
-  });
+
   
+const mapStateToProps = state =>{
+  return{
+      email:state.userInfo.email,
+      uid:state.userInfo.uid,
+      photo:state.userInfo.photo,
+      userName:state.userInfo.userName,
+
+      sizeFile:state.updateStyling.sizeFile,
+      colorFile:state.updateStyling.colorFile,
+  }
+}
+// const mapDispatchToProps = dispatch =>{
+//   return {
+//    userInfo:(payload)=>dispatch(userInfo(payload))
+//   }
+// }
+
+export  default connect(mapStateToProps,null)(Reset)

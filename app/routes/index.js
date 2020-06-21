@@ -8,16 +8,18 @@ import EditNote from '../screens/Note/EditNote'
 import NotePage from '../screens/Note/NotePage'
 import Highlights from '../screens/Highlights/'
 import History from '../screens/History/'
+
 import Commentary from '../screens/StudyHelp/Commentary/'
 import Dictionary from '../screens/StudyHelp/Dictionary/'
-
 import StudyHelp from '../screens/StudyHelp/'
-
 import Hints from '../screens/Hints/Hints'
-import Reset from '../screens/backup/Reset'
-import Register from '../screens/backup/Register'
-import Login from '../screens/backup/Login'
-import ProfilePage from '../screens/backup/ProfilePage'
+
+import Reset from '../screens/Auth/Reset'
+import Register from '../screens/Auth/Register'
+import Login from '../screens/Auth/Login'
+import ProfilePage from '../screens/Auth/ProfilePage'
+import Auth from '../screens/Auth/'
+
 
 import DrawerScreen from '../screens/DrawerScreen'
 import Bible from '../screens/Bible'
@@ -56,7 +58,11 @@ const NavStack = createStackNavigator(
       EditNote:{screen:EditNote },
       NotePage:{screen:NotePage },
       StudyHelp:{screen:StudyHelp},
-      Commentary:{screen:Commentary},
+      Commentary:{screen:Commentary,
+        navigationOptions: () => ({
+          header:null
+        })
+      },
       Dictionary:{screen:Dictionary},
       About:{screen:About},
       Settings:{screen:Settings},
@@ -72,12 +78,22 @@ const NavStack = createStackNavigator(
           header:null
         })
       },
-      Reset:{screen: Reset},
+      Reset:{screen: Reset,
+        navigationOptions: { headerTitle:"Forgot Passsword ?" }
+      },
       ProfilePage:{
         screen:ProfilePage,
         navigationOptions: () => ({
           header:null
-        })
+      }),
+     
+        // navigationOptions: { headerTitle:"Profile Page" }
+      },
+      Auth:{
+        screen:Auth,
+        navigationOptions: () => ({
+          header:null
+      }),
       }
 
      
