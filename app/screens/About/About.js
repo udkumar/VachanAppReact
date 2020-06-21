@@ -64,7 +64,7 @@ class About extends Component {
     <Text style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>  Added Firebase for personalisation and synchronisation{'\n'}
     </Text>
     </View>
-       </ScrollView>
+    </ScrollView>
     );
   }
 }

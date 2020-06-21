@@ -43,6 +43,8 @@ import {styles} from './styles.js'
         .signInWithEmailAndPassword(this.state.email, this.state.password)
         .then((res) => {
           console.log(res)
+          // this.props.userInfo({email:user._user.email,uid:user._user.uid,
+          // userName:user._user.displayName,phoneNumber:null,photo:user._user.photoURL})
           this.props.navigation.navigate("Bible")
           this.setState({
             isLoading: false,
@@ -77,6 +79,7 @@ import {styles} from './styles.js'
           return firebase.auth().signInWithCredential(credential);
         })
         .then((res) => {
+          this.props.navigation.navigate("Bible")
           // this.props.userInfo({email:res.user._user.email,uid:res.user._user.uid,userName:res.user._user.displayName,phoneNumber:null,photo:res.user._user.photoURL})
           // If you need to do anything with the user, do it here
           // The user will be logged in automatically by the
@@ -107,7 +110,9 @@ import {styles} from './styles.js'
           return firebase.auth().signInWithCredential(credential);
         })
         .then((res) => {
-          console.log(" USER facbook user ",user)
+          this.props.navigation.navigate("Bible")
+          // this.props.userInfo({email:res.user._user.email,uid:res.user._user.uid,userName:res.user._user.displayName,phoneNumber:null,photo:res.user._user.photoURL})
+          // console.log(" USER facbook user ",user)
         })
         .catch((error) => {
           const { code, message } = error;

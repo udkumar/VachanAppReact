@@ -25,20 +25,20 @@ import {styles} from './styles.js'
         }
         this.styles = styles(this.props.colorFile, this.props.sizeFile);  
       }
-    // async componentDidMount(){
-    //     firebase.auth().onAuthStateChanged((user)=>{
-    //       if (!user) {
-    //           return
-    //       }
-    //       else{
-    //         this.setState({user:user._user.email,userData:user,isLoading:false,imageUrl:user._user.photoURL})
-    //         this.props.userInfo({email:user._user.email,uid:user._user.uid,
-    //         userName:user._user.displayName,phoneNumber:null,photo:user._user.photoURL})
-    //         this.setState({isLoading:true})
+    async componentDidMount(){
+        firebase.auth().onAuthStateChanged((user)=>{
+          if (!user) {
+              return
+          }
+          else{
+            this.setState({user:user._user.email,userData:user,isLoading:false,imageUrl:user._user.photoURL})
+            this.props.userInfo({email:user._user.email,uid:user._user.uid,
+            userName:user._user.displayName,phoneNumber:null,photo:user._user.photoURL})
+            this.setState({isLoading:true})
 
-    //       }
-    //     })  
-    // }
+          }
+        })  
+    }
    
     // logOut=()=>{
     //     firebase.auth().signOut()
