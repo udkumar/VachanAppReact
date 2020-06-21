@@ -65,17 +65,19 @@ class ReferenceSelection extends Component {
   }
 
   updateSelectedVerse = (verseNumber, index) => {
-    this.setState({selectedVerseIndex: index, selectedVerseNumber: verseNumber})
+    
+    this.setState({selectedVerseIndex:index !=null && index, selectedVerseNumber: verseNumber})
     // pop current screen, and pass data
+
     this.props.navigation.state.params.getReference({
       bookId:this.state.selectedBookId,bookName:this.state.selectedBookName,
-      chapterNumber:this.state.selectedChapterNumber,
+      chapterNumber:this.state.selectedChapterNumber > this.state. totalChapters ? '1' :this.state.selectedChapterNumber,
       totalChapters:this.state.totalChapters,
       totalVerses:this.state.totalVerses,
-      verseNumber:verseNumber})
+      verseNumber:verseNumber !=null &&  verseNumber 
+    })
       this.props.navigation.pop()
   }
-
   async componentDidMount(){
     if(this.props.navigation.state.params.parallelContent){
       this.props.fetchVersionBooks({language:this.props.parallelContentLanguage,versionCode:this.props.parallelContentVersionCode,downloaded:false,sourceId:this.props.parallelContentSourceId})
@@ -134,6 +136,7 @@ class ReferenceSelection extends Component {
         updateSelectedBook: this.updateSelectedBook,
         updateSelectedChapter: this.updateSelectedChapter,
         updateSelectedVerse: this.updateSelectedVerse,
+        onPressCheck:this.onPressCheck
 
       }}/>
       ) 

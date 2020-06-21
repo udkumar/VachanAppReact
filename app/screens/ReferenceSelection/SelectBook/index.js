@@ -53,35 +53,42 @@ class SelectBook extends Component {
   
   getOTSize=()=>{
     var count = 0;
-    if(this.props.books.length == 0){
-      this.setState({OTSize:0})
-    }else{
-      for(var i=0 ; i<this.props.books.length ; i++){
-        if(this.props.books[i].bookNumber <= 39){
-          count ++;
+    if(this.props.books){
+      if(this.props.books.length == 0){
+        this.setState({OTSize:0})
+      }else{
+        for(var i=0 ; i<this.props.books.length ; i++){
+          if(this.props.books[i].bookNumber <= 39){
+            count ++;
+          }
+          else{
+            break;
+          }
         }
-        else{
-          break;
-        }
-      }
-  }
+    }
+    }
+   
   this.setState({OTSize:count})
   }
 
 getNTSize=()=>{
   var count = 0;
-  if(this.props.books.length == 0 ){
-    this.setState({NTSize:0})
-  }else{
-    for(var i=this.props.books.length-1 ; i>=0 ; i--){
-      if(this.props.books[i].bookNumber >= 40){
-        count++
-      }
-      else{
-        break;
+
+  if(this.props.books){
+    if(this.props.books.length == 0 ){
+      this.setState({NTSize:0})
+    }else{
+      for(var i=this.props.books.length-1 ; i>=0 ; i--){
+        if(this.props.books[i].bookNumber >= 40){
+          count++
+        }
+        else{
+          break;
+        }
       }
     }
   }
+ 
   this.setState({NTSize:count})
 }
 // componentWillReceiveProps(nextProps){
@@ -208,6 +215,7 @@ renderItem = ({item, index})=> {
             />
         </View> 
       }
+     {(this.props.books && this.props.books.length > 0) && <Icon name="check-circle" color='rgba(62, 64, 149, 0.8)' onPress={()=>this.props.screenProps.updateSelectedVerse(null,null)}  size={64} style={{position:'absolute',bottom:0,right:0,padding:20}}/>}
       </View>
     );
   }

@@ -8,6 +8,7 @@ import {
 import SelectionGrid from '../../../components/SelectionGrid/';
 import { numberSelection } from './styles.js';
 import {connect} from 'react-redux'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 
  class SelectVerse extends Component {
    
@@ -30,12 +31,16 @@ import {connect} from 'react-redux'
   render() {
     console.log("verseData ",this.state.totalVerses)
     return (
+      <View style={{flex:1}}>
       <SelectionGrid
       styles={this.styles}
       onNumPress={(item)=>{this.onVerseSelected(item)}}
       numbers={this.state.verseData}
       loader={this.state.isLoading}
+      heighlightedNumber={this.props.screenProps.selectedVerseNumber}
       />
+      <Icon name="check-circle" color='rgba(62, 64, 149, 0.8)' onPress={()=>this.props.screenProps.updateSelectedVerse(null,null)}  size={64} style={{position:'absolute',bottom:0,right:0,padding:20}}/>
+      </View>
     );
   }
 }

@@ -10,13 +10,14 @@ import {
 import SelectionGrid from '../../../components/SelectionGrid/';
 import { numberSelection } from './styles.js';
 import {connect} from 'react-redux'
+import Icon from 'react-native-vector-icons/MaterialIcons'
+
 
 
 class ChapterSelection extends Component {
 
   constructor(props){
     super(props)
-    console.log("props navigation",this.props.screenProps.totalChapters)
     this.state = {
       chapterData:Array.from(new Array(this.props.screenProps.totalChapters), (x,i) => i+1),
     }
@@ -30,13 +31,19 @@ class ChapterSelection extends Component {
     this.props.navigation.navigate('Verses')
   }
   render() {
-    console.log("value ",this.state.chapterData," total chapters ",this.props.screenProps.totalChapters)
+    console.log("props navigation",this.props.screenProps.selectedBookId)
+
     return (
+      <View style={{flex:1}}>
       <SelectionGrid
       styles={this.styles}
       onNumPress={(item,index)=>{this.onNumPress(item,index)}}
       numbers={this.state.chapterData}
-      />
+      heighlightedNumber={this.props.screenProps.selectedChapterNumber}
+      />  
+      <Icon name="check-circle" color='rgba(62, 64, 149, 0.8)' onPress={()=>this.props.screenProps.updateSelectedVerse(null,null)}  size={64} style={{position:'absolute',bottom:0,right:0,padding:20}}/>
+      </View>
+      
     )
   }
 }
