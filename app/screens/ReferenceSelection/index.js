@@ -51,16 +51,16 @@ class ReferenceSelection extends Component {
         selectedBookId: item.bookId, 
         selectedBookName: item.bookName, 
         totalChapters: item.numOfChapters,
-        totalVerses:getBookNumOfVersesFromMapping(this.state.selectedBookId,this.state.selectedChapterNumber)
+        totalVerses:getBookNumOfVersesFromMapping(item.bookId,this.state.selectedChapterNumber)
     })
   }
 
   updateSelectedChapter = (chapterNumber,index) => {
-    console.log("this.state.numOfChapters[index] ",this.state.totalChapters,)
+    console.log("selectedChapterIndex , selectedChapterNumber",index,chapterNumber)
     this.setState({
         selectedChapterIndex: index, 
         selectedChapterNumber: chapterNumber,
-        totalVerses:getBookNumOfVersesFromMapping(this.state.selectedBookId,this.state.selectedChapterNumber)
+        totalVerses:getBookNumOfVersesFromMapping(this.state.selectedBookId,chapterNumber)
     })
   }
 

@@ -256,7 +256,7 @@ class Bible extends Component {
       // toggleModal:this.setState({modalVisible:!this.state.modalVisible}),
     })
     this.subs = this.props.navigation.addListener("didFocus", () =>{
-    this.setState({isLoading:true,bookId:this.props.bookId,currentVisibleChapter:this.props.chapterNumber},()=>{
+    this.setState({isLoading:true,selectedReferenceSet:[],bookId:this.props.bookId,currentVisibleChapter:this.props.chapterNumber},()=>{
     console.log("IS DOWNLOADED ",this.props.sourceId,this.props.downloaded,this.state.currentVisibleChapter,this.props.bookId)
       this.getChapter()
       this.audioComponentUpdate()
@@ -265,14 +265,13 @@ class Bible extends Component {
       this.getNotes()
       this.fetchAudio()
       this.props.navigation.setParams({
-        bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 15 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
+        bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 12 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,11)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
         currentChapter:this.state.currentVisibleChapter,
-        languageName: this.props.language, 
+        languageName: this.props.language.substring(0,3), 
         versionCode: this.props.versionCode,
         bookId:this.props.bookId,
         audio:this.state.audio,
         numOfChapter:this.props.totalChapters,
-        numOfVerse:this.props.totalVerses,
         isBookmark:this.isBookmark()
       })
       this.props.updateVersionBook({
@@ -312,17 +311,15 @@ class Bible extends Component {
       DbQueries.addHistory(this.props.sourceId,this.props.language,this.props.languageCode, this.props.versionCode, item.bookId,JSON.parse(item.chapterNumber), this.props.downloaded, time)
       this.props.navigation.setParams({
         bookId:item.bookId,
-        bookName:getBookNameFromMapping(item.bookId,this.props.language).length > 8 ? getBookNameFromMapping(item.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(item.bookId,this.props.language),
+        bookName:getBookNameFromMapping(item.bookId,this.props.language).length > 12 ? getBookNameFromMapping(item.bookId,this.props.language).slice(0,11)+"..." : getBookNameFromMapping(item.bookId,this.props.language),
         currentChapter:JSON.parse(item.chapterNumber),
         numOfChapter:item.totalChapters,
-        numOfVerse:item.totalVerses
       })
       this.props.updateVersionBook({
         bookId:item.bookId,
         bookName:item.bookName,
         chapterNumber:JSON.parse(item.chapterNumber),
         totalChapters:item.totalChapters,
-        totalVerses:item.totalVerses,
         verseNumber:item.verseNumber
       })
     }
@@ -343,9 +340,9 @@ class Bible extends Component {
       versionCode:item.versionCode,sourceId:item.sourceId,downloaded:item.downloaded})
       
       this.props.navigation.setParams({
-      languageName:item.languageName,
+      languageName:item.languageName.substring(0,3),
       versionCode:item.versionCode,
-      bookName:getBookNameFromMapping(this.props.bookId,item.languageName).length > 8 ? getBookNameFromMapping(this.props.bookId,item.languageName).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,item.languageName),
+      bookName:getBookNameFromMapping(this.props.bookId,item.languageName).length > 12 ? getBookNameFromMapping(this.props.bookId,item.languageName).slice(0,11)+"..." : getBookNameFromMapping(this.props.bookId,item.languageName),
         // chapterNumber:this.state.currentVisibleChapter
       })
       // this.getBookMarks()
@@ -367,6 +364,8 @@ class Bible extends Component {
             error:null,
             // currentVisibleChapter:this.state.currentVisibleChapter,
           })
+          this.props.navigation.setParams({numOfVerse:content[0].chapters[this.state.currentVisibleChapter-1].verses.length})
+
         }
         else{
           alert("not able to fetch book from db")
@@ -396,20 +395,20 @@ class Bible extends Component {
     this.setState({isLoading:true,currentVisibleChapter: val != null ? JSON.parse(this.state.currentVisibleChapter)  + val : this.state.currentVisibleChapter,error:null },async()=>{
       try{
             this.props.navigation.setParams({
-              languageName:this.props.language,
+              languageName:this.props.language.substring(0,3),
               versionCode:this.props.versionCode,
               bookId:this.props.bookId,
-              bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
+              bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 12 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,11)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
               currentChapter:JSON.parse(this.state.currentVisibleChapter),
               numOfChapter:this.props.totalChapters,
-              numOfVerse:this.props.totalVerses,
               isBookmark:this.isBookmark()
             })
             if(this.state.connection_Status){
               try{
                 var content = await APIFetch.getChapterContent(this.props.sourceId, this.props.bookId, this.state.currentVisibleChapter)
                 this.setState({chapterContent:content.chapterContent.verses,isLoading:false,currentVisibleChapter:this.state.currentVisibleChapter})
-  
+                console.log("Total verses  ",content.chapterContent.verses.length)
+                this.props.navigation.setParams({numOfVerse:content.chapterContent.verses.length})
               }
               catch(error){
                 console.log("erorr ",error)
@@ -424,6 +423,7 @@ class Bible extends Component {
                   chapterContent:this.state.downloadedBook[this.state.currentVisibleChapter-1].verses,
                   isLoading:false
                  })
+                this.props.navigation.setParams({numOfVerse:this.state.downloadedBook[this.state.currentVisibleChapter-1].verses.length})
                 }
                 else{
                   this.getDownloadedContent()
@@ -833,7 +833,7 @@ getNotes(){
           {this.props.navigation.getParam("visibleParallelView") &&
             <Header style={{height:40}}>
                   <Button transparent onPress={()=>{this.props.navigation.navigate("SelectionTab",{getReference:this.getReference,bookId:this.props.bookId,chapterNumber:this.state.currentVisibleChapter,totalChapters:this.props.totalChapters,totalVerses:this.props.totalVerses})}}>
-                      <Title style={{fontSize:16}}>{getBookNameFromMapping(this.props.bookId,this.props.language).length > 8 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,7)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language)} {this.state.currentVisibleChapter}</Title>
+                      <Title style={{fontSize:16}}>{getBookNameFromMapping(this.props.bookId,this.props.language).length > 12 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,11)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language)} {this.state.currentVisibleChapter}</Title>
                       <Icon name="arrow-drop-down" color="#fff" size={20}/>
                   </Button>
             </Header>
