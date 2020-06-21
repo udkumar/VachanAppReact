@@ -216,6 +216,10 @@ class EditNote extends Component {
       placeholder='Enter your note here'
       value={this.state.contentBody}
       onChangeText={(text)=>this.setState({contentBody:text})}
+      returnKeyType="done"
+      autoFocus={true}
+      blurOnSubmit={true}
+      multiline={true}
       />
       {/* <View style={this.styles.textEditorView}>
 

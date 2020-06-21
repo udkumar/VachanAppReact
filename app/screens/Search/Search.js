@@ -260,17 +260,12 @@ class Search extends Component {
     return (
       <View style={this.styles.container}>
         <TouchableOpacity onPress={()=>this.props.navigation.navigate('LanguageList',{updateLangVer:this.updateLangVer})} style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',margin:8}}>
-          {/* <View> */}
-            <Text  style={{fontSize:18}}>Change Bible </Text>
-          {/* </View>  */}
-          {/* <View> */}
+            <Text  style={{fontSize:18}}>Change Bible</Text>
             <Text style={{fontSize:16,color:'#3740FE'}}>{this.state.languageName} {this.state.versionCode}</Text>
-          {/* </View> */}
         </TouchableOpacity>
-        
+        <Text style={this.styles.textLength}>{text}</Text>
         {this.state.tabsData.length > 0 &&
         <View>
-        <Text style={this.styles.textLength}>{text}</Text>
         <SearchTab
           toggleFunction={this.toggleButton}
           activeTab={this.state.activeTab}
