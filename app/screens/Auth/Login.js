@@ -147,7 +147,7 @@ import {styles} from './styles.js'
           style={this.styles.container}
         >
           <View>
-            <Icon name='close' size={28} style={{position:'absolute',left:0,top:0,margin:12}} onPress={()=>{this.props.navigation.pop()}}/>
+            <Icon name='close' size={28} style={this.styles.headerCloseIcon} onPress={()=>{this.props.navigation.pop()}}/>
           </View>
           <View style={{padding:35,flex:1}}> 
           <View style={{alignItems:'center',justifyContent:'center'}}>
@@ -163,7 +163,9 @@ import {styles} from './styles.js'
             }}> 
           <TextInput
             style={this.styles.inputStyle}
+            placeholderTextColor={this.styles.placeholderColor.color}
             placeholder="Email"
+            
             value={this.state.email}
             onChangeText={(val) => this.updateInputVal(val, 'email')}
           />
@@ -171,12 +173,13 @@ import {styles} from './styles.js'
           <TextInput
             style={this.styles.inputStyle}
             placeholder="Password"
+            placeholderTextColor={this.styles.placeholderColor.color}
             value={this.state.password}
             onChangeText={(val) => this.updateInputVal(val, 'password')}
             maxLength={15}
             secureTextEntry={this.state.passwordVisible}
           />  
-          <Icon name={this.state.passwordVisible ? 'eye' : 'eye-off'} size={24} style={{alignSelf:'flex-end',position: 'absolute', right: 10, bottom:30}} onPress={()=>this.setState({passwordVisible:!this.state.passwordVisible})}/>
+          <Icon name={this.state.passwordVisible ? 'eye' : 'eye-off'} size={24} style={this.styles.eyeIcon} onPress={()=>this.setState({passwordVisible:!this.state.passwordVisible})}/>
           </View>
           <Button
             color="#3E4095"
@@ -190,19 +193,13 @@ import {styles} from './styles.js'
           </Text>  
           <View style={{flexDirection:'row',marginVertical:8,alignItems:'center',justifyContent:'center'}}>
           <View
-            style={{
-              width:'45%',
-              borderBottomColor: 'black',
-              borderBottomWidth: 1,
-            }}
+            style={
+              this.styles.dividerLine
+            }
           />
-          <Text style={{margin:4,fontSize:18,fontWeight:'700'}}>Or</Text>
+          <Text style={this.styles.divider}>Or</Text>
           <View
-            style={{
-              width:'45%',
-              borderBottomColor: 'black',
-              borderBottomWidth: 1,
-            }}
+            style={this.styles.dividerLine}
           />
           </View>
           <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center'}}>

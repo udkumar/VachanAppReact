@@ -3,12 +3,13 @@ import {
   Text,
   View,
   Linking,
+  Dimensions,
   ScrollView
 } from 'react-native';
 import packageJson from '../../../package.json'
 import { aboutPage } from './styles.js'
 import {connect} from 'react-redux'
-
+const screenHeight = Dimensions.get('window').height
 class About extends Component {
   static navigationOptions = {
     headerTitle: 'About',
@@ -20,10 +21,11 @@ class About extends Component {
   render() {
     const bulletIcon = '\u2022'
     return (
-      <ScrollView  contentContainerStyle={this.styles.container}>
+      <View style={[this.styles.container,{height:screenHeight}]}> 
+      <ScrollView >
       <View style={this.styles.textContainer}>
       <Text style={this.styles.textStyle}>
-      <Text style={this.styles.linkText} onPress={() =>{Linking.openURL('https://VachanOnline.com')}}>VachanOnline.com</Text> 
+      <Text style={this.styles.linkText} onPress={() =>{Linking.openURL('https://VachanOnline.com')}}>VachanOnline.com </Text> 
       is the premier Bible study website in Indian languages. 
       It is part of The Vachan Project to provide free access to digital scripture engagement resources.
       It is an initiative of Friends of Agape (FOA), USA. 
@@ -32,15 +34,15 @@ class About extends Component {
       Bridge Connectivity Solutions Pvt. Ltd. (BCS) and its translation/localization partners; unfoldingWord, Wycliffe Associates, Crossway, Bridgeway Publications, BibleProject, and Visual Unit are involved in localisation of content and providing licenses to use on this site.{'\n'}
       <Text style={this.styles.TitleText}>{'\n'}Technology Provider:{'\n'} </Text>
       Bridge Connectivity Solutions Pvt. Ltd. (BCS) developed this platform from scratch with the in-house team of developers inspired from similar websites in other countries. VachanEngine is the back-end of this. 
-      Vachan APIs for permissions for digital content delivery can be made available for many products please contact us at <Text style={this.styles.linkText} onPress={() =>{Linking.openURL('thevachanproject@gmail.com')}}>thevachanproject@gmail.com.</Text> Also visit our company website <Text style={this.styles.linkText} onPress={() =>{Linking.openURL('www.bridgeconn.com')}}>www.bridgeconn.com .</Text>{'\n'}
+      Vachan APIs for permissions for digital content delivery can be made available for many products please contact us at <Text style={this.styles.linkText} onPress={() =>{Linking.openURL('thevachanproject@gmail.com')}}>thevachanproject@gmail.com</Text> Also visit our company website <Text style={this.styles.linkText} onPress={() =>{Linking.openURL('www.bridgeconn.com')}}>www.bridgeconn.com </Text>{'\n'}
     <Text style={this.styles.TitleText}>{'\n'}Source Code{'\n'}</Text>
       Current Code On GitHub: {'\n'}
-      <Text style={this.styles.linkText} onPress={() =>{Linking.openURL('https://github.com/Bridgeconn/VachanOnline-v2')}}>https://github.com/Bridgeconn/VachanOnline-v2 {'\n'}</Text>
+      <Text style={this.styles.linkText} onPress={() =>{Linking.openURL('https://github.com/Bridgeconn/VachanOnline-v2')}}>https://github.com/Bridgeconn/VachanOnline-v2{'\n'}</Text> 
       Previous versions Forked from Digital Bible Society’s Browser Bible-3 (InScript) by John Dyer on GitHub.
     <Text style={{fontWeight:'bold'}}>{'\n'}Release Notes (1/06/2020) v1.0 {'\n'}</Text>
     
     <Text style={this.styles.TitleText}>{'\n'}Platform Update:{'\n'}</Text>We are making a major technology change in this release. Code from Browser Bible-3 (InScript) is now replaced with a brand new web application in ReactJS powered by Postgres APIs (VachanEngine) in the back-end. A companion mobile app written in ReactNative is also being released. 
-     The older legacy site will still be available for sometime on<Text  style={this.styles.linkText} onPress={() =>{Linking.openURL('www.vachanonline.net')}}> www.vachanonline.net. {'\n'} </Text>
+     The older legacy site will still be available for sometime on <Text  style={this.styles.linkText} onPress={() =>{Linking.openURL('www.vachanonline.net')}}>www.vachanonline.net {'\n'} </Text>
     <Text  style={this.styles.TitleText}>{'\n'}Content Additions (using Vachan API’s):{'\n'}</Text> 
     <Text style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>  Bibles: Updated versions of IRV Bibles in available Indian Gateway Languages + ESV English Bible{'\n'}
     <Text style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>  Commentary: Hindi IRV Notes + Bridgeway Bible Commentary (English) + ESV Global Study Bible Notes (English){'\n'}
@@ -65,6 +67,7 @@ class About extends Component {
     </Text>
     </View>
     </ScrollView>
+    </View>
     );
   }
 }

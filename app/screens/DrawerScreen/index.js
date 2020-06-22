@@ -1,14 +1,9 @@
 import React, {Component} from 'react';
-import {NavigationActions} from 'react-navigation';
-import PropTypes from 'prop-types';
 import {ScrollView, Text, View, StyleSheet,ImageBackground,TouchableOpacity,Image} from 'react-native';
-import { DrawerActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialIcons'
-
+import { styles } from './styles.js';
 import {connect} from 'react-redux'
 
-// import auth from 'react-native-firebase';
-import firebase from 'react-native-firebase'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil'
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
 
@@ -23,6 +18,7 @@ class DrawerScreen extends Component {
       initializing:true,
       user:''
     }
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);
   }
 
   // onLogin=()=>{
@@ -63,18 +59,19 @@ class DrawerScreen extends Component {
     ]
     
     return (
-      <ScrollView> 
-          <View style={styles.headerContainer}>
+      <View style={this.styles.container}>
+      <ScrollView style={this.styles.container}> 
+          <View style={this.styles.headerContainer}>
                 <ImageBackground source={require('../../assets/headerbook.jpeg')} style={{flex:1,width: 280,}} >
                     <View style={{position:'absolute',bottom:0,left:0}}>
                     <Image
-                      style={{width: 50,height: 50,alignSelf:'center',padding:8}}
+                      style={this.styles.imageStyle}
                       source={require('../../assets/bcs_old_favicon.png')}
                     />
-                    <TouchableOpacity style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',}}  onPress={()=>{this.props.navigation.navigate('Auth')}}>
-                    <View style={{flexDirection:'row',padding:8,alignItems:'center',justifyContent:'center'}}>
+                    <TouchableOpacity style={this.styles.goToLogin}  onPress={()=>{this.props.navigation.navigate('Auth')}}>
+                    <View style={this.styles.loginView}>
                     <Icon name='account-circle' size={20} color={'#fff'} style={{paddingRight:16}}/>
-                    <Text style={styles.headerText}>Login/Sign Up</Text>
+                    <Text style={this.styles.headerText}>Login/Sign Up</Text>
                     </View>
                     <Icon name='chevron-right' size={20} color={'#fff'} style={{paddingRight:16}}/>
                     </TouchableOpacity>
@@ -85,52 +82,28 @@ class DrawerScreen extends Component {
           iconName.map((iconName,index)=>
                 <TouchableOpacity 
                 onPress={()=>{this.props.navigation.navigate(iconName.pressIcon)}} 
-                style={{
-                    flex:1,
-                    flexDirection:"row",
-                    justifyContent:'space-between',
-                    alignItems:'center',
-                    paddingHorizontal:8,
-                    paddingVertical:12,
-                    borderWidth: 0.3,
-                    borderColor: '#d6d7da'
-                }}>
+                style={
+                  this.styles.drawerItem
+                }>
                     <View 
                     style={{
                       flexDirection:"row",
                   }}>
-                      <Icon name={iconName.icon} size={20} style={{paddingRight:16}}/>
+                      <Icon name={iconName.icon} size={20}  style={this.styles.iconStyleDrawer}/>
                       <Text 
-                        style={{fontSize:16}}>
+                        style={this.styles.textStyle}>
                         {iconName.pressIcon}
                       </Text>
                     </View>
-                    <Icon name='chevron-right' size={20} style={{paddingRight:16}}/>
+                    <Icon name='chevron-right' size={20} style={this.styles.iconStyleDrawer}/>
               </TouchableOpacity>
           )
         }
       </ScrollView>
+      </View>
     );
   }
 }
-const styles = StyleSheet.create({
-  
-  headerContainer: {
-      height: 150,
-  },
-  headerText: {
-    // padding:8,
-    color: '#fff8f8',
-    // textDecorationLine: 'underline',
-    // lineHeight:6
-},customText:{
-   fontSize: 18,
-   textAlign: 'center',
-   color:'#040404'
-  
-}
-})
-
 const mapStateToProps = state =>{
   return{
     sizeFile:state.updateStyling.sizeFile,

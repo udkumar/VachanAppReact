@@ -5,6 +5,7 @@ const width = Dimensions.get('window').width;
 export const aboutPage =(colorFile, sizeFile) =>{
     return StyleSheet.create({
         container:{
+            flex:1,
             backgroundColor:colorFile.backgroundColor,
         },
         textStyle:{
@@ -40,13 +41,15 @@ export const aboutPage =(colorFile, sizeFile) =>{
             paddingVertical:12,
             fontSize:sizeFile.titleText,
             color:'#3E4095',
-            letterSpacing: 1.5,
+            letterSpacing: 1.2,
             flexShrink: 1 
             // color:colorFile.textColor,
         },
         bulletIcon:{
             fontSize:26,
-            color:colorFile.iconColor
+            color:colorFile.iconColor,
+            flexShrink: 1 
+
         }
     })
 

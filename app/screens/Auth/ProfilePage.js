@@ -26,6 +26,7 @@ import {styles} from './styles.js'
         this.styles = styles(this.props.colorFile, this.props.sizeFile);  
       }
     async componentDidMount(){
+
         firebase.auth().onAuthStateChanged((user)=>{
           if (!user) {
               return
@@ -35,11 +36,10 @@ import {styles} from './styles.js'
             this.props.userInfo({email:user._user.email,uid:user._user.uid,
             userName:user._user.displayName,phoneNumber:null,photo:user._user.photoURL})
             this.setState({isLoading:true})
-
           }
         })  
+        
     }
-   
     // logOut=()=>{
     //     firebase.auth().signOut()
     //     this.props.userInfo({email:null,uid:null,userName:'',phoneNumber:null,photo:null})
@@ -49,8 +49,9 @@ import {styles} from './styles.js'
     // }
    
   render() {
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);  
     return (
-      <View style={{flex:1}}>
+      <View style={this.styles.container}>
          <Header>
           <Left>
             <Button transparent onPress={()=>this.props.navigation.navigate("Bible")}>
@@ -61,40 +62,36 @@ import {styles} from './styles.js'
             <Title>Profile</Title>
           </Body>
         </Header>
-      <View style={{flex:1,backgroundColor:'#eee'}}>
+      <View style={this.styles.cardBgColor}>
           {/* <View style={this.styles.container}> */}
-          <Card>
-            <CardItem>
+          <Card style={this.styles.cardStyling}>
+            <CardItem  style={this.styles.cardItemStyling}>
                 <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
                 <Image style={this.styles.avatar} source={this.props.photo !=null  ? {uri:this.props.photo} :  require('../../assets/account1.png')}/>
                 <View>
-                <Text>{this.props.email}</Text>
-                <Text>{this.props.userName}</Text>
+                <Text style={[this.styles.textStyle,{paddingRight:8}]}>{this.props.email}</Text>
+                <Text style={[this.styles.textStyle,{paddingRight:8}]}>{this.props.userName}</Text>
                 {/* <Text>{this.props.phoneNumber}</Text> */}
                 </View>
                 </View>
             </CardItem>
             </Card>
             <View></View>
-            <Card>
-            <CardItem header button style={[{flexDirection:'row'}]} onPress={()=>this.props.navigation.navigate('Settings')}>
+            <Card style={this.styles.cardStyling}>
+            <CardItem header button style={[this.styles.cardItemStyling,{flexDirection:'row'}]} onPress={()=>this.props.navigation.navigate('Settings')}>
                   <Icon name='settings' style={this.styles.cardItemIconCustom}/>
                   <Text style={this.styles.textStyle}>Settings</Text>
             </CardItem>
-            <CardItem header button  style={{flexDirection:'row'}} onPress={()=>this.props.navigation.navigate('About')}>
+            <CardItem header button  style={[this.styles.cardItemStyling,{flexDirection:'row'}]} onPress={()=>this.props.navigation.navigate('About')}>
                   <Icon name='info' style={this.styles.cardItemIconCustom}/>
                   <Text style={this.styles.textStyle}>About</Text>
             </CardItem>
             </Card>
-            {/* <View > */}
-            <Card>
-            <CardItem  header button onPress={this.props.logOut} style={{alignItems:'center',justifyContent:'center'}}>
-            <Text>LOG OUT</Text>  
+            <Card style={this.styles.cardStyling}>
+            <CardItem  header button onPress={this.props.logOut} style={[this.styles.cardItemStyling,{alignItems:'center',justifyContent:'center'}]}>
+            <Text style={this.styles.textStyle}>LOG OUT</Text>  
             </CardItem>
             </Card>
-            {/* </View> */}
-
-          {/* </View> */}
       </View>
       </View>
     );

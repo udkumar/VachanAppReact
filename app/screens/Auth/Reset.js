@@ -73,14 +73,16 @@ class Reset extends Component {
             )
           }    
         return (
-            <View style={[this.styles.container],{display: "flex",
+            <View style={this.styles.container}>
+              <View style={{display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            padding: 35,}}>  
-            <Text style={{lineHeight:24}}>Enter your email address and we'll send a link to reset your password.</Text>
+            padding: 35}}>
+            <Text style={this.styles.textStyle}>Enter your email address and we'll send a link to reset your password.</Text>
             <TextInput
             style={this.styles.inputStyle}
-            placeholder="Email"
+            placeholderTextColor={this.styles.placeholderColor.color}
+            placeholder="Enter email"
             value={this.state.email}
             onChangeText={(val) => this.updateInputVal(val, 'email')}
           />
@@ -93,7 +95,8 @@ class Reset extends Component {
             style={this.styles.loginText}
             onPress={() => this.props.navigation.goBack()}>
             Back to login
-            </Text>                           
+            </Text>     
+            </View>                        
           </View>
         )
     }

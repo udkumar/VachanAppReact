@@ -13,8 +13,9 @@ export const styles = (colorFile, sizeFile) =>{
         },
         textStyle:{
             color: colorFile.textColor,   
-            fontSize:sizeFile.titleText,
+            fontSize:sizeFile.contentText,
             marginLeft:4,
+            lineHeight:sizeFile.lineHeight
         },
         cardItemStyle:{
             backgroundColor:colorFile.backgroundColor
@@ -141,20 +142,6 @@ export const styles = (colorFile, sizeFile) =>{
             fontSize:32   
         },
 
-        //register
-          inputStyle: {
-            width: '100%',
-            marginBottom: 15,
-            paddingBottom: 15,
-            alignSelf: "center",
-            borderColor: "#ccc",
-            borderBottomWidth: 1
-          },
-          loginText: {
-            color: '#3740FE',
-            marginTop: 25,
-            textAlign: 'center'
-          },
         //reset 
               inputStyle: {
                 width: '100%',
@@ -162,13 +149,52 @@ export const styles = (colorFile, sizeFile) =>{
                 paddingBottom: 15,
                 alignSelf: "center",
                 borderColor: "#ccc",
-                borderBottomWidth: 1
+                borderBottomWidth: 1,
+                color: colorFile.textColor
               },
             loginText: {
               color: '#3740FE',
               marginTop: 25,
               textAlign: 'center'
+            },
+            eyeIcon:{
+              alignSelf:'flex-end',
+              position: 'absolute', 
+              right: 10, 
+              bottom:30,
+              color:colorFile.textColor, 
+            },
+            headerCloseIcon:{
+              position:'absolute',
+              left:0,
+              top:0,
+              margin:12,
+              color: colorFile.textColor
+            },
+            divider:{
+              margin:4,
+              fontSize:18,
+              fontWeight:'700',
+              color: colorFile.textColor
+            },
+            dividerLine:{
+              width:'45%',
+              borderBottomColor:colorFile.textColor,
+              borderBottomWidth: 1,
+            },
+            
+            //profile page 
+            cardBgColor:{
+              backgroundColor:colorFile.fedBackgroundColor
+            },
+            cardStyling:{
+              backgroundColor:colorFile.backgroundColor
+            },
+            cardItemStyling:{
+              backgroundColor:colorFile.backgroundColor,
+              color: colorFile.textColor
             }
+           
             
 })
 }

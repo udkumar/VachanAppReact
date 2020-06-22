@@ -137,7 +137,7 @@ class Register extends Component {
           style={this.styles.container}
         >
             <View>
-            <Icon name='close' size={28} style={{position:'absolute',left:0,top:0,margin:12}} onPress={()=>{this.props.navigation.pop()}}/>
+            <Icon name='close' size={28} style={this.styles.headerCloseIcon} onPress={()=>{this.props.navigation.pop()}}/>
             </View>
             <View style={{padding:35,flex:1}}>  
               <View style={{alignItems:'center',justifyContent:'center'}}>
@@ -163,36 +163,44 @@ class Register extends Component {
               <TextInput
                 style={this.styles.inputStyle}
                 placeholder="Name"
+              placeholderTextColor={this.styles.placeholderColor.color}
+
                 value={this.state.displayName}
                 onChangeText={(val) => this.updateInputVal(val, 'displayName')}
               />      
               <TextInput
                 style={this.styles.inputStyle}
                 placeholder="Email"
+              placeholderTextColor={this.styles.placeholderColor.color}
+
                 value={this.state.email}
                 onChangeText={(val) => this.updateInputVal(val, 'email')}
               />
               <View>
               <TextInput
-                style={styles.inputStyle}
+                style={this.styles.inputStyle}
                 placeholder="Password"
+                placeholderTextColor={this.styles.placeholderColor.color}
+
                 value={this.state.password}
                 onChangeText={(val) => this.updateInputVal(val, 'password')}
                 maxLength={15}
                 secureTextEntry={this.state.passwordVisible1}
               />   
-            <Icon name={this.state.passwordVisible1 ? 'eye' : 'eye-off'} size={24} style={{alignSelf:'flex-end',position: 'absolute', right: 10, bottom:30}} onPress={()=>this.setState({passwordVisible1:!this.state.passwordVisible1})}/>
+            <Icon name={this.state.passwordVisible1 ? 'eye' : 'eye-off'} size={24} style={this.styles.eyeIcon} onPress={()=>this.setState({passwordVisible1:!this.state.passwordVisible1})}/>
             </View>
             <View>
               <TextInput
                 style={this.styles.inputStyle}
                 placeholder="Confirm Password"
+                placeholderTextColor={this.styles.placeholderColor.color}
+
                 value={this.state.cpassword}
                 onChangeText={(val) => this.updateInputVal(val, 'cpassword')}
                 maxLength={15}
                 secureTextEntry={this.state.passwordVisible2}
               />   
-            <Icon name={this.state.passwordVisible2 ? 'eye' : 'eye-off'} size={24} style={{alignSelf:'flex-end',position: 'absolute', right: 10, bottom:30}} onPress={()=>this.setState({passwordVisible2:!this.state.passwordVisible2})}/>
+            <Icon name={this.state.passwordVisible2 ? 'eye' : 'eye-off'} size={24} style={this.styles.eyeIcon} onPress={()=>this.setState({passwordVisible2:!this.state.passwordVisible2})}/>
             </View>
               <Button
                 color="#3E4095"

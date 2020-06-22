@@ -1,7 +1,9 @@
 module.exports = {
         Dark_Gray:'#333333',
         Black:'#000',
+        FedBlack:'#8c8f8f',
         White:'#fff',
+        FedWhite:"#e3e6e6",
         Gray:'#808080',
         Pink:'#F62459',
         Dark_Blue:'#191970',
@@ -14,6 +16,7 @@ module.exports = {
         Semi_Trans_White:'rgba(210,210,210,0.5)',
         Yellow:'#FFFF00',
         NightYellow:'#999900',
+        
 }
 
 
