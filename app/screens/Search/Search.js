@@ -259,9 +259,9 @@ class Search extends Component {
     let text = this.state.isLoading == true ? "Loading..." : this.state.tabsData.length + " search results found"
     return (
       <View style={this.styles.container}>
-        <TouchableOpacity onPress={()=>this.props.navigation.navigate('LanguageList',{updateLangVer:this.updateLangVer})} style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',margin:8}}>
-            <Text  style={{fontSize:18}}>Change Bible</Text>
-            <Text style={{fontSize:16,color:'#3740FE'}}>{this.state.languageName} {this.state.versionCode}</Text>
+        <TouchableOpacity onPress={()=>this.props.navigation.navigate('LanguageList',{updateLangVer:this.updateLangVer})} style={this.styles.toggleBibleTouchable}>
+            <Text  style={this.styles.headerStyle}>Change Bible</Text>
+            <Text style={this.styles.toggleBible}>{this.state.languageName} {this.state.versionCode}</Text>
         </TouchableOpacity>
         <Text style={this.styles.textLength}>{text}</Text>
         {this.state.tabsData.length > 0 &&

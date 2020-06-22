@@ -55,8 +55,8 @@ class DrawerScreen extends Component {
       {icon:'search',pressIcon:'Search'},
       {icon:'settings',pressIcon:'Settings'},
       {icon:'info',pressIcon:'About'},
-
     ]
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);
     
     return (
       <View style={this.styles.container}>

@@ -7,7 +7,7 @@ import DbQueries from '../../../utils/dbQueries'
 import AsyncStorageUtil from '../../../utils/AsyncStorageUtil'
 import {AsyncStorageConstants} from '../../../utils/AsyncStorageConstants'
 
-const API_BASE_URL = 'https://api.autographamt.com/v1/'
+const API_BASE_URL = 'https://api.vachanonline.net/v1/'
 
   function* fetchDownloadedVersionContent(params){
     try {

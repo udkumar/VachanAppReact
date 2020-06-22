@@ -5,7 +5,7 @@ import { put, takeLatest, call,fork,all } from 'redux-saga/effects'
 import fetchApi from '../../api';
 import DbQueries from '../../../utils/dbQueries'
 // 
-const API_BASE_URL = 'https://api.autographamt.com/v1/'
+const API_BASE_URL = 'https://api.vachanonline.net/v1/'
 
   function* fetchParalleBible(params) {
     try {
@@ -27,13 +27,7 @@ const API_BASE_URL = 'https://api.autographamt.com/v1/'
         yield put(parallelBibleSuccess({parallelBible:chapterContent,totalVerses:totalVerses}))
         yield put(parallelBiblefailure(null))
       }
-      else{
-        yield put(parallelBiblefailure(e))
-        yield put(parallelBibleSuccess([])) 
-      }
     }
-    
-
     } catch (e) {
     yield put(parallelBiblefailure(e))
     yield put(parallelBibleSuccess([]))

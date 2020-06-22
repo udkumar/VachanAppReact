@@ -12,7 +12,7 @@ import DbQueries from '../../../utils/dbQueries'
 import AsyncStorageUtil from '../../../utils/AsyncStorageUtil'
 import {AsyncStorageConstants} from '../../../utils/AsyncStorageConstants'
 
-const API_BASE_URL = 'https://api.autographamt.com/v1/'
+const API_BASE_URL = 'https://api.vachanonline.net/v1/'
 
 //fetch audio available book ,audio file 
   function* fetchVersionLanguage() {
@@ -42,12 +42,8 @@ const API_BASE_URL = 'https://api.autographamt.com/v1/'
         var response = yield DbQueries.getDownloadedBook(payload.language,payload.versionCode)
         // console.log("book name downloaded  ",response)
 
-         for(var i = 0; i<response.length;i++){
+         for(var i=0; i<=response.length-1;i++){
           // var bookId = response[i]
-          console.log("book id ",response[i].bookId)
-          console.log("book name ",response[i].bookName)
-          console.log("book number ",response[i].bookNumber)
-
           var books = {
                 bookId:response[i].bookId,
                 bookName:response[i].bookName,
@@ -70,10 +66,8 @@ const API_BASE_URL = 'https://api.autographamt.com/v1/'
           for(var i =0;i<response.length;i++){
             // console.log("language name ",payload.language.toLowerCase(),response[i].language.name)
             if(payload.language.toLowerCase() == response[i].language.name){
-              console.log("language equal  ",response[i].language)
-              for(var j=0;j<response[i].bookNames.length;j++ ){
-                  console.log("book id  ",response[i].bookNames[j].book_code)
-                  // console.language("book name  ", response[i].bookNames[j])
+              for(var j=0;j<=response[i].bookNames.length-1;j++){
+                  console.log("BOOK ID ",response[i].bookNames[j].book_code)
                 var books= {
                   bookId:response[i].bookNames[j].book_code,
                   bookName:response[i].bookNames[j].long,

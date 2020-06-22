@@ -4,6 +4,7 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
+  Alert,
   FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -35,6 +36,7 @@ class BibleChapter extends Component {
         })
     }
     getRef=(item)=>{
+        console.log(" ITEM ",item)
         this.setState({currentParallelViewChapter:item.chapterNumber},()=>{
             this.props.fetchParallelBible({isDownloaded:false,sourceId:this.props.parallelContentSourceId,
                 language:this.props.parallelContentLanguage,version:this.props.parallelContentVersionCode,
@@ -80,6 +82,7 @@ class BibleChapter extends Component {
       }
     }
     render(){
+        this.styles = styles(this.props.colorFile, this.props.sizeFile);    
         return(
             <View style={this.styles.container}>
                 <Header style={{height:40, borderLeftWidth:0.2, borderLeftColor:'#fff'}}>
@@ -127,8 +130,8 @@ class BibleChapter extends Component {
                         <Text style={this.styles.textString}
                         >
                         {verse.text}
-                    </Text>         
-                    </Text>
+                        </Text>         
+                        </Text>
                         :
                         <Text letterSpacing={24}
                             style={this.styles.verseWrapperText}>

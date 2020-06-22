@@ -212,6 +212,7 @@ renderItem = ({item, index})=> {
               keyExtractor={item => item.bookNumber}
               onViewableItemsChanged={this.onViewableItemsChanged}
               viewabilityConfig={this.viewabilityConfig}
+              contentContainerStyle={{ paddingBottom: 60}}
             />
         </View> 
       }

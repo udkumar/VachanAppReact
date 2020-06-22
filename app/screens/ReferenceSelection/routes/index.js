@@ -21,7 +21,6 @@ const SelectionTabStack = createMaterialTopTabNavigator(
               },
         },
         Verses:{
-            
             screen:SelectVerse,
             navigationOptions: {
                 tabBarLabel: 'Select Verse',

@@ -17,6 +17,25 @@ export const styles =(colorFile, sizeFile) =>{
         justifyContent:'center',
         
     },
+    modalContainer:{
+        backgroundColor:colorFile.backgroundColor,
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+            
+    },
+    accordionHeader:{
+        flexDirection: "row",
+        padding: 10,
+        justifyContent: "space-between",
+        alignItems: "center" ,
+        backgroundColor:colorFile.backgroundColor,
+        },
+        accordionHeaderText:{
+            color:colorFile.textColor,
+            fontWeight: "600" 
+        },
     chapterList:{
         margin:16
     },

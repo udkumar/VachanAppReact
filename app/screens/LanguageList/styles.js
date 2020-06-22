@@ -47,7 +47,7 @@ export const styles =(colorFile, sizeFile) =>{
         justifyContent:'space-between',
         backgroundColor:colorFile.backgroundColor
       },
-      iconStyle:{
+      iconStyleSelection:{
         color:colorFile.iconColor
       },
       headerText: {
@@ -86,5 +86,41 @@ export const styles =(colorFile, sizeFile) =>{
       },
 
       //selectioncontent 
+      modalContainer:{
+        backgroundColor:colorFile.backgroundColor,
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+            
+    },
+    accordionHeader:{
+        flexDirection: "row",
+        padding: 10,
+        justifyContent: "space-between",
+        alignItems: "center" ,
+        backgroundColor:colorFile.backgroundColor,
+        },
+        accordionHeaderText:{
+            color:colorFile.textColor,
+            fontWeight: "600" 
+        },
+        headerInner:{
+          flexDirection: "row",
+          padding: 10,
+          justifyContent: "space-between",
+          alignItems: "center" ,
+          backgroundColor:colorFile.backgroundColor
+           },
+        selectionHeaderModal:{
+          color:colorFile.textColor,
+          fontWeight:'600'
+        },
+        selectionInnerContent:{
+          padding: 10,
+          backgroundColor:colorFile.backgroundColor,
+          // color:colorFile.textColor,
+        }
    })
+
 }

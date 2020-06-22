@@ -35,18 +35,12 @@ var contentType = ''
       // }
       // else{
         return(
-          <View style={{
-            flexDirection: "row",
-            padding: 10,
-            justifyContent: "space-between",
-            alignItems: "center" ,
-            }}>
-            <Text style={{ fontWeight: "600" }} >
+          <View style={this.styles.accordionHeader}>
+            <Text style={this.styles.accordionHeaderText} >
             {" "}{item.contentType.charAt(0).toUpperCase()+item.contentType.slice(1)}
              
             </Text>
-            <Icon style={styles.iconStyle} name={expanded ? "keyboard-arrow-down" : "keyboard-arrow-up" }  size={24}/>
-
+            <Icon style={this.styles.iconStyleSelection} name={expanded ? "keyboard-arrow-down" : "keyboard-arrow-up" }  size={24}/>
           </View>
         )
       // }
@@ -55,18 +49,13 @@ var contentType = ''
       _renderHeaderInner=(item,expanded)=>{
           // this.props.updateContentType({})
           return(
-            <View style={{
-              flexDirection: "row",
-              padding: 10,
-              justifyContent: "space-between",
-              alignItems: "center" ,
-               }}
+            <View style={this.styles.headerInner}
               //  onPress={()=>{this.onPressModal}} 
                >
-              <Text style={{ fontWeight: "600" }}>
+              <Text style={this.styles.selectionHeaderModal}>
                 {" "}{item.languageName}
               </Text>
-              <Icon  style={styles.iconStyle} name={expanded ? "keyboard-arrow-down" : "keyboard-arrow-up" }  size={24}/>
+              <Icon  style={this.styles.iconStyleSelection} name={expanded ? "keyboard-arrow-down" : "keyboard-arrow-up" }  size={24}/>
             </View>
           )
         }
@@ -75,17 +64,14 @@ var contentType = ''
         return(
           item.versionModels.map(v=>
           <TouchableOpacity 
-            style={{
-              // flexDirection: "row",
-              padding: 10,
-              }}
+            style={this.styles.selectionInnerContent}
               onPress={()=>{
                 this.props.navigation.setParams({modalVisible:false,visibleParallelView:true});
                 this.props.updateContentType({parallelContentType:contentType,parallelContentLanguage:item.languageName,parallelContentLanguageCode:item.languageCode,parallelContentVersion:v.versionName,parallelContentVersionCode:v.versionCode,parallelContentSourceId:v.sourceId})
               }} 
             >
-              <Text >{v.versionName}</Text>
-              <Text>{v.versionCode}</Text>
+              <Text style={this.styles.selectionHeaderModal}>{v.versionName}</Text>
+              <Text style={this.styles.selectionHeaderModal}>{v.versionCode}</Text>
             </TouchableOpacity>)
       )
     }
@@ -128,6 +114,7 @@ var contentType = ''
         // this.props.fetchAllContent()
     }
       render(){
+        this.styles =styles(this.props.colorFile, this.props.sizeFile)
           return(
             <View>
             <Modal
@@ -138,16 +125,11 @@ var contentType = ''
               >
             <View>
               <TouchableWithoutFeedback
-                style={{
-                  flex: 1,
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  }} 
+                style={this.styles.modalContainer}
                 onPressOut={()=>{this.props.navigation.setParams({modalVisible:false})}} 
                 // onPress={this.onPressModal}
               >
-              <View style={{height:'80%',width:'70%',alignSelf:'flex-end',}}>
+              <View style={{height:'80%',width:'70%',alignSelf:'flex-end'}}>
               <Card style={{marginTop:40}}>
                     <Accordion 
                     dataArray={this.props.availableContents}

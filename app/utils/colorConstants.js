@@ -3,7 +3,7 @@ module.exports = {
         Black:'#000',
         FedBlack:'#8c8f8f',
         White:'#fff',
-        FedWhite:"#e3e6e6",
+        FedWhite:"#dee0e0",
         Gray:'#808080',
         Pink:'#F62459',
         Dark_Blue:'#191970',
