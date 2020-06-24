@@ -18,9 +18,9 @@ import VerseView from './VerseView'
 import {getBookNameFromMapping} from '../../utils/UtilFunctions';
 import APIFetch from '../../utils/APIFetch'
 import {fetchAudioUrl,fetchVersionLanguage,fetchVersionContent,queryDownloadedBook,userInfo,updateVersionBook,updateVersion} from '../../store/action/'
-import SelectContent from '../Bible/component/SelectContent'
-import SelectBottomTabBar from '../Bible/component/SelectBottomTabBar'
-import ChapterNdAudio from '../Bible/component/ChapterNdAudio'
+import SelectContent from '../../components/Bible/SelectContent'
+import SelectBottomTabBar from '../../components/Bible/SelectBottomTabBar'
+import ChapterNdAudio from '../../components/Bible/ChapterNdAudio'
 import Spinner from 'react-native-loading-spinner-overlay';
 import { styles } from './styles.js';
 import {connect} from 'react-redux'
@@ -28,7 +28,7 @@ import Commentary from '../StudyHelp/Commentary/'
 import Dictionary from '../StudyHelp/Dictionary/'
 
 import {Header, Button,Title} from 'native-base'
-import BibleChapter from './component/BibleChapter';
+import BibleChapter from '../../components/Bible/BibleChapter';
 import firebase from 'react-native-firebase'
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
@@ -131,7 +131,6 @@ class Bible extends Component {
       top: height / 2,
       connection_Status:true,
       scrollDirection:'up',
-      close:true,
       message:'',
       status:false,
       modalVisible: false,
@@ -809,7 +808,7 @@ getNotes(){
     this.props.navigation.setParams({visibleParallelView:value,})
   }
   render() {
-    console.log(" login modal ",this.state.loginModal)
+    console.log(" VISIBLE PARALLEL VIEW  ", this.props.navigation.getParam("visibleParallelView") )
     return(
     <View  style={this.styles.container}>
       {this.state.isLoading &&
@@ -880,8 +879,8 @@ getNotes(){
             />
           }
         {
-          this.state.chapterContent.length > 0 &&
-        this.props.navigation.getParam("visibleParallelView") ? null :
+        this.state.chapterContent.length > 0 &&
+        this.props.navigation.getParam("visibleParallelView") == false && 
           (this.state.showBottomBar &&
             <SelectBottomTabBar 
             styles={this.styles}
@@ -986,7 +985,6 @@ const mapStateToProps = state =>{
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
     verseInLine:state.updateStyling.verseInLine,
-    close:state.updateSplitScreen.close,
 
     email:state.userInfo.email,
     userId:state.userInfo.uid,
@@ -1004,7 +1002,6 @@ const mapStateToProps = state =>{
 }
 const mapDispatchToProps = dispatch =>{
   return {
-    closeSplitScreen :(close)=>dispatch(closeSplitScreen(close)),
     fetchVersionLanguage:()=>dispatch(fetchVersionLanguage()),
     fetchVersionContent:(payload)=>dispatch(fetchVersionContent(payload)),
     updateVersion: (payload)=>dispatch(updateVersion(payload)),

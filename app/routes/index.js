@@ -1,11 +1,10 @@
 // all of our routes
 import {createStackNavigator, createDrawerNavigator,createSwitchNavigator,createAppContainer} from 'react-navigation'
-import About from '../screens/About/About'
-import Search from '../screens/Search/Search'
-import Settings from '../screens/settings/Settings'
+import About from '../screens/About/'
+import Search from '../screens/Search/'
+import Settings from '../screens/Settings'
 import Notes from '../screens/Note/index'
 import EditNote from '../screens/Note/EditNote'
-import NotePage from '../screens/Note/NotePage'
 import Highlights from '../screens/Highlights/'
 import History from '../screens/History/'
 
@@ -56,7 +55,6 @@ const NavStack = createStackNavigator(
       },
       LanguageList:{screen:LanguageList },
       EditNote:{screen:EditNote },
-      NotePage:{screen:NotePage },
       StudyHelp:{screen:StudyHelp},
       Commentary:{screen:Commentary,
         navigationOptions: () => ({
@@ -70,7 +68,6 @@ const NavStack = createStackNavigator(
       History:{screen:History},
       BookMarks:{screen:BookMarks},
       Highlights:{screen:Highlights},
-      NotePage:{screen:NotePage},
       Infographics:{screen:Infographics},
       Login:{screen: Login},
       Register:{screen: Register,

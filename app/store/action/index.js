@@ -1,11 +1,7 @@
 
-export {updateBCV,deleteNote} from './editNote'
-export {addBookToNote,addChapterToNote,addVerseToNote,updateNoteBody} from './editNote'
 
 export {updateVersion,updateContentType,updateVersionBook} from './updateVersion'
 export {updateFontSize,updateColorMode,updateVerseInLine} from './updateStyling'
-export {closeSplitScreen,updateDimensions} from './splitScreenProps'
-export {updateInfographics} from './updateInfographics'
 
 export {fetchAudioUrl,audioURLSuccess,audioURLFailure} from './apiFetch/audio/fetchUrl'
 

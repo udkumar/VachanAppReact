@@ -4,8 +4,8 @@ import BookIcon from 'react-native-vector-icons/Foundation'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import {Card,CardItem,Content,Body,List,ListItem,Left,Right,Accordion} from 'native-base'
-import {updateContentType,fetchAllContent} from '../../../store/action/'
-import {styles} from '../../LanguageList/styles'
+import {updateContentType,fetchAllContent} from '../../store/action/'
+import {styles} from '../../screens/LanguageList/styles'
 import {connect} from 'react-redux'
 
 
@@ -148,7 +148,7 @@ var contentType = ''
             <TouchableOpacity onPress={this.onPressModal} style={[this.props.navStyles.touchableStyleRight,{flexDirection:'row'}]}>
             <Image
                 style={{width:32,height:32,color:'#fff'}}
-                source={require('../../../assets/Reference05.png')}
+                source={require('../../assets/Reference05.png')}
                 //
             />
                 {/* <BookIcon 

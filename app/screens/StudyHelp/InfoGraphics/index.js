@@ -159,7 +159,6 @@ const mapStateToProps = state =>{
 
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
-    close:state.updateSplitScreen.close,
 
     filePath:state.infographics.url,
     file:state.infographics.fileName
@@ -170,7 +169,6 @@ const mapStateToProps = state =>{
 const mapDispatchToProps = dispatch =>{
   return {
     selectedChapter: (chapterNumber,totalVerses)=>dispatch(selectedChapter(chapterNumber,totalVerses)),
-    closeSplitScreen :(close)=>dispatch(closeSplitScreen(close)),
     updateAudio :(audio)=>dispatch(updateAudio(audio)),
     updateContentType:(content) =>dispatch(updateContentType(content)),
   }

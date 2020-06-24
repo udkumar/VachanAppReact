@@ -129,21 +129,7 @@ class Note extends Component {
       this.queryDb()
   }
 
-  // openNoteContent = ()=>{
-    //  openNoteContent = (note,bodyText)=>{
-  //   this.props.navigation.navigate("NotePage",{
-  //     bodyText:bodyText,
-  //     note:note,
-  //     onDelete: this.onDelete, 
-  //     onRefresh: this.onRefresh, 
-  //     referenceList:  this.props.navigation.state.params.referenceList,
-  //     bookId: this.state.bookId,
-  //     versionCode: this.state.versionCode,
-  //     languageName: this.state.languageName,
-  //   })
-  // }
-  //   this.props.navigation.navigate("NotePage",{notesData:this.state.notesData})
-  // }
+
   bodyText(text){
     var jparse = text == '' ? '' : text
     var strParse = jparse.replace(/<(?:.|\n)*?>/gm, '');

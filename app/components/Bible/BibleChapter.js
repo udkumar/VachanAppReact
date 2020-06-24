@@ -9,8 +9,8 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import Spinner from 'react-native-loading-spinner-overlay';
-import {getBookNameFromMapping} from '../../../utils/UtilFunctions';
-import {fetchParallelBible} from '../../../store/action/'
+import {getBookNameFromMapping} from '../../utils/UtilFunctions';
+import {fetchParallelBible} from '../../store/action'
 import { styles } from './styles';
 import {connect} from 'react-redux'
 import {Header, Button,Right,Title} from 'native-base'

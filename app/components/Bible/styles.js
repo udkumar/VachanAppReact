@@ -58,7 +58,6 @@ export const styles =(colorFile, sizeFile) =>{
         width:width/3,
         justifyContent:'center',
         alignItems:'center',
-       
     },
  
      
