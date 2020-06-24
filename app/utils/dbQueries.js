@@ -103,8 +103,8 @@ class DbQueries {
         DbHelper.clearHistory()
     }
 
-    deleteLanguage(lanCode, verCode){
-        DbHelper.deleteLanguage(lanCode, verCode)
+    deleteBibleVersion(lanCode, verCode,sourceId,downloaded){
+        DbHelper.deleteBibleVersion(lanCode, verCode,sourceId,downloaded)
     }
 
     // add list of languages to db
@@ -114,6 +114,9 @@ class DbQueries {
     getLangaugeList(){
        return DbHelper.getLangaugeList()
     }
+    // deleteBible(){
+
+    // }
     // updateLanguageList(lang,verCode,booklist){
     //     return DbHelper.updateLanguageList(lang,verCode,booklist)
     // }

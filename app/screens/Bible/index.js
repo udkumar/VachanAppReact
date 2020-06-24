@@ -944,7 +944,9 @@ headerLeftStyle:{
 },
 headerRightStyle:{
   flexDirection:'row',
-  paddingRight:8,
+  alignItems:'center',
+  justifyContent:'center',
+  paddingRight:4,
   flex:1,
 },
 touchableStyleRight:{

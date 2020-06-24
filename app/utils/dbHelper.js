@@ -470,16 +470,17 @@ class DbHelper {
 		});
 	}
 
-    async deleteLanguage(langCode,verCode){
+    async deleteBibleVersion(langCode,verCode,sourceId,downloaded){
 		let realm = await this.getRealm();
 		realm.write(() => {
 			let result = realm.objectForPrimaryKey("LanguageModel", langCode)
+			let bible = realm.objects("BookModel")
+			let bibleA = bible.filtered('languageName ==[c] "' + langCode + '" && versionCode ==[c] "' + verCode + '"')
+			realm.delete(bibleA); 
 			let resultsA = result.versionModels
-			let resultsB = resultsA.filtered('versionCode ==[c] "' + verCode + '"')
-			realm.delete(resultsB)
-			if (resultsA.length == 0) {
-				realm.delete(result)
-			}
+			let resultsB = resultsA.filtered('versionCode ==[c] "' + verCode + '" && sourceId ==[c] "' + sourceId + '"')
+			resultsB[0].downloaded = false
+			resultsB[0].bookNameList = []
 		})
 	}
 

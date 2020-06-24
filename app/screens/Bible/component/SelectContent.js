@@ -146,16 +146,16 @@ var contentType = ''
             </Modal>
           
             <TouchableOpacity onPress={this.onPressModal} style={[this.props.navStyles.touchableStyleRight,{flexDirection:'row'}]}>
-            {/* <Image
-                style={{width: 24,height: 24,color:'#fff'}}
-                source={require('../../../assets/Reference02.png')}
+            <Image
+                style={{width:32,height:32,color:'#fff'}}
+                source={require('../../../assets/Reference05.png')}
                 //
-            /> */}
-                <BookIcon 
+            />
+                {/* <BookIcon 
                   name='book'
                   color={"#fff"} 
                   size={24} 
-                /> 
+                />  */}
             </TouchableOpacity>
             </View>
           

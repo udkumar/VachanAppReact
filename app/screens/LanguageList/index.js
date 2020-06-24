@@ -191,6 +191,10 @@ class LanguageList extends Component {
         versionCode:verCode,downloaded:downloaded})
         this.props.navigation.pop()
     }
+    async deleteBible(languageName,languageCode,versionCode,sourceId,downloaded){
+     await  DbQueries.deleteBibleVersion(languageName,versionCode,sourceId,downloaded)
+     await this.fetchLanguages()
+    }
 
     _renderHeader = (item, expanded) =>{
       return(
@@ -225,7 +229,7 @@ class LanguageList extends Component {
                   <View>
                   {
                     element.downloaded == true ? 
-                    <Icon style={[this.styles.iconStyle,{marginRight:8}]} name="check" size={24}  onPress={()=>{this.navigateTo(item.languageName,item.languageCode,element.versionCode,element.sourceId, element.downloaded )}}
+                    <Icon style={[this.styles.iconStyle,{marginRight:8}]} name="delete" size={24}  onPress={()=>{this.deleteBible(item.languageName,item.languageCode,element.versionCode,element.sourceId, element.downloaded)}}
                     />
                   :
                     <Icon  style={[this.styles.iconStyle,{marginRight:12}]} name="file-download" size={24} onPress={()=>{this.downloadBible(item.languageName,element.versionCode,index,element.sourceId)}}/>
