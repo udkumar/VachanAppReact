@@ -29,10 +29,12 @@ class BibleChapter extends Component {
         this.alertPresent = false
     }
     queryParallelBible =(val)=>{
+         console.log(" queryParallelBible ",val,"totalChapters ",this.props.totalChapters)
         this.setState({currentParallelViewChapter:val != null ? this.state.currentParallelViewChapter + val : this.props.currentChapter},()=>{
-        this.props.fetchParallelBible({isDownloaded:false,sourceId:this.props.parallelContentSourceId,language:this.props.parallelContentLanguage,version:this.props.parallelContentVersionCode,bookId:this.state.id,chapter:val != null ? this.state.currentParallelViewChapter + val: this.props.currentChapter})
-            this.setState({currentParallelViewChapter:this.state.currentParallelViewChapter
-            })
+        this.props.fetchParallelBible({isDownloaded:false,sourceId:this.props.parallelContentSourceId,language:this.props.parallelContentLanguage,version:this.props.parallelContentVersionCode,bookId:this.state.id,
+            chapter:this.state.currentParallelViewChapter})
+            // this.setState({currentParallelViewChapter:this.state.currentParallelViewChapter
+            // })
         })
     }
     getRef=(item)=>{

@@ -18,10 +18,12 @@ const API_BASE_URL = 'https://api.vachanonline.net/v1/'
       totalVerses = response[0].length
     }
     else{
+      console.log(" query chapter number ",payload.chapter)
       const url = API_BASE_URL + "bibles" + "/" + payload.sourceId + "/" + "books" + "/" + payload.bookId + "/" + "chapter" + "/" + payload.chapter
       const res = yield call(fetch,url)
       if(res.ok && res.status == 200){
-        const response =yield res.json()
+        const response = yield res.json()
+        // console.log("RESPONDE AND CHAPTER NUMBER ",response.chapterContent.verses)
         const chapterContent = response.chapterContent.verses
         const totalVerses = response.chapterContent.verses.length
         yield put(parallelBibleSuccess({parallelBible:chapterContent,totalVerses:totalVerses}))

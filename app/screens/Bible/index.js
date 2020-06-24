@@ -808,7 +808,6 @@ getNotes(){
     this.props.navigation.setParams({visibleParallelView:value,})
   }
   render() {
-    console.log(" VISIBLE PARALLEL VIEW  ", this.props.navigation.getParam("visibleParallelView") )
     return(
     <View  style={this.styles.container}>
       {this.state.isLoading &&
@@ -866,6 +865,7 @@ getNotes(){
               {/* <View style={{marginBottom:20}}/> */}
           {
             this.state.chapterContent.length > 0 &&
+            <View>
             <ChapterNdAudio
             styles={this.styles}
             currentVisibleChapter={this.state.currentVisibleChapter}
@@ -877,19 +877,21 @@ getNotes(){
             navigation={this.props.navigation}
             queryBookFromAPI={this.queryBookFromAPI}
             />
+          {
+            this.props.navigation.getParam("visibleParallelView") == false && 
+                this.state.showBottomBar &&
+                <SelectBottomTabBar 
+                styles={this.styles}
+                bottomHighlightText={this.state.bottomHighlightText}
+                doHighlight={this.doHighlight}
+                addToNotes={this.addToNotes}
+                addToShare={this.addToShare}
+                />
+              
           }
-        {
-        this.state.chapterContent.length > 0 &&
-        this.props.navigation.getParam("visibleParallelView") == false && 
-          (this.state.showBottomBar &&
-            <SelectBottomTabBar 
-            styles={this.styles}
-            bottomHighlightText={this.state.bottomHighlightText}
-            doHighlight={this.doHighlight}
-            addToNotes={this.addToNotes}
-            addToShare={this.addToShare}
-            />)
-        }
+          </View>
+          }
+     
         </View>
             {/**parallelView**/}
         {

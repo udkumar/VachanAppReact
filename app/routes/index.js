@@ -10,15 +10,12 @@ import History from '../screens/History/'
 
 import Commentary from '../screens/StudyHelp/Commentary/'
 import Dictionary from '../screens/StudyHelp/Dictionary/'
-import StudyHelp from '../screens/StudyHelp/'
-import Hints from '../screens/Hints/Hints'
 
 import Reset from '../screens/Auth/Reset'
 import Register from '../screens/Auth/Register'
 import Login from '../screens/Auth/Login'
 import ProfilePage from '../screens/Auth/ProfilePage'
 import Auth from '../screens/Auth/'
-
 
 import DrawerScreen from '../screens/DrawerScreen'
 import Bible from '../screens/Bible'
@@ -55,7 +52,6 @@ const NavStack = createStackNavigator(
       },
       LanguageList:{screen:LanguageList },
       EditNote:{screen:EditNote },
-      StudyHelp:{screen:StudyHelp},
       Commentary:{screen:Commentary,
         navigationOptions: () => ({
           header:null
@@ -64,7 +60,6 @@ const NavStack = createStackNavigator(
       Dictionary:{screen:Dictionary},
       About:{screen:About},
       Settings:{screen:Settings},
-      Hints:{screen:Hints},
       History:{screen:History},
       BookMarks:{screen:BookMarks},
       Highlights:{screen:Highlights},
