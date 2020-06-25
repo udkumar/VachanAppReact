@@ -37,7 +37,7 @@ class Bible extends Component {
   static navigationOptions = ({navigation}) =>{
         const { params={} } = navigation.state 
         return{
-          header: params.visibleParallelView && null,
+          header: params.visibleParallelView  && null,
           headerLeft:(
                 <View style={navStyles.headerLeftStyle}>
                   <TouchableOpacity style={[navStyles.touchableStyleLeft]}  
@@ -50,13 +50,22 @@ class Bible extends Component {
                     </TouchableOpacity>
                       <TouchableOpacity style={navStyles.touchableStyleLeft} 
                         onPress={() =>{navigation.navigate("SelectionTab", 
-                        {getReference:params.getRef,parallelContent:false,bookId:params.bookId,chapterNumber:params.currentChapter,totalChapters:params.numOfChapter,totalVerses:params.numOfVerse})}}> 
-                        <Text  style={navStyles.headerTextStyle}>{params.bookName}  {params.currentChapter }</Text>
-                      <Icon name="arrow-drop-down" color="#fff" size={24}/>
+                        {getReference:params.getRef,parallelContent:false,bookId:params.bookId,chapterNumber:params.currentChapter,totalChapters:params.numOfChapter,totalVerses:params.numOfVerse})}}
+                        style={[navStyles.headerLeftStyle,{paddingRight:8}]}> 
+                        {/* <View > */}
+                          <Text style={[navStyles.headerTextStyle,{paddingRight:4}]}>{params.bookName} </Text>
+                          <Text style={[navStyles.headerTextStyle,{fontWeight:'bold'}]}>{params.currentChapter }</Text>
+                          <Icon name="arrow-drop-down" color="#fff" size={20} style={{alignSelf:'center'}}/>
+                        {/* </View> */}
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() =>{{navigation.navigate("LanguageList",{updateLangVer:params.updatelangVer})}}} style={[navStyles.headerLeftStyle]}>
-                        <Text style={navStyles.headerTextStyle}>{params.languageName}  {params.versionCode}</Text>
-                        <Icon name="arrow-drop-down" color="#fff" size={24}/>
+                      <TouchableOpacity 
+                        onPress={() =>{{navigation.navigate("LanguageList",{updateLangVer:params.updatelangVer})}}} 
+                        style={navStyles.headerLeftStyle}>
+                        {/* <View > */}
+                          <Text style={[navStyles.headerTextStyle,{paddingRight:4}]}>{params.languageName}</Text>
+                          <Text style={[navStyles.headerTextStyle,{fontWeight:'bold'}]}>{params.versionCode}</Text>
+                          <Icon name="arrow-drop-down" color="#fff" style={{alignSelf:'center'}} size={20}/>
+                        {/* </View> */}
                       </TouchableOpacity>
                 </View>
             ), 
@@ -74,13 +83,21 @@ class Bible extends Component {
               {params.audio &&
               <TouchableOpacity  onPress={params.toggleAudio}
                 style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
-                <Icon 
+                <Icon
                     name='volume-up'
                     size={24} 
                     color={ "#fff" }
                 /> 
               </TouchableOpacity>
               }
+                  <TouchableOpacity  style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
+                    <Icon 
+                      onPress={params.onSeach} 
+                      name='search'
+                      color={"#fff"} 
+                      size={24} 
+                  /> 
+                  </TouchableOpacity>
                   <TouchableOpacity  style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
                     <Icon 
                       onPress={()=> {params.onBookmark(params.isBookmark)}} 
@@ -134,6 +151,7 @@ class Bible extends Component {
       message:'',
       status:false,
       modalVisible: false,
+      onSearchHideHeader:false,
       // loginModal:false,
       arrLayout:[],
       notesList:[],
@@ -251,7 +269,8 @@ class Bible extends Component {
       audio:this.state.audio,
       onBookmark: this.onBookmarkPress,
       toggleAudio:this.toggleAudio,
-
+      onSeach:this.onSeach,
+      onSearchHideHeader:this.state.onSearchHideHeader
       // toggleModal:this.setState({modalVisible:!this.state.modalVisible}),
     })
     this.subs = this.props.navigation.addListener("didFocus", () =>{
@@ -803,7 +822,12 @@ getNotes(){
     this.setState({offset:currentOffset,direction:direction})
     console.log(direction)
   }
-
+  onSeach=()=>{
+    this.props.navigation.navigate('Search')
+    // console.log(" HEADER HIDE ",this.state.onSearchHideHeader)
+    // this.setState({onSearchHideHeader:!this.state.onSearchHideHeader})
+    // this.props.navigation.setParams({onSearchHideHeader:!this.state.onSearchHideHeader})
+  }
   toggleParallelView(value){
     this.props.navigation.setParams({visibleParallelView:value,})
   }
@@ -938,26 +962,34 @@ getNotes(){
 const navStyles = StyleSheet.create({
 
 headerLeftStyle:{
-  alignItems:'flex-end',
-  justifyContent:'flex-end',
+  alignItems:'stretch',
+  justifyContent:'space-evenly',
   flexDirection:'row',
   flex:1,
+  // paddingLeft:8,
+},
+border:{
+  paddingHorizontal:4,
+  paddingVertical:4,
+
+  borderWidth:0.2,
+  // marginLeft:4,
+  borderColor:'#fff'
 },
 headerRightStyle:{
   flexDirection:'row',
   alignItems:'center',
   justifyContent:'center',
-  paddingRight:4,
+  paddingRight:2,
   flex:1,
 },
 touchableStyleRight:{
     flexDirection:"row",
-    marginRight:10
+    marginRight:8
 },
 touchableStyleLeft:{
   flexDirection:"row",
-    marginLeft:10,
-    marginRight:10
+    marginHorizontal:8
 },
 headerTextStyle:{
     fontSize:18,

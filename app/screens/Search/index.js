@@ -13,12 +13,14 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import DbQueries from '../../utils/dbQueries.js'
 import APIFetch from '../../utils/APIFetch'
-import {getBookNameFromMapping, getBookNumberFromMapping, getResultText} from '../../utils/UtilFunctions'
-const width = Dimensions.get('window').width-20;
+import {getBookNameFromMapping,getBookChaptersFromMapping, getBookNumberFromMapping,getBookNumOfVersesFromMapping, getResultText} from '../../utils/UtilFunctions'
 import SearchTab from '../../components/SearchTab/SearchTab'
+import {updateVersionBook} from '../../store/action/'
+
 import { Segment } from 'native-base';
 import {searchStyle} from './styles'
 import {connect} from 'react-redux'
+const width = Dimensions.get('window').width;
  
 const SearchResultTypes = {
   ALL: 0,
@@ -36,7 +38,7 @@ class Search extends Component {
           <TextInput
             placeholder="Search"
             underlineColorAndroid = 'transparent'
-            style={{color:'white',width:Dimensions.get('window').width-90}}
+            style={{color:'white',width:width-90}}
             onChangeText={(text) =>params.onTextChange(text)}
             placeholderTextColor={'#fff'} 
             returnKeyType="search"
@@ -47,7 +49,7 @@ class Search extends Component {
           />
         ),
         headerRight:(
-          <Icon name={params.text !== '' ? 'cancel' : 'search'} onPress={()=>params.clearData()} size={24} color="#fff" style={{marginHorizontal:8}} />
+          <Icon name={params.text == '' ? 'search' : 'cancel'} onPress={()=>params.clearData()} size={24} color="#fff" style={{marginHorizontal:8}} />
         )
       }
   }
@@ -237,11 +239,22 @@ class Search extends Component {
   //     </View>
   //   )
   // }
+goToBible=(bId,chapterNum,verseNum)=>{
+  this.props.updateVersionBook({
+    bookId:bId, 
+    bookName:getBookNameFromMapping(bId,this.state.languageName),
+    chapterNumber:chapterNum,
+    totalChapters:getBookChaptersFromMapping(bId),
+    totalVerses:getBookNumOfVersesFromMapping(bId,chapterNum),
+    verseNumber:verseNum
+  })
+  this.props.navigation.navigate('Bible')
+}
 
   searchedData = ({item,index}) => {
     return (
       <TouchableOpacity style={this.styles.searchedDataContainer} 
-        // onPress={()=>this.props.navigation.navigate('Bible')}
+        onPress={ ()=> {this.goToBible(item.bookId,item.chapterNumber,item.verseNumber,this.state.languageName)}}
         >
         <Text style={this.styles.searchedData}> 
           {getBookNameFromMapping(item.bookId,this.state.languageName)} {item.chapterNumber} : {item.verseNumber} 
@@ -294,5 +307,10 @@ const mapStateToProps = state =>{
     colorFile:state.updateStyling.colorFile,
   }
 }
+const mapDispatchToProps = dispatch =>{
+  return {
+    updateVersionBook:(value)=>dispatch(updateVersionBook(value))
+  }
+}
 
-export  default connect(mapStateToProps,null)(Search)
+export  default connect(mapStateToProps,mapDispatchToProps)(Search)
