@@ -48,24 +48,20 @@ class Bible extends Component {
                         size={24}
                     />
                     </TouchableOpacity>
-                      <TouchableOpacity style={navStyles.touchableStyleLeft} 
+                      <TouchableOpacity 
                         onPress={() =>{navigation.navigate("SelectionTab", 
                         {getReference:params.getRef,parallelContent:false,bookId:params.bookId,chapterNumber:params.currentChapter,totalChapters:params.numOfChapter,totalVerses:params.numOfVerse})}}
-                        style={[navStyles.headerLeftStyle,{paddingRight:8}]}> 
-                        {/* <View > */}
+                        style={[navStyles.headerLeftStyle,{paddingHorizontal:8}]}> 
                           <Text style={[navStyles.headerTextStyle,{paddingRight:4}]}>{params.bookName} </Text>
                           <Text style={[navStyles.headerTextStyle,{fontWeight:'bold'}]}>{params.currentChapter }</Text>
                           <Icon name="arrow-drop-down" color="#fff" size={20} style={{alignSelf:'center'}}/>
-                        {/* </View> */}
                       </TouchableOpacity>
                       <TouchableOpacity 
                         onPress={() =>{{navigation.navigate("LanguageList",{updateLangVer:params.updatelangVer})}}} 
                         style={navStyles.headerLeftStyle}>
-                        {/* <View > */}
                           <Text style={[navStyles.headerTextStyle,{paddingRight:4}]}>{params.languageName}</Text>
                           <Text style={[navStyles.headerTextStyle,{fontWeight:'bold'}]}>{params.versionCode}</Text>
                           <Icon name="arrow-drop-down" color="#fff" style={{alignSelf:'center'}} size={20}/>
-                        {/* </View> */}
                       </TouchableOpacity>
                 </View>
             ), 
@@ -283,7 +279,7 @@ class Bible extends Component {
       this.getNotes()
       this.fetchAudio()
       this.props.navigation.setParams({
-        bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 12 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,11)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
+        bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 10 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,9)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
         currentChapter:this.state.currentVisibleChapter,
         languageName: this.props.language.substring(0,3), 
         versionCode: this.props.versionCode,
@@ -329,7 +325,7 @@ class Bible extends Component {
       DbQueries.addHistory(this.props.sourceId,this.props.language,this.props.languageCode, this.props.versionCode, item.bookId,JSON.parse(item.chapterNumber), this.props.downloaded, time)
       this.props.navigation.setParams({
         bookId:item.bookId,
-        bookName:getBookNameFromMapping(item.bookId,this.props.language).length > 12 ? getBookNameFromMapping(item.bookId,this.props.language).slice(0,11)+"..." : getBookNameFromMapping(item.bookId,this.props.language),
+        bookName:getBookNameFromMapping(item.bookId,this.props.language).length > 10 ? getBookNameFromMapping(item.bookId,this.props.language).slice(0,9)+"..." : getBookNameFromMapping(item.bookId,this.props.language),
         currentChapter:JSON.parse(item.chapterNumber),
         numOfChapter:item.totalChapters,
       })
@@ -360,7 +356,7 @@ class Bible extends Component {
       this.props.navigation.setParams({
       languageName:item.languageName.substring(0,3),
       versionCode:item.versionCode,
-      bookName:getBookNameFromMapping(this.props.bookId,item.languageName).length > 12 ? getBookNameFromMapping(this.props.bookId,item.languageName).slice(0,11)+"..." : getBookNameFromMapping(this.props.bookId,item.languageName),
+      bookName:getBookNameFromMapping(this.props.bookId,item.languageName).length > 10 ? getBookNameFromMapping(this.props.bookId,item.languageName).slice(0,9)+"..." : getBookNameFromMapping(this.props.bookId,item.languageName),
         // chapterNumber:this.state.currentVisibleChapter
       })
       // this.getBookMarks()
@@ -416,7 +412,7 @@ class Bible extends Component {
               languageName:this.props.language.substring(0,3),
               versionCode:this.props.versionCode,
               bookId:this.props.bookId,
-              bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 12 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,11)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
+              bookName:getBookNameFromMapping(this.props.bookId,this.props.language).length > 10 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,9)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language),
               currentChapter:JSON.parse(this.state.currentVisibleChapter),
               numOfChapter:this.props.totalChapters,
               isBookmark:this.isBookmark()
@@ -855,7 +851,7 @@ getNotes(){
           {this.props.navigation.getParam("visibleParallelView") &&
             <Header style={{height:40}}>
                   <Button transparent onPress={()=>{this.props.navigation.navigate("SelectionTab",{getReference:this.getReference,bookId:this.props.bookId,chapterNumber:this.state.currentVisibleChapter,totalChapters:this.props.totalChapters,totalVerses:this.props.totalVerses})}}>
-                      <Title style={{fontSize:16}}>{getBookNameFromMapping(this.props.bookId,this.props.language).length > 12 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,11)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language)} {this.state.currentVisibleChapter}</Title>
+                      <Title style={{fontSize:16}}>{getBookNameFromMapping(this.props.bookId,this.props.language).length > 10 ? getBookNameFromMapping(this.props.bookId,this.props.language).slice(0,9)+"..." : getBookNameFromMapping(this.props.bookId,this.props.language)} {this.state.currentVisibleChapter}</Title>
                       <Icon name="arrow-drop-down" color="#fff" size={20}/>
                   </Button>
             </Header>
