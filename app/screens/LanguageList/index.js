@@ -12,7 +12,7 @@ import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants';
 import { styles } from './styles.js';
 import {connect} from 'react-redux';
-import {updateVersion,updateInfographics,fetchAllContent} from '../../store/action/'
+import {updateVersion,fetchVersionBooks,fetchAllContent} from '../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
 
 import {API_BASE_URL} from '../../utils/APIConstant'
@@ -21,6 +21,7 @@ import { State } from 'react-native-gesture-handler';
 // const languageList = async () => { 
 //   return await DbQueries.getLangaugeList()
 // }
+// const booksValue = null
 
 class LanguageList extends Component {
     static navigationOptions = ({navigation}) => ({
@@ -39,7 +40,12 @@ class LanguageList extends Component {
           // searchList:[],
           startDownload:false,
           index : -1,
-          languageName:'',
+          // languageName:'',
+          language:this.props.language,
+          versionCode:this.props.versionCode,
+          downloaded:this.props.downloaded,
+          sourceId:this.props.sourceId,
+
           colorFile:this.props.colorFile,
           sizeFile:this.props.sizeFile,
 
@@ -59,7 +65,7 @@ class LanguageList extends Component {
           this.alertPresent = true;
           if (this.state.languages.length == 0) {
             this.fetchLanguages()
-            Alert.alert("", "Check your internet connection", [{text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
+            // Alert.alert("", "Check your internet connection", [{text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
             }else{
             console.log("LANGUAGEG LIST ",this.state.languages.length)
             this.alertPresent = false;
@@ -124,7 +130,7 @@ class LanguageList extends Component {
         notification = new firebase.notifications.Notification()
             .setNotificationId(curTime)
             .setTitle('Downloading')
-            .setBody(this.state.languageName +" Bible downloading" )
+            .setBody(this.state.language +" Bible downloading" )
             .android.setChannelId('download_channel')
             .android.setSmallIcon('ic_launcher')
             .android.setOngoing(true)
@@ -182,14 +188,14 @@ class LanguageList extends Component {
         }
       }
     }
-    navigateTo(langName,langCode,verCode,sourceId,downloaded){
-      console.log(" navigate to ",langName,langCode,verCode,sourceId,downloaded)
-      // this.props.updateVersion({language:langName,languageCode:langCode,
-      //   versionCode:verCode,sourceId:sourceId,downloaded:downloaded})
+
+     navigateTo(langName,langCode,verCode,sourceId,downloaded){
+      this.props.fetchVersionBooks({language:langName,versionCode:verCode,downloaded:downloaded,sourceId:sourceId})
        this.props.navigation.state.params.updateLangVer({
         sourceId:sourceId,languageName:langName,languageCode:langCode, 
-        versionCode:verCode,downloaded:downloaded})
-        this.props.navigation.pop()
+        versionCode:verCode,downloaded:downloaded
+      })
+      this.props.navigation.pop()
     }
     async deleteBible(languageName,languageCode,versionCode,sourceId,downloaded){
      await  DbQueries.deleteBibleVersion(languageName,versionCode,sourceId,downloaded)
@@ -221,7 +227,7 @@ class LanguageList extends Component {
             {item.versionModels.map((element, index, key) => (
               <TouchableOpacity 
               style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginHorizontal:8}} 
-               onPress={()=>{this.navigateTo(item.languageName,item.languageCode,element.versionCode,element.sourceId, element.downloaded  )}}>
+               onPress={()=>{this.navigateTo(item.languageName,item.languageCode,element.versionCode,element.sourceId, element.downloaded)}}>
                   <View>
                     <Text style={[this.styles.text,{marginLeft:8,fontWeight:'bold'}]} >{element.versionCode} </Text>
                     <Text style={[this.styles.text,{marginLeft:8}]} >{element.versionName}</Text>
@@ -239,26 +245,31 @@ class LanguageList extends Component {
                 </TouchableOpacity>
             ))}
         </View>
+
       )
     }
     render(){
+      // booksValue = this.props.books
       // console.log(" languague LIST IN RENDER ",this.state.languages)
       return (
         <View style={this.styles.MainContainer}>
-        {this.props.isLoading &&
+        {
+        this.props.isLoading ?
             <Spinner
             visible={true}
             textContent={'Loading...'}
             //  textStyle={styles.spinnerTextStyle}
-          />}
-          {this.state.startDownload &&
+          />
+           :null }
+          {this.state.startDownload ?
             <Spinner
             visible={true}
             textContent={'DOWNLOADING BIBLE...'}
             //  textStyle={styles.spinnerTextStyle}
-          />}
+          />
+        :null }
           
-            {this.state.languages.length == 0  &&
+            {this.state.languages.length == 0  ?
               <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
               <TouchableOpacity 
               onPress={()=>this.updateData()}
@@ -266,23 +277,18 @@ class LanguageList extends Component {
               >
               <Text style={{fontSize:18,color:'#fff'}}>Reload</Text>
               </TouchableOpacity>
-              </View>}
+              </View>
+              :
+              <Accordion 
+                dataArray={this.state.languages}
+                animation={true}
+                expanded={true}
+                renderHeader={this._renderHeader}
+                renderContent={this._renderContent}
+              />
+              }
             
-          
-        {/* <TextInput 
-          style={this.styles.TextInputStyleClass}
-          onChangeText={(text) => this.SearchFilterFunction(text)}
-          value={this.state.text}
-          underlineColorAndroid='transparent'
-          placeholder="Search Here"
-        />   */}
-        <Accordion 
-          dataArray={this.state.languages}
-          animation={true}
-          expanded={true}
-          renderHeader={this._renderHeader}
-          renderContent={this._renderContent}
-          />
+        
        
       </View>
       )
@@ -291,11 +297,18 @@ class LanguageList extends Component {
 
 const mapStateToProps = state =>{
   return{
+    language: state.updateVersion.language,
+    versionCode:state.updateVersion.versionCode,
+    sourceId:state.updateVersion.sourceId,
+    downloaded:state.updateVersion.downloaded,
+
+
     bookId:state.updateVersion.bookId,
     chapterNumber:state.updateVersion.chapterNumber,
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
     bibleLanguages:state.contents.contentLanguages,
+    books:state.versionFetch.data,
   }
 }
 
@@ -303,7 +316,7 @@ const mapDispatchToProps = dispatch =>{
   return {
     updateVersion: (value)=>dispatch(updateVersion(value)),
     fetchAllContent:()=>dispatch(fetchAllContent()),
-
+    fetchVersionBooks:(payload)=>dispatch(fetchVersionBooks(payload)),
   }
 }
 export default connect(mapStateToProps,mapDispatchToProps)(LanguageList)

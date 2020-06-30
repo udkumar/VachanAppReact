@@ -41,12 +41,7 @@ export const styles =(colorFile, sizeFile) =>{
         marginLeft:4,
         alignSelf:'center'
     },
-    goToLogin:{
-        flexDirection:'row',alignItems:'center',justifyContent:'space-between'
-    },
-    loginView:{
-        flexDirection:'row',padding:8,alignItems:'center',justifyContent:'center'
-    },
+   
     iconStyle:{
         color:colorFile.iconColor
     },

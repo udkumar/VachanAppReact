@@ -48,13 +48,17 @@ class DrawerScreen extends Component {
     // const valueProps  = this.props.navigation.state.routes[0].index == 1 ? (this.props.navigation.state.routes[0].routes[1].params ? this.props.navigation.state.routes[0].routes[1].params.photorUl : null) : null
  
     const iconName = [
-      {icon:'bookmark',pressIcon:'BookMarks'},
-      {icon:'border-color',pressIcon:'Highlights'},
-      {icon:'note',pressIcon:'Notes'},
-      {icon:'history',pressIcon:'History'},
-      {icon:'search',pressIcon:'Search'},
-      {icon:'settings',pressIcon:'Settings'},
-      {icon:'info',pressIcon:'About'},
+       {icon:'account-circle',pressIcon:this.props.email ? 'ProfilePage' : 'Auth',text:this.state.email ?  'Profile': 'LogIn/SignUp'},
+      {icon:'bookmark',pressIcon:'BookMarks',text:'BookMarks'},
+      {icon:'border-color',pressIcon:'Highlights',text:'Highlights'},
+      {icon:'note',pressIcon:'Notes',text:'Notes'},
+      {icon:'history',pressIcon:'History',text:'History'},
+      {icon:'search',pressIcon:'Search',text:'Search'},
+      {icon:'settings',pressIcon:'Settings',text:'Settings'},
+      {icon:'info',pressIcon:'About',text:'About'},
+
+      
+
     ]
     this.styles = styles(this.props.colorFile, this.props.sizeFile);
     
@@ -63,18 +67,14 @@ class DrawerScreen extends Component {
       <ScrollView style={this.styles.container}> 
           <View style={this.styles.headerContainer}>
                 <ImageBackground source={require('../../assets/headerbook.jpeg')} style={{flex:1,width: 280,}} >
-                    <View style={{position:'absolute',bottom:0,left:0}}>
+                    <View style={{position:'absolute',bottom:0,margin:8}}>
                     <Image
                       style={this.styles.imageStyle}
                       source={require('../../assets/bcs_old_favicon.png')}
                     />
-                    <TouchableOpacity style={this.styles.goToLogin}  onPress={()=>{this.props.navigation.navigate('Auth')}}>
-                    <View style={this.styles.loginView}>
-                    <Icon name='account-circle' size={20} color={'#fff'} style={{paddingRight:16}}/>
-                    <Text style={this.styles.headerText}>Login/Sign Up</Text>
-                    </View>
-                    <Icon name='chevron-right' size={20} color={'#fff'} style={{paddingRight:16}}/>
-                    </TouchableOpacity>
+                    {/* <View style={this.styles.goToLogin}> */}
+                    <Image source={require('../../assets/logo.png')} style={{padding:4,width:136,height:30}}/>
+                    {/* </View> */}
                     </View>
                 </ImageBackground>
             </View>
@@ -92,7 +92,7 @@ class DrawerScreen extends Component {
                       <Icon name={iconName.icon} size={20}  style={this.styles.iconStyleDrawer}/>
                       <Text 
                         style={this.styles.textStyle}>
-                        {iconName.pressIcon}
+                        {iconName.text}
                       </Text>
                     </View>
                     <Icon name='chevron-right' size={20} style={this.styles.iconStyleDrawer}/>
@@ -108,6 +108,7 @@ const mapStateToProps = state =>{
   return{
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
+    email:state.userInfo.email,
   }
 }
 

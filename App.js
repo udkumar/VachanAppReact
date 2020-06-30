@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import  {AppNavigator} from './app/routes/';
-
+import {NetInfo} from 'react-native'
 import AsyncStorageUtil from './app/utils/AsyncStorageUtil';
 import {nightColors, dayColors} from './app/utils/colors.js'
 import {extraSmallFont,smallFont,mediumFont,largeFont,extraLargeFont} from './app/utils/dimens.js'
@@ -8,7 +8,7 @@ import { styleFile } from './app/utils/styles.js'
 import {AsyncStorageConstants} from './app/utils/AsyncStorageConstants'
 import SplashScreen from 'react-native-splash-screen'
 import {connect} from 'react-redux'
-import {fetchAllContent} from './app/store/action/'
+import {fetchAllContent,fetchVersionBooks} from './app/store/action/'
 // import isSignedIn from './app/routes/auth'
 
 class App extends Component {
@@ -75,6 +75,10 @@ class App extends Component {
       }
     
     async componentDidMount(){
+      // NetInfo.isConnected.addEventListener(
+      //   'connectionChange',
+      //   this._handleConnectivityChange  
+      // )
       // isSignedIn()
       // .then(res => {
       //   this.setState({ signedIn: res, checkedSignIn: true })
@@ -82,17 +86,31 @@ class App extends Component {
       // .catch(err => alert("An error occurred"));
       // AsyncStorage.removeItem('notiReg')
        var email = await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.BackupRestoreEmail, "")
-        this.setState({email})          
+        
+       this.setState({email})          
     //  if (email ==='' || email !=null){
     //   return 
     //  }
       setTimeout(() => {  
          SplashScreen.hide()
-      }, 800)
-
+      }, 400)
+      this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,downloaded:this.props.downloaded,sourceId:this.props.sourceId})
       this.props.fetchAllContent()
         SplashScreen.hide()
     }
+    // _handleConnectivityChange = (isConnected) => {
+    //   console.log(" handle connection")
+    //   if(isConnected){
+       
+    //   } 
+    // };
+    // componentWillUnmount(){
+    //   NetInfo.isConnected.removeEventListener(
+    //     'connectionChange',
+    //     this._handleConnectivityChange
+ 
+    // )
+    // }
     render() {
       // const Layout = AppNavigator(this.state.signedIn)
       // if (!this.state.checkedSignIn) {
@@ -103,10 +121,23 @@ class App extends Component {
         return <AppNavigator/>
     }
   }
+  const mapStateToProps = state =>{
+    return{
+      language: state.updateVersion.language,
+      languageCode:state.updateVersion.languageCode,
+      versionCode:state.updateVersion.versionCode,
+      sourceId:state.updateVersion.sourceId,
+      downloaded:state.updateVersion.downloaded,
+      contentType:state.updateVersion.parallelContentType,
+    }
+  }  
+
 const mapDispatchToProps = dispatch =>{
   return {
     fetchAllContent:()=>dispatch(fetchAllContent()),
+    fetchVersionBooks:(payload)=>dispatch(fetchVersionBooks(payload)),
+
   }
 }
 
-export default connect(null,mapDispatchToProps)(App)
+export default connect(mapStateToProps,mapDispatchToProps)(App)

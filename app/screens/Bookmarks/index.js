@@ -172,7 +172,7 @@ class BookMarks extends Component {
   }
 
   render() {
-    console.log(" book list ",this.state.bookmarksList)
+    console.log(" book list ",this.props.books)
     return (
         <View style={this.styles.container}>
          {this.state.bookmarksList.length > 0 ?
@@ -231,6 +231,9 @@ const mapStateToProps = state =>{
     bookId:state.updateVersion.bookId,
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
+
+    books:state.versionFetch.data,
+
   }
 }
 const mapDispatchToProps = dispatch =>{
