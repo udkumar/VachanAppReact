@@ -4,7 +4,7 @@ import {versionLanguageSuccess,versionLanguageFailure,
   versionBooksSuccess,versionBooksFailure,
   versionContentSuccess,versionContentFailure,
   downloadedBookSuccess,downloadedBookFailure}  from '../../action/'
-import {getBookNameFromMapping,getBookSectionFromMapping,getBookNumberFromMapping,getBookChaptersFromMapping, getBookNumOfVersesFromMapping} from '../../../utils/UtilFunctions';
+import {getBookSectionFromMapping,getBookChaptersFromMapping} from '../../../utils/UtilFunctions';
 
 import { put, takeLatest, call,fork,all } from 'redux-saga/effects'
 import fetchApi from '../../api';

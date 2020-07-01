@@ -42,8 +42,8 @@ const SelectionTabStack = createMaterialTopTabNavigator(
             // inactiveTintColor:"#fff",
             upperCaseLabel: false,
             style: {
-                borderWidth:1,
-                borderColor:'#000',
+                borderBottomWidth:1,
+                borderColor:'#3E4095',
                 backgroundColor:"#fff",
                 // backgroundColor: '#3F51B5', // Makes Android tab bar white instead of standard blue
                 height:36

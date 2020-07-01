@@ -17,6 +17,8 @@ import VerseMetadataModel from '../models/VerseMetadataModel';
 import bookNameList from '../models/bookNameList';
 import BookmarksBookId from '../models/BookmarksBookId'
 import HighlightsBookId from '../models/HighlightsBookId'
+import LanguageMetaData from '../models/LanguageMetaData'
+
 
 import {
 	Platform,
@@ -27,13 +29,13 @@ class DbHelper {
     async getRealm() {
     	try {
     		return await Realm.open({
-				schemaVersion: 10,
+				schemaVersion: 16,
 				deleteRealmIfMigrationNeeded: true, 
 				path:
 					Platform.OS === 'ios'
 					? RNFS.MainBundlePath + '/vachanApp.realm'
 					: RNFS.DocumentDirectoryPath + '/vachanApp.realm',
-				schema: [LanguageModel.schema, VersionModel.schema, BookModel.schema, ChapterModel.schema, VerseModel.schema, NoteModel.schema, NoteStylingModel.schema,VerseStylingModel.schema, ReferenceModel.schema, HistoryModel.schema,BookmarksListModel.schema,HighlightsModel.schema,VerseMetadataModel.schema,bookNameList.schema,BookmarksBookId.schema,HighlightsBookId.schema] });
+				schema: [LanguageModel.schema,LanguageMetaData.schema, VersionModel.schema, BookModel.schema, ChapterModel.schema, VerseModel.schema, NoteModel.schema, NoteStylingModel.schema,VerseStylingModel.schema, ReferenceModel.schema, HistoryModel.schema,BookmarksListModel.schema,HighlightsModel.schema,VerseMetadataModel.schema,bookNameList.schema,BookmarksBookId.schema,HighlightsBookId.schema] });
 				// console.log('create db:', db.path)
 			} catch (err) {
 			console.log("error in getItem"+err)
@@ -77,7 +79,7 @@ class DbHelper {
 					var resultsB = resultsA.filtered('languageName ==[c] "' + langCode + '" && versionCode ==[c] "' + verCode + '" && bookName CONTAINS[c] "'+text+'"').sorted("bookNumber");
 					console.log(" result a ",resultsB.length)
 					if(resultsB.length>0){
-						return resultsB[0].bookId
+						return {bookId:resultsB[0].bookId,bookName:resultsB[0].bookName}
 					}
 				}
 				return null;
@@ -99,6 +101,7 @@ class DbHelper {
 						if(Object.keys(matchedStr).length > 0){
 							textValue.push({
 								bookId:resultsB[i].bookId,
+								bookName:resultsB[i].bookName,
 								chapterNumber:resultsB[i].chapters[j].chapterNumber,
 								verseNumber: matchedStr[0].number,
 								text:matchedStr[0].text,
@@ -434,7 +437,7 @@ class DbHelper {
 		}
 	}
 
-	async addHistory(sourceId,langName,langCode, verCode, bId, cNum,downloaded, timeStamp) {
+	async addHistory(sourceId,langName,langCode, verCode, bId,bookName, cNum,downloaded, timeStamp) {
 		let realm = await this.getRealm();
 		if (realm) {
 			realm.write(() => {
@@ -444,6 +447,7 @@ class DbHelper {
 					languageCode:langCode,
 					versionCode: verCode,
 					bookId: bId,
+					bookName:bookName,
 					chapterNumber: cNum,
 					downloaded:JSON.parse(downloaded),
 					time: timeStamp
@@ -486,12 +490,12 @@ class DbHelper {
 
 	async addLangaugeList(languages){
 		let realm = await this.getRealm()
-			
+		
 		if(realm){
 			for(var i=0; i<languages.length; i++){
+				console.log(" LANGUAGE TO ADD TO DATABASE ",languages[i])
 				realm.write(() => {
-					console.log("langauge added")
-					realm.create('LanguageModel', languages[i])
+					realm.create('LanguageModel',languages[i])
 				})
 			}
 		}

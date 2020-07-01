@@ -33,6 +33,7 @@ import ProfilePage from './ProfilePage';
         firebase.auth().signOut()
         this.props.userInfo({email:null,uid:null,userName:'',phoneNumber:null,photo:null})
         this.setState({user:null})
+        // this.props.navigation.navigate("Bible")
         // DbQueries.deleteBookmark()
     }
    

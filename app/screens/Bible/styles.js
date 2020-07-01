@@ -20,7 +20,7 @@ export const styles =(colorFile, sizeFile) =>{
         margin:16
     },
     sectionHeading:{
-        fontSize:sizeFile.titleText,
+        fontSize:sizeFile.contentText + 1,
         color:'#3E4095',
         fontWeight:'normal',
         lineHeight:sizeFile.lineHeight,

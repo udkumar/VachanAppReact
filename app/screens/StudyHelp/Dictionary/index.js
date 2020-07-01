@@ -17,7 +17,6 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import {connect} from 'react-redux'
 import {Accordion,Card,CardItem,Content,Body,Header,Container, Right,Left,Title,Button} from 'native-base'
 import{fetchDictionaryContent} from '../../../store/action/index'
-import {getBookNameFromMapping} from '../../../utils/UtilFunctions';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import startEndIndex from '../../../assets/commentary_mapping'
 import { NavigationEvents } from 'react-navigation';

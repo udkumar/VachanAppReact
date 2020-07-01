@@ -1,4 +1,4 @@
-import {getBookNameFromMapping,getBookNumberFromMapping} from './UtilFunctions';
+import {getBookNumberFromMapping} from './UtilFunctions';
 
 
 export const AsyncStorageConstants = {
@@ -63,7 +63,7 @@ export const AsyncStorageConstants = {
         DefVersionCode:'IRV',
         DefVersionName:'Indian Revised Version',
         DefBookId:"3jn",
-        DefBookName:getBookNameFromMapping("3jn","Hindi"),
+        DefBookName:'3 यूहन्ना',
         DefBookChapter:1,
         DefBookNumber:getBookNumberFromMapping("3jn"),
         DefSourceId:45,

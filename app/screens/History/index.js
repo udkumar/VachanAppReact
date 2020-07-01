@@ -14,7 +14,7 @@ import { View } from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {Accordion} from 'native-base';
 import {updateVersion,updateVersionBook} from '../../store/action/'
-import {getBookNameFromMapping,getBookChaptersFromMapping,getBookNumOfVersesFromMapping} from '../../utils/UtilFunctions'
+import {getBookChaptersFromMapping,getBookNumOfVersesFromMapping} from '../../utils/UtilFunctions'
 import {List,ListItem} from 'native-base'
 import { historyStyle } from './styles.js'
 import {connect} from 'react-redux'
@@ -138,7 +138,7 @@ var moment = require('moment');
       downloaded:item.downloaded})
     this.props.updateVersionBook({
       bookId:item.bookId, 
-      bookName:getBookNameFromMapping(item.bookId,item.languageName),
+      bookName:item.bookName,
       chapterNumber:item.chapterNumber,
       totalChapters:getBookChaptersFromMapping(item.bookId),
       totalVerses:getBookNumOfVersesFromMapping(item.bookId,item.chapterNumber),
@@ -156,8 +156,7 @@ var moment = require('moment');
           this.state.isLoading ? <ActivityIndicator animate = {true}/> : 
             data.list.map((item, index) => 
             <TouchableOpacity onPress={()=>{this.goToContent(item)}}>
-
-              <Text style={this.styles.contentText}> {item.languageName} : {getBookNameFromMapping(item.bookId,item.languageName)} : {item.chapterNumber} </Text>
+              <Text style={this.styles.contentText}> {item.languageName} : {item.bookName} : {item.chapterNumber} </Text>
             </TouchableOpacity>
             )
            

@@ -1,4 +1,4 @@
-import { UPDATE_VERSION,UPDATE_VERSION_BOOK, UPDATE_CONTENT_TYPE  } from '../action/actionsType';
+import { UPDATE_VERSION,UPDATE_VERSION_BOOK, UPDATE_CONTENT_TYPE,UPDATE_MATA_DATA  } from '../action/actionsType';
 
 const initialState = {
    language:'Hindi',
@@ -14,11 +14,23 @@ const initialState = {
    verseNumber: 1,
    totalVerses:15,
    verseText:'',
+
+   copyrightHolder:'',
+   description:'',
+   license:'',
+   source:'',
+   technologyPartner:'',
+   revision:'',
+   versionNameGL:'',
+
    parallelContentType:'bible',
    parallelContentLanguage:'Hindi',
    parallelContentLanguageCode:'hin',
    parallelContentVersion:'Indian Revised Version',
    parallelContentVersionCode:'IRV',
+   parallelContentSourceId:45,
+   parallelContentBookId:'3jn',
+   parallelContentBookName:'3 यूहन्ना',
    parallelContentDownloaded:false
 }
 
@@ -53,7 +65,22 @@ function updateVersionReducer(state=initialState,action){
             parallelContentVersion:action.payload.parallelContentVersion,
             parallelContentVersionCode:action.payload.parallelContentVersionCode,
             parallelContentSourceId:action.payload.parallelContentSourceId,
-            parallelContentDownloaded:false
+            parallelContentBookId:action.payload.parallelContentBookId,
+            parallelContentBookName:action.payload.parallelContentBookName,
+            parallelContentDownloaded:false,
+
+
+        }
+        case UPDATE_MATA_DATA:
+        return {
+            ...state,
+            copyrightHolder:action.payload.copyrightHolder,
+            description:action.payload.description,
+            license:action.payload.license,
+            source:action.payload.source,
+            technologyPartner:action.payload.technologyPartner,
+            revision:action.payload.revision,
+            versionNameGL:action.payload.versionNameGL,
         }
         default: 
         return state

@@ -1,4 +1,6 @@
 export const UPDATE_VERSION = 'update_version';
+export const UPDATE_MATA_DATA ='update_mata_data'
+
 export const UPDATE_VERSION_BOOK = 'update_version_book';
 export const UPDATE_BOOK = 'update_book';
 

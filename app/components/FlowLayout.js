@@ -15,7 +15,6 @@ var {
 	height
 } = Dimensions.get('window');
 import {connect} from 'react-redux'
-import {getBookNameFromMapping} from '../utils/UtilFunctions';
 
 
 class FlowView extends Component {
@@ -27,7 +26,7 @@ class FlowView extends Component {
 					this.props.onTextClick();
 				}}>
 					<View style={[styles.corner,{backgroundColor:'transparent'}]}>
-						<Text style={this.props.styles.textStyle}>{getBookNameFromMapping(this.props.bookId,this.props.language)} {this.props.chapterNumber}:{this.props.verseNumber}</Text>
+						<Text style={this.props.styles.textStyle}>{this.props.bookName} {this.props.chapterNumber}:{this.props.verseNumber}</Text>
                         <Icon name="clear" style={this.props.styles.iconReferClose}
                         	onPress={()=> {this.props.onDeleteClick()}} />
 					</View>
@@ -53,7 +52,7 @@ class FlowLayout extends Component {
 					this.props.openReference(position)
 				}}> */}
 					<View style={[styles.corner,{backgroundColor:'transparent'}]}>
-						<Text style={this.props.styles.textStyle}>{getBookNameFromMapping(this.props.dataValue.bookId,this.props.language)} {this.props.dataValue.chapterNumber}:{value}</Text>
+						<Text style={this.props.styles.textStyle}>{this.props.bookName} {this.props.dataValue.chapterNumber}:{value}</Text>
                         {/* <Icon name="clear" style={this.props.styles.iconReferClose}
                         	onPress={()=> {this.props.deleteReference(position)}} /> */}
 					</View>
@@ -86,6 +85,7 @@ const mapStateToProps = state =>{
 	  language:state.updateVersion.language,
 	  sizeFile:state.updateStyling.sizeFile,
 	  colorFile:state.updateStyling.colorFile,
+	  bookName:state.updateVersion.bookName,
 	  
 	}
   }

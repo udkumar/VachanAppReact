@@ -9,6 +9,7 @@ HistoryModel.schema = {
         languageCode:'string',
     	versionCode: 'string',
         bookId: 'string',
+        bookName:'string',
         chapterNumber:'int',
 		downloaded:'bool',
         time:'date'

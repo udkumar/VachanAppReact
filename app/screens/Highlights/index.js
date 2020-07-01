@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import DbQueries from '../../utils/dbQueries'
-import {getBookNameFromMapping,getBookChaptersFromMapping,getBookNumOfVersesFromMapping} from '../../utils/UtilFunctions';
+import {getBookChaptersFromMapping,getBookNumOfVersesFromMapping} from '../../utils/UtilFunctions';
 import { highlightstyle } from './styles'
 import {connect} from 'react-redux'
 import {updateVersionBook} from '../../store/action/'
@@ -108,7 +108,7 @@ class HighLights extends Component {
     // console.log("item HIGHIGHTS ",item)
     this.props.updateVersionBook({
       bookId:bId, 
-      bookName:getBookNameFromMapping(bId,this.props.languageName),
+      bookName:this.props.bookName,
       chapterNumber:chapterNum,
       totalChapters:getBookChaptersFromMapping(bId),
       totalVerses:getBookNumOfVersesFromMapping(bId,chapterNum),
@@ -129,7 +129,7 @@ class HighLights extends Component {
           item.verseNumber  &&
           item.verseNumber.map(e=>
            <TouchableOpacity style={this.styles.bookmarksView} onPress = { ()=> {this.navigateToBible(item.bookId,item.chapterNumber,e)}} >
-           <Text style={this.styles.bookmarksText}>{getBookNameFromMapping(item.bookId,this.props.languageName)}  {":"} {item.chapterNumber} {":"} {e}</Text>
+           <Text style={this.styles.bookmarksText}>{this.props.bookName}  {":"} {item.chapterNumber} {":"} {e}</Text>
            <Icon name='delete-forever' style={this.styles.iconCustom}   
              onPress={() => {this.removeHighlight(item.bookId,item.chapterNumber,e)}} 
            />
@@ -162,6 +162,7 @@ const mapStateToProps = state =>{
     languageName: state.updateVersion.language,
     versionCode:state.updateVersion.versionCode,
     bookId:state.updateVersion.bookId,
+    bookName:state.updateVersion.bookName,
     sourceId: state.updateVersion.sourceId,
     email:state.userInfo.email,
     uid:state.userInfo.uid,

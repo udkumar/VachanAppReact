@@ -10,6 +10,6 @@ LanguageModel.schema = {
         // languageCode: 'string',
         languageName: 'string',
         languageCode:'string',
-        versionModels: 'VersionModel[]'
+        versionModels: 'VersionModel[]',
     }
 };

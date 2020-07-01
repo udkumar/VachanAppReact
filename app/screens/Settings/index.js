@@ -1,28 +1,19 @@
 import React, { Component } from 'react';
 import {
-  StyleSheet,
   Text,
   View,
-  Button,
   Slider,
-  Dimensions,
   TouchableOpacity,
-  AsyncStorage,
-  Switch,
   ScrollView
 } from 'react-native';
-import { HeaderBackButton, NavigationActions} from 'react-navigation'
-import { Container, Header, Content, List, ListItem, Right, Left } from 'native-base';
+import { List, ListItem, Right, Left } from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {extraSmallFont,smallFont,mediumFont,largeFont,extraLargeFont} from '../../utils/dimens.js'
 import { settingsPageStyle } from './styles.js'
 import {nightColors, dayColors, constColors} from '../../utils/colors.js'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
 import {connect} from 'react-redux'
 import {updateColorMode,updateFontSize,updateVerseInLine} from '../../store/action/index'
-import SplashScreen from 'react-native-splash-screen'
- 
 
 class Setting extends Component {
   static navigationOptions = {

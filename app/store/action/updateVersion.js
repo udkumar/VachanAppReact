@@ -1,4 +1,4 @@
-import { UPDATE_VERSION ,UPDATE_CONTENT_TYPE,UPDATE_VERSION_BOOK} from "./actionsType";
+import { UPDATE_VERSION ,UPDATE_CONTENT_TYPE,UPDATE_VERSION_BOOK,UPDATE_MATA_DATA} from "./actionsType";
 
 export const updateVersion = (payload)=>{
     return {
@@ -19,6 +19,14 @@ export const updateContentType = (payload)=>{
         payload
     }
 }
+export const updatematadata = (payload)=>{
+    return{
+        type: UPDATE_MATA_DATA,
+        payload
+    }
+}
+
+
 
 // export const availableContent =() =>{
 //    return{

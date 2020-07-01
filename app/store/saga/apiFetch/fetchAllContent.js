@@ -23,12 +23,32 @@ const API_BASE_URL = 'https://api.vachanonline.net/v1/'
     
      for(var i = 0; i<bibleLanguage.length;i++){
       var versions = []
-      const language =bibleLanguage[i].language.charAt(0).toUpperCase() +bibleLanguage[i].language.slice(1)
+      const language = bibleLanguage[i].language.charAt(0).toUpperCase() + bibleLanguage[i].language.slice(1)
         let languageCode=''
       for(var j= 0; j<bibleLanguage[i].languageVersions.length;j++){
         languageCode = bibleLanguage[i].languageVersions[j].language.code
-        const  {version} =bibleLanguage[i].languageVersions[j]
-        versions.push({sourceId:bibleLanguage[i].languageVersions[j].sourceId,versionName:version.name,versionCode:version.code,license:"license",year:2019,downloaded:false})
+        const  {version} = bibleLanguage[i].languageVersions[j]
+        const metaD = bibleLanguage[i].languageVersions[j].metadata 
+        var mData = [{
+          abbreviation:metaD && (metaD.hasOwnProperty("Abbreviation") ? metaD["Abbreviation"] : ''),
+          contact:metaD && (metaD.hasOwnProperty("Contact") ? metaD["Contact"] : ''),
+          contentType:metaD && (metaD.hasOwnProperty("Content Type") ? metaD["Content Type"] : ''),
+          copyrightHolder:metaD && (metaD.hasOwnProperty("Copyright Holder") ? metaD["Copyright Holder"] : ''),
+          description:metaD && (metaD.hasOwnProperty("Description") ? metaD["Description"] : ''),
+          languageCode:metaD && (metaD.hasOwnProperty("Language Code") ? metaD["Language Code"] : ''),
+          languageName:metaD && (metaD.hasOwnProperty("Language Name") ? metaD["Language Name"] : ''),
+          license:metaD && (metaD.hasOwnProperty("License") ? metaD["License"] : ''),
+          licenseURL:metaD && (metaD.hasOwnProperty("License URL") ? metaD["License URL"] : ''),
+          NTURL:metaD && (metaD.hasOwnProperty("NT URL") ? metaD["NT URL"] : ''),
+          OTURL:metaD && (metaD.hasOwnProperty("OT URL") ? metaD["OT URL"] : ''),
+          publicDomain:metaD && (metaD.hasOwnProperty("Public Domain") ? metaD["Public Domain"] : ''),
+          revision:metaD && (metaD.hasOwnProperty("Revision (Name & Year)") ? metaD["Revision (Name & Year)"] : ''),
+          source:metaD && (metaD.hasOwnProperty("Source (Name & Year)") ? metaD["Source (Name & Year)"] : ''),
+          technologyPartner:metaD && (metaD.hasOwnProperty("Technology Partner") ? metaD["Technology Partner"] : ''),
+          versionName:metaD && (metaD.hasOwnProperty("Version Name (in Eng)") ? metaD["Version Name (in Eng)"] : ''),
+          versionNameGL:metaD && (metaD.hasOwnProperty("Version Name (in GL)") ? metaD["Version Name (in GL)"] : ''),
+        }]
+        versions.push({sourceId:bibleLanguage[i].languageVersions[j].sourceId,versionName:version.name,versionCode:version.code,metaData:mData,downloaded:false})
       }
       bible.push({languageName:language,languageCode:languageCode,versionModels:versions})
     }
@@ -37,7 +57,27 @@ const API_BASE_URL = 'https://api.vachanonline.net/v1/'
       const language =commentaryLanguage[i].language.charAt(0).toUpperCase() + commentaryLanguage[i].language.slice(1)
         const languageCode = commentaryLanguage[i].languageCode
       for(var j= 0; j<commentaryLanguage[i].commentaries.length;j++){
-        versions.push({sourceId:commentaryLanguage[i].commentaries[j].sourceId,versionName:commentaryLanguage[i].commentaries[j].name,versionCode:commentaryLanguage[i].commentaries[j].code,license:"license",year:2019,downloaded:false})
+        const metaD = commentaryLanguage[i].commentaries[j].metadata 
+        var mData = [{
+          abbreviation:metaD && (metaD.hasOwnProperty("Abbreviation") ? metaD["Abbreviation"] : ''),
+          contact:metaD && (metaD.hasOwnProperty("Contact") ? metaD["Contact"] : ''),
+          contentType:metaD && (metaD.hasOwnProperty("Content Type") ? metaD["Content Type"] : ''),
+          copyrightHolder:metaD && (metaD.hasOwnProperty("Copyright Holder") ? metaD["Copyright Holder"] : ''),
+          description:metaD && (metaD.hasOwnProperty("Description\u00a0") ? metaD["Description\u00a0"] : ''),
+          languageCode:metaD && (metaD.hasOwnProperty("Language Code\u00a0") ? metaD["Language Code\u00a0"] : ''),
+          languageName:metaD && (metaD.hasOwnProperty("Language Name\u00a0") ? metaD["Language Name\u00a0"] : ''),
+          license:metaD && (metaD.hasOwnProperty("License") ? metaD["License"] : ''),
+          licenseURL:metaD && (metaD.hasOwnProperty("License URL\u00a0") ? metaD["License URL\u00a0"] : ''),
+          NTURL:metaD && (metaD.hasOwnProperty("NT URL") ? metaD["NT URL"] : ''),
+          OTURL:metaD && (metaD.hasOwnProperty("OT URL") ? metaD["OT URL"] : ''),
+          publicDomain:metaD && (metaD.hasOwnProperty("Public Domain") ? metaD["Public Domain"] : ''),
+          revision:metaD && (metaD.hasOwnProperty("Revision (Name & Year)") ? metaD["Revision (Name & Year)"] : ''),
+          source:metaD && (metaD.hasOwnProperty("Source (Name & Year)") ? metaD["Source (Name & Year)"] : ''),
+          technologyPartner:metaD && (metaD.hasOwnProperty("Technology Partner") ? metaD["Technology Partner"] : ''),
+          versionName:metaD && (metaD.hasOwnProperty("Version Name (in Eng)") ? metaD["Version Name (in Eng)"] : ''),
+          versionNameGL:metaD && (metaD.hasOwnProperty("Version Name (in GL)") ? metaD["Version Name (in GL)"] : ''),
+        }]
+        versions.push({sourceId:commentaryLanguage[i].commentaries[j].sourceId,versionName:commentaryLanguage[i].commentaries[j].name,versionCode:commentaryLanguage[i].commentaries[j].code,metaData:mData,downloaded:false})
       }
       commentary.push({languageName:language,languageCode:languageCode,versionModels:versions})
     }
@@ -46,19 +86,43 @@ const API_BASE_URL = 'https://api.vachanonline.net/v1/'
       const language =dictionariesLanguage[i].language.charAt(0).toUpperCase() + dictionariesLanguage[i].language.slice(1)
         const languageCode = dictionariesLanguage[i].languageCode
       for(var j= 0; j<dictionariesLanguage[i].dictionaries.length;j++){
-        versions.push({sourceId:dictionariesLanguage[i].dictionaries[j].sourceId,versionName:dictionariesLanguage[i].dictionaries[j].name,versionCode:dictionariesLanguage[i].dictionaries[j].code,license:"license",year:2019,downloaded:false})
+        const metaD = dictionariesLanguage[i].dictionaries[j].metadata 
+        var mData = [{
+          abbreviation:metaD && (metaD.hasOwnProperty("Abbreviation") ? metaD["Abbreviation"] : ''),
+          contact:metaD && (metaD.hasOwnProperty("Contact") ? metaD["Contact"] : ''),
+          contentType:metaD && (metaD.hasOwnProperty("Content Type") ? metaD["Content Type"] : ''),
+          copyrightHolder:metaD && (metaD.hasOwnProperty("Copyright Holder") ? metaD["Copyright Holder"] : ''),
+          description:metaD && (metaD.hasOwnProperty("Description\u00a0") ? metaD["Description\u00a0"] : ''),
+          languageCode:metaD && (metaD.hasOwnProperty("Language Code\u00a0") ? metaD["Language Code\u00a0"] : ''),
+          languageName:metaD && (metaD.hasOwnProperty("Language Name\u00a0") ? metaD["Language Name\u00a0"] : ''),
+          license:metaD && (metaD.hasOwnProperty("License") ? metaD["License"] : ''),
+          licenseURL:metaD && (metaD.hasOwnProperty("License URL\u00a0") ? metaD["License URL\u00a0"] : ''),
+          NTURL:metaD && (metaD.hasOwnProperty("NT URL") ? metaD["NT URL"] : ''),
+          OTURL:metaD && (metaD.hasOwnProperty("OT URL") ? metaD["OT URL"] : ''),
+          publicDomain:metaD && (metaD.hasOwnProperty("Public Domain") ? metaD["Public Domain"] : ''),
+          revision:metaD && (metaD.hasOwnProperty("Revision (Name & Year)") ? metaD["Revision (Name & Year)"] : ''),
+          source:metaD && (metaD.hasOwnProperty("Source (Name & Year)") ? metaD["Source (Name & Year)"] : ''),
+          technologyPartner:metaD && (metaD.hasOwnProperty("Technology Partner") ? metaD["Technology Partner"] : ''),
+          versionName:metaD && (metaD.hasOwnProperty("Version Name (in Eng)") ? metaD["Version Name (in Eng)"] : ''),
+          versionNameGL:metaD && (metaD.hasOwnProperty("Version Name (in GL)") ? metaD["Version Name (in GL)"] : ''),
+        }]
+        versions.push({sourceId:dictionariesLanguage[i].dictionaries[j].sourceId,versionName:dictionariesLanguage[i].dictionaries[j].name,versionCode:dictionariesLanguage[i].dictionaries[j].code,metaData:mData,downloaded:false})
       }
       dictionary.push({languageName:language,languageCode:languageCode,versionModels:versions})
     }
-    yield put(allContentSuccess([{contentType:"bible",content:bible},{contentType:"commentary",content:commentary},{contentType:"dictionary",content:dictionary}]))
+    yield put(allContentSuccess([
+    {contentType:"bible",content:bible},
+    {contentType:"commentary",content:commentary},
+    {contentType:"dictionary",content:dictionary}]))
     yield put(allContentFailure(null))
     
   } catch (e) {
-      console.log("commentary error ",error)
+      console.log(" ERROR ",e)
     yield put(allContentFailure(e))
     yield put(allContentSuccess([]))
     }
   }
+
   function* fetchAllLanguage(){
     try {
       const response = yield call(fetchApi,'https://api.vachanonline.net/v1/languages')

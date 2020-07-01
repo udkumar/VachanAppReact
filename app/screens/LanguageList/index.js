@@ -80,14 +80,7 @@ class LanguageList extends Component {
     async fetchLanguages(){
       console.log(" language list ")
       var lanVer = []
-      // var oneDay = 24*60*60*1000; 
-      // var d = new Date('1-feb-2000')
-      // var ud = new Date(timestamp.languageUpdate)
-      // var diffDays = Math.round(Math.abs((d.getTime() - ud.getTime())/(oneDay)))
       const languageList =  await DbQueries.getLangaugeList()
-      // console.log("this.props.bibleLanguages[0]",this.props.bibleLanguages[0])
-      // console.log("languages data base  ",languageList)
-
       if(languageList === null){
         // console.log("language LIST ",languageList)
         if(this.props.bibleLanguages[0].content.length > 0){
@@ -110,19 +103,6 @@ class LanguageList extends Component {
         // searchList: lanVer
       })
     }
-    // SearchFilterFunction = (text)=>{
-    //     const newData = this.state.searchList.filter(function(item){
-    //       const itemData = item.languageName
-    //       const textData = text.toLowerCase()
-    //       return itemData.indexOf(textData) > -1
-    //     })
-    //     this.setState({
-    //       text: text,
-    //       languages:newData
-    //     })
-    // }
-
-   
     downloadBible = async(langName,verCode,index,sourceId)=>{
       var bookModels = []
       try{
@@ -250,7 +230,7 @@ class LanguageList extends Component {
     }
     render(){
       // booksValue = this.props.books
-      // console.log(" languague LIST IN RENDER ",this.state.languages)
+      console.log(" languague LIST IN RENDER ",this.state.languages)
       return (
         <View style={this.styles.MainContainer}>
         {

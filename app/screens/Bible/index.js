@@ -15,7 +15,6 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import DbQueries from '../../utils/dbQueries'
 import VerseView from './VerseView'
-// import {getBookNameFromMapping} from '../../utils/UtilFunctions';
 import APIFetch from '../../utils/APIFetch'
 import {fetchAudioUrl,fetchVersionLanguage,fetchVersionContent,queryDownloadedBook,fetchVersionBooks,userInfo,updateVersionBook,updateVersion} from '../../store/action/'
 import SelectContent from '../../components/Bible/SelectContent'
@@ -273,7 +272,7 @@ class Bible extends Component {
     this.subs = this.props.navigation.addListener("didFocus", () =>{
 
     this.setState({isLoading:true,selectedReferenceSet:[],bookId:this.props.bookId,currentVisibleChapter:this.props.chapterNumber},()=>{
-      console.log("IS DOWNLOADED ",this.props.sourceId,this.props.downloaded,this.state.currentVisibleChapter,this.props.bookId)
+      console.log("IS DOWNLOADED ",this.props.bookName)
       this.getChapter()
       this.audioComponentUpdate()
       this.getHighlights()
@@ -299,15 +298,9 @@ class Bible extends Component {
       // })
       this.props.updateVersion({language:this.props.language,languageCode:this.props.languageCode,
       versionCode:this.props.versionCode,sourceId:this.props.sourceId,downloaded:this.props.downloaded})
-      var time =  new Date()
-      DbQueries.addHistory(this.props.sourceId, this.props.language,this.props.languageCode, 
-      this.props.versionCode, this.props.bookId, JSON.parse(this.state.currentVisibleChapter), 
-      this.props.downloaded, time)
+      
       this.setState({isLoading:false})
-
     })
-   
-      //Your logic, this listener will call when you open the class every time
     })
   }
   _handleConnectivityChange = (isConnected) => {
@@ -319,14 +312,16 @@ class Bible extends Component {
 getBookName = ()=>{
   var value = this.props.books
   console.log(" BOOK LENGTH ",this.props.books.length)
-  if(this.props.books.length != 0){
-  console.log(" BOOK LENGTH not zero ",this.props.books.length)
+  var time =  new Date()
 
+  if(this.props.books.length != 0){
     for(var key in value){
       if(this.props.bookId == value[key].bookId){
+        var bId = value[key].bookId
+        var bName = value[key].bookName
         this.props.updateVersionBook({
-          bookId:value[key].bookId,
-          bookName:value[key].bookName,
+          bookId:bId,
+          bookName:bName,
           chapterNumber:JSON.parse(this.state.currentVisibleChapter),
           totalChapters:this.props.totalChapters,
           verseNumber:this.props.verseNumber
@@ -335,9 +330,11 @@ getBookName = ()=>{
           bookName:value[key].bookName.length > 10 ? value[key].bookName.slice(0,9)+"..." : value[key].bookName,
           bookId:value[key].bookId,
         })
+        DbQueries.addHistory(this.props.sourceId, this.props.language,this.props.languageCode, 
+        this.props.versionCode, bId,bName, JSON.parse(this.state.currentVisibleChapter), 
+        this.props.downloaded, time)
       }
     }
-    
   }
   else{
     console.log("Book Name ",this.props.bookName)
@@ -345,13 +342,17 @@ getBookName = ()=>{
     bookName:this.props.bookName.length > 10 ? this.props.bookName.slice(0,9)+"..." : this.props.bookName,
     bookId:this.props.bookId,
   })
+    DbQueries.addHistory(this.props.sourceId, this.props.language,this.props.languageCode, 
+    this.props.versionCode,this.props.bookId,this.props.bookName, JSON.parse(this.state.currentVisibleChapter), 
+    this.props.downloaded, time)
   }
 }
   getReference = async(item)=>{
     if(item){
   // this.scrollToVerse(item.verseNumber)
       var time =  new Date()
-      DbQueries.addHistory(this.props.sourceId,this.props.language,this.props.languageCode, this.props.versionCode, item.bookId,JSON.parse(item.chapterNumber), this.props.downloaded, time)
+      DbQueries.addHistory(this.props.sourceId,this.props.language,this.props.languageCode, 
+        this.props.versionCode, item.bookId,item.bookName, JSON.parse(item.chapterNumber), this.props.downloaded, time)
       this.props.navigation.setParams({
         bookId:item.bookId,
         bookName:this.props.bookName > 10 ? this.props.bookName.slice(0,9)+"..." : this.props.bookName,
@@ -820,7 +821,7 @@ getNotes(){
   componentWillUnmount(){
       var time =  new Date()
       DbQueries.addHistory(item.sourceId,item.languageName,item.languageCode, 
-      item.versionCode, this.props.bookId, this.state.currentVisibleChapter, item.downloaded, time)
+      item.versionCode, this.props.bookId,this.props.bookName, this.state.currentVisibleChapter, item.downloaded, time)
       this.subs.remove();
       NetInfo.isConnected.removeEventListener(
         'connectionChange',

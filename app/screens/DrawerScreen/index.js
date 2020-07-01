@@ -48,7 +48,7 @@ class DrawerScreen extends Component {
     // const valueProps  = this.props.navigation.state.routes[0].index == 1 ? (this.props.navigation.state.routes[0].routes[1].params ? this.props.navigation.state.routes[0].routes[1].params.photorUl : null) : null
  
     const iconName = [
-       {icon:'account-circle',pressIcon:this.props.email ? 'ProfilePage' : 'Auth',text:this.state.email ?  'Profile': 'LogIn/SignUp'},
+      {icon:'account-circle',pressIcon:'Auth',text:this.props.email ? 'Profile' : 'LogIn/SignUp'},
       {icon:'bookmark',pressIcon:'BookMarks',text:'BookMarks'},
       {icon:'border-color',pressIcon:'Highlights',text:'Highlights'},
       {icon:'note',pressIcon:'Notes',text:'Notes'},
@@ -56,9 +56,6 @@ class DrawerScreen extends Component {
       {icon:'search',pressIcon:'Search',text:'Search'},
       {icon:'settings',pressIcon:'Settings',text:'Settings'},
       {icon:'info',pressIcon:'About',text:'About'},
-
-      
-
     ]
     this.styles = styles(this.props.colorFile, this.props.sizeFile);
     
@@ -73,7 +70,10 @@ class DrawerScreen extends Component {
                       source={require('../../assets/bcs_old_favicon.png')}
                     />
                     {/* <View style={this.styles.goToLogin}> */}
-                    <Image source={require('../../assets/logo.png')} style={{padding:4,width:136,height:30}}/>
+                    <Text style={{size:20,color:'#fff'}}>
+                      Vachan Go
+                    </Text>
+                    {/* <Image source={require('../../assets/logo.png')} style={{padding:4,width:136,height:30}}/> */}
                     {/* </View> */}
                     </View>
                 </ImageBackground>

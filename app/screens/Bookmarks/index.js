@@ -15,7 +15,7 @@ import DbQueries from '../../utils/dbQueries'
 import { bookStyle } from './styles.js'
 import {updateVersionBook} from '../../store/action/'
 
-import {getBookNameFromMapping,getBookChaptersFromMapping,getBookNumOfVersesFromMapping} from '../../utils/UtilFunctions';
+import {getBookChaptersFromMapping,getBookNumOfVersesFromMapping} from '../../utils/UtilFunctions';
 Dimensions.get('window').width
 import {connect} from 'react-redux'
 import firebase from 'react-native-firebase'
@@ -108,7 +108,7 @@ class BookMarks extends Component {
   navigateToBible(bookId,chapter){
     this.props.updateVersionBook({
       bookId:bookId, 
-      bookName:getBookNameFromMapping(bookId,this.props.languageName),
+      bookName:this.props.bookName,
       chapterNumber:chapter,
       totalChapters:getBookChaptersFromMapping(bookId),
       totalVerses:getBookNumOfVersesFromMapping(bookId,chapter),
@@ -184,7 +184,7 @@ class BookMarks extends Component {
              item.chapterNumber.length > 0 &&
              item.chapterNumber.map(e=>
               <TouchableOpacity style={this.styles.bookmarksView} onPress = { ()=> {this.navigateToBible(item.bookId,e)}} >
-              <Text style={this.styles.bookmarksText}>{getBookNameFromMapping(item.bookId,this.props.languageName)} {":"} {e}</Text>
+              <Text style={this.styles.bookmarksText}>{this.props.bookName} {":"} {e}</Text>
               <Icon name='delete-forever' style={this.styles.iconCustom}   
                 onPress={() => {this.onBookmarkRemove(item.bookId,e)} } 
               />
@@ -225,6 +225,8 @@ const mapStateToProps = state =>{
     languageName: state.updateVersion.language,
     versionCode: state.updateVersion.versionCode,
     sourceId: state.updateVersion.sourceId,
+    bookName: state.updateVersion.bookName,
+
     email:state.userInfo.email,
     uid:state.userInfo.uid,
 

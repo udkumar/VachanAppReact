@@ -2,9 +2,12 @@ import React, {Component} from 'react';
 import {Modal, Text,TouchableOpacity,Dimensions,StyleSheet,Animated,LayoutAnimation,FlatList,Image, View, Alert,TouchableWithoutFeedback} from 'react-native';
 import BookIcon from 'react-native-vector-icons/Foundation'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+
+
 
 import {Card,CardItem,Content,Body,List,ListItem,Left,Right,Accordion} from 'native-base'
-import {updateContentType,fetchAllContent} from '../../store/action/'
+import {updateContentType,fetchAllContent,fetchVersionBooks} from '../../store/action/'
 import {styles} from '../../screens/LanguageList/styles'
 import {connect} from 'react-redux'
 
@@ -67,7 +70,11 @@ var contentType = ''
             style={this.styles.selectionInnerContent}
               onPress={()=>{
                 this.props.navigation.setParams({modalVisible:false,visibleParallelView:true});
-                this.props.updateContentType({parallelContentType:contentType,parallelContentLanguage:item.languageName,parallelContentLanguageCode:item.languageCode,parallelContentVersion:v.versionName,parallelContentVersionCode:v.versionCode,parallelContentSourceId:v.sourceId})
+                this.props.updateContentType({parallelContentType:contentType,parallelContentLanguage:item.languageName,
+                  parallelContentLanguageCode:item.languageCode,parallelContentVersion:v.versionName,
+                  parallelContentVersionCode:v.versionCode,parallelContentSourceId:v.sourceId})
+                // this.props.fetchVersionBooks({language:item.languageName,versionCode:v.versionCode,
+                  // downloaded:false,sourceId:v.sourceId})
               }} 
             >
               <Text style={this.styles.selectionHeaderModal}>{v.versionName}</Text>
@@ -146,16 +153,11 @@ var contentType = ''
             </Modal>
           
             <TouchableOpacity onPress={this.onPressModal} style={[this.props.navStyles.touchableStyleRight,{flexDirection:'row'}]}>
-            <Image
-                style={{width:32,height:32,color:'#fff'}}
-                source={require('../../assets/Reference05.png')}
-                //
-            />
-                {/* <BookIcon 
-                  name='book'
-                  color={"#fff"} 
-                  size={24} 
-                />  */}
+            <MaterialCommunityIcons 
+              name='book-open-variant'
+              color={"#fff"} 
+              size={24} 
+            /> 
             </TouchableOpacity>
             </View>
           
@@ -179,7 +181,7 @@ const mapDispatchToProps = dispatch =>{
   return {
     updateContentType:(content) =>dispatch(updateContentType(content)),
     fetchAllContent:()=>dispatch(fetchAllContent()),
-    
+    fetchVersionBooks:(payload)=>dispatch(fetchVersionBooks(payload)),
   }
 }
 export default connect(mapStateToProps,mapDispatchToProps)(SelectContent)

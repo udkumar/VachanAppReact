@@ -21,6 +21,12 @@ export const searchStyle =(colorFile, sizeFile) =>{
             fontSize:sizeFile.titleText,
             color:colorFile.textColor
         },
+        text:{
+            // paddingLeft:16,
+            fontSize:sizeFile.contentText,
+            color:'#fff'
+            // color:colorFile.textColor
+        },
         toggleBible:{
             fontSize:sizeFile.titleText,
             paddingRight:16,
@@ -32,7 +38,7 @@ export const searchStyle =(colorFile, sizeFile) =>{
             justifyContent:'space-between',
             paddingVertical:12,
             margin:8,
-            backgroundColor:colorFile.fedBackgroundColor
+            // backgroundColor:colorFile.fedBackgroundColor
         },
         searchedData:{
             padding:4,
