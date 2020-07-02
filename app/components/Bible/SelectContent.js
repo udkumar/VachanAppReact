@@ -73,8 +73,8 @@ var contentType = ''
                 this.props.updateContentType({parallelContentType:contentType,parallelContentLanguage:item.languageName,
                   parallelContentLanguageCode:item.languageCode,parallelContentVersion:v.versionName,
                   parallelContentVersionCode:v.versionCode,parallelContentSourceId:v.sourceId})
-                // this.props.fetchVersionBooks({language:item.languageName,versionCode:v.versionCode,
-                  // downloaded:false,sourceId:v.sourceId})
+                  this.props.fetchVersionBooks({language:item.languageName,versionCode:v.versionCode,
+                  downloaded:false,sourceId:v.sourceId})
               }} 
             >
               <Text style={this.styles.selectionHeaderModal}>{v.versionName}</Text>
@@ -144,7 +144,6 @@ var contentType = ''
                     expanded={true}
                     renderHeader={this._renderHeader}
                     renderContent={this._renderContent}
-
                     />
               </Card>
               </View>

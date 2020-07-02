@@ -19,7 +19,7 @@ export const updateContentType = (payload)=>{
         payload
     }
 }
-export const updatematadata = (payload)=>{
+export const updateMetadata = (payload)=>{
     return{
         type: UPDATE_MATA_DATA,
         payload

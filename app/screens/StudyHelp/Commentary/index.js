@@ -1,24 +1,15 @@
 import React,{Component} from 'react';
 import {
-  SafeAreaView,
   TouchableOpacity,
   FlatList,
-  StyleSheet,
   Alert,
   Text,
   View
 } from 'react-native';
-var RNFS = require('react-native-fs');
-import SplashScreen from 'react-native-splash-screen'
-import Spinner from 'react-native-loading-spinner-overlay';
 import {connect} from 'react-redux'
-import {Card,CardItem,Content,Body,Header,Container, Right,Left,Title,Button} from 'native-base'
+import {Body,Header,Right,Title,Button} from 'native-base'
 import{fetchCommentaryContent} from '../../../store/action/index'
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import startEndIndex from '../../../assets/commentary_mapping'
-import { NavigationEvents } from 'react-navigation';
-import APIFetch from '../../../utils/APIFetch'
-import { ScrollView } from 'react-native-gesture-handler';
 import {styles} from './styles'
 
 
@@ -58,8 +49,16 @@ class Commentary extends Component {
   updateData = ()=>{
       this.errorMessage()
   }
+  componentWillUnmount(){
+    console.log( "component UN Mount  ")
+}
   render(){
-    console.log("compoent parallel ",this.props.commentaryContent)
+    const bookId = this.props.bookId
+    const value = this.props.books.length !=0 && this.props.books.filter(function (entry){
+        return  entry.bookId == bookId
+     })
+    const bookName = value ?  value[0].bookName : this.props.bookName
+
     var convertToText = (response) => {
       if(response){
         let exRegex = /<b>(.*?)<\/b>/g
@@ -118,7 +117,7 @@ class Commentary extends Component {
         </View>
       :
       <View style={{flex:1}}>
-        <Text style={[this.styles.commentaryHeading,{margin:10}]}>{this.props.bookName} {  } {this.props.commentaryContent.chapter}</Text>
+        <Text style={[this.styles.commentaryHeading,{margin:10}]}>{bookName} {  } {this.props.commentaryContent.chapter}</Text>
         
       <FlatList
         data={this.props.commentaryContent.commentaries}
@@ -165,6 +164,7 @@ const mapStateToProps = state =>{
     colorFile:state.updateStyling.colorFile,
 
     contentType:state.updateVersion.contentType,
+    books:state.versionFetch.data,
 
     parallelContentSourceId:state.updateVersion.parallelContentSourceId,
     parallelContentVersionCode:state.updateVersion.parallelContentVersionCode,

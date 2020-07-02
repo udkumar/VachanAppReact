@@ -10,7 +10,6 @@ VersionModel.schema = {
 		versionCode: 'string',
 		metaData:'LanguageMetaData[]',
 		downloaded:'bool',
-		bookNameList:'bookNameList[]',
         versionOwner: {type: 'linkingObjects', objectType: 'LanguageModel', property: 'versionModels' }
     }
 };

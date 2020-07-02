@@ -488,15 +488,32 @@ class DbHelper {
 		})
 	}
 
-	async addLangaugeList(languages){
+	async addLangaugeList(languages,books){
 		let realm = await this.getRealm()
 		
 		if(realm){
 			for(var i=0; i<languages.length; i++){
-				console.log(" LANGUAGE TO ADD TO DATABASE ",languages[i])
-				realm.write(() => {
-					realm.create('LanguageModel',languages[i])
-				})
+				for(var j=0;j<books.length;j++){
+				var bookArr = []
+					if(languages[i].languageName.toLowerCase() == books[j].language.name){
+						for(var k=0;k<books[j].bookNames.length;k++){
+							const bookObj={
+								bookId:books[j].bookNames[k].book_code,
+								bookName:books[j].bookNames[k].short,
+								bookNumber:books[j].bookNames[k].book_id,
+							}
+							bookArr.push(bookObj)
+						}
+						realm.write(() =>{
+							realm.create('LanguageModel',{
+								languageName:languages[i].languageName ,
+								languageCode:languages[i].languageCode,
+								versionModels: languages[i].versionModels,
+								bookNameList:bookArr,
+							})
+						})
+					}
+				}
 			}
 		}
 	}

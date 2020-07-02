@@ -12,7 +12,7 @@ import DbQueries from '../../utils/dbQueries.js'
 import APIFetch from '../../utils/APIFetch'
 import {getBookChaptersFromMapping, getBookNumberFromMapping,getBookNumOfVersesFromMapping, getResultText} from '../../utils/UtilFunctions'
 import SearchTab from '../../components/SearchTab/SearchTab'
-import {updateVersionBook,updateVersion} from '../../store/action/'
+import {updateVersionBook,updateVersion,fetchVersionBooks} from '../../store/action/'
 
 import {searchStyle} from './styles'
 import {connect} from 'react-redux'
@@ -64,7 +64,8 @@ class Search extends Component {
       downloaded:this.props.downloaded,
       languageCode:this.props.languageCode,
       bookName:this.props.bookName,
-      bookId:this.props.bookId
+      bookId:this.props.bookId,
+      books:this.props.books
     }
 
     this.onSearchText = this.onSearchText.bind(this)
@@ -75,7 +76,6 @@ class Search extends Component {
   }
   
   onSearchText(){
-    console.log( "Book NAMES ",this.props.books)
     this.setState({isLoading: true, searchedResult:[], tabsData:[]}, async () => {
 
       if(this.state.downloaded){
@@ -103,12 +103,11 @@ class Search extends Component {
       }else{
         var res = await APIFetch.searchText(this.state.sourceId,this.state.text)
         var data = []
-        
-          if (res && this.props.books) {
+          if (res && this.state.books) {
             for(var i=0; i<=res.result.length-1; i++){
-              for(var key in this.props.books){
-                var bId = this.props.books[key].bookId
-                var bName = this.props.books[key].bookName
+              for(var j = 0 ;j<= this.state.books.length-1;j++){
+                var bId = this.state.books[j].bookId
+                var bName = this.state.books[j].bookName
                 if(bId == res.result[i].bookCode){
                   data.push({
                     bookId:res.result[i].bookCode,
@@ -207,28 +206,31 @@ class Search extends Component {
     this.setState({text:text})
   }
   
-  componentDidMount() {
-    this.subs = this.props.navigation.addListener("didFocus", () =>{
-      this.props.navigation.setParams({
-        onTextChange: this.onTextChange,
-        onSearchText: this.onSearchText,
-        onChangeText:this.onChangeText,
-        clearData:this.clearData,
-        headerStyle:this.styles.headerText,
-        // text:this.state.text
-      })
-      // this.getBookName()
-    })
-  }
-  componentWillUnmount(){
-    this.subs.remove();
-  }
+  async componentDidMount() {
+    const response = await APIFetch.fetchBookInLanguage()
 
-
-  componentWillMount(){
+    for(var i =0;i<response.length;i++){
+      var books = []
+      if(this.state.languageName.toLowerCase() == response[i].language.name){
+        for(var j=0;j<response[i].bookNames.length;j++){
+          books.push({
+            bookId:response[i].bookNames[j].book_code,
+            bookName:response[i].bookNames[j].short,
+            bookNumber:response[i].bookNames[j].book_id,
+          })
+        }
+        this.setState({books})
+      }
+    }
     this.props.navigation.setParams({
-      text:this.state.text
+      onTextChange: this.onTextChange,
+      onSearchText: this.onSearchText,
+      onChangeText:this.onChangeText,
+      clearData:this.clearData,
+      headerStyle:this.styles.headerText,
+      // text:this.state.text
     })
+
   }
   toggleButton(activeTab){
     if (this.state.activeTab == activeTab) {
@@ -278,6 +280,7 @@ goToBible=(bId,bookName,chapterNum,verseNum)=>{
 
 
 searchedData = ({item,index}) => {
+
     return (
       <TouchableOpacity style={this.styles.searchedDataContainer} 
         onPress={ ()=> {this.goToBible(item.bookId,item.bookName,item.chapterNumber,item.verseNumber,this.state.languageName)}}
@@ -290,11 +293,14 @@ searchedData = ({item,index}) => {
     )
   }
     updateLangVer=async(item)=>{
+      this.props.fetchVersionBooks({language:item.langName,versionCode:item.verCode,
+        downloaded:item.downloaded,sourceId:item.sourceId})
       // this.props.updateVersion({language:item.languageName,languageCode:item.languageCode,
       //   versionCode:item.versionCode,sourceId:item.sourceId,downloaded:item.downloaded})
-        this.setState({tabsData:[],searchedResult:[],sourceId:item.sourceId,languageCode:item.languageCode,
+        this.setState({tabsData:[],searchedResult:[],
+          sourceId:item.sourceId,languageCode:item.languageCode,
           languageName:item.languageName,versionCode:item.versionCode,
-          downloaded:item.downloaded})
+          downloaded:item.downloaded,books:item.books})
     }
   render() {
    
@@ -350,6 +356,8 @@ const mapDispatchToProps = dispatch =>{
   return {
     updateVersionBook:(value)=>dispatch(updateVersionBook(value)),
     updateVersion: (value)=>dispatch(updateVersion(value)),
+    fetchVersionBooks:(value)=>dispatch(fetchVersionBooks(value)),
+    
 
   }
 }

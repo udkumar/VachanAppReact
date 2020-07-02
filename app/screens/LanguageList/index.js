@@ -12,7 +12,7 @@ import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants';
 import { styles } from './styles.js';
 import {connect} from 'react-redux';
-import {updateVersion,fetchVersionBooks,fetchAllContent} from '../../store/action/'
+import {updateVersion,fetchVersionBooks,fetchAllContent,updateMetadata} from '../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
 
 import {API_BASE_URL} from '../../utils/APIConstant'
@@ -82,10 +82,9 @@ class LanguageList extends Component {
       var lanVer = []
       const languageList =  await DbQueries.getLangaugeList()
       if(languageList === null){
-        // console.log("language LIST ",languageList)
+        const response = await APIFetch.fetchBookInLanguage()
         if(this.props.bibleLanguages[0].content.length > 0){
-          // console.log("language  update ",this.props.bibleLanguages[0].content)
-          DbQueries.addLangaugeList(this.props.bibleLanguages[0].content)
+          DbQueries.addLangaugeList(this.props.bibleLanguages[0].content,response)
           lanVer = this.props.bibleLanguages[0].content
         }
         else{
@@ -115,20 +114,18 @@ class LanguageList extends Component {
             .android.setSmallIcon('ic_launcher')
             .android.setOngoing(true)
         firebase.notifications().displayNotification(notification)
-
-
         this.setState({startDownload:true})
         const response = await APIFetch.fetchBookInLanguage()
         var content = await APIFetch.getAllBooks(sourceId,"json")
         for(var i =0;i<response.length;i++){
           if(langName.toLowerCase() == response[i].language.name && content.bibleContent){
             for(var j=0;j<response[i].bookNames.length;j++){
-            console.log("book name while downloading from api ",response[i].bookNames[j].long)
+            console.log("book name while downloading from api ",response[i].bookNames[j].short)
             bookModels.push({
             languageName: langName,
             versionCode: verCode,
             bookId:response[i].bookNames[j].book_code,
-            bookName:response[i].bookNames[j].long,
+            bookName:response[i].bookNames[j].short,
             bookNumber:response[i].bookNames[j].book_id,
             chapters: this.getChapters(content.bibleContent,response[i].bookNames[j].book_code),
             section: getBookSectionFromMapping(response[i].bookNames[j].book_code),
@@ -169,11 +166,19 @@ class LanguageList extends Component {
       }
     }
 
-     navigateTo(langName,langCode,verCode,sourceId,downloaded){
-      this.props.fetchVersionBooks({language:langName,versionCode:verCode,downloaded:downloaded,sourceId:sourceId})
-       this.props.navigation.state.params.updateLangVer({
+     navigateTo(langName,langCode,booklist,verCode,sourceId,metadata,downloaded){
+      // this.props.fetchVersionBooks({language:langName,versionCode:verCode,downloaded:downloaded,sourceId:sourceId})
+      this.props.updateMetadata({copyrightHolder:metadata[0].copyrightHolder,
+        description:metadata[0].description,
+        license:metadata[0].license,
+        source:metadata[0].source,
+        technologyPartner:metadata[0].technologyPartner,
+        revision:metadata[0].revision,
+        versionNameGL:metadata.versionNameGL}) 
+      this.props.navigation.state.params.updateLangVer({
         sourceId:sourceId,languageName:langName,languageCode:langCode, 
-        versionCode:verCode,downloaded:downloaded
+        versionCode:verCode,downloaded:downloaded,
+        books:booklist
       })
       this.props.navigation.pop()
     }
@@ -207,7 +212,7 @@ class LanguageList extends Component {
             {item.versionModels.map((element, index, key) => (
               <TouchableOpacity 
               style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginHorizontal:8}} 
-               onPress={()=>{this.navigateTo(item.languageName,item.languageCode,element.versionCode,element.sourceId, element.downloaded)}}>
+               onPress={()=>{this.navigateTo(item.languageName,item.languageCode,item.bookNameList,element.versionCode,element.sourceId,element.metaData, element.downloaded)}}>
                   <View>
                     <Text style={[this.styles.text,{marginLeft:8,fontWeight:'bold'}]} >{element.versionCode} </Text>
                     <Text style={[this.styles.text,{marginLeft:8}]} >{element.versionName}</Text>
@@ -220,7 +225,6 @@ class LanguageList extends Component {
                   :
                     <Icon  style={[this.styles.iconStyle,{marginRight:12}]} name="file-download" size={24} onPress={()=>{this.downloadBible(item.languageName,element.versionCode,index,element.sourceId)}}/>
                   }
-                
                 </View>
                 </TouchableOpacity>
             ))}
@@ -229,8 +233,7 @@ class LanguageList extends Component {
       )
     }
     render(){
-      // booksValue = this.props.books
-      console.log(" languague LIST IN RENDER ",this.state.languages)
+      console.log(" LANGUaGE ",this.state.languages )
       return (
         <View style={this.styles.MainContainer}>
         {
@@ -281,8 +284,6 @@ const mapStateToProps = state =>{
     versionCode:state.updateVersion.versionCode,
     sourceId:state.updateVersion.sourceId,
     downloaded:state.updateVersion.downloaded,
-
-
     bookId:state.updateVersion.bookId,
     chapterNumber:state.updateVersion.chapterNumber,
     sizeFile:state.updateStyling.sizeFile,
@@ -297,6 +298,7 @@ const mapDispatchToProps = dispatch =>{
     updateVersion: (value)=>dispatch(updateVersion(value)),
     fetchAllContent:()=>dispatch(fetchAllContent()),
     fetchVersionBooks:(payload)=>dispatch(fetchVersionBooks(payload)),
+    updateMetadata:(payload)=>dispatch(updateMetadata(payload)),
   }
 }
 export default connect(mapStateToProps,mapDispatchToProps)(LanguageList)

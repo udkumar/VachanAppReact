@@ -150,7 +150,6 @@ class Bible extends Component {
       // loginModal:false,
       arrLayout:[],
       notesList:[],
-
       initializing:true,
       user:this.props.email,
       imageUrl:this.props.photo,
@@ -279,8 +278,10 @@ class Bible extends Component {
       this.getBookMarks()
       this.getNotes()
       this.fetchAudio()
-      this.getBookName()
+      // this.getBookName()
       this.props.navigation.setParams({
+        bookId:this.props.bookId,
+        bookName:this.props.bookName.length > 10 ? this.props.bookName.slice(0,9)+"..." : this.props.bookName,
         currentChapter:this.state.currentVisibleChapter,
         languageName: this.props.language.substring(0,3), 
         versionCode: this.props.versionCode,
@@ -296,8 +297,8 @@ class Bible extends Component {
       //   totalVerses:this.props.totalVerses,
       //   verseNumber:this.state.verseNumber
       // })
-      this.props.updateVersion({language:this.props.language,languageCode:this.props.languageCode,
-      versionCode:this.props.versionCode,sourceId:this.props.sourceId,downloaded:this.props.downloaded})
+      // this.props.updateVersion({language:this.props.language,languageCode:this.props.languageCode,
+      // versionCode:this.props.versionCode,sourceId:this.props.sourceId,downloaded:this.props.downloaded})
       
       this.setState({isLoading:false})
     })
@@ -309,44 +310,6 @@ class Bible extends Component {
       this.queryBookFromAPI(null)
     })
   };
-getBookName = ()=>{
-  var value = this.props.books
-  console.log(" BOOK LENGTH ",this.props.books.length)
-  var time =  new Date()
-
-  if(this.props.books.length != 0){
-    for(var key in value){
-      if(this.props.bookId == value[key].bookId){
-        var bId = value[key].bookId
-        var bName = value[key].bookName
-        this.props.updateVersionBook({
-          bookId:bId,
-          bookName:bName,
-          chapterNumber:JSON.parse(this.state.currentVisibleChapter),
-          totalChapters:this.props.totalChapters,
-          verseNumber:this.props.verseNumber
-        })
-        this.props.navigation.setParams({
-          bookName:value[key].bookName.length > 10 ? value[key].bookName.slice(0,9)+"..." : value[key].bookName,
-          bookId:value[key].bookId,
-        })
-        DbQueries.addHistory(this.props.sourceId, this.props.language,this.props.languageCode, 
-        this.props.versionCode, bId,bName, JSON.parse(this.state.currentVisibleChapter), 
-        this.props.downloaded, time)
-      }
-    }
-  }
-  else{
-    console.log("Book Name ",this.props.bookName)
-    this.props.navigation.setParams({
-    bookName:this.props.bookName.length > 10 ? this.props.bookName.slice(0,9)+"..." : this.props.bookName,
-    bookId:this.props.bookId,
-  })
-    DbQueries.addHistory(this.props.sourceId, this.props.language,this.props.languageCode, 
-    this.props.versionCode,this.props.bookId,this.props.bookName, JSON.parse(this.state.currentVisibleChapter), 
-    this.props.downloaded, time)
-  }
-}
   getReference = async(item)=>{
     if(item){
   // this.scrollToVerse(item.verseNumber)
@@ -355,7 +318,7 @@ getBookName = ()=>{
         this.props.versionCode, item.bookId,item.bookName, JSON.parse(item.chapterNumber), this.props.downloaded, time)
       this.props.navigation.setParams({
         bookId:item.bookId,
-        bookName:this.props.bookName > 10 ? this.props.bookName.slice(0,9)+"..." : this.props.bookName,
+        bookName:item.bookName.length > 10 ? item.bookName.slice(0,9)+"..." : item.bookName,
         currentChapter:JSON.parse(item.chapterNumber),
         numOfChapter:item.totalChapters,
       })
@@ -370,20 +333,38 @@ getBookName = ()=>{
     else{
       return
     }
-  
   }
 
   updateLangVer=async(item)=>{
     // console.log(" ITEM ",item)
     if(item){
+      console.log(" Book List ",item.books)
+      var bookName = null 
+     for(var i = 0 ;i<=item.books.length-1;i++){
+       if(item.books[i].bookId == this.props.bookId){
+         bookName = item.books[i].bookName
+       }
+     }
       this.props.updateVersion({language:item.languageName,languageCode:item.languageCode,
       versionCode:item.versionCode,sourceId:item.sourceId,downloaded:item.downloaded})
-      // this.props.navigation.setParams({
-      // languageName:item.languageName.substring(0,3),
-      // versionCode:item.versionCode,
-      // bookName:this.props.bookName.length > 10 ? this.props.bookName.slice(0,9)+"..." : this.props.bookName,
-      // })
-      // this.getBookMarks()
+      
+      this.props.navigation.setParams({
+      languageName:item.languageName.substring(0,3),
+      versionCode:item.versionCode,
+      bookName:bookName.length > 10 ? bookName.slice(0,9)+"..." : bookName,
+      })
+      this.props.updateVersionBook({
+        bookId:this.props.bookId,
+        bookName:bookName,
+        chapterNumber:JSON.parse(this.state.currentVisibleChapter),
+        totalChapters:this.props.totalChapters,
+        verseNumber:this.props.verseNumber
+      })
+      var time =  new Date()
+      DbQueries.addHistory(item.sourceId,item.languageName,item.languageCode, 
+      item.versionCode,this.props.bookId,bookName, 
+      JSON.parse(this.state.currentVisibleChapter),item.downloaded,time)
+
     }else{
       return
     }
@@ -851,6 +832,7 @@ getNotes(){
     this.props.navigation.setParams({visibleParallelView:value,})
   }
   render() {
+    console.log(" COPYRIGHT ",this.props.copyrightHolder)
     return(
     <View  style={this.styles.container}>
       {this.state.isLoading &&
@@ -901,9 +883,21 @@ getNotes(){
                   />
                 }
                 keyExtractor={this._keyExtractor}
-                ListFooterComponent={<View style={this.styles.addToSharefooterComponent}></View>}
-                // ListFooterComponentStyle={}
-
+                ListFooterComponent={
+                  <View style={this.styles.addToSharefooterComponent}>
+                    {
+                    (this.props.license && this.props.copyrightHolder) &&
+                    <View >
+                     <Text style={this.styles.textListFooter}>
+                     <Text style={this.styles.footerText}>Copyright holder:</Text>{' '}{this.props.copyrightHolder}
+                    </Text>
+                    <Text style={this.styles.textListFooter}>
+                    <Text style={this.styles.footerText}>License:</Text>{' '}{this.props.license}
+                    </Text>
+                    </View>
+                    }
+                  </View>}
+                // ListFooterComponentStyle={{}}
               />
               {/* <View style={{marginBottom:20}}/> */}
           {
@@ -1035,6 +1029,10 @@ const mapStateToProps = state =>{
     bookId:state.updateVersion.bookId,
     fontFamily:state.updateStyling.fontFamily,
 
+    copyrightHolder:state.updateVersion.copyrightHolder,
+    license:state.updateVersion.license,
+
+
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
     verseInLine:state.updateStyling.verseInLine,
@@ -1051,6 +1049,7 @@ const mapStateToProps = state =>{
     // audioURL:state.audioFetch.url,
     availableCommentaries:state.commentaryFetch.availableCommentaries,
     commentary:state.commentaryFetch.commentaryContent,
+    parallelContentType:state.updateVersion.parallelContentType,
 
   }
 }

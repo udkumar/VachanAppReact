@@ -55,7 +55,7 @@ class DrawerScreen extends Component {
       {icon:'history',pressIcon:'History',text:'History'},
       {icon:'search',pressIcon:'Search',text:'Search'},
       {icon:'settings',pressIcon:'Settings',text:'Settings'},
-      {icon:'info',pressIcon:'About',text:'About'},
+      {icon:'info',pressIcon:'About',text:'About us'},
     ]
     this.styles = styles(this.props.colorFile, this.props.sizeFile);
     

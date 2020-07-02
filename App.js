@@ -94,7 +94,7 @@ class App extends Component {
       setTimeout(() => {  
          SplashScreen.hide()
       }, 400)
-      this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,downloaded:this.props.downloaded,sourceId:this.props.sourceId})
+      // this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,downloaded:this.props.downloaded,sourceId:this.props.sourceId})
       this.props.fetchAllContent()
         SplashScreen.hide()
     }

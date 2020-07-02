@@ -63,12 +63,9 @@ class ReferenceSelection extends Component {
         totalVerses:getBookNumOfVersesFromMapping(this.state.selectedBookId,chapterNumber)
     })
   }
-
   updateSelectedVerse = (verseNumber, index) => {
-    
+    console.log(" totalChapters :",this.state.totalChapters)
     this.setState({selectedVerseIndex:index !=null && index, selectedVerseNumber: verseNumber})
-    // pop current screen, and pass data
-
     this.props.navigation.state.params.getReference({
       bookId:this.state.selectedBookId,bookName:this.state.selectedBookName,
       chapterNumber:this.state.selectedChapterNumber > this.state. totalChapters ? '1' :this.state.selectedChapterNumber,
@@ -76,7 +73,9 @@ class ReferenceSelection extends Component {
       totalVerses:this.state.totalVerses,
       verseNumber:verseNumber !=null &&  verseNumber 
     })
-      this.props.navigation.pop()
+    this.props.books.length = 0
+    // }
+    this.props.navigation.pop()
   }
   async componentDidMount(){
     if(this.props.navigation.state.params.parallelContent){
@@ -159,7 +158,7 @@ const mapStateToProps = state =>{
         parallelContentVersionCode:state.updateVersion.parallelContentVersionCode,
         parallelContentLanguage:state.updateVersion.parallelContentLanguage,
         parallelContentLanguageCode:state.updateVersion.parallelContentLanguageCode,
-        // parallelContentType:state.updateVersion.parallelContentType,
+        parallelContentType:state.updateVersion.parallelContentType,
 
         books:state.versionFetch.data,
         error:state.versionFetch.error,

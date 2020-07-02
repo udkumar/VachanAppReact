@@ -145,7 +145,6 @@ renderItem = ({item, index})=> {
       }
   }
 
-
   render(){
     let activeBgColor = this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#3F51B5' : '#fff'
     let inactiveBgColor =  this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#fff' : '#3F51B5'

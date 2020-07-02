@@ -174,11 +174,25 @@ export const styles =(colorFile, sizeFile) =>{
     },
     textStyle:{
         color:colorFile.textColor,
-        fontSize:sizeFile.contentText,
+        fontSize:sizeFile.contentText,  
+    },
+    textListFooter:{
+        color:colorFile.textColor,
+        fontSize:sizeFile.contentText-2,
+        textAlign:'center',
+        paddingVertical:2
     },
     addToSharefooterComponent:{
-        height: 40, 
-        marginBottom: 40 
+        // height: 60, 
+        margin: 40,
+        // position:'absolute',
+        // bottom:0,
+        // padding:12,
+        justifyContent:'center',
+        alignItems:'center',
+    },
+    footerText:{
+        fontWeight:'bold'
     },
     IconFloatingStyle:{
         position: 'absolute',
