@@ -71,13 +71,14 @@ export const noteStyle =(colorFile, sizeFile) =>{
     containerEditNote:{
         flex:1, 
         flexDirection:'column', 
-        backgroundColor:colorFile.backgroundColor
+        backgroundColor:colorFile.backgroundColor,
+        margin:8
 
     },
     subContainer:{
         justifyContent:'space-between',
         flexDirection:'row',
-         alignItems:'center',
+        alignItems:'center',
         marginHorizontal:8,
         marginVertical:16
     },
@@ -93,6 +94,7 @@ export const noteStyle =(colorFile, sizeFile) =>{
         fontSize:sizeFile.titleText
     },
     emptyMessageContainer:{
+        flex:1,
         alignItems:'center',
         flexDirection:'column',
         justifyContent:'center'

@@ -9,12 +9,6 @@ const SearchResultTypes = {
   };
 
 export default class SearchTab extends Component {
-   
-    constructor(props){
-        console.log("props value in searchtab"+props.activeTab)
-        super(props);
-
-    }
     render(){
     return (
             <Segment style={styles.container}>

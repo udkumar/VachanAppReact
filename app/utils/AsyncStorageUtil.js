@@ -1,6 +1,4 @@
-import {
-    AsyncStorage,
-} from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export default class AsyncStorageUtil {
 
@@ -14,6 +12,7 @@ export default class AsyncStorageUtil {
         }
     }
     static async setAllItems (keyValuePairs){
+        
         try {
             AsyncStorage.multiSet(keyValuePairs);
           } catch (error) {
@@ -36,8 +35,7 @@ export default class AsyncStorageUtil {
 
     static setItem(key, value){
 		try {
-            AsyncStorage.setItem(key, JSON.stringify(value));
-            // console.log("value"+value)
+            AsyncStorage.setItem(key, typeof value == "string" ? value : value.toString());
         } catch (error) {
             console.error('AsyncStorage error: ' + error);
         }

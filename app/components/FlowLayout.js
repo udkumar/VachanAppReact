@@ -14,13 +14,10 @@ var {
 	width,
 	height
 } = Dimensions.get('window');
+import {connect} from 'react-redux'
 
 
 class FlowView extends Component {
-
-	constructor(props) {
-		super(props);
-	}
 	
 	render() {
 		return (
@@ -29,7 +26,7 @@ class FlowView extends Component {
 					this.props.onTextClick();
 				}}>
 					<View style={[styles.corner,{backgroundColor:'transparent'}]}>
-						<Text style={this.props.styles.textStyle}>{this.props.text.bookName} {this.props.text.chapterNumber}:{this.props.text.verseNumber}</Text>
+						<Text style={this.props.styles.textStyle}>{this.props.bookName} {this.props.chapterNumber}:{this.props.verseNumber}</Text>
                         <Icon name="clear" style={this.props.styles.iconReferClose}
                         	onPress={()=> {this.props.onDeleteClick()}} />
 					</View>
@@ -40,17 +37,30 @@ class FlowView extends Component {
 	};
 
 }
-export default class FlowLayout extends Component {
+class FlowLayout extends Component {
 	
 	constructor(props) {
 		super(props);
     }
 
 	render() {
-		let items = this.props.dataValue.map((value, position) => {
+		// console.log('FLOW LAYOUT BCV REF ',this.props.bcvRef)
+		let items = this.props.dataValue.verses.map((value, position) => {
 			return (
 				<View key={position}>
-                    <FlowView  ref ={this.props.dataValue[position]} text={value} 
+				{/* <TouchableOpacity onPress={()=>{
+					this.props.openReference(position)
+				}}> */}
+					<View style={[styles.corner,{backgroundColor:'transparent'}]}>
+						<Text style={this.props.styles.textStyle}>{this.props.bookName} {this.props.dataValue.chapterNumber}:{value}</Text>
+                        {/* <Icon name="clear" style={this.props.styles.iconReferClose}
+                        	onPress={()=> {this.props.deleteReference(position)}} /> */}
+					</View>
+                {/* </TouchableOpacity> */}
+
+					{/* <FlowView 
+					//  ref ={this.props.dataValue[position]} 
+					text={this.props.dataValue} 
                         onDeleteClick={()=>{
                             this.props.deleteReference(position);
                         }}
@@ -58,7 +68,7 @@ export default class FlowLayout extends Component {
                             this.props.openReference(position);
 						}}
 						styles={this.props.styles}
-                    />
+                    /> */}
 				</View>
 			);
 		});
@@ -70,7 +80,19 @@ export default class FlowLayout extends Component {
 		);
 	};
 }
-
+const mapStateToProps = state =>{
+	return{
+	  language:state.updateVersion.language,
+	  sizeFile:state.updateStyling.sizeFile,
+	  colorFile:state.updateStyling.colorFile,
+	  bookName:state.updateVersion.bookName,
+	  
+	}
+  }
+  
+  
+  
+  export  default connect(mapStateToProps,null)(FlowLayout)
 const styles = StyleSheet.create({
 	corner: {
         flexDirection:'row',

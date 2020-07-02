@@ -10,7 +10,7 @@ NoteModel.schema = {
         createdTime:'date',
         modifiedTime:'date',
         body: 'string?',
-        styling: 'StylingModel[]',
+        styling: 'NoteStylingModel[]',
         references: 'ReferenceModel[]',
     }
 };

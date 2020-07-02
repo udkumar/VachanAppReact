@@ -2,13 +2,27 @@ import id_name_map from '../assets/mappings.json'
 const Constants = require('./constants')
 
 
-export function getBookNameFromMapping(bookId) {
+
+export function getBookNameFromMapping(id,language) {
         var obj = id_name_map.id_name_map;
         for (var key in obj) {
             if (obj.hasOwnProperty(key)) {
+                var bookId =  id.toUpperCase()
                 if (key == bookId) {
                     var val = obj[key];
-                    return val.book_name;
+                    var matchedValue = ''
+                    for(var key2 in val.book_name){
+                        var lang =  language.toLowerCase()
+                        if(lang == key2){
+                            matchedValue = val.book_name[key2]
+                        }
+                    }
+                    if(matchedValue !== ''){
+                        return matchedValue
+                    }
+                    else{
+                        return val.book_name['english']
+                    }
                 }
             }
         }
@@ -16,13 +30,59 @@ export function getBookNameFromMapping(bookId) {
   }
   
 
-export function getBookNumberFromMapping(bookId) {
+export function getBookNumberFromMapping(id) {
+    console.log(" book id ",id)
     var obj = id_name_map.id_name_map;
     for (var key in obj) {
         if (obj.hasOwnProperty(key)) {
+            var bookId =  id.toUpperCase()
+
             if (key == bookId) {
                 var val = obj[key];
                 return val.number;
+            }
+        }
+    }
+    return null;
+}
+
+export function getBookChaptersFromMapping(id){
+    var obj = id_name_map.id_name_map;
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            // console.log("bookid in get Book Chapters From Mapping ",id)
+            var bookId =  id.toUpperCase()
+            if (key == bookId) {
+                var val = obj[key];
+                return val.total_chapters.length;
+            }
+        }
+    }
+    return null;
+}
+export function getBookNumOfVersesFromMapping(id,chapterNumber){
+    var obj = id_name_map.id_name_map;
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            // console.log("bookid in get Book Chapters From Mapping ",id)
+            var bookId =  id.toUpperCase()
+            if (key == bookId) {
+                var val = obj[key];
+                return val.total_chapters[chapterNumber-1]
+            }
+        }
+    }
+    return null;
+}
+
+export function getBookSectionFromMapping(id) {
+    var obj = id_name_map.id_name_map;
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+        var bookId =  id.toUpperCase()
+            if (key == bookId) {
+                var val = obj[key];
+                return val.section;
             }
         }
     }

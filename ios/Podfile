@@ -21,6 +21,22 @@ target 'AutographaGo_ReactNative' do
 
     pod 'react-native-fbsdk', :path => '../node_modules/react-native-fbsdk'
 
+    pod 'react-native-netinfo', :path => '../node_modules/@react-native-community/netinfo'
+
+    pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
+
+    pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
+
+    pod 'RNReanimated', :path => '../node_modules/react-native-reanimated'
+
+    pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
+
+    pod 'react-native-orientation', :path => '../node_modules/react-native-orientation'
+
+    pod 'RNScreens', :path => '../node_modules/react-native-screens'
+
+    pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
+
   end
 
   target 'AutographaGo_ReactNativeTests' do

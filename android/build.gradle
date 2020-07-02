@@ -8,18 +8,20 @@ buildscript {
         compileSdkVersion = 28
         targetSdkVersion = 28
         supportLibVersion = "28.0.0"
-        // googlePlayServicesAuthVersion = "15.0.1" 
+        googlePlayServicesAuthVersion = "15.0.1" 
     }
    
     repositories {
         google()
         jcenter()
+        mavenCentral() 
     }
     
     dependencies {
         
         classpath 'com.android.tools.build:gradle:3.3.0'
-        classpath 'com.google.gms:google-services:4.0.1'
+        classpath 'com.google.gms:google-services:4.3.3'
+        // classpath 'com.google.gms:google-services:4.0.1'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -33,6 +35,9 @@ allprojects {
         maven {
             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
             url "$rootDir/../node_modules/react-native/android"
+        }
+        maven{
+            url "https://jitpack.io"
         }
     }
 }
@@ -48,6 +53,8 @@ subprojects {
 
 def getNpmVersion() {
     def inputFile = new File("../package.json")
+    
+    
     def packageJson = new JsonSlurper().parseText(inputFile.text)
     return packageJson["version"]
 }

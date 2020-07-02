@@ -1,11 +1,5 @@
 import DbHelper from './dbHelper';
-
-import LanguageModel from '../models/LanguageModel'
-import VersionModel from '../models/VersionModel'
-import BookModel from '../models/BookModel'
-import ChapterModel from '../models/ChapterModel'
-import VerseComponentsModel from '../models/VerseComponentsModel'
-import NoteModel from '../models/NoteModel';
+import dbHelper from './dbHelper';
 
 class DbQueries {
 
@@ -17,66 +11,69 @@ class DbQueries {
         return DbHelper.query('LanguageModel', 'languageCode ==[c] "' + code + '"');
     }
 
-    queryVersionWithCode(verCode: string, langCode: string) {
-        return DbHelper.queryVersionWithCode(verCode, langCode);
+    queryVersionWithCode(verCode: string, langName: string) {
+        return DbHelper.queryVersionWithCode(verCode, langName);
     }
 
-    queryBooks(verCode: string, langCode: string) {
-        return DbHelper.queryBooksWithCode(verCode, langCode);
+    queryBooks(verCode: string, langName: string) {
+        return DbHelper.queryBooksWithCode(verCode, langName);
     }
 
-    queryBookWithId(verCode: string, langCode: string,bookId: string) {
-        return DbHelper.queryBooksWithCode(verCode, langCode, bookId);
+    queryBookWithId(verCode: string, langName: string,bookId: string) {
+        return DbHelper.queryBooksWithCode(verCode, langName, bookId);
     }
 
-    querySearchBookWithName(verCode: string, langCode: string, text: string) {
-        return DbHelper.queryBooksWithCode(verCode, langCode, null, text);        
+    querySearchBookWithName(verCode: string, langName: string, text: string) {
+        return DbHelper.queryBooksWithCode(verCode, langName, text);        
     }
 
-    querySearchVerse(verCode: string, langCode: string, text: string) {
-        return DbHelper.queryInVerseText(verCode, langCode, text);
+    querySearchVerse(verCode: string, langName: string, text: string) {
+        return DbHelper.queryInVerseText(verCode, langName, text);
     }
     //for api data 
-    queryHighlights(langCode, verCode, bookId, chapterNumber) {
-            return DbHelper.queryHighlights(langCode, verCode, bookId,chapterNumber);
+    queryHighlights(sourceId, bookId,cNum) {
+            return DbHelper.queryHighlights(sourceId, bookId,cNum);
     }
 
-    // queryHighlights(verCode: string, langCode: string) {
-    //     return DbHelper.queryHighlights(verCode, langCode);
-    // }
-
-    // updateHighlightsInBook(model, chapterIndex, verseIndex, isHighlight) {
-    //     return DbHelper.updateHighlightsInBook(model, chapterIndex, verseIndex, isHighlight)
-    // }
+  
 
     insert(model, value) {
         DbHelper.insert(model, value);
     }
 
-    addNewBook(bookModel, versionModel, languageModel) {
-        DbHelper.insertNewBook(bookModel, versionModel, languageModel);
+    // addNewBook(bookModel, versionModel, languageModel) {
+    //     DbHelper.insertNewBook(bookModel, versionModel, languageModel);
+    // }
+    // angName,verCode,result,sourceId,bookListData
+    addNewVersion(langName,versCode,bookModels,sourceId){
+        DbHelper.addNewVersion(langName,versCode,bookModels,sourceId)
     }
 
-    // updateHighlightsInVerse(langCode, verCode, bookId, chapterNumber, verseNumber, isHighlight) {
-    //     DbHelper.updateHighlightsInVerse(langCode, verCode, bookId, chapterNumber, verseNumber, isHighlight);
+    // queryVersion(langName,versCode){
+    //     return DbHelper.queryVersion(langName,versCode)
     // }
-    updateHighlightsInVerse(langCode, verCode, bookId, chapterNumber, verseNumber, isHighlight) {
-        DbHelper.updateHighlightsInVerse(langCode, verCode, bookId, chapterNumber, verseNumber, isHighlight);
-    }
 
-    // updateBookmarkInBook(model, chapterNumber, isBookmark) {
-    //     DbHelper.updateBookmarkInBook(model, chapterNumber, isBookmark);
-    // }
-    updateBookmarkInBook(langCode,verCode,bId,chapterNumber, isBookmark) {
-        DbHelper.updateBookmarkInBook(langCode,verCode,bId,chapterNumber, isBookmark);
+    updateHighlightsInVerse(sourceId, bookId, chapterNumber, verseNumber, isHighlight) {
+        DbHelper.updateHighlightsInVerse(sourceId, bookId, chapterNumber, verseNumber, isHighlight);
     }
-    queryBookmark(langCode,verCode,bId){
-        return DbHelper.queryBookmark(langCode,verCode,bId);
+    // addHighlightsInVerse(sourceId,arr){
+    //     DbHelper.addHighlightsInVerse(sourceId,arr)
+    // }
+
+    updateBookmarkInBook(sourceId,bId,chapterNumber, isBookmark) {
+        DbHelper.updateBookmarkInBook(sourceId,bId,chapterNumber, isBookmark);
+    }
+    queryBookmark(sourceId,bId){
+        return DbHelper.queryBookmark(sourceId,bId);
+    }
+    deleteBookmark(){
+        return DbHelper.deleteBookmark();
+
     }
   
 
-    queryBookIdModels(verCode: string, langCode: string) {
-        return DbHelper.queryBookIdModels(verCode, langCode);
+    queryBookIdModels(verCode: string, langName: string) {
+        return DbHelper.queryBookIdModels(verCode, langName);
     }
 
     queryNotes() {
@@ -94,8 +91,8 @@ class DbQueries {
         DbHelper.deleteNote(time);
     }
 
-    addHistory(langCode, verCode, bookId, chapterNumber, time) {
-        DbHelper.addHistory(langCode, verCode, bookId, chapterNumber, time)
+    addHistory(sourceId,langName,languageCode, verCode, bookId,bookName, chapterNumber,downloaded, time) {
+        DbHelper.addHistory(sourceId,langName,languageCode, verCode, bookId,bookName, chapterNumber,downloaded, time)
     }
 
     queryHistory(){
@@ -106,13 +103,38 @@ class DbQueries {
         DbHelper.clearHistory()
     }
 
-    deleteLanguage(lanCode, verCode){
-        DbHelper.deleteLanguage(lanCode, verCode)
+    deleteBibleVersion(lanCode, verCode,sourceId,downloaded){
+        DbHelper.deleteBibleVersion(lanCode, verCode,sourceId,downloaded)
     }
 
-    queryVersions() {
-        return DbHelper.query('VersionModel');
+    // add list of languages to db
+    addLangaugeList(lang){
+        DbHelper.addLangaugeList(lang)
     }
+    getLangaugeList(){
+       return DbHelper.getLangaugeList()
+    }
+    // deleteBible(){
+
+    // }
+    // updateLanguageList(lang,verCode,booklist){
+    //     return DbHelper.updateLanguageList(lang,verCode,booklist)
+    // }
+    queryVersions(lang,ver,bookId){
+       return DbHelper.queryVersions(lang,ver,bookId)
+    }
+    queryTextForNote(lang,ver,bookId,chapterNumber,verseNumber){
+        return DbHelper.queryTextForNote(lang,ver,bookId,chapterNumber,verseNumber)
+    }
+    queryBook(lang,ver,bookId){
+        return DbHelper.queryBook(lang,ver,bookId)
+    }
+    getDownloadedBook(lang,ver){
+        return DbHelper.getDownloadedBook(lang,ver)
+    }
+    // updateLangaugeList(langName,versCode,downloaded){
+    //     DbHelper.updateLangaugeList(langName,versCode,downloaded)
+    // }
 }
 
 export default new DbQueries();

@@ -1,4 +1,7 @@
-module.exports = {
+import {getBookNumberFromMapping} from './UtilFunctions';
+
+
+export const AsyncStorageConstants = {
     Keys: {
         ColorMode : 'color_mode',
         SizeMode: 'size_mode',
@@ -11,8 +14,15 @@ module.exports = {
         BookId:'book_id',
         BookName:'book_name',
         BackupRestoreEmail:'backup_restore_email',
-        ChapterNumber:"chapter_number"
-
+        UserId:'user_id',
+        ChapterNumber:"chapter_number",
+        BookNumber:"book_number",
+        SourceId:"source_id",
+        Downloaded:"downloaded",
+        TotalChapters:'total_chapters',
+        TotalVerses:'total_verses',
+        VerseNumber:'verseNumber',
+        FontFamily:"font_family"
     },
     Values: {
         DayMode: 1,
@@ -25,22 +35,39 @@ module.exports = {
         SizeModeXLarge: 4,
 
         VerseInLine:false,
+        FontFamily:{
+        english:"NotoSans-Regular ",
+        kannada:"NotoSansKannadaUI-Regular",
+        hindi:" NotoSansDevanagariUI-Regular",
+        tamil:"NotoSansTamilUI-Regular",
+        telugu:"NotoSansTeluguUI-Regular",
+        marathi:"NotoSansDevanagariUI-Regular",
+        punjabi:"NotoSansGurmukhiUI-Regular",
+        assamese:"NotoSansBengaliUI-Regular",
+        bengali:"NotoSansBengaliUI-Regular",
+        urdu:"NotoNastaliqUrdu-Regular",
+        odiya:"NotoSansOriyaUI-Regular",
+        gujarati:"NotoSansGujaratiUI-Regular",
+        malayalam:"NotoSansMalayalamUI-Regular"
 
+        },
         LastReadReference: {
-            languageCode:'ENG',
-            versionCode:'ULT',
-            bookId:'GEN',
+            languageCode:'Hindi',
+            versionCode:'IRV',
+            bookId:'1JN',
             chapterNumber:1,
         },
 
-        DefLanguageCode:'ENG',
-        DefLanguageName:'English',
-        DefVersionCode:'ULT',
-        DefVersionName:'unfoldingWord Literal Text',
-        DefBookId:'GEN',
-        DefBookName:'Genesis',
-        DefBookChapter:1
-
+        DefLanguageCode:'hin',
+        DefLanguageName:'Hindi',
+        DefVersionCode:'IRV',
+        DefVersionName:'Indian Revised Version',
+        DefBookId:"3jn",
+        DefBookName:'3 यूहन्ना',
+        DefBookChapter:1,
+        DefBookNumber:getBookNumberFromMapping("3jn"),
+        DefSourceId:45,
+        DefDownloaded:false
        
     }
 }

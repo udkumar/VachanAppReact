@@ -3,31 +3,44 @@ import {
   StyleSheet,
   Text,
   View,
-  Alert,
-  TouchableWithoutFeedback
+  Animated
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons'
 const Constants = require('../../utils/constants')
-import {getResultText} from '../../utils/UtilFunctions';
-import {
-  Menu,
-  MenuProvider,
-  MenuOptions,
-  MenuOption,
-  MenuTrigger,
-  renderers,
-} from 'react-native-popup-menu';
-const { Popover } = renderers
+import {connect} from 'react-redux'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import { array } from 'prop-types';
 
-export default class VerseView extends Component {
+// import { styles } from './styles.js';
 
+
+class VerseView extends Component {
   constructor(props){
     super(props)
-    this.state  = {
-      opened:false
-    }
-  }
+    // this.Animation = new Animated.Value(0);
+    // this.styles = styles(this.props.colorFile, this.props.sizeFile);    
 
+  }
+  onPress() {
+    this.props.getSelection(
+        this.props.index, 
+        this.props.chapterNumber,
+        this.props.verseData.number,
+        this.props.verseData.text
+    );
+  }
+  // matchedVerse = () =>{
+  //   this.Animation.setValue(0);
+  //   Animated.timing(
+  //       this.Animation,
+  //       {
+  //           toValue: 1,
+  //           duration: 2000
+  //       }
+  //   ).start();
+  // }
+  // componentDidMount(){
+  //   this.matchedVerse()
+  // }
   has(selectedReferences, obj) {
     for(var i = 0; i < selectedReferences.length; i++) {
       if (selectedReferences[i] == obj) {
@@ -36,137 +49,100 @@ export default class VerseView extends Component {
     }
     return false;
   }
-  onBackdropPress(){
-    this.setState({ opened: false });
+  isHighlight(){
+      for(var i = 0 ; i<=this.props.HightlightedVerse.length; i++ ){
+        if(this.props.HightlightedVerse[i] == this.props.verseData.number){
+          return true
+          }
+      }
+    return false
   }
-  openMenu = () => {
-    this.props.getSelection(
-      this.props.index, 
-      this.props.verseData.chapterNumber,
-      this.props.verseData.verseNumber
-  )
-  let obj = this.props.verseData.chapterNumber + '_' + this.props.index + '_' + this.props.verseData.verseNumber;
-  let isSelect = this.has(this.props.selectedReferences, obj)
-  if(isSelect){
-    this.menu.open()
-  }
-  };
-  highlighted = (verse) =>{ 
-    var found = false;
-      for(var i=0; i<= this.props.HightlightedVerse.length-1; i++ ){
-        if(this.props.HightlightedVerse[i].verseNumber == verse && this.props.HightlightedVerse[i].chapterNumber == this.props.chapterNumber) {
-          // console.log("verse "+verse+" highlighted verse "+this.props.HightlightedVerse[i].verseNumber)
-          found = true
+  isNoted(){
+    var arr =[]
+    for(var i = 0 ;i<=this.props.notesList.length-1; i++ ){
+      for(var j = 0 ;j<=this.props.notesList[i].verses.length-1; j++ ){
+        var index = arr.indexOf(this.props.notesList[i].verses[j])
+        if(index == -1){
+          arr.push(this.props.notesList[i].verses[j])
         }
       }
-      // return found
-      if(found){
-        return true
       }
-      else{
-        return false
-      }
+    var value = arr.filter(v=> v == this.props.verseData.number)
+    if(value[0]){
+      return true
     }
-  render() {
-    let obj = this.props.verseData.chapterNumber + '_' + this.props.index + '_' + this.props.verseData.verseNumber;
-    let isSelect = this.has(this.props.selectedReferences, obj)
-    let isHighlight = this.highlighted(this.props.verseData.verseNumber)
-
-    switch(this.props.verseData.type) {
-      case Constants.MarkerTypes.VERSE: {
-        return (
-          <View >
-          <TouchableWithoutFeedback onLongPress={this.openMenu}>
-          <View>
-          <Menu 
-          ref={c => (this.menu = c)}
-          onBackdropPress={() => this.onBackdropPress()}
-          >
-          <MenuTrigger text=""/>
-            <MenuOptions style={{flexDirection:'row',justifyContent:"center"}}>
-                      <MenuOption 
-                        // optionsContainerStyle={{}} 
-                        onSelect={this.props.makeHighlight}  
-                        style={{alignItems:'center' }}
-                      >
-                        <Text >{this.props.HighlightedText == true ? "Highlight" : "Remove Highlight"}</Text>
-                      </MenuOption>
-                      <MenuOption  onSelect={this.props.makeNotes} style={{alignItems:'center'}}>
-                        <Text>Note</Text>
-                      </MenuOption>
-                      <MenuOption onSelect={this.props.share} style={{alignItems:'center'}}>
-                        <Text>Share</Text>
-                      </MenuOption>
-            </MenuOptions>
-          </Menu>    
-             <Text>
-            <Text style={this.props.styles.verseNumber} >
-              {this.props.verseData.verseNumber}{" "}
-            </Text>
-              <Text style={isSelect && isHighlight 
-                      ? this.props.styles.verseTextSelectedHighlighted 
-                      : !isSelect && !isHighlight 
-                      ? this.props.styles.verseTextNotSelectedNotHighlighted
-                      : !isSelect && isHighlight
-                      ? this.props.styles.verseTextNotSelectedHighlighted
-                      : this.props.styles.verseTextSelectedNotHighlighted}
-                      >
-                {getResultText(this.props.verseData.text)}
-              </Text> 
-            </Text>
-            </View>
-        </TouchableWithoutFeedback>   
-        </View>
-        );
-      }
-      // case Constants.MarkerTypes.PARAGRAPH: {
-      //   if (this.props.verseData.verseNumber == "1" || 
-      //       this.props.verseData.verseNumber.startsWith("1-")) {
-      //         return (
-      //           <Text style={this.props.styles.paragraphText} >
-      //             {getResultText(this.props.verseData.text)}
-      //           </Text>      
-      //         );
-      //   }
-      //   return (
-      //     <Text style={this.props.styles.paragraphText} >
-      //       {"\n"} {getResultText(this.props.verseData.text)}
-      //     </Text>
-      //   )
-      // }
-      case Constants.MarkerTypes.SECTION_HEADING: {
-      }
-      case Constants.MarkerTypes.SECTION_HEADING_ONE: {
-        return (
-          <Text style={this.props.styles.headingOne} >
-            {this.props.verseData.text}
-          </Text>
-        );        
-      }
-      case Constants.MarkerTypes.SECTION_HEADING_TWO: {
-        return (
-          <Text style={this.props.styles.headingTwo} >
-            {this.props.verseData.text}
-          </Text>
-        );
-      }
-      case Constants.MarkerTypes.SECTION_HEADING_THREE: {
-        return (
-          <Text style={this.props.styles.headingThree} >
-            {this.props.verseData.text}
-          </Text>
-        );
-      }
-      case Constants.MarkerTypes.SECTION_HEADING_FOUR: {
-        return (
-          <Text style={this.props.styles.headingFour} >
-            {this.props.verseData.text}
-          </Text>
-        );      
-      }
-      default: {
-        return null;
-      }
+    else{ 
+      return false
     }
   }
+  render() {
+    let obj = this.props.chapterNumber + '_' + this.props.index + '_' + this.props.verseData.number+ '_' +this.props.verseData.text;
+    let isSelect = this.has(this.props.selectedReferences, obj)
+    // console.log("is selected ",isSelect)
+    let isHighlight = this.isHighlight()
+    let isNoted = this.isNoted()
+      if(this.props.verseData.number == 1){
+        // console.log("this.props.verseData.number")
+        return (
+          <Text style ={this.props.styles.textStyle} onPress={() => {this.onPress()}}  >
+            <Text style={this.props.styles.sectionHeading}>
+              {this.props.verseData.metadata ? (this.props.verseData.metadata[0].section && this.props.verseData.metadata[0].section.text+"\n"): null }
+            </Text>
+          <Text style={this.props.styles.verseChapterNumber}>
+        {this.props.chapterNumber}{" "}
+          </Text>
+        <Text style={ [isSelect && isHighlight 
+                ? this.props.styles.verseTextSelectedHighlighted 
+                : !isSelect && !isHighlight 
+                ? this.props.styles.verseTextNotSelectedNotHighlighted
+                : !isSelect && isHighlight
+                ? this.props.styles.verseTextNotSelectedHighlighted
+                : this.props.styles.verseTextSelectedNotHighlighted,
+              ]}
+                >
+          {/* {this.getResultText(this.props.verseData.text)} */}
+         {this.props.verseData.text}
+        </Text> 
+        {isNoted ? <Icon name="note-outline" size={20} style={{padding:8}} /> :null} 
+          </Text>
+        )
+      }
+        return (
+          <Text style ={this.props.styles.textStyle} onPress={() => {this.onPress()}} 
+            >
+              <Text style={this.props.styles.sectionHeading}>
+              {this.props.verseData.metadata ? (this.props.verseData.metadata[0].section && this.props.verseData.metadata[0].section.text+"\n"): null }
+              </Text>
+            <Text style={this.props.styles.verseNumber}>
+              {this.props.verseData.number}{" "}
+            </Text>
+            <Text style={[isSelect && isHighlight 
+                    ? this.props.styles.verseTextSelectedHighlighted 
+                    : !isSelect && !isHighlight 
+                    ? this.props.styles.verseTextNotSelectedNotHighlighted
+                    : !isSelect && isHighlight
+                    ? this.props.styles.verseTextNotSelectedHighlighted
+                    : this.props.styles.verseTextSelectedNotHighlighted,
+                  ]}
+              >
+              {this.props.verseData.text} 
+            </Text>   
+            {isNoted ? <Icon name="note-outline" size={20} style={{padding:8}} /> :null} 
+          </Text>
+        )
+  }
 }
+
+const mapStateToProps = state =>{
+  return{
+
+    // chapterNumber:state.updateVersion.chapterNumber,
+    bookId:state.updateVersion.bookId,
+    verseNumber:state.updateVersion.verseNumber,
+    sizeFile:state.updateStyling.sizeFile,
+    colorFile:state.updateStyling.colorFile,
+
+  }
+}
+
+export  default connect(mapStateToProps,null)(VerseView)

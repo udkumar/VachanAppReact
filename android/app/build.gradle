@@ -95,9 +95,14 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = false
 
 android {
+
+    // compileOptions {
+    //     sourceCompatibility JavaVersion.VERSION_1_8
+    //     targetCompatibility JavaVersion.VERSION_1_8
+    // }
     compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.autographago_reactnative"
+        applicationId "com.vachango"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         multiDexEnabled true
@@ -117,10 +122,10 @@ android {
         }
     }
     buildTypes {
-        release {
-            minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-        }
+        // release {
+        //     minifyEnabled enableProguardInReleaseBuilds
+        //     proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        // }
     }
     // applicationVariants are e.g. debug, release
     applicationVariants.all { variant ->
@@ -138,35 +143,49 @@ android {
 }
  
 dependencies {
+    implementation project(':react-native-image-picker')
+    compile project(':react-native-webview-bridge')
+    compile project(':react-native-orientation')
+    implementation project(':react-native-gesture-handler')
+    implementation project(':react-native-reanimated')
+    implementation project(':react-native-splash-screen')
     implementation project(':react-native-video')
 
     implementation project(':react-native-fs')
     implementation project(':react-native-vector-icons')
-    implementation project(':react-native-webview-bridge')
+    implementation project(':react-native-firebase')
     implementation project(':react-native-google-signin')
     implementation project(':react-native-fbsdk')
+    implementation project(':@react-native-community_async-storage')
     implementation project(':react-native-zip-archive')
-    
     implementation project(':realm')
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
-    implementation project(':react-native-firebase')
-    implementation "com.google.android.gms:play-services-base:15.0.1"
-    implementation "com.google.firebase:firebase-messaging:17.1.0"
-    implementation "com.google.firebase:firebase-core:16.0.1"
-    implementation 'me.leolin:ShortcutBadger:1.1.21@aar'
-    implementation "com.google.firebase:firebase-config:15.0.2"
+     
 
-    implementation "com.google.firebase:firebase-auth:16.0.2"
-    implementation "com.google.firebase:firebase-dynamic-links:16.0.1"
-    implementation "com.google.firebase:firebase-storage:16.0.1"
-    implementation "com.google.firebase:firebase-firestore:17.0.2"
- 
-    // implementation 'com.android.support:multidex:2.0.0'
+    implementation "com.google.firebase:firebase-auth:17.0.0"
+    implementation 'com.google.android.gms:play-services-auth:17.0.0'
+    implementation 'com.google.firebase:firebase-dynamic-links:19.1.0'
+    implementation 'com.google.firebase:firebase-analytics:17.3.0'
+    implementation "com.google.firebase:firebase-storage:17.0.0"
+    implementation "com.google.firebase:firebase-firestore:19.0.0"
+    implementation 'com.google.firebase:firebase-database:19.2.1'
 
+    implementation "com.google.android.gms:play-services-base:17.2.1"
+    implementation "com.google.firebase:firebase-core:17.2.2"
+    implementation "com.google.firebase:firebase-messaging:20.1.5"
+
+    implementation 'com.facebook.android:facebook-android-sdk:[5,6)'
+    implementation 'me.leolin:ShortcutBadger:1.1.22@aar'
+
+
+
+    // implementation 'me.leolin:ShortcutBadger:1.1.21@aar'
+    // implementation "com.google.firebase:firebase-config:15.0.2"
+    
     api "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
-    api "com.facebook.react:react-native:+"  // From node_modules
-    // implementation"com.facebook.react:react-native:0.54.0"
+    api "com.facebook.react:react-native:0.59.1"  // From node_modules
+    // implementation"com.facebook.react:react-native:+"
           
 
 }
@@ -185,4 +204,6 @@ project.afterEvaluate {
 
 
 apply plugin: 'com.google.gms.google-services'
-com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true
+// apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); 
+// applyNativeModulesAppBuildGradle(project) 
+// com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true

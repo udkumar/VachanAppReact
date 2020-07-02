@@ -16,7 +16,8 @@ export const nightColors = {
     buttonBackgroundColor:colorConstants.White,
     buttonText:colorConstants.White,
     buttonColor:colorConstants.Navy_Blue,
-    highlightColor: colorConstants.NightYellow
+    highlightColor: colorConstants.NightYellow,
+    fedBackgroundColor:colorConstants.FedBlack
 
 };
 
@@ -35,7 +36,8 @@ export const dayColors = {
     buttonBackgroundColor:colorConstants.Navy_Blue,
     buttonColor:colorConstants.White,
     buttonText:colorConstants.White,
-    highlightColor:colorConstants.Yellow
+    highlightColor:colorConstants.Yellow,
+    fedBackgroundColor:colorConstants.FedWhite
     
 };
 
