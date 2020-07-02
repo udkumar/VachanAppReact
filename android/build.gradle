@@ -43,6 +43,14 @@ allprojects {
 }
 
 subprojects {
+    afterEvaluate {project ->
+        if (project.hasProperty("android")) {
+            android {
+                compileSdkVersion compileSdkVersion
+                buildToolsVersion "$buildToolsVersion"
+            }
+        }
+    }
     ext {
         def npmVersion = getNpmVersionArray()
         versionMajor = npmVersion[0]
@@ -50,6 +58,7 @@ subprojects {
         versionPatch = npmVersion[2]
     }
 }
+
 
 def getNpmVersion() {
     def inputFile = new File("../package.json")

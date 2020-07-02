@@ -100,15 +100,7 @@ android {
     //     sourceCompatibility JavaVersion.VERSION_1_8
     //     targetCompatibility JavaVersion.VERSION_1_8
     // }
-    signingConfigs {
-     if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
-                storeFile file(MYAPP_UPLOAD_STORE_FILE)
-                storePassword MYAPP_UPLOAD_STORE_PASSWORD
-                keyAlias MYAPP_UPLOAD_KEY_ALIAS
-                keyPassword MYAPP_UPLOAD_KEY_PASSWORD
-    }
-    }
-
+    buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "com.vachango"
@@ -121,13 +113,24 @@ android {
         //     abiFilters "armeabi-v7a", "x86"
         // }
     }
-  
+     
     splits {
         abi {
             reset()
             enable enableSeparateBuildPerCPUArchitecture
             universalApk true  // If true, also generate a universal APK
             include "armeabi-v7a", "x86"
+        }
+    }
+    signingConfigs {
+        release {
+            if (project.hasProperty('MYAPP_RELEASE_STORE_FILE')) {
+        //    java.lang.System.console(MYAPP_RELEASE_STORE_PASSWORD) 
+                storeFile file(MYAPP_RELEASE_STORE_FILE)
+                storePassword MYAPP_RELEASE_STORE_PASSWORD
+                keyAlias MYAPP_RELEASE_KEY_ALIAS
+                keyPassword MYAPP_RELEASE_KEY_PASSWORD
+            }
         }
     }
     buildTypes {
@@ -153,9 +156,8 @@ android {
 }
  
 dependencies {
-    implementation project(':react-native-image-picker')
     compile project(':react-native-webview-bridge')
-    compile project(':react-native-orientation')
+    // compile project(':react-native-orientation')
     implementation project(':react-native-gesture-handler')
     implementation project(':react-native-reanimated')
     implementation project(':react-native-splash-screen')

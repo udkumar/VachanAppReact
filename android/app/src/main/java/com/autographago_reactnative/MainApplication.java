@@ -4,7 +4,7 @@ import com.facebook.react.ReactApplication;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.swmansion.reanimated.ReanimatedPackage;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
-import com.github.yamill.orientation.OrientationPackage; 
+// import com.github.yamill.orientation.OrientationPackage; 
 // import com.reactnativecommunity.netinfo.NetInfoPackage;
 import co.apptailor.googlesignin.RNGoogleSigninPackage;
 // import com.facebook.CallbackManager;
@@ -28,7 +28,7 @@ import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 import com.github.alinz.reactnativewebviewbridge.WebViewBridgePackage;
 import com.facebook.reactnative.androidsdk.FBSDKPackage;
-import com.imagepicker.ImagePickerPackage;
+// import com.imagepicker.ImagePickerPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -50,7 +50,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-          new OrientationPackage(),
+          // new OrientationPackage(),
             new RNGestureHandlerPackage(),
             new ReanimatedPackage(),
             new SplashScreenReactPackage(),
@@ -70,8 +70,8 @@ public class MainApplication extends Application implements ReactApplication {
             new RNFirebaseMessagingPackage(),
             new RNFirebaseNotificationsPackage(),
             new WebViewBridgePackage(),
-            new FBSDKPackage(),
-            new ImagePickerPackage()
+            new FBSDKPackage()
+            // new ImagePickerPackage()
       );
     }
 

@@ -7,7 +7,7 @@ import { StyleSheet, ActivityIndicator, View, Text,TextInput,Image,Button,Alert,
 import firebase from 'react-native-firebase'
 import {userInfo} from '../../store/action/'
 import {connect} from 'react-redux'
-import ImagePicker from 'react-native-image-picker';
+// import ImagePicker from 'react-native-image-picker';
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -91,36 +91,36 @@ class Register extends Component {
       }
     }
 
-    chooseFile = () => {
-      var options = {
-        title: 'Select Image',
-        customButtons: [
-          { name: 'customOptionKey', title: 'Choose Photo from Custom Option' },
-        ],
-        storageOptions: {
-          skipBackup: true,
-          path: 'images',
-        },
-      };
-      ImagePicker.showImagePicker(options, response => {
-        console.log('Response = ', response);
-        if (response.didCancel) {
-          console.log('User cancelled image picker');
-        } else if (response.error) {
-          console.log('ImagePicker Error: ', response.error);
-        } else if (response.customButton) {
-          console.log('User tapped custom button: ', response.customButton);
-          alert(response.customButton);
-        } else {
-          let source = response;
-          // You can also display the image using data:
-          // let source = { uri: 'data:image/jpeg;base64,' + response.data };
-          this.setState({
-            filePath: source,
-          });
-        }
-      });
-    };
+    // chooseFile = () => {
+    //   var options = {
+    //     title: 'Select Image',
+    //     customButtons: [
+    //       { name: 'customOptionKey', title: 'Choose Photo from Custom Option' },
+    //     ],
+    //     storageOptions: {
+    //       skipBackup: true,
+    //       path: 'images',
+    //     },
+    //   };
+    //   ImagePicker.showImagePicker(options, response => {
+    //     console.log('Response = ', response);
+    //     if (response.didCancel) {
+    //       console.log('User cancelled image picker');
+    //     } else if (response.error) {
+    //       console.log('ImagePicker Error: ', response.error);
+    //     } else if (response.customButton) {
+    //       console.log('User tapped custom button: ', response.customButton);
+    //       alert(response.customButton);
+    //     } else {
+    //       let source = response;
+    //       // You can also display the image using data:
+    //       // let source = { uri: 'data:image/jpeg;base64,' + response.data };
+    //       this.setState({
+    //         filePath: source,
+    //       });
+    //     }
+    //   });
+    // };
   
     render(){
       console.log(" FILE   ",this.state.filePath)
@@ -141,9 +141,9 @@ class Register extends Component {
             </View>
             <View style={{padding:35,flex:1}}>  
               <View style={{alignItems:'center',justifyContent:'center'}}>
-              <TouchableOpacity
+              {/* <TouchableOpacity
               //  onPress={this.chooseFile}
-                >
+                > */}
               <Image
                 style={{width: 50,height: 50,marginVertical:16}}
                 source={require('../../assets/bcs_old_favicon.png')}
@@ -153,7 +153,7 @@ class Register extends Component {
                 style={{width: 50,height: 50,marginVertical:16}}
                 source={require('../../assets/bcs_old_favicon.png')}
               /> */}
-              </TouchableOpacity>
+              {/* </TouchableOpacity> */}
                 <Text style={{fontSize:26,color:'#3E4095',fontWeight:'bold'}}>Sign Up</Text>
               </View> 
               <View style={{

@@ -67,7 +67,7 @@ import {styles} from './styles.js'
           <Card style={this.styles.cardStyling}>
             <CardItem  style={this.styles.cardItemStyling}>
                 <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
-                <Image style={this.styles.avatar} source={this.props.photo !=null  ? {uri:this.props.photo} :  require('../../assets/account1.png')}/>
+                <Image style={this.styles.avatar} source={this.props.photo !=null  ? {uri:this.props.photo} :  require('../../assets/account.png')}/>
                 <View>
                 <Text style={[this.styles.textStyle,{paddingRight:8}]}>{this.props.email}</Text>
                 <Text style={[this.styles.textStyle,{paddingRight:8}]}>{this.props.userName}</Text>
