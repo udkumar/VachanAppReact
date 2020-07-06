@@ -22,29 +22,30 @@ const Controls = ({
   onPressRepeat,
   forwardDisabled,
 }) => (
-  <View style={styles.container}>
+  <View style={styles.controlerContainer}>
     <View style={{width: 20}} />
-    <TouchableOpacity onPress={onBack}>
-      <Icon styles={styles.iconStyle} name="fast-rewind"  size={24} />
-    </TouchableOpacity>
+    {/* <TouchableOpacity > */}
+      <Icon onPress={onBack} styles={styles.iconStyle} name="fast-rewind"  size={24} />
+    {/* </TouchableOpacity> */}
     <View style={{width: 10}} />
     {!paused ?
-      <TouchableOpacity onPress={onPressPause}>
+      // <TouchableOpacity onPress={onPressPause}>
         <View style={styles.playButton}>
-        <Icon  styles={styles.iconStyle} name="pause"size={24}  style={[forwardDisabled && {opacity: 0.3}]}/>
+        <Icon onPress={onPressPause} name="pause" size={24}  style={[styles.iconStyle,forwardDisabled && {opacity: 0.3}]}/>
         </View>
-      </TouchableOpacity> :
-      <TouchableOpacity onPress={onPressPlay}>
+      // </TouchableOpacity> 
+      :
+      // <TouchableOpacity >
         <View style={styles.playButton}>
-        <Icon  styles={styles.iconStyle}   name="play-arrow" size={30}/>
+        <Icon  onPress={onPressPlay} styles={styles.iconStyle}   name="play-arrow" size={24}/>
         </View>
-      </TouchableOpacity>
+      //  </TouchableOpacity> 
     }
     <View style={{width: 10}} />
-    <TouchableOpacity onPress={onForward}
-      disabled={forwardDisabled}>
-      <Icon  styles={styles.iconStyle} name="fast-forward" size={24}  />
-    </TouchableOpacity>
+    {/* <TouchableOpacity  */}
+      {/* disabled={forwardDisabled}> */}
+      <Icon   onPress={onForward} styles={styles.iconStyle} name="fast-forward" size={24}  />
+    {/* </TouchableOpacity> */}
     <View style={{width: 20}} />
     
   </View>

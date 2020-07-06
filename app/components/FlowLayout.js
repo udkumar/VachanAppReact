@@ -9,7 +9,7 @@ import {
 	Dimensions,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
-
+import Color from '../utils/colorConstants'
 var {
 	width,
 	height
@@ -25,7 +25,7 @@ class FlowView extends Component {
 				<TouchableOpacity onPress={()=>{
 					this.props.onTextClick();
 				}}>
-					<View style={[styles.corner,{backgroundColor:'transparent'}]}>
+					<View style={[styles.corner,{backgroundColor:Color.Transparent}]}>
 						<Text style={this.props.styles.textStyle}>{this.props.bookName} {this.props.chapterNumber}:{this.props.verseNumber}</Text>
                         <Icon name="clear" style={this.props.styles.iconReferClose}
                         	onPress={()=> {this.props.onDeleteClick()}} />
@@ -51,7 +51,7 @@ class FlowLayout extends Component {
 				{/* <TouchableOpacity onPress={()=>{
 					this.props.openReference(position)
 				}}> */}
-					<View style={[styles.corner,{backgroundColor:'transparent'}]}>
+					<View style={[styles.corner,{backgroundColor:Color.Transparent}]}>
 						<Text style={this.props.styles.textStyle}>{this.props.bookName} {this.props.dataValue.chapterNumber}:{value}</Text>
                         {/* <Icon name="clear" style={this.props.styles.iconReferClose}
                         	onPress={()=> {this.props.deleteReference(position)}} /> */}
@@ -96,7 +96,7 @@ const mapStateToProps = state =>{
 const styles = StyleSheet.create({
 	corner: {
         flexDirection:'row',
-		borderColor: 'gray',
+		borderColor: Color.Gray,
 		borderWidth: 1, /// PixelRatio.get(),
 		borderRadius: 20,
 		justifyContent: 'center',

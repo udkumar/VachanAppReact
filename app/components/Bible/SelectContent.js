@@ -7,10 +7,10 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 
 import {Card,CardItem,Content,Body,List,ListItem,Left,Right,Accordion} from 'native-base'
-import {updateContentType,fetchAllContent,fetchVersionBooks} from '../../store/action/'
+import {updateContentType,fetchAllContent,fetchVersionBooks,parallelMetadta} from '../../store/action/'
 import {styles} from '../../screens/LanguageList/styles'
 import {connect} from 'react-redux'
-
+import Color from '../../utils/colorConstants'
 
 
 var contentType = ''
@@ -75,6 +75,16 @@ var contentType = ''
                   parallelContentVersionCode:v.versionCode,parallelContentSourceId:v.sourceId})
                   this.props.fetchVersionBooks({language:item.languageName,versionCode:v.versionCode,
                   downloaded:false,sourceId:v.sourceId})
+                    console.log( " v ",v)
+                  this.props.parallelMetadta({
+                  pCopyrightHolder:v.metaData[0].copyrightHolder,
+                  pDescription:v.metaData[0].description,
+                  pLicense:v.metaData[0].license,
+                  pSource:v.metaData[0].source,
+                  pTechnologyPartner:v.metaData[0].technologyPartner,
+                  pRevision:v.metaData[0].revision,
+                  pVersionNameGL:v.metaData[0].versionNameGL
+                  }) 
               }} 
             >
               <Text style={this.styles.selectionHeaderModal}>{v.versionName}</Text>
@@ -154,8 +164,8 @@ var contentType = ''
             <TouchableOpacity onPress={this.onPressModal} style={[this.props.navStyles.touchableStyleRight,{flexDirection:'row'}]}>
             <MaterialCommunityIcons 
               name='book-open-variant'
-              color={"#fff"} 
-              size={24} 
+              color={Color.White} 
+              size={24}
             /> 
             </TouchableOpacity>
             </View>
@@ -181,6 +191,8 @@ const mapDispatchToProps = dispatch =>{
     updateContentType:(content) =>dispatch(updateContentType(content)),
     fetchAllContent:()=>dispatch(fetchAllContent()),
     fetchVersionBooks:(payload)=>dispatch(fetchVersionBooks(payload)),
+    parallelMetadta:(payload)=>dispatch(parallelMetadta(payload)),
+
   }
 }
 export default connect(mapStateToProps,mapDispatchToProps)(SelectContent)

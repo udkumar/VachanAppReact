@@ -1,6 +1,7 @@
 import {StyleSheet,Dimensions} from 'react-native'
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
+import Color from '../../utils/colorConstants'
 
 export const styles =(colorFile, sizeFile) =>{
   // console.log("font in style page....."+ JSON.stringify(fontfamily))
@@ -27,7 +28,7 @@ export const styles =(colorFile, sizeFile) =>{
       borderWidth: 1,
       borderColor: '#009688',
       borderRadius: 7 ,
-      backgroundColor : "#FFFFFF"
+      backgroundColor :Color.White
            
       },
       overlay:{
@@ -36,7 +37,7 @@ export const styles =(colorFile, sizeFile) =>{
         left: 0,
         top: 0,
         opacity: 0.5,
-        backgroundColor: 'black',
+        backgroundColor:Color.Black,
         width: width , 
         height: 360
       },
@@ -63,7 +64,7 @@ export const styles =(colorFile, sizeFile) =>{
       },
       separator: {
         height: 0.5,
-        backgroundColor: '#808080',
+        backgroundColor: Color.Gray,
         width: '95%',
         marginLeft: 16,
         marginRight: 16,

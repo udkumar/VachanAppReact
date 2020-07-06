@@ -2,6 +2,7 @@ import {createMaterialTopTabNavigator,createSwitchNavigator,createAppContainer} 
 import SelectBook from '../SelectBook/'
 import SelectChapter from '../SelectChapter'
 import SelectVerse from '../SelectVerse/'
+import Color from '../../../utils/colorConstants'
 
 
 const SelectionTabStack = createMaterialTopTabNavigator(
@@ -32,10 +33,10 @@ const SelectionTabStack = createMaterialTopTabNavigator(
     {   
         // tabBarPosition: 'bottom',
         // activeTintColor:'#3F51B5',
-        inactiveTintColor:'#000',
+        inactiveTintColor:Color.Black,
         swipeEnabled:false,
         tabBarOptions: {
-            labelStyle: { fontSize: 16,margin:0,padding:0,color:"#3E4095" },
+            labelStyle: { fontSize: 16,margin:0,padding:0,color:Color.Blue_Color },
             // showIcon: true,
             // showLabel: true,
             // activeTintColor: '#3F51B5',
@@ -43,13 +44,13 @@ const SelectionTabStack = createMaterialTopTabNavigator(
             upperCaseLabel: false,
             style: {
                 borderBottomWidth:1,
-                borderColor:'#3E4095',
-                backgroundColor:"#fff",
+                borderColor:Color.Blue_Color,
+                backgroundColor:Color.White,
                 // backgroundColor: '#3F51B5', // Makes Android tab bar white instead of standard blue
                 height:36
             },
             indicatorStyle: {
-                backgroundColor: '#3E4095',
+                backgroundColor: Color.Blue_Color,
             },
         },
       

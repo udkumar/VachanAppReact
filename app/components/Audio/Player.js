@@ -1,16 +1,14 @@
 import React, { Component } from 'react';
 import {
   View,
-  Text,
-  StatusBar,
-  ToastAndroid,
   ActivityIndicator
 } from 'react-native';
 import Controls from './Controls';
 import Video from 'react-native-video';
 import {connect} from 'react-redux'
 import {fetchAudioUrl} from '../../store/action'
-import {styles} from './styles'
+import Color from '../../utils/colorConstants'
+// import {styles} from './styles'
 
 class Player extends Component {
   constructor(props) {
@@ -26,7 +24,6 @@ class Player extends Component {
       shuffleOn: false,
       // visibleAudio:false
     };
-    this.styles = styles(this.props.colorFile, this.props.sizeFile)
   }
 
   setDuration(data) {
@@ -91,16 +88,19 @@ class Player extends Component {
 //   })
 // }
   render() {
+    // this.styles = styles(this.props.colorFile, this.props.sizeFile)
     console.log("PORP   URL .....",this.props.loading,this.props.audioURL)
     const track = this.state.audioFile;
     return (
+      
       <View style={{flex:1}}>
-          {
-            this.props.loading ? <ActivityIndicator style={{alignItems: 'center',justifyContent: 'center',}} size="large" color="#3E4095"/> 
-            :
-            <View style={this.styles.container}>
+           {this.props.loading && 
+           <ActivityIndicator style={{alignItems: 'center',justifyContent: 'center',}} size="large" color={Color.Blue_Color}/> }
+           {
+            this.props.error ? null :
+            <View style={this.props.styles.audiocontainer}>
             <Controls
-            styles={this.styles}
+            styles={this.props.styles}
             onPressRepeat={() => this.setState({repeatOn : !this.state.repeatOn})}
             repeatOn={this.state.repeatOn}
             // shuffleOn={this.state.shuffleOn}
@@ -111,7 +111,7 @@ class Player extends Component {
             onBack={this.onBack.bind(this)}
             onForward={this.onForward.bind(this)}
             paused={this.state.paused}/>
-          <Video source={{uri: this.props.audioURL}} // Can be a URL or a local file.
+          <Video source={{uri:this.props.audioURL}} // Can be a URL or a local file.
             ref="audioElement"
             paused={this.state.paused}               // Pauses playback entirely.
             resizeMode="cover"           // Fill the whole screen at aspect ratio.
@@ -121,9 +121,8 @@ class Player extends Component {
             onProgress={this.setTime.bind(this)}    // Callback every ~250ms with currentTime
             onEnd={this.onEnd}           // Callback when playback finishes
             onError={this.videoError}    // Callback when video cannot be loaded
-            style={this.styles.audioElement} />
+            />
           </View>
-          
           }
       </View>
     );
@@ -135,6 +134,7 @@ class Player extends Component {
 const mapStateToProps = state =>{
   return{
     audioURL:state.audioFetch.url,
+    error:state.audioFetch.error,
     loading:state.audioFetch.loading,
 
     sizeFile:state.updateStyling.sizeFile,

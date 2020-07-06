@@ -10,12 +10,15 @@ import {connect} from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { array } from 'prop-types';
 
+import {getResultText}  from  '../../utils/UtilFunctions'
+  
 // import { styles } from './styles.js';
 
 
 class VerseView extends Component {
   constructor(props){
     super(props)
+      this.itemHeights =[]
     // this.Animation = new Animated.Value(0);
     // this.styles = styles(this.props.colorFile, this.props.sizeFile);    
 
@@ -84,7 +87,8 @@ class VerseView extends Component {
       if(this.props.verseData.number == 1){
         // console.log("this.props.verseData.number")
         return (
-          <Text style ={this.props.styles.textStyle} onPress={() => {this.onPress()}}  >
+          <Text style ={this.props.styles.textStyle} onPress={() => {this.onPress()}}  
+          >
             <Text style={this.props.styles.sectionHeading}>
               {this.props.verseData.metadata ? (this.props.verseData.metadata[0].section && this.props.verseData.metadata[0].section.text+"\n"): null }
             </Text>
@@ -100,8 +104,7 @@ class VerseView extends Component {
                 : this.props.styles.verseTextSelectedNotHighlighted,
               ]}
                 >
-          {/* {this.getResultText(this.props.verseData.text)} */}
-         {this.props.verseData.text}
+          {getResultText(this.props.verseData.text)}
         </Text> 
         {isNoted ? <Icon name="note-outline" size={20} style={{padding:8}} /> :null} 
           </Text>
@@ -109,6 +112,7 @@ class VerseView extends Component {
       }
         return (
           <Text style ={this.props.styles.textStyle} onPress={() => {this.onPress()}} 
+            onLayout={object => this.itemHeights[this.props.index] = object.nativeEvent.layout.height}
             >
               <Text style={this.props.styles.sectionHeading}>
               {this.props.verseData.metadata ? (this.props.verseData.metadata[0].section && this.props.verseData.metadata[0].section.text+"\n"): null }
@@ -125,7 +129,7 @@ class VerseView extends Component {
                     : this.props.styles.verseTextSelectedNotHighlighted,
                   ]}
               >
-              {this.props.verseData.text} 
+              {getResultText(this.props.verseData.text) } 
             </Text>   
             {isNoted ? <Icon name="note-outline" size={20} style={{padding:8}} /> :null} 
           </Text>

@@ -22,6 +22,7 @@ import startEndIndex from '../../../assets/commentary_mapping'
 import { NavigationEvents } from 'react-navigation';
 import APIFetch from '../../../utils/APIFetch'
 import {styles} from './styles'
+import Color from '../../../utils/colorConstants'
 
 class Dictionary extends Component {
 
@@ -116,16 +117,17 @@ class Dictionary extends Component {
 
     return (
         <View style={this.styles.container}>
-         <Header style={{height:40,borderLeftWidth:0.5,borderLeftColor:'#fff'}} >
+          <Header style={{height:40,borderLeftWidth:0.5,borderLeftColor:Color.White}} >
          <Body>
            <Title style={{fontSize:16}}>{this.props.parallelContentVersionCode}</Title>
          </Body>
          <Right>
          <Button transparent onPress={()=>this.props.toggleParallelView(false)}>
-           <Icon name='cancel' color={'#fff'} size={20}/>
+           <Icon name='cancel' color={Color.White} size={20}/>
          </Button>
          </Right>
        </Header>
+         
         {this.state.isLoading &&
         <Spinner
         visible={true}
@@ -133,18 +135,15 @@ class Dictionary extends Component {
         //  textStyle={styles.spinnerTextStyle}
       />}
       {
-        (this.props.error) ? 
-        <View style={{flex:1,justifyContent:'center',alignContent:'center'}}>
+        this.props.error ? 
+        <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
           <TouchableOpacity 
           onPress={()=>this.updateData()}
-          style={{height:40,width:120,borderRadius:4,backgroundColor:'#3F51B5',
-          justifyContent:'center',alignItems:'center'
-        }}
+          style={this.styles.reloadButton}
           >
-            <Text style={{fontSize:18,color:'#fff'}}>Reload</Text>
+            <Text style={this.styles.reloadText}>Reload</Text>
           </TouchableOpacity>
-        </View> 
-      // }
+         </View> 
       :
         <View>
         <Accordion 
@@ -163,7 +162,7 @@ class Dictionary extends Component {
           <View style={{width:'70%',height:'70%',position: 'absolute', zIndex: 0,}}>
             <Icon
               name='cancel' onPress={()=>this.setState({modalVisibleDictionary:false})}  
-              size={28} color='#3E4095' style={{position:'absolute',right:0,zIndex: 1}}
+              size={28} color={Color.Blue_Color} style={{position:'absolute',right:0,zIndex: 1}}
             />
              <ScrollView style={this.styles.scrollViewModal}>
                <Text style={this.styles.textString}>Description: {this.state.wordDescription.definition}</Text>

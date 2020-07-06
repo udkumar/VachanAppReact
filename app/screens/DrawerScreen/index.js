@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import {ScrollView, Text, View, StyleSheet,ImageBackground,TouchableOpacity,Image} from 'react-native';
+import {ScrollView, Text, View, StyleSheet,ImageBackground,TouchableOpacity,Image, ColorPropType} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { styles } from './styles.js';
 import {connect} from 'react-redux'
-
+import Color from '../../utils/colorConstants'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil'
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
 
@@ -69,12 +69,12 @@ class DrawerScreen extends Component {
                       style={this.styles.imageStyle}
                       source={require('../../assets/bcs_old_favicon.png')}
                     />
-                    {/* <View style={this.styles.goToLogin}> */}
-                    <Text style={{size:20,color:'#fff'}}>
+                    <View style={this.styles.goToLogin}>
+                    {/* <Text style={{size:20,color:Color.White}}>
                       Vachan Go
-                    </Text>
-                    {/* <Image source={require('../../assets/logo.png')} style={{padding:4,width:136,height:30}}/> */}
-                    {/* </View> */}
+                    </Text> */}
+                    <Image source={require('../../assets/logo.png')} style={{padding:4,width:136,height:30}}/>
+                    </View>
                     </View>
                 </ImageBackground>
             </View>

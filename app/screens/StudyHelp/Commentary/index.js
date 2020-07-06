@@ -11,7 +11,7 @@ import {Body,Header,Right,Title,Button} from 'native-base'
 import{fetchCommentaryContent} from '../../../store/action/index'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {styles} from './styles'
-
+import Color from '../../../utils/colorConstants'
 
 class Commentary extends Component {
 
@@ -86,33 +86,26 @@ class Commentary extends Component {
     }
     return (
       <View style={this.styles.container}>
-       <Header style={{height:40,borderLeftWidth:0.5,borderLeftColor:'#fff'}} >
+       <Header style={{height:40,borderLeftWidth:0.5,borderLeftColor:Color.White}} >
         <Body>
           <Title style={{fontSize:16}}>{this.props.parallelContentVersionCode}</Title>
         </Body>
         <Right>
         <Button transparent 
-        // onPress={this.props.commentaryFullScreen}
         onPress={()=>this.props.toggleParallelView(false)}
         >
-          <Icon name='cancel' color={'#fff'} size={20}/>
+        <Icon name='cancel' color={Color.White} size={20}/>
         </Button>
-        {/* <Button transparent 
-        // onPress={this.props.commentaryFullScreen}
-        onPress={()=>this.props.toggleParallelView(false)}
-        > */}
-          {/* <Icon name='cancel' color={'#fff'} size={20}/> */}
-        {/* </Button> */}
+   
         </Right>
       </Header>
       {
-        (this.props.error) ?
-        <View style={{flex:1,justifyContent:'center',alignContent:'center'}}>
+        this.props.error ?
+        <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
           <TouchableOpacity 
           onPress={()=>this.updateData()}
-          style={{height:40,width:120,borderRadius:4,backgroundColor:'#3F51B5',
-          justifyContent:'center',alignItems:'center'}}>
-            <Text style={{fontSize:18,color:'#fff'}}>Reload</Text>
+          style={this.styles.reloadButton}>
+            <Text style={this.styles.reloadText}>Reload</Text>
           </TouchableOpacity>
         </View>
       :

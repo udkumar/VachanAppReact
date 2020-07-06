@@ -13,6 +13,7 @@ import {userInfo} from '../../store/action'
 // import Login from './Login'
 import firebase from 'react-native-firebase'
 import {styles} from './styles.js'
+import Color from '../../utils/colorConstants'
 
   class ProfilePage extends Component {
     constructor(props){
@@ -55,7 +56,7 @@ import {styles} from './styles.js'
          <Header>
           <Left>
             <Button transparent onPress={()=>this.props.navigation.navigate("Bible")}>
-              <Icon size={24} color="#fff" name='arrow-back'  />
+              <Icon size={24} color={Color.White} name='arrow-back'  />
             </Button>
           </Left>
           <Body>

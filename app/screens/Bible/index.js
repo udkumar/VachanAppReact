@@ -16,7 +16,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import DbQueries from '../../utils/dbQueries'
 import VerseView from './VerseView'
 import APIFetch from '../../utils/APIFetch'
-import {fetchAudioUrl,fetchVersionLanguage,fetchVersionContent,queryDownloadedBook,fetchVersionBooks,userInfo,updateVersionBook,updateVersion} from '../../store/action/'
+import {fetchAudioUrl,fetchVersionLanguage,fetchVersionContent,queryDownloadedBook,fetchVersionBooks,userInfo,updateVersionBook,updateVersion,updateMetadata} from '../../store/action/'
 import SelectContent from '../../components/Bible/SelectContent'
 import SelectBottomTabBar from '../../components/Bible/SelectBottomTabBar'
 import ChapterNdAudio from '../../components/Bible/ChapterNdAudio'
@@ -25,6 +25,7 @@ import { styles } from './styles.js';
 import {connect} from 'react-redux'
 import Commentary from '../StudyHelp/Commentary/'
 import Dictionary from '../StudyHelp/Dictionary/'
+import Color from '../../utils/colorConstants'
 
 import {Header, Button,Title} from 'native-base'
 import BibleChapter from '../../components/Bible/BibleChapter';
@@ -43,7 +44,7 @@ class Bible extends Component {
                       onPress={() =>{navigation.toggleDrawer()}}>
                     <Icon 
                         name="menu"  
-                        color="#fff"
+                        color={Color.White}
                         size={24}
                     />
                     </TouchableOpacity>
@@ -53,21 +54,21 @@ class Bible extends Component {
                         style={[navStyles.headerLeftStyle,{paddingHorizontal:8}]}> 
                           <Text style={[navStyles.headerTextStyle,{paddingRight:4}]}>{params.bookName} </Text>
                           <Text style={[navStyles.headerTextStyle,{fontWeight:'bold'}]}>{params.currentChapter }</Text>
-                          <Icon name="arrow-drop-down" color="#fff" size={20} style={{alignSelf:'center'}}/>
+                          <Icon name="arrow-drop-down" color={Color.White} size={20} style={{alignSelf:'center'}}/>
                       </TouchableOpacity>
                       <TouchableOpacity 
                         onPress={() =>{{navigation.navigate("LanguageList",{updateLangVer:params.updatelangVer})}}} 
                         style={navStyles.headerLeftStyle}>
                           <Text style={[navStyles.headerTextStyle,{paddingRight:4}]}>{params.languageName}</Text>
                           <Text style={[navStyles.headerTextStyle,{fontWeight:'bold'}]}>{params.versionCode}</Text>
-                          <Icon name="arrow-drop-down" color="#fff" style={{alignSelf:'center'}} size={20}/>
+                          <Icon name="arrow-drop-down" color={Color.White} style={{alignSelf:'center'}} size={20}/>
                       </TouchableOpacity>
                 </View>
             ), 
        
-            headerTintColor:"#fff",
+            headerTintColor:Color.White,
             headerStyle: {
-              backgroundColor: "#3F51B5",
+              backgroundColor: Color.Blue_Color,
               elevation: 0,
               shadowOpacity: 0,
               // height:40,
@@ -81,7 +82,7 @@ class Bible extends Component {
                 <Icon
                     name='volume-up'
                     size={24} 
-                    color={ "#fff" }
+                    color={Color.White}
                 /> 
               </TouchableOpacity>
               }
@@ -89,7 +90,7 @@ class Bible extends Component {
                     <Icon 
                       onPress={params.onSeach} 
                       name='search'
-                      color={"#fff"} 
+                      color={Color.White}
                       size={24} 
                   /> 
                   </TouchableOpacity>
@@ -97,7 +98,7 @@ class Bible extends Component {
                     <Icon 
                       onPress={()=> {params.onBookmark(params.isBookmark)}} 
                       name='bookmark'
-                      color={params.isBookmark ? "red" : "#fff"} 
+                      color={params.isBookmark ? Color.Red : Color.White} 
                       size={24} 
                   /> 
                  </TouchableOpacity>
@@ -111,16 +112,7 @@ class Bible extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // languageName:this.props.language,
-      // languageCode:this.props.languageCode,
-      // versionCode:this.props.versionCode,
-      // sourceId:this.props.sourceId,
-      // downloaded:this.props.downloaded,
-        // bookId:this.props.bookId,
-      // bookName:this.props.bookName,
-      // totalChapters:this.props.totalChapters,
-      // totalVerses:this.props.totalVerses,
-      // verseNumber:this.props.verseNumber,
+  
       colorFile:this.props.colorFile,
       sizeFile:this.props.sizeFile,
       downloadedBook:[],
@@ -345,6 +337,16 @@ class Bible extends Component {
          bookName = item.books[i].bookName
        }
      }
+     this.props.updateMetadata({
+       copyrightHolder:item.metadata[0].copyrightHolder,
+      description:item.metadata[0].description,
+      license:item.metadata[0].license,
+      source:item.metadata[0].source,
+      technologyPartner:item.metadata[0].technologyPartner,
+      revision:item.metadata[0].revision,
+      versionNameGL:item.metadata[0].versionNameGL
+    }) 
+
       this.props.updateVersion({language:item.languageName,languageCode:item.languageCode,
       versionCode:item.versionCode,sourceId:item.sourceId,downloaded:item.downloaded})
       
@@ -498,7 +500,7 @@ toggleAudio=()=>{
 }
 
 async audioComponentUpdate(){
-  console.log("audio value ",this.state.audio)
+console.log("audio value ",this.state.audio)
 var found = false
 let res =  await APIFetch.availableAudioBook(this.props.languageCode,this.props.versionCode)
 try{
@@ -511,10 +513,10 @@ for (var key in res.books){
     break;
   }
 }
-  if(found==false){
-    this.props.navigation.setParams({audio:false })
-    this.setState({audio:false})
-  }
+if(found==false){
+  this.props.navigation.setParams({audio:false })
+  this.setState({audio:false})
+}
 }
 }
 catch(error){
@@ -831,39 +833,69 @@ getNotes(){
   toggleParallelView(value){
     this.props.navigation.setParams({visibleParallelView:value,})
   }
+  renderFooter = () => {
+    return(
+    // <View>
+    <View style={this.styles.addToSharefooterComponent}>
+      {
+      (this.props.license && this.props.copyrightHolder && this.props.technologyPartner) &&
+      <View style ={this.styles.footerView}>
+      <Text style={this.styles.textListFooter}>
+        <Text style={this.styles.footerText}>Copyright:</Text>{' '}{this.props.copyrightHolder}
+      </Text>
+      <Text style={this.styles.textListFooter}>
+      <Text style={this.styles.footerText}>License:</Text>{' '}{this.props.license}
+      </Text>
+      <Text style={this.styles.textListFooter}>
+      <Text style={this.styles.footerText}>Technology partner:</Text>{' '}{this.props.technologyPartner}
+      </Text>
+      </View>
+    }
+    </View>
+    // </View>
+    )
+  }
+
+
   render() {
     console.log(" COPYRIGHT ",this.props.copyrightHolder)
     return(
-    <View  style={this.styles.container}>
-      {this.state.isLoading &&
+    <View style={this.styles.container}>
+      {
+        this.props.navigation.getParam("visibleParallelView") &&
+        <View style={{position:'absolute',top:0,zIndex:2,width:'50%'}}>
+          <Header style={{height:40}}>
+            <Button transparent onPress={()=>{this.props.navigation.navigate("SelectionTab",{getReference:this.getReference,bookId:this.props.bookId,chapterNumber:this.state.currentVisibleChapter,totalChapters:this.props.totalChapters,totalVerses:this.props.totalVerses})}}>
+                <Title style={{fontSize:16}}>{this.props.bookName.length > 10 ? this.props.bookName.slice(0,9)+"..." : this.props.bookName} {this.state.currentVisibleChapter}</Title>
+                <Icon name="arrow-drop-down" color={Color.White} size={20}/>
+            </Button>
+          </Header>
+        </View>
+        }
+      {
+      this.state.isLoading ? 
         <Spinner
         visible={true}
         textContent={'Loading...'}
         //  textStyle={styles.spinnerTextStyle}
-      />}
-      {this.state.error !=null ?
+      /> : null}
+      {/** Main View for the single or parrallel View */}
+      <View style={this.styles.singleView}>
+        {/** Single view with only bible text */}
+        <View style={{width:this.props.navigation.getParam("visibleParallelView") ? '50%' :width }}>
+        {this.state.error !=null ?
         <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
           <TouchableOpacity 
-          onPress={()=>this.queryBookFromAPI(null)}
-          style={{height:40,width:120,borderRadius:4,backgroundColor:'#3F51B5',
-          justifyContent:'center',alignItems:'center'}}>
-            <Text style={{fontSize:18,color:'#fff'}}>Reload</Text>
+            onPress={()=>this.queryBookFromAPI(null)}
+            style={this.styles.reloadButton}>
+            <Text style={this.styles.reloadText}>Reload</Text>
           </TouchableOpacity>
         </View>
-      :
-      <View style={{flexDirection:'row'}}>
-        <View style={{width:this.props.navigation.getParam("visibleParallelView") ? '50%' :width}}>
-          {this.props.navigation.getParam("visibleParallelView") &&
-            <Header style={{height:40}}>
-                  <Button transparent onPress={()=>{this.props.navigation.navigate("SelectionTab",{getReference:this.getReference,bookId:this.props.bookId,chapterNumber:this.state.currentVisibleChapter,totalChapters:this.props.totalChapters,totalVerses:this.props.totalVerses})}}>
-                      <Title style={{fontSize:16}}>{this.props.bookName.length > 10 ? this.props.bookName.slice(0,9)+"..." : this.props.bookName} {this.state.currentVisibleChapter}</Title>
-                      <Icon name="arrow-drop-down" color="#fff" size={20}/>
-                  </Button>
-            </Header>
-          }
+        :
+          <View style={{flex:1}}>
           <FlatList
                 data={this.state.chapterContent }
-                contentContainerStyle={{margin:16}}
+                contentContainerStyle={{margin:16,marginTop:this.props.navigation.getParam("visibleParallelView") ? 52 : 16}}
                 // extraData={this.state}
                 // showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
@@ -875,7 +907,7 @@ getNotes(){
                       styles = {this.styles}
                       selectedReferences = {this.state.selectedReferenceSet}
                       getSelection = {(verseIndex, chapterNumber, verseNumber,text) => {
-                        this.props.navigation.getParam("visibleParallelView")== false && this.getSelectedReferences(verseIndex, chapterNumber, verseNumber,text)}}
+                      this.props.navigation.getParam("visibleParallelView")== false && this.getSelectedReferences(verseIndex, chapterNumber, verseNumber,text)}}
                       HightlightedVerse = {this.state.HightlightedVerseArray}
                       notesList={this.state.notesList}
                       chapterNumber ={this.state.currentVisibleChapter}
@@ -883,28 +915,13 @@ getNotes(){
                   />
                 }
                 keyExtractor={this._keyExtractor}
-                ListFooterComponent={
-                  <View style={this.styles.addToSharefooterComponent}>
-                    {
-                    (this.props.license && this.props.copyrightHolder) &&
-                    <View >
-                     <Text style={this.styles.textListFooter}>
-                     <Text style={this.styles.footerText}>Copyright holder:</Text>{' '}{this.props.copyrightHolder}
-                    </Text>
-                    <Text style={this.styles.textListFooter}>
-                    <Text style={this.styles.footerText}>License:</Text>{' '}{this.props.license}
-                    </Text>
-                    </View>
-                    }
-                  </View>}
+                ListFooterComponent={this.renderFooter}
                 // ListFooterComponentStyle={{}}
-              />
-              {/* <View style={{marginBottom:20}}/> */}
-          {
-            this.state.chapterContent.length > 0 &&
-            <View>
-            <ChapterNdAudio
+          />
+     
+          <ChapterNdAudio
             styles={this.styles}
+            audio={this.state.audio}
             currentVisibleChapter={this.state.currentVisibleChapter}
             status={this.state.status}
             languageCode={this.props.languageCode}
@@ -913,27 +930,22 @@ getNotes(){
             totalChapters={this.props.totalChapters}
             navigation={this.props.navigation}
             queryBookFromAPI={this.queryBookFromAPI}
-            />
-          {
-            this.props.navigation.getParam("visibleParallelView") == false && 
-                this.state.showBottomBar &&
-                <SelectBottomTabBar 
-                styles={this.styles}
-                bottomHighlightText={this.state.bottomHighlightText}
-                doHighlight={this.doHighlight}
-                addToNotes={this.addToNotes}
-                addToShare={this.addToShare}
-                />
-              
-          }
-          </View>
-          }
-     
+          /> 
+          {this.props.navigation.getParam("visibleParallelView") == false && 
+            this.state.showBottomBar &&
+              <SelectBottomTabBar 
+              styles={this.styles}
+              bottomHighlightText={this.state.bottomHighlightText}
+              doHighlight={this.doHighlight}
+              addToNotes={this.addToNotes}
+              addToShare={this.addToShare}
+              />}
+        </View>}     
         </View>
-            {/**parallelView**/}
+            {/** 2nd view as  parallelView**/}
         {
           this.props.navigation.getParam("visibleParallelView")== true && (
-          <View style={{width:'50%',borderLeftWidth: 1,  borderLeftColor: '#eee'}}>
+          <View style={this.styles.parallelView}>
             {
               this.props.contentType == 'bible' &&
               <BibleChapter 
@@ -965,7 +977,7 @@ getNotes(){
 
           </View>
         )}
-        </View>}
+        </View>
         </View>
       )
   }
@@ -987,7 +999,7 @@ border:{
 
   borderWidth:0.2,
   // marginLeft:4,
-  borderColor:'#fff'
+  borderColor:Color.White
 },
 headerRightStyle:{
   flexDirection:'row',
@@ -1007,7 +1019,7 @@ touchableStyleLeft:{
 headerTextStyle:{
     fontSize:18,
     // fontWeight:'400',
-    color:"#fff",
+    color:Color.White,
     textAlign:'center'
 },
 })
@@ -1029,9 +1041,9 @@ const mapStateToProps = state =>{
     bookId:state.updateVersion.bookId,
     fontFamily:state.updateStyling.fontFamily,
 
-    copyrightHolder:state.updateVersion.copyrightHolder,
+    copyrightHolder:state.updateVersion.revision,
     license:state.updateVersion.license,
-
+    technologyPartner:state.updateVersion.technologyPartner,
 
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
@@ -1063,6 +1075,8 @@ const mapDispatchToProps = dispatch =>{
     updateVersionBook: (value)=>dispatch(updateVersionBook(value)),
     userInfo:(payload)=>dispatch(userInfo(payload)),
     fetchVersionBooks:(payload)=>dispatch(fetchVersionBooks(payload)),
+    updateMetadata:(payload)=>dispatch(updateMetadata(payload))
+
 
     // fetchDownloadedVersionContent:(payload)=>dispatch(fetchDownloadedVersionContent(payload))
   }

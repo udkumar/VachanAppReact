@@ -14,6 +14,7 @@ import { styles } from './styles.js';
 import {connect} from 'react-redux';
 import {updateVersion,fetchVersionBooks,fetchAllContent,updateMetadata} from '../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
+import Color from '../../utils/colorConstants'
 
 import {API_BASE_URL} from '../../utils/APIConstant'
 import { State } from 'react-native-gesture-handler';
@@ -168,17 +169,12 @@ class LanguageList extends Component {
 
      navigateTo(langName,langCode,booklist,verCode,sourceId,metadata,downloaded){
       // this.props.fetchVersionBooks({language:langName,versionCode:verCode,downloaded:downloaded,sourceId:sourceId})
-      this.props.updateMetadata({copyrightHolder:metadata[0].copyrightHolder,
-        description:metadata[0].description,
-        license:metadata[0].license,
-        source:metadata[0].source,
-        technologyPartner:metadata[0].technologyPartner,
-        revision:metadata[0].revision,
-        versionNameGL:metadata.versionNameGL}) 
+      
       this.props.navigation.state.params.updateLangVer({
         sourceId:sourceId,languageName:langName,languageCode:langCode, 
         versionCode:verCode,downloaded:downloaded,
-        books:booklist
+        books:booklist,
+        metadata:metadata
       })
       this.props.navigation.pop()
     }
@@ -256,7 +252,7 @@ class LanguageList extends Component {
               <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
               <TouchableOpacity 
               onPress={()=>this.updateData()}
-              style={{height:40,width:120,borderRadius:4,backgroundColor:'#3F51B5',justifyContent:'center',alignItems:'center'}}
+              style={{height:40,width:120,borderRadius:4,backgroundColor:Color.Blue_Color,justifyContent:'center',alignItems:'center'}}
               >
               <Text style={{fontSize:18,color:'#fff'}}>Reload</Text>
               </TouchableOpacity>

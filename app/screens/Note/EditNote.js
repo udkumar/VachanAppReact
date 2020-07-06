@@ -17,8 +17,8 @@ import {
 import FlowLayout from '../../components/FlowLayout'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { HeaderBackButton, NavigationActions } from 'react-navigation';
-import {RichTextEditor, actions} from 'react-native-zss-rich-text-editor';
-import RichTextToolbar from '../../utils/RichTextToolbar'
+// import {RichTextEditor, actions} from 'react-native-zss-rich-text-editor';
+// import RichTextToolbar from '../../utils/RichTextToolbar'
 const height = Dimensions.get('window').height;
 import { noteStyle } from './styles.js';
 import DbQueries from '../../utils/dbQueries'
@@ -26,17 +26,17 @@ import APIFetch from '../../utils/APIFetch'
 import {connect} from 'react-redux'
 import Spinner from 'react-native-loading-spinner-overlay';
 import firebase from 'react-native-firebase'
-
+import Color from '../../utils/colorConstants'
 
 
 
 class EditNote extends Component {
   static navigationOptions = ({navigation}) =>({
     headerTitle: 'Edit Note',
-    headerLeft:(<HeaderBackButton tintColor='white' onPress={()=>navigation.state.params.handleBack()}/>),
+    headerLeft:(<HeaderBackButton tintColor={Color.White} onPress={()=>navigation.state.params.handleBack()}/>),
     headerRight:(
       <TouchableOpacity style={{margin:8}} onPress={()=>navigation.state.params.handleAdd()}>
-        <Text style={{fontSize:16,color:'#fff',fontWeight:'700',marginRight:12}}>DONE</Text>
+        <Text style={{fontSize:16,color:Color.White,fontWeight:'700',marginRight:12}}>DONE</Text>
       </TouchableOpacity>
       ),
     
@@ -212,8 +212,9 @@ class EditNote extends Component {
         {/* <Icon name="add-circle" style={this.styles.addIconCustom} size={28} color="gray" onPress={this.onAddVersePress} /> */}
       </View>
       <TextInput
-      style={{margin:8}}
+      style={this.styles.inputStyle}
       placeholder='Enter your note here'
+      placeholderTextColor={this.styles.placeholderColor.color}
       value={this.state.contentBody}
       onChangeText={(text)=>this.setState({contentBody:text})}
       multiline={true}
@@ -247,48 +248,48 @@ class EditNote extends Component {
     )
   }
 
-  _renderToolbarItem (action,selected, method){
-    let iconName = 'format-bold'
-    switch(action) {
-      case actions.setBold: {
-        iconName = "format-bold"
-        break
-      }
-      case actions.setItalic: {
-        iconName = "format-italic"
-        break
-      }
-      case actions.setUnderline: {
-        iconName = "format-underlined"
-        break
-      }
-      case actions.setStrikethrough: {
-        iconName = "format-strikethrough"
-        break
-      }
-      case actions.insertBulletsList: {
-        iconName = "format-list-bulleted"
-        break
-      }
-      case actions.insertOrderedList: {
-        iconName = "format-list-numbered"
-        break
-      }
-    }
+  // _renderToolbarItem (action,selected, method){
+  //   let iconName = 'format-bold'
+  //   switch(action) {
+  //     case actions.setBold: {
+  //       iconName = "format-bold"
+  //       break
+  //     }
+  //     case actions.setItalic: {
+  //       iconName = "format-italic"
+  //       break
+  //     }
+  //     case actions.setUnderline: {
+  //       iconName = "format-underlined"
+  //       break
+  //     }
+  //     case actions.setStrikethrough: {
+  //       iconName = "format-strikethrough"
+  //       break
+  //     }
+  //     case actions.insertBulletsList: {
+  //       iconName = "format-list-bulleted"
+  //       break
+  //     }
+  //     case actions.insertOrderedList: {
+  //       iconName = "format-list-numbered"
+  //       break
+  //     }
+  //   }
 
-    return(
-      <Icon name={iconName} 
-      size={28} 
-      color={selected ? 'black' : 'white'} 
-      style={[
-        // this.styles.iconCustom,
-        {backgroundColor: selected ? 'white': 'transparent', margin:8, 
-        padding:8, }
-      ]}
-        onPress={method} 
-      />
-    );
-  }
+  //   return(
+  //     <Icon name={iconName} 
+  //     size={28} 
+  //     color={selected ? 'black' : 'white'} 
+  //     style={[
+  //       // this.styles.iconCustom,
+  //       {backgroundColor: selected ? 'white': 'transparent', margin:8, 
+  //       padding:8, }
+  //     ]}
+  //       onPress={method} 
+  //     />
+  //   );
+  // }
 }
 
 const mapStateToProps = state =>{

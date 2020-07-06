@@ -46,9 +46,14 @@ export const noteStyle =(colorFile, sizeFile) =>{
         backgroundColor:colorFile.backgroundColor,
         margin:8
     },
-    //editNote
-
-
+    placeholderColor:{
+        color: colorFile.textColor, 
+    },
+    inputStyle:{
+        fontSize:sizeFile.contentText,
+        color: colorFile.textColor,
+        margin:8
+    },
     NoteAddButton:{
         flex:8
     },
@@ -72,13 +77,14 @@ export const noteStyle =(colorFile, sizeFile) =>{
         flex:1, 
         flexDirection:'column', 
         backgroundColor:colorFile.backgroundColor,
-        margin:8
+        // margin:8
 
     },
     subContainer:{
         justifyContent:'space-between',
         flexDirection:'row',
         alignItems:'center',
+        margin:8,
         marginHorizontal:8,
         marginVertical:16
     },

@@ -2,6 +2,7 @@ import {StyleSheet,Dimensions} from 'react-native'
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 
+import Color from '../../utils/colorConstants'
 export const styles = (colorFile, sizeFile) =>{
     return StyleSheet.create({
         container:{
@@ -31,9 +32,9 @@ export const styles = (colorFile, sizeFile) =>{
             flexDirection:'row',
             color:"#0000ff"
         },
-        buttonStyle:{
-            color:"#841584" 
-        },
+        // buttonStyle:{
+        //     color:"#841584" 
+        // },
         iconStyle:{
             margin:8, 
             padding:8,
@@ -42,7 +43,7 @@ export const styles = (colorFile, sizeFile) =>{
         },
         textInputStyle:{
             height: 40, 
-            borderColor: 'gray', 
+            borderColor: Color.Gray, 
             borderWidth: 1,
             marginVertical:8
         },
@@ -65,7 +66,7 @@ export const styles = (colorFile, sizeFile) =>{
             marginHorizontal:10
           },
           loginText: {
-            color: '#3740FE',
+            color: Color.Blue_Color,
             marginTop: 25,
             textAlign: 'center'
           },
@@ -77,7 +78,7 @@ export const styles = (colorFile, sizeFile) =>{
             position: 'absolute',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: '#fff'
+            backgroundColor: Color.White
           },
           //profile
           header:{
@@ -89,7 +90,7 @@ export const styles = (colorFile, sizeFile) =>{
             height: 130,
             borderRadius: 63,
             borderWidth: 4,
-            borderColor: "white",
+            borderColor:Color.Transparent,
             marginBottom:10,
             alignSelf:'center',
             // position: 'absolute',
@@ -97,7 +98,7 @@ export const styles = (colorFile, sizeFile) =>{
           },
           name:{
             fontSize:22,
-            color:"#FFFFFF",
+            color:Color.White,
             fontWeight:'600',
           },
           body:{
@@ -110,7 +111,7 @@ export const styles = (colorFile, sizeFile) =>{
           },
           name:{
             fontSize:28,
-            color: "#696969",
+            color: Color.Gray,
             fontWeight: "600"
           },
           info:{
@@ -120,7 +121,7 @@ export const styles = (colorFile, sizeFile) =>{
           },
           description:{
             fontSize:16,
-            color: "#696969",
+            color: Color.Gray,
             marginTop:10,
             textAlign: 'center'
           },

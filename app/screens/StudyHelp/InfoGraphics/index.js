@@ -7,7 +7,7 @@ import {connect} from 'react-redux'
 import {selectedChapter,updateAudio,updateContentType} from '../../../store/action/'
 import APIFetch from '../../../utils/APIFetch'
 import { NavigationEvents } from 'react-navigation';
-
+import Color from '../../../utils/colorConstants'
 
 import infographics from '../../../assets/infographics.json'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -27,11 +27,11 @@ class Infographics extends Component {
               // onPress={() =>{navigation.navigate("LanguageList", {contentType:'infographics'})}}
               >
                 <Text  style={styles.headerTextStyle}>{params.file} </Text>
-              <Icon name="arrow-drop-down" color="#fff" size={24}/>
+              <Icon name="arrow-drop-down" color={Color.White} size={24}/>
               </TouchableOpacity>
             </View>
       ), 
-        headerTintColor:"#fff",
+        headerTintColor:Color.White,
     }
 }
     constructor(props){
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
    
   },
   GridViewInsideTextItemStyle: {
-     color: '#fff',
+     color: Color.White,
      padding: 4,
      fontSize: 18,
      justifyContent: 'center',  
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
   },
   headerTextStyle:{
       fontSize:16,
-      color:"#fff",
+      color:Color.White,
       textAlign:'center'
   },
   });

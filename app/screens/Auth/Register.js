@@ -12,6 +12,7 @@ import {connect} from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import {styles} from './styles.js'
+import Color from '../../utils/colorConstants'
 
 class Register extends Component {
     constructor(props){
@@ -127,7 +128,7 @@ class Register extends Component {
           if(this.state.isLoading){
             return(
               <View style={this.styles.preloader}>
-                <ActivityIndicator size="large" color="#3E4095"/>
+                <ActivityIndicator size="large" color={Blue_Color}/>
               </View>
             )
           }    
@@ -154,7 +155,7 @@ class Register extends Component {
                 source={require('../../assets/bcs_old_favicon.png')}
               /> */}
               {/* </TouchableOpacity> */}
-                <Text style={{fontSize:26,color:'#3E4095',fontWeight:'bold'}}>Sign Up</Text>
+                <Text style={{fontSize:26,color:Color.Blue_Color,fontWeight:'bold'}}>Sign Up</Text>
               </View> 
               <View style={{
                 flexDirection: "column",
@@ -203,7 +204,7 @@ class Register extends Component {
             <Icon name={this.state.passwordVisible2 ? 'eye' : 'eye-off'} size={24} style={this.styles.eyeIcon} onPress={()=>this.setState({passwordVisible2:!this.state.passwordVisible2})}/>
             </View>
               <Button
-                color="#3E4095"
+                color={Color.Blue_Color}
                 title="Signup"
                 onPress={() => this.registerUser()}
               />
