@@ -72,19 +72,23 @@ class BookMarks extends Component {
 
   async componentDidMount(){
     if(this.props.email){
-      var firebaseRef = firebase.database().ref("users/"+this.props.uid+"/bookmarks/"+this.props.sourceId);
-      firebaseRef.once('value', (snapshot)=> {
-        var data=[]
-          var list = snapshot.val()
-          if(snapshot.val() !=null){
-            for(var key in list){
-              data.push({bookId:key,chapterNumber:list[key]})
+      this.setState({isLoading:true},()=>{
+        var firebaseRef = firebase.database().ref("users/"+this.props.uid+"/bookmarks/"+this.props.sourceId);
+        firebaseRef.once('value', (snapshot)=> {
+          var data=[]
+            var list = snapshot.val()
+            if(snapshot.val() !=null){
+              for(var key in list){
+                data.push({bookId:key,chapterNumber:list[key]})
+              }
+              this.setState({
+                bookmarksList:data,
+                isLoading:false
+              })
             }
-            this.setState({
-              bookmarksList:data
-            })
-          }
-        })
+          })
+      })
+
     }
     // else{
     //   let model = await  DbQueries.queryBookmark(this.state.sourceId,null)
@@ -122,7 +126,6 @@ class BookMarks extends Component {
 
     
   async onBookmarkRemove(id,chapterNum){
-
     if(this.props.email){
       var data =  this.state.bookmarksList
       data.filter((a,i) => {
@@ -148,75 +151,48 @@ class BookMarks extends Component {
         })
         this.setState({bookmarksList:data})
     }
-    // else{
-    //   await DbQueries.updateBookmarkInBook(this.state.sourceId,id,chapterNum,false);
-    //   var data =  this.state.bookmarksList
-    //   data.filter((a,i) => {
-    //       if(a.bookId == id ){
-    //           a.chapterNumber.filter((b,j) => {
-    //           if(b == chapterNum){
-    //             if(a.chapterNumber.length == 1){
-    //               console.log(" i ",i)
-    //                data.splice(i,1)
-    //             }
-    //             else{
-    //                a.chapterNumber.splice(j,1)
-    //             }
-    //           }
-    //         })
-    //       }
-    //     })
-    //     this.setState({bookmarksList:data})
-    // }
-  
   }
-
+  renderItem = ({item, index}) => {
+    <View>
+      {
+        item.chapterNumber.length > 0 &&
+        item.chapterNumber.map(e=>
+        <TouchableOpacity style={this.styles.bookmarksView} onPress = { ()=> {this.navigateToBible(item.bookId,e)}} >
+        <Text style={this.styles.bookmarksText}>{this.props.bookName} {":"} {e}</Text>
+        <Icon name='delete-forever' style={this.styles.iconCustom}   
+          onPress={() => {this.onBookmarkRemove(item.bookId,e)} } 
+        />
+        </TouchableOpacity>
+      )}
+    </View>
+  }
   render() {
     console.log(" book list ",this.props.books)
     return (
         <View style={this.styles.container}>
-         {this.state.bookmarksList.length > 0 ?
+        {
+        this.state.isLoading ? 
+         <ActivityIndicator animate={true}/> :
          <FlatList
          data={this.state.bookmarksList}
          contentContainerStyle={this.state.bookmarksList.length === 0 && this.styles.centerEmptySet}
-         renderItem={({item, index}) => 
-           <View>{
-             item.chapterNumber.length > 0 &&
-             item.chapterNumber.map(e=>
-              <TouchableOpacity style={this.styles.bookmarksView} onPress = { ()=> {this.navigateToBible(item.bookId,e)}} >
-              <Text style={this.styles.bookmarksText}>{this.props.bookName} {":"} {e}</Text>
-              <Icon name='delete-forever' style={this.styles.iconCustom}   
-                onPress={() => {this.onBookmarkRemove(item.bookId,e)} } 
-              />
-              </TouchableOpacity>
-            )}
+         renderItem={ this.renderItem}
+         ListEmptyComponent={
+           <View style={this.styles.emptyMessageContainer}>
+           <Icon name="collections-bookmark" style={this.styles.emptyMessageIcon}/>
+             <Text
+               style={this.styles.messageEmpty}
+             >
+              No Bookmark added
+             </Text>
+             
            </View>
          }
-        //  ListEmptyComponent={
-        //    <View style={this.styles.emptyMessageContainer}>
-        //    <Icon name="collections-bookmark" style={this.styles.emptyMessageIcon}/>
-        //      <Text
-        //        style={this.styles.messageEmpty}
-        //      >
-        //       No Bookmark added
-        //      </Text>
-             
-        //    </View>
-        //  }
          extraData={this.props}
-       /> : 
-       <View style={this.styles.emptyMessageContainer}>
-           <Icon name="collections-bookmark" style={this.styles.emptyMessageIcon}/>
-            <Text
-             style={this.styles.messageEmpty}
-           >
-               No Bookmark added
-            </Text>
-             
-           </View> 
-         } 
-        </View>
-    );
+        /> 
+        }
+       </View>
+    )
   }
 }
 

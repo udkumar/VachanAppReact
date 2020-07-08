@@ -7,6 +7,7 @@ import Color from '../../utils/colorConstants'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil'
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
 
+import {fetchVersionBooks} from '../../store/action/'
 
 
 
@@ -36,6 +37,8 @@ class DrawerScreen extends Component {
   //   })
   // }
   async componentDidMount(){
+    this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,
+      downloaded:this.props.downloaded,sourceId:this.props.sourceId})
     var email = await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.BackupRestoreEmail)
     this.setState({email})
   }
@@ -109,8 +112,18 @@ const mapStateToProps = state =>{
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
     email:state.userInfo.email,
+
+    language: state.updateVersion.language,
+    languageCode:state.updateVersion.languageCode,
+    versionCode:state.updateVersion.versionCode,
+    sourceId:state.updateVersion.sourceId,
+    downloaded:state.updateVersion.downloaded,
   }
 }
 
-
-export  default connect(mapStateToProps,null)(DrawerScreen)
+const mapDispatchToProps = dispatch =>{
+  return {
+    fetchVersionBooks:(value)=>dispatch(fetchVersionBooks(value)),
+  }
+}
+export  default connect(mapStateToProps,mapDispatchToProps)(DrawerScreen)

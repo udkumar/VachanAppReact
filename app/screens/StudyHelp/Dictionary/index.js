@@ -23,6 +23,7 @@ import { NavigationEvents } from 'react-navigation';
 import APIFetch from '../../../utils/APIFetch'
 import {styles} from './styles'
 import Color from '../../../utils/colorConstants'
+import ReloadButton from '../../../components/ReloadButton'
 
 class Dictionary extends Component {
 
@@ -136,14 +137,9 @@ class Dictionary extends Component {
       />}
       {
         this.props.error ? 
-        <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-          <TouchableOpacity 
-          onPress={()=>this.updateData()}
-          style={this.styles.reloadButton}
-          >
-            <Text style={this.styles.reloadText}>Reload</Text>
-          </TouchableOpacity>
-         </View> 
+        <ReloadButton
+        reloadFunction={this.updateData}
+        />
       :
         <View>
         <Accordion 

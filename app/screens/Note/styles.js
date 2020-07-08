@@ -2,6 +2,7 @@ import {StyleSheet,Dimensions} from 'react-native'
 import { Icon } from 'native-base';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
+import Color from '../../utils/colorConstants'
 
 export const noteStyle =(colorFile, sizeFile) =>{
     return StyleSheet.create({
@@ -15,6 +16,39 @@ export const noteStyle =(colorFile, sizeFile) =>{
         marginTop:16, 
         flexDirection:'row'
         
+    },
+    chapterSelectionContainer:{
+        flex:1,
+        backgroundColor:colorFile.backgroundColor        
+    },
+    selectGridNum:{
+        flex:0.25,
+        borderColor:colorFile.gridBorderColor,
+        // borderRightWidth:1, 
+        // borderBottomWidth:1,
+        // borderWidth:0.5,
+        height:width/4,
+        justifyContent:"center"
+    },
+    modalText:{
+        textAlign:'left',
+        fontSize:sizeFile.titleText,
+        color:colorFile.textColor
+    },
+    modalMainView:{flex:1,justifyContent:'center',
+    alignItems:'center',
+    backgroundColor:colorFile.semiTransparentBackground},
+    modalView:{
+        width:'80%',height:'80%',position:'absolute',zIndex:0,top:80
+    },
+    modalCloseIcon:{
+        position:'absolute',right:-20,top:-20,zIndex: 1
+    },
+    chapterNum:{
+        fontSize:sizeFile.titleText,
+        textAlign:"center",
+        alignItems:"center", 
+        color:colorFile.textColor
     },
     cardItemStyle:{
         paddingTop:16,

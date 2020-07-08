@@ -1,5 +1,4 @@
 import {StyleSheet,Dimensions} from 'react-native'
-import { Icon } from 'native-base';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 import Color from '../../utils/colorConstants'
@@ -11,6 +10,11 @@ export const styles =(colorFile, sizeFile) =>{
         flex:1,
         backgroundColor:colorFile.backgroundColor
         
+    },
+    centerContent:{
+        flex:1,
+        justifyContent:'center',
+        alignContent:'center'
     },
     verseWrapperText:{
         fontSize:sizeFile.contentText,
@@ -103,7 +107,7 @@ export const styles =(colorFile, sizeFile) =>{
         width:40,
         borderRadius: 28,
         bottom:36,
-        left:8
+        left:4
     },
     bottomBarPrevView:{
         position:'absolute', 
@@ -125,7 +129,7 @@ export const styles =(colorFile, sizeFile) =>{
         width:40,
         borderRadius: 28,
         bottom:36,
-        right:8
+        right:4
     },
 
     bottomBarNextView:{
@@ -223,6 +227,14 @@ export const styles =(colorFile, sizeFile) =>{
         justifyContent:'center',
         alignItems:'center'
     },
-        reloadText:{fontSize:18,color:Color.White,textAlign:'center'}
+    reloadText:{fontSize:18,
+        color:Color.White,
+        textAlign:'center'
+    },
+    emptyMessageIcon:{
+        fontSize:sizeFile.emptyIconSize,
+        margin:16,
+        color:colorFile.iconColor,
+    },
     })
 }

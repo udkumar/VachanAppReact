@@ -55,26 +55,28 @@ class ReferenceSelection extends Component {
     })
   }
 
-  updateSelectedChapter = (chapterNumber,index) => {
-    console.log("selectedChapterIndex , selectedChapterNumber",index,chapterNumber)
-    this.setState({
-        selectedChapterIndex: index, 
-        selectedChapterNumber: chapterNumber,
-        totalVerses:getBookNumOfVersesFromMapping(this.state.selectedBookId,chapterNumber)
-    })
-  }
-  updateSelectedVerse = (verseNumber, index) => {
-    console.log(" totalChapters :",this.state.totalChapters)
-    this.setState({selectedVerseIndex:index !=null && index, selectedVerseNumber: verseNumber})
+  // updateSelectedChapter = (chapterNumber,index) => {
+  //   console.log("selectedChapterIndex , selectedChapterNumber",index,chapterNumber)
+  //   this.setState({
+  //       selectedChapterIndex: index, 
+  //       selectedChapterNumber: chapterNumber,
+  //       totalVerses:getBookNumOfVersesFromMapping(this.state.selectedBookId,chapterNumber)
+  //   })
+  // }
+  updateSelectedChapter = (chapterNumber, index) => {
+    var chapterNum = chapterNumber != null ? chapterNumber  : this.state.selectedChapterNumber
+
+    console.log(" totalChapters :",chapterNum)
+    this.setState({selectedChapterIndex:index !=null && index,})
     this.props.navigation.state.params.getReference({
-      bookId:this.state.selectedBookId,bookName:this.state.selectedBookName,
-      chapterNumber:this.state.selectedChapterNumber > this.state. totalChapters ? '1' :this.state.selectedChapterNumber,
+      bookId:this.state.selectedBookId,
+      bookName:this.state.selectedBookName,
+      chapterNumber:this.state.selectedChapterNumber > this.state.totalChapters ? '1' : chapterNum,
       totalChapters:this.state.totalChapters,
       totalVerses:this.state.totalVerses,
-      verseNumber:verseNumber !=null &&  verseNumber 
+      // verseNumber:verseNumber !=null &&  verseNumber 
     })
-    this.props.books.length = 0
-    // }
+    // this.props.books.length = 0
     this.props.navigation.pop()
   }
   async componentDidMount(){
@@ -134,7 +136,6 @@ class ReferenceSelection extends Component {
 
         updateSelectedBook: this.updateSelectedBook,
         updateSelectedChapter: this.updateSelectedChapter,
-        updateSelectedVerse: this.updateSelectedVerse,
         onPressCheck:this.onPressCheck
 
       }}/>

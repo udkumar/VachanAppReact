@@ -9,6 +9,7 @@ import {
   Alert,
   ToastAndroid,
   Modal,
+  TouchableWithoutFeedback,
   TouchableHighlight,
   ScrollView,
   Image,
@@ -26,17 +27,20 @@ import APIFetch from '../../utils/APIFetch'
 import {connect} from 'react-redux'
 import Spinner from 'react-native-loading-spinner-overlay';
 import firebase from 'react-native-firebase'
+import SelectionGrid from '../../components/SelectionGrid'
 import Color from '../../utils/colorConstants'
+import {getBookNumOfVersesFromMapping,getBookChaptersFromMapping} from '../../utils/UtilFunctions'
 
+import {updateVersionBook} from '../../store/action/'
 
 
 class EditNote extends Component {
   static navigationOptions = ({navigation}) =>({
-    headerTitle: 'Edit Note',
+    headerTitle:(<Text style={{fontSize:16,color:Color.White,fontWeight:'700',marginRight:12}}>Note</Text>),
     headerLeft:(<HeaderBackButton tintColor={Color.White} onPress={()=>navigation.state.params.handleBack()}/>),
     headerRight:(
       <TouchableOpacity style={{margin:8}} onPress={()=>navigation.state.params.handleAdd()}>
-        <Text style={{fontSize:16,color:Color.White,fontWeight:'700',marginRight:12}}>DONE</Text>
+        <Text style={{fontSize:16,color:Color.White,fontWeight:'700',marginRight:12}}>Save</Text>
       </TouchableOpacity>
       ),
     
@@ -51,7 +55,9 @@ class EditNote extends Component {
         // notesList:
         bcvRef:this.props.navigation.state.params.bcvRef,
         isLoading:false,
-        contentBody:this.props.navigation.state.params.contentBody
+        contentBody:this.props.navigation.state.params.contentBody,
+        modalVisible:false,
+        totalVerses:null
     }
     this.styles = noteStyle(props.colorFile, props.sizeFile);  
     this.getHtml = this.getHtml.bind(this);
@@ -79,7 +85,8 @@ class EditNote extends Component {
 
   saveNote = async () =>{
       var time =  Date.now()
-      console.log("time "+time)
+      console.log("bcvRef "+this.state.bcvRef)
+
       var firebaseRef = firebase.database().ref("users/"+this.props.uid+"/notes/"+this.props.sourceId+"/"+this.state.bcvRef.bookId)
       
         if(this.state.contentBody == ''){
@@ -87,9 +94,7 @@ class EditNote extends Component {
         }
         else{
           var edit = firebase.database().ref("users/"+this.props.uid+"/notes/"+this.props.sourceId+"/"+this.state.bcvRef.bookId+"/"+this.state.bcvRef.chapterNumber)
-          console.log(" noteObject  ",this.state.noteObject,this.state.noteIndex)
           if(this.state.noteIndex != -1  ){
-            if(this.props.navigation.state.params.contentBody  != this.state.contentBody){
               var updates = {}
               updates["/"+this.state.noteIndex] = {
               createdTime:time,  
@@ -98,10 +103,9 @@ class EditNote extends Component {
               verses:this.state.bcvRef.verses
               }
               edit.update(updates)
-            }
           }
           else{
-            console.log("notes object ",this.state.noteObject)
+            console.log("NOTE INDEX ",this.state.bcvRef.verses)
               var notesArray = this.state.noteObject.concat({
               createdTime:time,  
               modifiedTime:time, 
@@ -112,9 +116,8 @@ class EditNote extends Component {
               updates[this.state.bcvRef.chapterNumber] = notesArray
               firebaseRef.update(updates)
           }
-     
-          this.props.navigation.state.params.onbackNote([],this.state.contentBody)
-          this.props.navigation.dispatch(NavigationActions.back())
+          this.props.navigation.state.params.onbackNote()
+          this.props.navigation.pop()
         }
   }
 
@@ -140,9 +143,11 @@ class EditNote extends Component {
       } 
       else {
         console.log("1 ",this.state.contentBody," 2 ", this.state.noteObject)
-        if(this.state.contentBody !== this.props.navigation.state.params.contentBody){
+        if(this.state.contentBody !== this.props.navigation.state.params.contentBody
+          || this.state.bcvRef.verses.length !== this.props.navigation.state.params.bcvRef.verses.length
+          ){
             this.showAlert();
-          return
+            return
         }
         this.props.navigation.dispatch(NavigationActions.back())
       }
@@ -170,126 +175,130 @@ class EditNote extends Component {
     this.props.navigation.setParams({ handleAdd: this.saveNote})
     this.props.navigation.setParams({ handleBack: this.onBack})
   }
-  
-  // openReference=(index)=> {
-  //   console.log(" bcv ref open ref",this.state.bcvRef)
-  //   this.props.navigation.navigate('Bible', {bookId: this.state.bcvRef.bookId, 
-  //     chapterNumber: this.state.bcvRef.chapterNumber, verseNumber: this.state.bcvRef.verses[index]})
+  // add this function in second release
+  // onAddVersePress=()=>{
+  //   // if(this.state.totalVerses !== null ){
+  //     var value = getBookNumOfVersesFromMapping(this.state.bcvRef.bookId,this.state.bcvRef.chapterNumber)
+  //     this.setState({modalVisible:true,totalVerses:value})
+  //   // }
+  // }
+  // closeModal =()=>{
+  //   this.setState({modalVisible:false})
+  // }
+ 
+  // addVerseNumber=(item)=>{
+  //   var value = this.state.bcvRef.verses.includes(item)
+  //   if(value){
+  //     Alert.alert("You have already added verse "+item)
+  //   }else{
+  //     var addBcvRef = this.state.bcvRef
+  //     addBcvRef.verses.push(item)
+  //     this.setState({bcvRef:addBcvRef,modalVisible:!this.state.modalVisible})
+  //   }
   // }
 
+  openReference=(index,value)=> {
+    console.log(" bcv ref open ref",index)
+    if(this.state.contentBody !== this.props.navigation.state.params.contentBody
+      || this.state.bcvRef.verses.length !== this.props.navigation.state.params.bcvRef.verses.length
+      ){
+        Alert.alert(
+          'Save Changes ? ',
+          'Do you want to save the note ',
+          [
+            {text: 'Cancel', onPress: () => {return}},
+            {text: 'No', onPress: () => { 
+              this.props.updateVersionBook({
+                bookId:this.state.bcvRef.bookId, 
+                bookName:this.state.bcvRef.bookName,
+                chapterNumber:this.state.bcvRef.chapterNumber,
+                totalChapters:getBookChaptersFromMapping(this.state.bcvRef.bookId),
+                totalVerses:getBookNumOfVersesFromMapping(this.state.bcvRef.bookId,this.state.bcvRef.chapterNumber),
+                verseNumber:value
+              })
+              this.props.navigation.navigate("Bible") 
+            }},
+            {text: 'Yes', onPress: () => this.saveNote()},
+          ],
+        )
+        return
+      }
+      this.props.updateVersionBook({
+        bookId:this.state.bcvRef.bookId, 
+        bookName:this.state.bcvRef.bookName,
+        chapterNumber:this.state.bcvRef.chapterNumber,
+        totalChapters:getBookChaptersFromMapping(this.state.bcvRef.bookId),
+        totalVerses:getBookNumOfVersesFromMapping(this.state.bcvRef.bookId,this.state.bcvRef.chapterNumber),
+        verseNumber:value
+      })
+      this.props.navigation.navigate('Bible')
+  }
+  //  add this function in second release
   // deleteReference=(index)=> {
   //   // if(this.state.bcvRef.verses.length == 1){
   //   //   this.props.navigation.dispatch(NavigationActions.back())
   //   // }
   //   this.state.bcvRef.verses.splice(index, 1)
-  //   // this.setState({bcvRef:this.state.bcvRef})
+  //   this.setState({bcvRef:this.state.bcvRef})
   // }
 
   render() {
-    // console.log(" note list ",this.props.navigation.state.params.notesList)
+    console.log(" note list ",this.state.bcvRef)
     return (
+    <View style={{flex:1}}>
      <ScrollView style={this.styles.containerEditNote}>
       <View style={this.styles.subContainer}>
-      {/* {this.state.isLoading &&
-        <Spinner
-        visible={this.state.isLoading}
-        textContent={'Loading...'}
-        // textStyle={styles.spinnerTextStyle}
-        />} */}
+    
         {this.state.bcvRef 
-          ? 
+          &&
           <FlowLayout style={this.styles.tapButton} 
           // ref="flow" 
             dataValue={this.state.bcvRef} 
             openReference={(index) => this.openReference(index)} 
-            deleteReference={(index) => this.deleteReference(index)}
+            // deleteReference={(index) => this.deleteReference(index)}
             styles={this.styles}
           />
-          : 
-          <Text style={this.styles.tapButton}>Tap button to add references</Text> 
-         
         }
         {/* <Icon name="add-circle" style={this.styles.addIconCustom} size={28} color="gray" onPress={this.onAddVersePress} /> */}
       </View>
       <TextInput
-      style={this.styles.inputStyle}
-      placeholder='Enter your note here'
-      placeholderTextColor={this.styles.placeholderColor.color}
-      value={this.state.contentBody}
-      onChangeText={(text)=>this.setState({contentBody:text})}
-      multiline={true}
+        style={this.styles.inputStyle}
+        placeholder='Enter your note here'
+        placeholderTextColor={this.styles.placeholderColor.color}
+        value={this.state.contentBody}
+        onChangeText={(text)=>this.setState({contentBody:text})}
+        multiline={true}
       />
-      {/* <View style={this.styles.textEditorView}>
-
-        <RichTextEditor
-          style={this.styles.richTextEditor}
-          ref={(r)=>this.richtext = r}
-          hiddenTitle={true}
-          contentPlaceholder="New Note"
-          initialContentHTML={this.state.noteBody}
-          editorInitializedCallback={() => this.onEditorInitialized()}
-        />
-        <RichTextToolbar
-          ref={(r)=>this.toolbar = r}
-          getEditor={() => this.richtext}
-          renderAction={this._renderToolbarItem}
-          actions={[
-            actions.setBold,
-            actions.setItalic,
-            actions.setUnderline,
-            actions.setStrikethrough,
-            actions.insertBulletsList,
-            actions.insertOrderedList
-          ]}
-        />
-      </View> */}
-
      </ScrollView> 
+     {/**modal to add verses can be add in next release */}
+     {/* <Modal
+     animated={true}
+     transparent={true}
+     visible={this.state.modalVisible}>
+     <View style={this.styles.modalMainView}>
+     <TouchableWithoutFeedback
+      onPressOut={this.closeModal}
+      >
+      <View style={this.styles.modalView}>
+      <Text style={this.styles.modalText}>Add Verse</Text>
+      <Icon
+        name='cancel' onPress={this.closeModal}  
+        size={28} color={Color.Blue_Color} style={this.styles.modalCloseIcon}
+      />
+      <SelectionGrid 
+      styles={this.styles}
+      onNumPress={this.addVerseNumber}
+      numbers={Array.from(new Array(this.state.totalVerses), (x,i) => i+1)}
+      loader={false}
+      heighlightedNumber={1}
+      />
+      </View>
+      </TouchableWithoutFeedback>
+     </View>
+   </Modal> */}
+   </View>
     )
   }
-
-  // _renderToolbarItem (action,selected, method){
-  //   let iconName = 'format-bold'
-  //   switch(action) {
-  //     case actions.setBold: {
-  //       iconName = "format-bold"
-  //       break
-  //     }
-  //     case actions.setItalic: {
-  //       iconName = "format-italic"
-  //       break
-  //     }
-  //     case actions.setUnderline: {
-  //       iconName = "format-underlined"
-  //       break
-  //     }
-  //     case actions.setStrikethrough: {
-  //       iconName = "format-strikethrough"
-  //       break
-  //     }
-  //     case actions.insertBulletsList: {
-  //       iconName = "format-list-bulleted"
-  //       break
-  //     }
-  //     case actions.insertOrderedList: {
-  //       iconName = "format-list-numbered"
-  //       break
-  //     }
-  //   }
-
-  //   return(
-  //     <Icon name={iconName} 
-  //     size={28} 
-  //     color={selected ? 'black' : 'white'} 
-  //     style={[
-  //       // this.styles.iconCustom,
-  //       {backgroundColor: selected ? 'white': 'transparent', margin:8, 
-  //       padding:8, }
-  //     ]}
-  //       onPress={method} 
-  //     />
-  //   );
-  // }
 }
 
 const mapStateToProps = state =>{
@@ -303,7 +312,6 @@ const mapStateToProps = state =>{
 
     chapterNumber:state.updateVersion.chapterNumber,
     totalChapters:state.updateVersion.totalChapters,
-    totalVerses:state.updateVersion.totalVerses,
     bookId:state.updateVersion.bookId,
     downloaded:state.updateVersion.downloaded,
     // bookId:state.editNote.bookId,
@@ -317,7 +325,12 @@ const mapStateToProps = state =>{
     colorFile:state.updateStyling.colorFile,
   }
 }
+const mapDispatchToProps = dispatch =>{
+  return {
+    updateVersionBook:(value)=>dispatch(updateVersionBook(value))
+  }
+}
 
 
 
-export  default connect(mapStateToProps,null)(EditNote)
+export  default connect(mapStateToProps,mapDispatchToProps)(EditNote)

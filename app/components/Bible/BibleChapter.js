@@ -120,18 +120,18 @@ class BibleChapter extends Component {
                 />}
                 {
                 this.props.error ?
-                <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+                <View style={{flex:1,justifyContent:'center',alignItems:'center',margin:0}}>
                 <TouchableOpacity 
                 onPress={()=>this.updateData()}
                 style={this.styles.reloadButton}>
-                    <Text style={this.styles.reloadText}>Reload</Text>
+                    <Text style={this.styles.reloadText}>Offline. Content unavailable.</Text>
                 </TouchableOpacity>
                 </View>
                 :
                 <View style={{flex:1}}>
                 <ScrollView contentContainerStyle={{paddingBottom:20}} showsVerticalScrollIndicator={false} ref={(ref) => { this.scrollViewRef = ref; }} >
                     {this.props.parallelBible.map((verse, index) => 
-                    <View style={{margin:16}}>
+                    <View style={{marginHorizontal:16}}>
                         {verse.number == 1 ? 
                         <Text letterSpacing={24}
                         style={this.styles.verseWrapperText}>

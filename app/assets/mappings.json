@@ -253,7 +253,7 @@
       "number": 42
     },
     "JHN": {
-    "book_name": {"english":"John","kannada":"ಯೋಹಾನನು","hindi":"यूहन्ना","tamil":"யோவான்","telugu":"యోహాను సువార్త","marathi":"योहानकृत शुभवर्तमान","punjabi":"ਯੂਹੰਨਾ ਦੀ ਇੰਜੀਲ","assamese":"যোহনে লিখা শুভবাৰ্তা","bengali":"যোহন","urdu":"यूहन्ना","odiya":"ଯୋହନ","gujarati":"યોહાનની લખેલી સુવાર્તા","malayalam":"യോഹന്നാൻ എഴുതിയ സുവിശേഷം"},
+    "book_name": {"english":"John"},
       "section": "NT",
       "total_chapters":[51,25,36,54,47,71,53,59,41,42,57,50,38,31,27,33,26,40,42,31,25],
       "number": 43

@@ -8,7 +8,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Share,
-  ToastAndroid,
+  // ToastAndroid,
   Modal,
   NetInfo,
 } from 'react-native';
@@ -19,7 +19,8 @@ import APIFetch from '../../utils/APIFetch'
 import {fetchAudioUrl,fetchVersionLanguage,fetchVersionContent,queryDownloadedBook,fetchVersionBooks,userInfo,updateVersionBook,updateVersion,updateMetadata} from '../../store/action/'
 import SelectContent from '../../components/Bible/SelectContent'
 import SelectBottomTabBar from '../../components/Bible/SelectBottomTabBar'
-import ChapterNdAudio from '../../components/Bible/ChapterNdAudio'
+import ChapterNdAudio from '../../components/Bible/ChapterNdAudio';
+import ReloadButton from '../../components/ReloadButton';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { styles } from './styles.js';
 import {connect} from 'react-redux'
@@ -27,12 +28,13 @@ import Commentary from '../StudyHelp/Commentary/'
 import Dictionary from '../StudyHelp/Dictionary/'
 import Color from '../../utils/colorConstants'
 
-import {Header, Button,Title} from 'native-base'
+import {Header, Button,Title,Toast} from 'native-base'
 import BibleChapter from '../../components/Bible/BibleChapter';
 import firebase from 'react-native-firebase'
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 
+const INITIAL_SCROLL_POSITION = 40; 
 class Bible extends Component {
   static navigationOptions = ({navigation}) =>{
         const { params={} } = navigation.state 
@@ -154,6 +156,7 @@ class Bible extends Component {
     this.pinchDiff = 0
     this.pinchTime = new Date().getTime()
     this.styles = styles(this.props.colorFile, this.props.sizeFile);    
+    this.itemHeights = [];
   }
 
   componentWillReceiveProps(nextProps,prevState){
@@ -297,14 +300,29 @@ class Bible extends Component {
     })
   }
   _handleConnectivityChange = (isConnected) => {
-    console.log(" handle connection")
-    this.setState({connection_Status :isConnected == true ? true : false },()=>{
-      this.queryBookFromAPI(null)
+    // console.log(" handle connection", this.state.error,this.state.connection_Status,)
+    this.setState({connection_Status : isConnected == true ? true : false },()=>{
+      if(this.state.connection_Status){
+        Toast.show({
+          text: "Online. Now content available.",
+          buttonText: "Okay",
+          type: "success",
+          duration: 3000
+        })
+        this.queryBookFromAPI(null)
+
+      }else{
+        Toast.show({
+          text: "Offline. Check your internet Connection.",
+          buttonText: "Okay",
+          type: "warning",
+          duration: 3000
+        })
+      }
     })
   };
   getReference = async(item)=>{
     if(item){
-  // this.scrollToVerse(item.verseNumber)
       var time =  new Date()
       DbQueries.addHistory(this.props.sourceId,this.props.language,this.props.languageCode, 
         this.props.versionCode, item.bookId,item.bookName, JSON.parse(item.chapterNumber), this.props.downloaded, time)
@@ -366,6 +384,9 @@ class Bible extends Component {
       DbQueries.addHistory(item.sourceId,item.languageName,item.languageCode, 
       item.versionCode,this.props.bookId,bookName, 
       JSON.parse(this.state.currentVisibleChapter),item.downloaded,time)
+
+      this.props.fetchVersionBooks({language:item.languageName,versionCode:item.versionCode,
+      downloaded:item.downloaded,sourceId:item.sourceId})
 
     }else{
       return
@@ -449,9 +470,9 @@ class Bible extends Component {
                   this.getDownloadedContent()
                 }
               }
-              else{
+              else{ 
               console.log("not internet no downloaded book ")
-                this.setState({ isLoading:false,error:'book not downloaded'})
+                this.setState({isLoading:false,chapterContent:[],error:'book not downloaded'})
                 //  Alert.alert("Please check internet Connection")
               }
             }
@@ -489,13 +510,11 @@ toggleAudio=()=>{
     this.setState({status:!this.state.status})
   }
   else{
-    ToastAndroid.showWithGravityAndOffset(
-      "Sorry Audio is not there for this book",
-       ToastAndroid.LONG,
-       ToastAndroid.BOTTOM,
-       25,
-       50,
-     )
+    Toast.show({
+      text: "Offline. Content unavailable.",
+      buttonText: "Okay",
+      duration: 3000
+    })
   }
 }
 
@@ -727,6 +746,7 @@ getNotes(){
             notesList:this.state.notesList,
             bcvRef:{
             bookId: id, 
+            bookName:this.props.bookName,
             chapterNumber:this.state.currentVisibleChapter,
             verses:verses
             },
@@ -818,12 +838,6 @@ getNotes(){
 
   _keyExtractor = (item, index) => item.number;
 
-  onScroll=(event)=> {
-    var currentOffset = event.nativeEvent.contentOffset.y;
-    var direction = currentOffset > this.state.offset ? 'down' : 'up';
-    this.setState({offset:currentOffset,direction:direction})
-    console.log(direction)
-  }
   onSeach=()=>{
     this.props.navigation.navigate('Search')
     // console.log(" HEADER HIDE ",this.state.onSearchHideHeader)
@@ -834,28 +848,31 @@ getNotes(){
     this.props.navigation.setParams({visibleParallelView:value,})
   }
   renderFooter = () => {
-    return(
-    // <View>
-    <View style={this.styles.addToSharefooterComponent}>
-      {
-      (this.props.license && this.props.copyrightHolder && this.props.technologyPartner) &&
-      <View style ={this.styles.footerView}>
-      <Text style={this.styles.textListFooter}>
-        <Text style={this.styles.footerText}>Copyright:</Text>{' '}{this.props.copyrightHolder}
-      </Text>
-      <Text style={this.styles.textListFooter}>
-      <Text style={this.styles.footerText}>License:</Text>{' '}{this.props.license}
-      </Text>
-      <Text style={this.styles.textListFooter}>
-      <Text style={this.styles.footerText}>Technology partner:</Text>{' '}{this.props.technologyPartner}
-      </Text>
-      </View>
+    if(this.state.chapterContent.length === 0 ){
+      return null
+    }else{
+      return(
+        // <View>
+        <View style={this.styles.addToSharefooterComponent}>
+          { 
+          (this.props.license && this.props.copyrightHolder && this.props.technologyPartner) &&
+          <View style ={this.styles.footerView}>
+          <Text style={this.styles.textListFooter}>
+            <Text style={this.styles.footerText}>Copyright:</Text>{' '}{this.props.copyrightHolder}
+          </Text>
+          <Text style={this.styles.textListFooter}>
+          <Text style={this.styles.footerText}>License:</Text>{' '}{this.props.license}
+          </Text>
+          <Text style={this.styles.textListFooter}>
+          <Text style={this.styles.footerText}>Technology partner:</Text>{' '}{this.props.technologyPartner}
+          </Text>
+          </View>
+        }
+        </View>
+        // </View>
+        )
     }
-    </View>
-    // </View>
-    )
   }
-
 
   render() {
     console.log(" COPYRIGHT ",this.props.copyrightHolder)
@@ -873,31 +890,22 @@ getNotes(){
         </View>
         }
       {
-      this.state.isLoading ? 
+      this.state.isLoading &&
         <Spinner
         visible={true}
         textContent={'Loading...'}
         //  textStyle={styles.spinnerTextStyle}
-      /> : null}
+      />
+      }
       {/** Main View for the single or parrallel View */}
       <View style={this.styles.singleView}>
         {/** Single view with only bible text */}
         <View style={{width:this.props.navigation.getParam("visibleParallelView") ? '50%' :width }}>
-        {this.state.error !=null ?
-        <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-          <TouchableOpacity 
-            onPress={()=>this.queryBookFromAPI(null)}
-            style={this.styles.reloadButton}>
-            <Text style={this.styles.reloadText}>Reload</Text>
-          </TouchableOpacity>
-        </View>
-        :
-          <View style={{flex:1}}>
           <FlatList
                 data={this.state.chapterContent }
-                contentContainerStyle={{margin:16,marginTop:this.props.navigation.getParam("visibleParallelView") ? 52 : 16}}
-                // extraData={this.state}
-                // showsHorizontalScrollIndicator={false}
+                contentContainerStyle={this.state.chapterContent.length === 0 ? this.styles.centerEmptySet : {margin:16,marginTop:this.props.navigation.getParam("visibleParallelView") ? 52 : 16}}
+                extraData={this.state}
+                showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
                 renderItem={({item, index}) => 
                   <VerseView
@@ -916,9 +924,12 @@ getNotes(){
                 }
                 keyExtractor={this._keyExtractor}
                 ListFooterComponent={this.renderFooter}
+                ListEmptyComponent={<ReloadButton styles={this.styles} reloadFunction={this.queryBookFromAPI}/>}
                 // ListFooterComponentStyle={{}}
           />
-     
+          {
+          this.state.chapterContent.length > 0 &&   
+          <View style={{flex:1}}>
           <ChapterNdAudio
             styles={this.styles}
             audio={this.state.audio}
@@ -940,7 +951,9 @@ getNotes(){
               addToNotes={this.addToNotes}
               addToShare={this.addToShare}
               />}
-        </View>}     
+          </View>
+        }
+     
         </View>
             {/** 2nd view as  parallelView**/}
         {

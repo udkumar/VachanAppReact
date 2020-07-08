@@ -59,6 +59,7 @@ class About extends Component {
     <Text style={this.styles.bulletIcon}>{bullet + " "}</Text>Added DigitalOcean Spaces with CDN to serve Audio & Video. {'\n'}
     <Text style={this.styles.bulletIcon}>{bullet + " "}</Text>Added Firebase for personalisation and synchronisation. {'\n'} */}
     </Text>
+    <View style={{flex:0.1}}/>
     </View>
     </ScrollView>
     </View>

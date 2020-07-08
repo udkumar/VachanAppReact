@@ -25,7 +25,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
   }
  
   onVerseSelected=(item,index)=> {
-    this.props.screenProps.updateSelectedVerse(item,index)
+    // this.props.screenProps.updateSelectedVerse(item,index)
   }
   
   render() {
@@ -39,7 +39,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
       loader={this.state.isLoading}
       heighlightedNumber={this.props.screenProps.selectedVerseNumber}
       />
-      <Icon name="check-circle" color='rgba(62, 64, 149, 0.8)' onPress={()=>this.props.screenProps.updateSelectedVerse(null,null)}  size={64} style={{position:'absolute',bottom:0,right:0,padding:20}}/>
+      {/* <Icon name="check-circle" color='rgba(62, 64, 149, 0.8)' onPress={()=>this.props.screenProps.updateSelectedChapter(null,null)}  size={64} style={{position:'absolute',bottom:0,right:0,padding:20}}/> */}
       </View>
     );
   }

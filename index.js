@@ -30,6 +30,8 @@ const store = createStore(
 const persistor = persistStore(store)
 
 sagaMiddleware.run(rootSaga)
+typography()
+
 
 class RNRedux extends Component{
 
@@ -64,6 +66,5 @@ class RNRedux extends Component{
             </Provider>
     }
 }
-typography()
 
 AppRegistry.registerComponent('VachanGo', () => RNRedux ) ;

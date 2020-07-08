@@ -12,6 +12,11 @@ export const styles =(colorFile, sizeFile) =>{
         backgroundColor:colorFile.backgroundColor
         
     },
+    centerContent:{
+        flex:1,
+        justifyContent:'center',
+        alignContent:'center'
+    },
     verseWrapperText:{
         fontSize:sizeFile.contentText,
         color:colorFile.textColor,
@@ -92,7 +97,7 @@ export const styles =(colorFile, sizeFile) =>{
         width:40,
         borderRadius: 28,
         bottom:36,
-        left:8
+        left:4
     },
     bottomBarPrevView:{
         position:'absolute', 
@@ -114,7 +119,7 @@ export const styles =(colorFile, sizeFile) =>{
         width:40,
         borderRadius: 28,
         bottom:36,
-        right:8
+        right:4
     },
 
     bottomBarNextView:{
@@ -246,18 +251,16 @@ export const styles =(colorFile, sizeFile) =>{
         borderLeftWidth: 1,  
         borderLeftColor: Color.Gray
     },
-    reloadButton:{
-        height:40,
-        width:120,
-        borderRadius:4,
-        backgroundColor:Color.Blue_Color,
-        justifyContent:'center',
-        alignSelf:'center'
+    emptyMessageIcon:{
+        fontSize:sizeFile.emptyIconSize,
+        margin:16,
+        color:colorFile.iconColor,
     },
-    reloadText:{
-        textAlign:'center',
-        fontSize:18,
-        color:Color.White
+    centerEmptySet: { 
+        justifyContent: 'center', 
+        alignItems: 'center',
+        height: '100%' 
     }
+    
     })
 }

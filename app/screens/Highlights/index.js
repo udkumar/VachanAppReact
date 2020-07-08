@@ -38,6 +38,7 @@ class HighLights extends Component {
     super(props)
     this.state = {
       HightlightedVerseArray:[],
+      isLoading:false
     }
     this.styles = highlightstyle(this.props.colorFile, this.props.sizeFile);  
     
@@ -86,22 +87,25 @@ class HighLights extends Component {
   }
   async componentDidMount(){
     if(this.props.email){
-       firebase.database().ref("/users/"+this.props.uid+"/highlights/"+this.props.sourceId+"/").once('value', (snapshot)=> {
-        var highlights = snapshot.val()
-        console.log("HIGHLIGHTED VERSES ",snapshot.val())
-        var array = []
-        if(highlights != null){
-          for(var key in highlights){
-            for(var val in highlights[key]){
-              console.log(" highlight null ",highlights[key][val])
-              if(highlights[key][val] !=null){
-                array.push({bookId:key,chapterNumber:val,verseNumber:highlights[key][val]})
+      this.setState({isLoading:true},()=>{
+        firebase.database().ref("/users/"+this.props.uid+"/highlights/"+this.props.sourceId+"/").once('value', (snapshot)=> {
+          var highlights = snapshot.val()
+          console.log("HIGHLIGHTED VERSES ",snapshot.val())
+          var array = []
+          if(highlights != null){
+            for(var key in highlights){
+              for(var val in highlights[key]){
+                console.log(" highlight null ",highlights[key][val])
+                if(highlights[key][val] !=null){
+                  array.push({bookId:key,chapterNumber:val,verseNumber:highlights[key][val]})
+                }
               }
             }
+            this.setState({HightlightedVerseArray:array,isLoading:false})
           }
-          this.setState({HightlightedVerseArray:array})
-        }
-        })
+          })
+      })
+
     }
   }
   navigateToBible=(bId,chapterNum,verseNum)=>{
@@ -116,42 +120,42 @@ class HighLights extends Component {
     })
     this.props.navigation.navigate("Bible")
   }
+  renderItem = ({item,index})=>{  
+    <View>{
+      item.verseNumber  &&
+      item.verseNumber.map(e=>
+        <TouchableOpacity style={this.styles.bookmarksView} onPress = { ()=> {this.navigateToBible(item.bookId,item.chapterNumber,e)}} >
+        <Text style={this.styles.bookmarksText}>{this.props.bookName}  {":"} {item.chapterNumber} {":"} {e}</Text>
+        <Icon name='delete-forever' style={this.styles.iconCustom}   
+          onPress={() => {this.removeHighlight(item.bookId,item.chapterNumber,e)}} 
+        />
+        </TouchableOpacity>
+      )}
+    </View>
+  }
   render() {
     console.log("langugueg name ",this.state.HightlightedVerseArray)
     return (
       <View style={this.styles.container}>
-      {this.state.HightlightedVerseArray.length > 0 ?
+      {this.state.isLoading ? 
+      <ActivityIndicator animate={true}/> :
       <FlatList
       data={this.state.HightlightedVerseArray}
       contentContainerStyle={this.state.HightlightedVerseArray.length === 0 && this.styles.centerEmptySet}
-      renderItem={({item, index}) => 
-        <View>{
-          item.verseNumber  &&
-          item.verseNumber.map(e=>
-           <TouchableOpacity style={this.styles.bookmarksView} onPress = { ()=> {this.navigateToBible(item.bookId,item.chapterNumber,e)}} >
-           <Text style={this.styles.bookmarksText}>{this.props.bookName}  {":"} {item.chapterNumber} {":"} {e}</Text>
-           <Icon name='delete-forever' style={this.styles.iconCustom}   
-             onPress={() => {this.removeHighlight(item.bookId,item.chapterNumber,e)}} 
-           />
-           </TouchableOpacity>
-         )}
+      renderItem={this.renderItem}
+      ListEmptyComponent={
+        <View style={this.styles.emptyMessageContainer}>
+        <Icon name="note-add" style={this.styles.emptyMessageIcon}/>
+          <Text
+            style={this.styles.messageEmpty}>
+           Select verse to Highlight
+          </Text>
+          
         </View>
       }
-     
       extraData={this.props}
     />
-    :
-    <View style={this.styles.emptyMessageContainer}>
-    <Icon name="collections-bookmark" style={this.styles.emptyMessageIcon}/>
-      <Text
-        style={this.styles.messageEmpty}
-      >
-       No Highlight added
-      </Text>
-      
-    </View>
       } 
-     
      </View>
     );
   }

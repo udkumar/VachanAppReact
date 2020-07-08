@@ -43,7 +43,7 @@ import Color from '../../utils/colorConstants'
         .auth()
         .signInWithEmailAndPassword(this.state.email, this.state.password)
         .then((res) => {
-          console.log("signInWithEmailAndPassword",ress.emailVerified)
+          console.log("signInWithEmailAndPassword",res.emailVerified)
           
           // this.props.userInfo({email:user._user.email,uid:user._user.uid,
           // userName:user._user.displayName,phoneNumber:null,photo:user._user.photoURL})

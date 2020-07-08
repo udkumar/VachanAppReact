@@ -306,8 +306,8 @@ searchedData = ({item,index}) => {
     )
   }
   updateLangVer=async(item)=>{
-      this.props.fetchVersionBooks({language:item.langName,versionCode:item.verCode,
-        downloaded:item.downloaded,sourceId:item.sourceId})
+      // this.props.fetchVersionBooks({language:item.langName,versionCode:item.verCode,
+      //   downloaded:item.downloaded,sourceId:item.sourceId})
       // this.props.updateVersion({language:item.languageName,languageCode:item.languageCode,
       //   versionCode:item.versionCode,sourceId:item.sourceId,downloaded:item.downloaded})
         this.setState({tabsData:[],searchedResult:[],
@@ -369,7 +369,7 @@ const mapStateToProps = state =>{
 const mapDispatchToProps = dispatch =>{
   return {
     updateVersionBook:(value)=>dispatch(updateVersionBook(value)),
-    updateVersion: (value)=>dispatch(updateVersion(valurginmaamae)),
+    updateVersion: (value)=>dispatch(updateVersion(value)),
     fetchVersionBooks:(value)=>dispatch(fetchVersionBooks(value)),
   }
 }

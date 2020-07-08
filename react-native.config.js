@@ -1,4 +1,3 @@
 module.exports = {
-   
-    assets: ['./src/assets/fonts/Roboto'],
+    assets: ['./app/assets/fonts/Roboto'],
   }

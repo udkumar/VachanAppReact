@@ -12,6 +12,7 @@ import{fetchCommentaryContent} from '../../../store/action/index'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {styles} from './styles'
 import Color from '../../../utils/colorConstants'
+import ReloadButton from '../../../components/ReloadButton';
 
 class Commentary extends Component {
 
@@ -101,13 +102,10 @@ class Commentary extends Component {
       </Header>
       {
         this.props.error ?
-        <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-          <TouchableOpacity 
-          onPress={()=>this.updateData()}
-          style={this.styles.reloadButton}>
-            <Text style={this.styles.reloadText}>Reload</Text>
-          </TouchableOpacity>
-        </View>
+        <ReloadButton
+        reloadFunction={this.updateData}
+        />
+      
       :
       <View style={{flex:1}}>
         <Text style={[this.styles.commentaryHeading,{margin:10}]}>{bookName} {  } {this.props.commentaryContent.chapter}</Text>

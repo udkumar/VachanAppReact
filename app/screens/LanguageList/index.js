@@ -82,6 +82,7 @@ class LanguageList extends Component {
       console.log(" language list ")
       var lanVer = []
       const languageList =  await DbQueries.getLangaugeList()
+      
       if(languageList === null){
         const response = await APIFetch.fetchBookInLanguage()
         if(this.props.bibleLanguages[0].content.length > 0){
@@ -168,8 +169,7 @@ class LanguageList extends Component {
     }
 
      navigateTo(langName,langCode,booklist,verCode,sourceId,metadata,downloaded){
-      // this.props.fetchVersionBooks({language:langName,versionCode:verCode,downloaded:downloaded,sourceId:sourceId})
-      
+       console.log(' book List ',booklist )
       this.props.navigation.state.params.updateLangVer({
         sourceId:sourceId,languageName:langName,languageCode:langCode, 
         versionCode:verCode,downloaded:downloaded,

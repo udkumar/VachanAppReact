@@ -21,13 +21,13 @@ const SelectionTabStack = createMaterialTopTabNavigator(
                 // tabBarIcon: ({ tintColor }) => <MaterialIcons name='account-circle' size={26} style={{ color: tintColor }} />
               },
         },
-        Verses:{
-            screen:SelectVerse,
-            navigationOptions: {
-                tabBarLabel: 'Select Verse',
-                // tabBarIcon: ({ tintColor }) => <MaterialIcons name='account-circle' size={26} style={{ color: tintColor }} />
-              },
-        },
+        // Verses:{
+        //     screen:SelectVerse,
+        //     navigationOptions: {
+        //         tabBarLabel: 'Select Verse',
+        //         // tabBarIcon: ({ tintColor }) => <MaterialIcons name='account-circle' size={26} style={{ color: tintColor }} />
+        //       },
+        // },
        
     },
     {   

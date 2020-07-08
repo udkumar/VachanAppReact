@@ -8,6 +8,7 @@ import { styleFile } from './app/utils/styles.js'
 import {AsyncStorageConstants} from './app/utils/AsyncStorageConstants'
 import SplashScreen from 'react-native-splash-screen'
 import {connect} from 'react-redux'
+import { Root } from "native-base";
 import {fetchAllContent,fetchVersionBooks} from './app/store/action/'
 // import isSignedIn from './app/routes/auth'
 
@@ -118,7 +119,12 @@ class App extends Component {
       // }
   
       // console.log("PROPS IN APP NAVIGATOR ",this.props)
-        return <AppNavigator/>
+      return (
+      <Root>
+        <AppNavigator/>
+      </Root>
+      )
+         
     }
   }
   const mapStateToProps = state =>{

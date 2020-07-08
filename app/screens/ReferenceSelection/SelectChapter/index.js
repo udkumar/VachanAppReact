@@ -28,7 +28,6 @@ class ChapterSelection extends Component {
   }
    onNumPress=(item,index)=>{
     this.props.screenProps.updateSelectedChapter(item,index)
-    this.props.navigation.navigate('Verses')
   }
   render() {
     console.log("props navigation",this.props.screenProps.selectedBookId)
@@ -41,7 +40,7 @@ class ChapterSelection extends Component {
       numbers={this.state.chapterData}
       heighlightedNumber={this.props.screenProps.selectedChapterNumber}
       />  
-      <Icon name="check-circle" color='rgba(62, 64, 149, 0.8)' onPress={()=>this.props.screenProps.updateSelectedVerse(null,null)}  size={64} style={{position:'absolute',bottom:0,right:0,padding:20}}/>
+      <Icon name="check-circle" color='rgba(62, 64, 149, 0.8)' onPress={()=>this.props.screenProps.updateSelectedChapter(this.props.screenProps.selectedChapterNumber,this.props.screenProps.selectedChapterIndex)}  size={64} style={{position:'absolute',bottom:0,right:0,padding:20}}/>
       </View>
       
     )
