@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
+  ActivityIndicator,
   TouchableOpacity,
   FlatList,
 } from 'react-native';
@@ -102,17 +103,20 @@ class HighLights extends Component {
               }
             }
             this.setState({HightlightedVerseArray:array,isLoading:false})
+          }else{
+            this.setState({HightlightedVerseArray:[],isLoading:false})
           }
           })
+          this.setState({isLoading:false})
       })
 
     }
   }
-  navigateToBible=(bId,chapterNum,verseNum)=>{
+  navigateToBible=(bId,bookName,chapterNum,verseNum)=>{
     // console.log("item HIGHIGHTS ",item)
     this.props.updateVersionBook({
       bookId:bId, 
-      bookName:this.props.bookName,
+      bookName:bookName,
       chapterNumber:chapterNum,
       totalChapters:getBookChaptersFromMapping(bId),
       totalVerses:getBookNumOfVersesFromMapping(bId,chapterNum),
@@ -120,32 +124,42 @@ class HighLights extends Component {
     })
     this.props.navigation.navigate("Bible")
   }
-  renderItem = ({item,index})=>{  
-    <View>{
-      item.verseNumber  &&
+  renderItem = ({item,index})=>{ 
+    var bookName = null 
+    if (this.props.books){
+      for(var i = 0; i<= this.props.books.length-1; i++){
+        var bId = this.props.books[i].bookId
+        if(bId == item.bookId){
+         bookName = this.props.books[i].bookName
+        }
+      }
+    }
+    let value = item.verseNumber  &&
       item.verseNumber.map(e=>
-        <TouchableOpacity style={this.styles.bookmarksView} onPress = { ()=> {this.navigateToBible(item.bookId,item.chapterNumber,e)}} >
-        <Text style={this.styles.bookmarksText}>{this.props.bookName}  {":"} {item.chapterNumber} {":"} {e}</Text>
+        <TouchableOpacity style={this.styles.bookmarksView} onPress = { ()=> {this.navigateToBible(item.bookId,bookName,item.chapterNumber,e)}} >
+        <Text style={this.styles.bookmarksText}>{bookName}  {":"} {item.chapterNumber} {":"} {e}</Text>
         <Icon name='delete-forever' style={this.styles.iconCustom}   
           onPress={() => {this.removeHighlight(item.bookId,item.chapterNumber,e)}} 
         />
         </TouchableOpacity>
-      )}
-    </View>
+      )
+      return(
+      <View>{value}</View>
+      )
   }
   render() {
     console.log("langugueg name ",this.state.HightlightedVerseArray)
     return (
       <View style={this.styles.container}>
       {this.state.isLoading ? 
-      <ActivityIndicator animate={true}/> :
+      <ActivityIndicator animate={true} style={{justifyContent:'center',alignSelf:'center'}}/> :
       <FlatList
       data={this.state.HightlightedVerseArray}
       contentContainerStyle={this.state.HightlightedVerseArray.length === 0 && this.styles.centerEmptySet}
       renderItem={this.renderItem}
       ListEmptyComponent={
         <View style={this.styles.emptyMessageContainer}>
-        <Icon name="note-add" style={this.styles.emptyMessageIcon}/>
+        <Icon name="border-color" style={this.styles.emptyMessageIcon} onPress={()=>{this.props.navigation.navigate("Bible")}}/>
           <Text
             style={this.styles.messageEmpty}>
            Select verse to Highlight
@@ -174,6 +188,9 @@ const mapStateToProps = state =>{
 
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
+
+    books:state.versionFetch.data,
+
   }
 }
 const mapDispatchToProps = dispatch =>{

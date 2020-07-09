@@ -77,7 +77,7 @@ class BookMarks extends Component {
         firebaseRef.once('value', (snapshot)=> {
           var data=[]
             var list = snapshot.val()
-            if(snapshot.val() !=null){
+            if(snapshot.val() != null){
               for(var key in list){
                 data.push({bookId:key,chapterNumber:list[key]})
               }
@@ -86,7 +86,14 @@ class BookMarks extends Component {
                 isLoading:false
               })
             }
+            else{
+              this.setState({
+                bookmarksList:[],
+                isLoading:false
+              })
+            }
           })
+          this.setState({isLoading:false})
       })
 
     }
@@ -109,10 +116,10 @@ class BookMarks extends Component {
     //   }
     // }
   } 
-  navigateToBible(bookId,chapter){
+  navigateToBible(bookId,bookName,chapter){
     this.props.updateVersionBook({
       bookId:bookId, 
-      bookName:this.props.bookName,
+      bookName:bookName,
       chapterNumber:chapter,
       totalChapters:getBookChaptersFromMapping(bookId),
       totalVerses:getBookNumOfVersesFromMapping(bookId,chapter),
@@ -153,18 +160,31 @@ class BookMarks extends Component {
     }
   }
   renderItem = ({item, index}) => {
-    <View>
-      {
-        item.chapterNumber.length > 0 &&
+    var bookName = null 
+    if (this.props.books){
+      for(var i = 0; i<= this.props.books.length-1; i++){
+        var bId = this.props.books[i].bookId
+        // console.log(" BOOK ID IN BOKMARKS")
+        if(bId == item.bookId){
+         bookName = this.props.books[i].bookName
+        }
+      }
+    }
+      var val = item.chapterNumber.length > 0 &&
         item.chapterNumber.map(e=>
-        <TouchableOpacity style={this.styles.bookmarksView} onPress = { ()=> {this.navigateToBible(item.bookId,e)}} >
-        <Text style={this.styles.bookmarksText}>{this.props.bookName} {":"} {e}</Text>
+        <TouchableOpacity style={this.styles.bookmarksView} onPress = { ()=> {this.navigateToBible(item.bookId,bookName,e)}} >
+        <Text style={this.styles.bookmarksText}>{bookName} {":"} {e}</Text>
         <Icon name='delete-forever' style={this.styles.iconCustom}   
           onPress={() => {this.onBookmarkRemove(item.bookId,e)} } 
         />
         </TouchableOpacity>
-      )}
+      )
+    return(
+    <View>
+      {bookName && val} 
     </View>
+    )
+    
   }
   render() {
     console.log(" book list ",this.props.books)
@@ -172,14 +192,14 @@ class BookMarks extends Component {
         <View style={this.styles.container}>
         {
         this.state.isLoading ? 
-         <ActivityIndicator animate={true}/> :
+         <ActivityIndicator animate={true} style={{justifyContent:'center',alignSelf:'center'}}/> :
          <FlatList
          data={this.state.bookmarksList}
          contentContainerStyle={this.state.bookmarksList.length === 0 && this.styles.centerEmptySet}
          renderItem={ this.renderItem}
          ListEmptyComponent={
            <View style={this.styles.emptyMessageContainer}>
-           <Icon name="collections-bookmark" style={this.styles.emptyMessageIcon}/>
+           <Icon name="collections-bookmark" style={this.styles.emptyMessageIcon} onPress={()=>{this.props.navigation.navigate("Bible")}}/>
              <Text
                style={this.styles.messageEmpty}
              >

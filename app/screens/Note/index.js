@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   Dimensions,
   FlatList,
-  WebView
+  WebView,
+  ActivityIndicator
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Card, CardItem, Content, Right, Left } from 'native-base';
@@ -127,9 +128,9 @@ class Note extends Component {
             notesData:arr,
             isLoading:false
           })
-         
         }
       })
+      this.setState({isLoading:false})
     })
     }
     else{
@@ -159,8 +160,7 @@ class Note extends Component {
       for(var i = 0; i<= this.props.books.length-1; i++){
         var bId = this.props.books[i].bookId
         if(bId == item.bookId){
-        var bookName = this.props.books[i].bookName
-
+         bookName = this.props.books[i].bookName
         }
       }
     }
@@ -207,7 +207,7 @@ class Note extends Component {
     return (
       <View style={this.styles.container}>
        {this.state.isLoading ? 
-      <ActivityIndicator animate={true}/> :
+      <ActivityIndicator animate={true} style={{justifyContent:'center',alignSelf:'center'}}/> :
       <FlatList
         contentContainerStyle={this.state.notesData.length === 0 
           ? this.styles.centerEmptySet : this.styles.noteFlatlistCustom}
@@ -215,7 +215,7 @@ class Note extends Component {
         renderItem={this.renderItem}
         ListEmptyComponent={
           <View style={this.styles.emptyMessageContainer}>
-          <Icon name="note-add" style={this.styles.emptyMessageIcon}/>
+          <Icon name="note" style={this.styles.emptyMessageIcon} onPress={()=>{this.props.navigation.navigate("Bible")}}/>
             <Text
               style={this.styles.messageEmpty}>
              Select verse to Note

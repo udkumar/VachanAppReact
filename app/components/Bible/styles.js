@@ -16,6 +16,11 @@ export const styles =(colorFile, sizeFile) =>{
         justifyContent:'center',
         alignContent:'center'
     },
+    centerEmptySet: { 
+        justifyContent: 'center', 
+        alignItems: 'center',
+        height: '100%' 
+    },
     verseWrapperText:{
         fontSize:sizeFile.contentText,
         color:colorFile.textColor,
@@ -235,6 +240,7 @@ export const styles =(colorFile, sizeFile) =>{
         fontSize:sizeFile.emptyIconSize,
         margin:16,
         color:colorFile.iconColor,
+        alignSelf:'center'
     },
     })
 }

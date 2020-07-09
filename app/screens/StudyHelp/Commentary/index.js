@@ -100,16 +100,18 @@ class Commentary extends Component {
    
         </Right>
       </Header>
+
       {
-        this.props.error ?
-        <ReloadButton
-        reloadFunction={this.updateData}
-        />
-      
+        (this.props.error) ?
+        <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+          <ReloadButton
+          styles={this.styles}
+          reloadFunction={this.updateData}
+          />   
+        </View>
       :
       <View style={{flex:1}}>
         <Text style={[this.styles.commentaryHeading,{margin:10}]}>{bookName} {  } {this.props.commentaryContent.chapter}</Text>
-        
       <FlatList
         data={this.props.commentaryContent.commentaries}
         showsVerticalScrollIndicator={false}

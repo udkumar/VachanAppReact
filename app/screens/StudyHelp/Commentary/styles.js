@@ -62,8 +62,15 @@ export const styles =(colorFile, sizeFile) =>{
       reloadText:{
         fontSize:18,color:Color.White,textAlign:'center'
       },
-      reloadButton:{height:40,width:120,borderRadius:4,backgroundColor:Color.Blue_Color,
-            justifyContent:'center',alignItems:'center'}
+      reloadButton:{height:40,width:120,
+        borderRadius:4,backgroundColor:Color.Blue_Color,
+        justifyContent:'center',alignItems:'center'},
+        emptyMessageIcon:{
+            fontSize:sizeFile.emptyIconSize,
+            margin:16,
+            color:colorFile.iconColor,
+            alignSelf:'center'
+        },
       
     })
 }

@@ -136,10 +136,13 @@ class Dictionary extends Component {
         //  textStyle={styles.spinnerTextStyle}
       />}
       {
-        this.props.error ? 
-        <ReloadButton
-        reloadFunction={this.updateData}
-        />
+        (this.props.error) ? 
+        <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+          <ReloadButton
+          styles={this.styles}
+          reloadFunction={this.updateData}
+          />   
+        </View>
       :
         <View>
         <Accordion 

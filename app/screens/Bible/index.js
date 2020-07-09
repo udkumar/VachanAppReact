@@ -54,13 +54,13 @@ class Bible extends Component {
                         onPress={() =>{navigation.navigate("SelectionTab", 
                         {getReference:params.getRef,parallelContent:false,bookId:params.bookId,chapterNumber:params.currentChapter,totalChapters:params.numOfChapter,totalVerses:params.numOfVerse})}}
                         style={[navStyles.headerLeftStyle,{paddingHorizontal:8}]}> 
-                          <Text style={[navStyles.headerTextStyle,{paddingRight:4}]}>{params.bookName} </Text>
+                          <Text style={[navStyles.headerTextStyle,{ paddingRight:4}]}>{params.bookName} </Text>
                           <Text style={[navStyles.headerTextStyle,{fontWeight:'bold'}]}>{params.currentChapter }</Text>
                           <Icon name="arrow-drop-down" color={Color.White} size={20} style={{alignSelf:'center'}}/>
                       </TouchableOpacity>
                       <TouchableOpacity 
                         onPress={() =>{{navigation.navigate("LanguageList",{updateLangVer:params.updatelangVer})}}} 
-                        style={navStyles.headerLeftStyle}>
+                        style={[navStyles.headerLeftStyle]}>
                           <Text style={[navStyles.headerTextStyle,{paddingRight:4}]}>{params.languageName}</Text>
                           <Text style={[navStyles.headerTextStyle,{fontWeight:'bold'}]}>{params.versionCode}</Text>
                           <Icon name="arrow-drop-down" color={Color.White} style={{alignSelf:'center'}} size={20}/>
@@ -274,9 +274,11 @@ class Bible extends Component {
       this.getNotes()
       this.fetchAudio()
       // this.getBookName()
+      const shortName =  this.props.language.toLowerCase()  == ('malayalam' ||'tamil' || 'kannada') ?  (this.props.bookName.length > 4 ? this.props.bookName.slice(0,3)+"..." : this.props.bookName ) : this.props.bookName.length > 8 ? this.props.bookName.slice(0,7)+"..." : this.props.bookName
+
       this.props.navigation.setParams({
         bookId:this.props.bookId,
-        bookName:this.props.bookName.length > 10 ? this.props.bookName.slice(0,9)+"..." : this.props.bookName,
+        bookName:shortName,
         currentChapter:this.state.currentVisibleChapter,
         languageName: this.props.language.substring(0,3), 
         versionCode: this.props.versionCode,
@@ -310,6 +312,7 @@ class Bible extends Component {
           duration: 3000
         })
         this.queryBookFromAPI(null)
+        // this.props.fetchAllContent()
 
       }else{
         Toast.show({
@@ -326,9 +329,11 @@ class Bible extends Component {
       var time =  new Date()
       DbQueries.addHistory(this.props.sourceId,this.props.language,this.props.languageCode, 
         this.props.versionCode, item.bookId,item.bookName, JSON.parse(item.chapterNumber), this.props.downloaded, time)
-      this.props.navigation.setParams({
-        bookId:item.bookId,
-        bookName:item.bookName.length > 10 ? item.bookName.slice(0,9)+"..." : item.bookName,
+        // const shortName =  this.props.language.toLowerCase()  == ('malayalam' ||'tamil') ?  item.bookName.length > 6 ? item.bookName.slice(0,5)+"..." : item.bookName : item.bookName.length > 10 ? item.bookName.slice(0,9)+"..." : item.bookName
+
+        this.props.navigation.setParams({
+        // bookId:item.bookId,
+        // bookName:shortName,
         currentChapter:JSON.parse(item.chapterNumber),
         numOfChapter:item.totalChapters,
       })
@@ -367,11 +372,11 @@ class Bible extends Component {
 
       this.props.updateVersion({language:item.languageName,languageCode:item.languageCode,
       versionCode:item.versionCode,sourceId:item.sourceId,downloaded:item.downloaded})
-      
+      // const shortName =  this.props.language.toLowerCase()  == ('malayalam' ||'tamil') ? (bookName.length > 6 ? bookName.slice(0,5)+"..." : bookName ) : bookName.length > 10 ? bookName.slice(0,9)+"..." : bookName
       this.props.navigation.setParams({
       languageName:item.languageName.substring(0,3),
       versionCode:item.versionCode,
-      bookName:bookName.length > 10 ? bookName.slice(0,9)+"..." : bookName,
+      // bookName: shortName
       })
       this.props.updateVersionBook({
         bookId:this.props.bookId,
@@ -409,7 +414,7 @@ class Bible extends Component {
 
         }
         else{
-          alert("not able to fetch book from db")
+          console.log("not able to fetch book from local database")
         }
         
   }
@@ -444,19 +449,7 @@ class Bible extends Component {
               numOfChapter:this.props.totalChapters,
               isBookmark:this.isBookmark()
             })
-            if(this.state.connection_Status){
-              try{
-                var content = await APIFetch.getChapterContent(this.props.sourceId, this.props.bookId, this.state.currentVisibleChapter)
-                this.setState({chapterContent:content.chapterContent.verses,isLoading:false,currentVisibleChapter:this.state.currentVisibleChapter})
-                console.log("Total verses  ",content.chapterContent.verses.length)
-                this.props.navigation.setParams({numOfVerse:content.chapterContent.verses.length})
-              }
-              catch(error){
-                console.log("erorr ",error)
-                this.setState({isLoading:false,error:error,chapterContent:[]})
-              }
-            }
-            else{
+           
               console.log(" book is downloaded",this.props.downloaded)
               if(this.props.downloaded){
                 if(this.state.downloadedBook.length > 0){
@@ -469,13 +462,18 @@ class Bible extends Component {
                 else{
                   this.getDownloadedContent()
                 }
+              }else{
+                try{
+                  var content = await APIFetch.getChapterContent(this.props.sourceId, this.props.bookId, this.state.currentVisibleChapter)
+                  this.setState({chapterContent:content.chapterContent.verses,isLoading:false,currentVisibleChapter:this.state.currentVisibleChapter})
+                  this.props.navigation.setParams({numOfVerse:content.chapterContent.verses.length})
+                }
+                catch(error){
+                  console.log("erorr ",error)
+                  this.setState({isLoading:false,error:error,chapterContent:[]})
+                }
               }
-              else{ 
-              console.log("not internet no downloaded book ")
-                this.setState({isLoading:false,chapterContent:[],error:'book not downloaded'})
-                //  Alert.alert("Please check internet Connection")
-              }
-            }
+            
             this.props.updateVersionBook({
               bookId:this.props.bookId,
               bookName:this.props.bookName,
@@ -1031,6 +1029,8 @@ touchableStyleLeft:{
 },
 headerTextStyle:{
     fontSize:18,
+    // alignSelf:'baseline',
+    // flexShrink: 1,
     // fontWeight:'400',
     color:Color.White,
     textAlign:'center'
@@ -1088,7 +1088,9 @@ const mapDispatchToProps = dispatch =>{
     updateVersionBook: (value)=>dispatch(updateVersionBook(value)),
     userInfo:(payload)=>dispatch(userInfo(payload)),
     fetchVersionBooks:(payload)=>dispatch(fetchVersionBooks(payload)),
-    updateMetadata:(payload)=>dispatch(updateMetadata(payload))
+    updateMetadata:(payload)=>dispatch(updateMetadata(payload)),
+    // fetchAllContent:()=>dispatch(fetchAllContent()),
+
 
 
     // fetchDownloadedVersionContent:(payload)=>dispatch(fetchDownloadedVersionContent(payload))

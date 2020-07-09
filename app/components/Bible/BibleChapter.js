@@ -15,6 +15,7 @@ import {connect} from 'react-redux'
 import {getResultText} from '../../utils/UtilFunctions'
 import {Header, Button,Right,Title} from 'native-base'
 import Color from '../../utils/colorConstants'
+import ReloadButton from '../ReloadButton';
 
 class BibleChapter extends Component {
     constructor(props){
@@ -32,7 +33,10 @@ class BibleChapter extends Component {
     queryParallelBible =(val)=>{
          console.log(" qQUERYBIBLE PARALLEL ",val,"totalChapters ",this.props.totalChapters)
         this.setState({currentParallelViewChapter:val != null ? this.state.currentParallelViewChapter + val : this.props.currentChapter},()=>{
-        this.props.fetchParallelBible({isDownloaded:false,sourceId:this.props.parallelContentSourceId,language:this.props.parallelContentLanguage,version:this.props.parallelContentVersionCode,bookId:this.state.id,
+        this.props.fetchParallelBible({isDownloaded:false,sourceId:this.props.parallelContentSourceId,
+            language:this.props.parallelContentLanguage,
+            version:this.props.parallelContentVersionCode,
+            bookId:this.state.id,
             chapter:this.state.currentParallelViewChapter})
             // this.setState({currentParallelViewChapter:this.state.currentParallelViewChapter
             // })
@@ -91,7 +95,7 @@ class BibleChapter extends Component {
     }
    
     render(){
-        // console.log(" FETCH VERSION BOOKS ",this.props.copyrightHolder,this.props.license,this.props.technologyPartner)
+        console.log(" FETCH VERSION BOOKS ",this.props.error)
 
         const bookId = this.state.id
         const value = this.props.books.length !=0 && this.props.books.filter(function (entry){
@@ -119,13 +123,12 @@ class BibleChapter extends Component {
                     //  textStyle={styles.spinnerTextStyle}
                 />}
                 {
-                this.props.error ?
-                <View style={{flex:1,justifyContent:'center',alignItems:'center',margin:0}}>
-                <TouchableOpacity 
-                onPress={()=>this.updateData()}
-                style={this.styles.reloadButton}>
-                    <Text style={this.styles.reloadText}>Offline. Content unavailable.</Text>
-                </TouchableOpacity>
+                (this.props.error) ?
+                <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+                <ReloadButton
+                styles={this.styles}
+                reloadFunction={this.queryParallelBible}
+               />   
                 </View>
                 :
                 <View style={{flex:1}}>
@@ -182,7 +185,6 @@ class BibleChapter extends Component {
                     </View>
                 </ScrollView>
 
-                   
                 <View style={{justifyContent:(this.state.currentParallelViewChapter != 1 &&  this.state.currentParallelViewChapter == this.state.currentParallelViewChapter != this.state.totalChapters) ? 'center' : 'space-around',alignItems:'center'}}>
                 {
                 this.state.currentParallelViewChapter == 1 ? null :

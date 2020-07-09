@@ -18,6 +18,12 @@ export const styles =(colorFile, sizeFile) =>{
       fontSize: 17,
       padding: 4
      },
+     emptyMessageIcon:{
+      fontSize:sizeFile.emptyIconSize,
+      margin:16,
+      color:colorFile.iconColor,
+      alignSelf:'center'
+    },
     
      TextInputStyleClass:{
       position:'absolute',

@@ -39,8 +39,8 @@ const API_BASE_URL = 'https://api.vachanonline.net/v1/'
       let bookListData = []
       if(payload.downloaded) {
         // console.log("payload bible ")
-        var response = yield DbQueries.getDownloadedBook(payload.language,payload.versionCode)
-        // console.log("book name downloaded  ",response)
+        var response = yield DbQueries.getDownloadedBook(payload.language)
+        console.log("book name downloaded  ",response)
          for(var i=0; i<=response.length-1;i++){
           // var bookId = response[i]
           var books = {

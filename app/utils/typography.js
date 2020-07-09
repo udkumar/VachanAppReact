@@ -2,17 +2,15 @@ import React from 'react'
 import { Text, Platform, StyleSheet } from 'react-native'
 
 export const typography = () => {
-  const oldTextRender = Text.render
-  Text.render = function(...args) {
-    const origin = oldTextRender.call(this, ...args)
+  // if(Platform.OS !== 'android') {
+  //   return
+  // }
+
+  const oldRender = Text.render
+  Text.render = function (...args) {
+    const origin = oldRender.call(this, ...args);
     return React.cloneElement(origin, {
-      style: [styles.defaultText, origin.props.style],
+      style: [{fontFamily: 'Roboto'}, origin.props.style]
     })
   }
 }
-
-const styles = StyleSheet.create({
-  defaultText: {
-    fontFamily: 'Roboto-Regular',
-  }
-});

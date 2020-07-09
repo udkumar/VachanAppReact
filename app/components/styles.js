@@ -8,8 +8,6 @@ export const buttonstyle =(colorFile, sizeFile) =>{
             // width:120,
             // borderRadius:4,
             backgroundColor:Color.Blue_Color,
-            justifyContent:'center',
-            alignItems:'center',
             // margin:0
         },
         reloadText:{

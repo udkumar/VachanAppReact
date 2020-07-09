@@ -13,8 +13,8 @@ import {fetchVersionBooks} from '../../store/action/'
 import { getBookNumOfVersesFromMapping } from '../../utils/UtilFunctions';
 import Spinner from 'react-native-loading-spinner-overlay';
 import APIFetch from '../../utils/APIFetch'
-
-
+import ReloadButton from '../../components/ReloadButton';
+import { styles } from  './styles';
 
 class ReferenceSelection extends Component {
 
@@ -106,6 +106,7 @@ class ReferenceSelection extends Component {
     this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,downloaded:this.props.downloaded,sourceId:this.props.sourceId})
   }
   render() {
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);  
     return (
       this.props.isLoading ?
         <Spinner
@@ -115,12 +116,16 @@ class ReferenceSelection extends Component {
       /> : ( 
         this.props.error ? 
         <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-        <TouchableOpacity 
+          <ReloadButton
+          styles={this.styles}
+          reloadFunction={this.reloadBooks}
+          />
+        {/* <TouchableOpacity 
         onPress={this.reloadBooks}
         style={{height:40,width:120,borderRadius:4,backgroundColor:'#3F51B5',justifyContent:'center',alignItems:'center'}}
         >
         <Text style={{fontSize:18,color:'#fff'}}>Reload</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         </View>
         :
         <SelectionTab 
@@ -163,7 +168,10 @@ const mapStateToProps = state =>{
 
         books:state.versionFetch.data,
         error:state.versionFetch.error,
-        isLoading:state.versionFetch.loading
+        isLoading:state.versionFetch.loading,
+
+        sizeFile:state.updateStyling.sizeFile,
+        colorFile:state.updateStyling.colorFile,
     }
   }
   const mapDispatchToProps = dispatch =>{

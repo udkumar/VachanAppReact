@@ -255,6 +255,7 @@ export const styles =(colorFile, sizeFile) =>{
         fontSize:sizeFile.emptyIconSize,
         margin:16,
         color:colorFile.iconColor,
+        alignSelf:'center'
     },
     centerEmptySet: { 
         justifyContent: 'center', 
