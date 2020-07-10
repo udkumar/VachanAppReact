@@ -14,7 +14,6 @@ export const aboutPage =(colorFile, sizeFile) =>{
                 color:colorFile.textColor,
                 lineHeight:sizeFile.lineHeight,
                 // flexShrink: 1 ,
-                // fontFamily:'Roboto-Regular'
         },
         textContainer:{
             margin:16,
@@ -52,7 +51,6 @@ export const aboutPage =(colorFile, sizeFile) =>{
         bulletIcon:{
             fontSize:26,
             color:colorFile.iconColor,
-            // fontFamily:'Roboto-Regular',
             lineHeight:sizeFile.lineHeight,
 
             // flexShrink: 1,

@@ -4,7 +4,6 @@ const width = Dimensions.get('window').width;
 import Color from '../../utils/colorConstants'
 
 export const styles =(colorFile, sizeFile) =>{
-  // console.log("font in style page....."+ JSON.stringify(fontfamily))
     return StyleSheet.create({
     MainContainer :{
     flex:1,
@@ -80,7 +79,6 @@ export const styles =(colorFile, sizeFile) =>{
         color: colorFile.textColor,
         
         // paddingLeft:10
-       // fontFamily:fontfamily
       },
       content: {
         paddingHorizontal:20,

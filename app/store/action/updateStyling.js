@@ -24,10 +24,4 @@ export const updateVerseInLine = (inline)=>{
     }
 }
 
-export const updateFontFamily =(lang)=>{
-    console.log("langugage in action redux ",lang)
-    return{
-        type:UPDATE_FONT_FAMILY,
-        fontFamily:lang
-    }
-}
+

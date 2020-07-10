@@ -87,7 +87,6 @@ export const styles =(colorFile, sizeFile) =>{
         
     },
     VerseText:{
-        // fontFamily:fontfamily, 
         fontWeight:'100'
     },
 

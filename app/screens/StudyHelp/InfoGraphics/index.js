@@ -4,7 +4,7 @@ import { StyleSheet,Image,ScrollView, FlatList,TouchableOpacity, Text, View, Ale
 
 
 import {connect} from 'react-redux'
-import {selectedChapter,updateAudio,updateContentType} from '../../../store/action/'
+import {updateAudio,updateContentType} from '../../../store/action/'
 import APIFetch from '../../../utils/APIFetch'
 import { NavigationEvents } from 'react-navigation';
 import Color from '../../../utils/colorConstants'
@@ -156,7 +156,6 @@ const mapStateToProps = state =>{
     totalChapters:state.updateVersion.totalChapters,
     bookName:state.updateVersion.bookName,
     bookId:state.updateVersion.bookId,
-    fontFamily:state.updateStyling.fontFamily,
 
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
@@ -169,7 +168,6 @@ const mapStateToProps = state =>{
 
 const mapDispatchToProps = dispatch =>{
   return {
-    selectedChapter: (chapterNumber,totalVerses)=>dispatch(selectedChapter(chapterNumber,totalVerses)),
     updateAudio :(audio)=>dispatch(updateAudio(audio)),
     updateContentType:(content) =>dispatch(updateContentType(content)),
   }

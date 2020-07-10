@@ -20,9 +20,6 @@ export const AsyncStorageConstants = {
         SourceId:"source_id",
         Downloaded:"downloaded",
         TotalChapters:'total_chapters',
-        TotalVerses:'total_verses',
-        VerseNumber:'verseNumber',
-        FontFamily:"font_family"
     },
     Values: {
         DayMode: 1,
@@ -35,22 +32,7 @@ export const AsyncStorageConstants = {
         SizeModeXLarge: 4,
 
         VerseInLine:false,
-        FontFamily:{
-        english:"NotoSans-Regular ",
-        kannada:"NotoSansKannadaUI-Regular",
-        hindi:" NotoSansDevanagariUI-Regular",
-        tamil:"NotoSansTamilUI-Regular",
-        telugu:"NotoSansTeluguUI-Regular",
-        marathi:"NotoSansDevanagariUI-Regular",
-        punjabi:"NotoSansGurmukhiUI-Regular",
-        assamese:"NotoSansBengaliUI-Regular",
-        bengali:"NotoSansBengaliUI-Regular",
-        urdu:"NotoNastaliqUrdu-Regular",
-        odiya:"NotoSansOriyaUI-Regular",
-        gujarati:"NotoSansGujaratiUI-Regular",
-        malayalam:"NotoSansMalayalamUI-Regular"
-
-        },
+       
         LastReadReference: {
             languageCode:'Hindi',
             versionCode:'IRV',

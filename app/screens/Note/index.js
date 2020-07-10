@@ -63,7 +63,6 @@ class Note extends Component {
   //     referenceList:  this.props.navigation.state.params.referenceList,
   //     bookId: this.props.bookId,
   //     chapterNumber:1,
-  //     totalVerses:null
   //   })
   // };
 
@@ -256,7 +255,6 @@ export  default connect(mapStateToProps,null)(Note)
 //     // bookName:state.editNote.bookName,
 //     // bodyText:state.editNote.bodyText,
 //     // chapterNumber:state.editNote.chapterNumber,
-//     // verseNumber: state.editNote.verseNumber,
 //     // index:state.editNote.index,
 //     // referenceNote:state.editNote.referenceNote,
     

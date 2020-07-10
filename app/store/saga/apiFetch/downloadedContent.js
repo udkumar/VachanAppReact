@@ -12,7 +12,6 @@ const API_BASE_URL = 'https://api.vachanonline.net/v1/'
   function* fetchDownloadedVersionContent(params){
     try {
     let chapterContent = []
-    // let totalVerses=null
     const payload = params.payload
     let downloaded = yield AsyncStorageUtil.getAllItems([
       AsyncStorageConstants.Keys.Downloaded,

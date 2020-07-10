@@ -10,7 +10,6 @@ import {
 import {connect} from 'react-redux'
 import {SelectionTab} from './routes/index'
 import {fetchVersionBooks} from '../../store/action/'
-import { getBookNumOfVersesFromMapping } from '../../utils/UtilFunctions';
 import Spinner from 'react-native-loading-spinner-overlay';
 import APIFetch from '../../utils/APIFetch'
 import ReloadButton from '../../components/ReloadButton';
@@ -33,7 +32,6 @@ class ReferenceSelection extends Component {
       
       selectedVerseIndex: 0,
       selectedVerseNumber: '',
-      totalVerses:this.props.navigation.state.params.totalVerses
 
     }
     this.alertPresent =false
@@ -47,33 +45,21 @@ class ReferenceSelection extends Component {
         selectedBookId: item.bookId, 
         selectedBookName: item.bookName, 
         totalChapters: item.numOfChapters,
-        totalVerses:getBookNumOfVersesFromMapping(item.bookId,this.state.selectedChapterNumber)
     })
   }
 
-  // updateSelectedChapter = (chapterNumber,index) => {
-  //   console.log("selectedChapterIndex , selectedChapterNumber",index,chapterNumber)
-  //   this.setState({
-  //       selectedChapterIndex: index, 
-  //       selectedChapterNumber: chapterNumber,
-  //       totalVerses:getBookNumOfVersesFromMapping(this.state.selectedBookId,chapterNumber)
-  //   })
-  // }
   updateSelectedChapter = (chapter, index) => {
     var chapterNum = chapter === null ?  this.state.selectedChapterNumber : chapter
     console.log("CHAPTER NUMBER ",chapter , "chapter number ",chapterNum,"selected book name" ,this.state.selectedBookName)
     // this.state.selectedChapterNumber > this.state.totalChapters ? '1' : chapterNum,
     this.setState({selectedChapterNumber:chapterNum,
       selectedChapterIndex:index !=null && index,
-      totalVerses:getBookNumOfVersesFromMapping(this.state.selectedBookId,chapterNum)
     },()=>{
       this.props.navigation.state.params.getReference({
         bookId:this.state.selectedBookId,
         bookName:this.state.selectedBookName,
         chapterNumber: chapterNum > this.state.totalChapters ? '1' : chapterNum,
         totalChapters:this.state.totalChapters,
-        totalVerses:this.state.totalVerses,
-        // verseNumber:verseNumber !=null &&  verseNumber 
       })
       this.props.navigation.goBack()
     })
@@ -135,7 +121,6 @@ class ReferenceSelection extends Component {
         selectedChapterNumber: this.state.selectedChapterNumber,
         selectedVerseIndex: this.state.selectedVerseIndex,
         selectedVerseNumber: this.state.selectedVerseNumber,
-        totalVerses:this.state.totalVerses,
         totalChapters:this.state.totalChapters,
 
         updateSelectedBook: this.updateSelectedBook,

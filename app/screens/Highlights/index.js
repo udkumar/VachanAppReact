@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import DbQueries from '../../utils/dbQueries'
-import {getBookChaptersFromMapping,getBookNumOfVersesFromMapping} from '../../utils/UtilFunctions';
+import {getBookChaptersFromMapping} from '../../utils/UtilFunctions';
 import { highlightstyle } from './styles'
 import {connect} from 'react-redux'
 import {updateVersionBook} from '../../store/action/'
@@ -119,8 +119,6 @@ class HighLights extends Component {
       bookName:bookName,
       chapterNumber:chapterNum,
       totalChapters:getBookChaptersFromMapping(bId),
-      totalVerses:getBookNumOfVersesFromMapping(bId,chapterNum),
-      verseNumber:verseNum
     })
     this.props.navigation.navigate("Bible")
   }

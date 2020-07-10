@@ -11,8 +11,6 @@ const initialState = {
    bookName:'यूहन्ना',
    chapterNumber:1,
    totalChapters:21,
-   verseNumber: 1,
-   totalVerses:51,
    verseText:'',
 
    copyrightHolder:'Unfolding Word',
@@ -61,8 +59,6 @@ function updateVersionReducer(state=initialState,action){
             bookName:action.payload.bookName,
             chapterNumber:action.payload.chapterNumber,
             totalChapters:action.payload.totalChapters,
-            totalVerses:action.payload.totalVerses,
-            verseNumber:action.payload.verseNumber
         }
         case UPDATE_CONTENT_TYPE:
         return {

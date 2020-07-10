@@ -29,7 +29,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import firebase from 'react-native-firebase'
 import SelectionGrid from '../../components/SelectionGrid'
 import Color from '../../utils/colorConstants'
-import {getBookNumOfVersesFromMapping,getBookChaptersFromMapping} from '../../utils/UtilFunctions'
+import {getBookChaptersFromMapping} from '../../utils/UtilFunctions'
 
 import {updateVersionBook} from '../../store/action/'
 
@@ -57,7 +57,6 @@ class EditNote extends Component {
         isLoading:false,
         contentBody:this.props.navigation.state.params.contentBody,
         modalVisible:false,
-        totalVerses:null
     }
     this.styles = noteStyle(props.colorFile, props.sizeFile);  
     this.getHtml = this.getHtml.bind(this);
@@ -213,8 +212,6 @@ class EditNote extends Component {
                 bookName:this.state.bcvRef.bookName,
                 chapterNumber:this.state.bcvRef.chapterNumber,
                 totalChapters:getBookChaptersFromMapping(this.state.bcvRef.bookId),
-                totalVerses:getBookNumOfVersesFromMapping(this.state.bcvRef.bookId,this.state.bcvRef.chapterNumber),
-                verseNumber:value
               })
               this.props.navigation.navigate("Bible") 
             }},
@@ -228,8 +225,6 @@ class EditNote extends Component {
         bookName:this.state.bcvRef.bookName,
         chapterNumber:this.state.bcvRef.chapterNumber,
         totalChapters:getBookChaptersFromMapping(this.state.bcvRef.bookId),
-        totalVerses:getBookNumOfVersesFromMapping(this.state.bcvRef.bookId,this.state.bcvRef.chapterNumber),
-        verseNumber:value
       })
       this.props.navigation.navigate('Bible')
   }
@@ -318,7 +313,6 @@ const mapStateToProps = state =>{
     // bookName:state.editNote.bookName,
     // bodyText:state.editNote.bodyText,
     // chapterNumber:state.editNote.chapterNumber,
-    // verseNumber: state.editNote.verseNumber,
     // index:state.editNote.index,
     
     sizeFile:state.updateStyling.sizeFile,

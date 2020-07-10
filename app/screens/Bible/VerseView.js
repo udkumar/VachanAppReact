@@ -142,7 +142,6 @@ const mapStateToProps = state =>{
 
     // chapterNumber:state.updateVersion.chapterNumber,
     bookId:state.updateVersion.bookId,
-    verseNumber:state.updateVersion.verseNumber,
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
 

@@ -109,7 +109,6 @@ const API_BASE_URL = 'https://api.vachanonline.net/v1/'
   function* fetchVersionContent(params) {
     try {
       // let chapterContent = []
-      // let totalVerses=null
       const payload = params.payload
       const url = API_BASE_URL + "bibles" + "/" + payload.sourceId + "/" + "books" + "/" + payload.bookId + "/" + "chapter" + "/" + payload.chapter
       const res= yield call(fetch,url)

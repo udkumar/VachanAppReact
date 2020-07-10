@@ -12,7 +12,7 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import DbQueries from '../../utils/dbQueries.js'
 import APIFetch from '../../utils/APIFetch'
-import {getBookChaptersFromMapping, getBookNumberFromMapping,getBookNumOfVersesFromMapping, getResultText} from '../../utils/UtilFunctions'
+import {getBookChaptersFromMapping, getBookNumberFromMapping, getResultText} from '../../utils/UtilFunctions'
 import SearchTab from '../../components/SearchTab/SearchTab'
 import {updateVersionBook,updateVersion,fetchVersionBooks} from '../../store/action/'
 
@@ -262,8 +262,6 @@ goToBible=(bId,bookName,chapterNum,verseNum)=>{
     bookName:bookName,
     chapterNumber:chapterNum,
     totalChapters:getBookChaptersFromMapping(bId),
-    totalVerses:getBookNumOfVersesFromMapping(bId,chapterNum),
-    verseNumber:verseNum
   })
   
   this.props.updateVersion({language:this.state.languageName,languageCode:this.state.languageCode,

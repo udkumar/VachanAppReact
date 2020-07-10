@@ -14,7 +14,7 @@ import { View } from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {Accordion} from 'native-base';
 import {updateVersion,updateVersionBook} from '../../store/action/'
-import {getBookChaptersFromMapping,getBookNumOfVersesFromMapping} from '../../utils/UtilFunctions'
+import {getBookChaptersFromMapping} from '../../utils/UtilFunctions'
 import {List,ListItem} from 'native-base'
 import { historyStyle } from './styles.js'
 import {connect} from 'react-redux'
@@ -132,7 +132,6 @@ var moment = require('moment');
     )
   }
   goToContent(item){
-    console.log(" version Code ",item.versionCode,"getBookChaptersFromMapping ",getBookChaptersFromMapping(item.bookId)," getBookNumOfVersesFromMapping ",getBookNumOfVersesFromMapping(item.bookId,item.chapterNumber))
     this.props.updateVersion({language:item.languageName,languageCode:item.languageCode,
       versionCode:item.versionCode,sourceId:item.sourceId,
       downloaded:item.downloaded})
@@ -141,8 +140,6 @@ var moment = require('moment');
       bookName:item.bookName,
       chapterNumber:item.chapterNumber,
       totalChapters:getBookChaptersFromMapping(item.bookId),
-      totalVerses:getBookNumOfVersesFromMapping(item.bookId,item.chapterNumber),
-      // verseNumber:item.verseNumber
     })
     this.props.navigation.navigate("Bible")
   }

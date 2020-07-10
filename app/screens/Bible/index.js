@@ -52,7 +52,7 @@ class Bible extends Component {
                     </TouchableOpacity>
                       <TouchableOpacity 
                         onPress={() =>{navigation.navigate("SelectionTab", 
-                        {getReference:params.getRef,parallelContent:false,bookId:params.bookId,bookName:params.bookName,chapterNumber:params.currentChapter,totalChapters:params.numOfChapter,totalVerses:params.numOfVerse})}}
+                        {getReference:params.getRef,parallelContent:false,bookId:params.bookId,bookName:params.bookName,chapterNumber:params.currentChapter,totalChapters:params.numOfChapter})}}
                         style={[navStyles.headerLeftStyle,{paddingHorizontal:8}]}> 
                           <Text style={[navStyles.headerTextStyle,{ paddingRight:4}]}>{params.bookName} </Text>
                           <Text style={[navStyles.headerTextStyle,{fontWeight:'bold'}]}>{params.currentChapter }</Text>
@@ -290,8 +290,6 @@ class Bible extends Component {
       //   bookName:this.props.bookName,
       //   chapterNumber:this.state.currentVisibleChapter,
       //   totalChapters:this.props.totalChapters,
-      //   totalVerses:this.props.totalVerses,
-      //   verseNumber:this.state.verseNumber
       // })
       // this.props.updateVersion({language:this.props.language,languageCode:this.props.languageCode,
       // versionCode:this.props.versionCode,sourceId:this.props.sourceId,downloaded:this.props.downloaded})
@@ -340,7 +338,6 @@ class Bible extends Component {
         bookName:item.bookName,
         chapterNumber:JSON.parse(item.chapterNumber),
         totalChapters:item.totalChapters,
-        verseNumber:item.verseNumber
       })
     }
     else{
@@ -381,7 +378,6 @@ class Bible extends Component {
         bookName:bookName,
         chapterNumber:JSON.parse(this.state.currentVisibleChapter),
         totalChapters:this.props.totalChapters,
-        verseNumber:this.props.verseNumber
       })
       var time =  new Date()
       DbQueries.addHistory(item.sourceId,item.languageName,item.languageCode, 
@@ -479,8 +475,6 @@ class Bible extends Component {
               bookName:this.props.bookName,
               chapterNumber:JSON.parse(this.state.currentVisibleChapter),
               totalChapters:this.props.totalChapters,
-              totalVerses:this.props.totalVerses,
-              verseNumber:this.state.verseNumber
             })
             // this.props.updateVersion({language:this.props.language,languageCode:this.props.languageCode,
             // versionCode:this.props.versionCode,sourceId:this.props.sourceId,downloaded:this.props.downloaded})
@@ -880,7 +874,7 @@ getNotes(){
         this.props.navigation.getParam("visibleParallelView") &&
         <View style={{position:'absolute',top:0,zIndex:2,width:'50%'}}>
           <Header style={{height:40}}>
-            <Button transparent onPress={()=>{this.props.navigation.navigate("SelectionTab",{getReference:this.getReference,bookId:this.props.bookId,bookName:this.props.bookName,chapterNumber:this.state.currentVisibleChapter,totalChapters:this.props.totalChapters,totalVerses:this.props.totalVerses})}}>
+            <Button transparent onPress={()=>{this.props.navigation.navigate("SelectionTab",{getReference:this.getReference,bookId:this.props.bookId,bookName:this.props.bookName,chapterNumber:this.state.currentVisibleChapter,totalChapters:this.props.totalChapters})}}>
                 <Title style={{fontSize:16}}>{this.props.bookName.length > 10 ? this.props.bookName.slice(0,9)+"..." : this.props.bookName} {this.state.currentVisibleChapter}</Title>
                 <Icon name="arrow-drop-down" color={Color.White} size={20}/>
             </Button>
@@ -965,7 +959,7 @@ getNotes(){
                 bookName={this.props.bookName}
                 toggleParallelView={(value)=>this.toggleParallelView(value)}
                 totalChapters={this.props.totalChapters}
-                totalVerses={this.props.totalVerses}
+                
                 navigation={this.props.navigation}
             /> }
             {
@@ -1049,10 +1043,8 @@ const mapStateToProps = state =>{
 
     chapterNumber:state.updateVersion.chapterNumber,
     totalChapters:state.updateVersion.totalChapters,
-    totalVerses:state.updateVersion.totalVerses,
     bookName:state.updateVersion.bookName,
     bookId:state.updateVersion.bookId,
-    fontFamily:state.updateStyling.fontFamily,
 
     copyrightHolder:state.updateVersion.revision,
     license:state.updateVersion.license,
@@ -1066,12 +1058,7 @@ const mapStateToProps = state =>{
     userId:state.userInfo.uid,
     
     books:state.versionFetch.data,
-    // fetchedData:state.versionFetch,
-    // chapterContent:state.versionFetch.chapterContent,
-    // error:state.versionFetch.error,
-    // verseNumber:state.updateVersion.verseNumber,
-    // isLoading:state.versionFetch.loading,
-    // audioURL:state.audioFetch.url,
+   
     availableCommentaries:state.commentaryFetch.availableCommentaries,
     commentary:state.commentaryFetch.commentaryContent,
     parallelContentType:state.updateVersion.parallelContentType,

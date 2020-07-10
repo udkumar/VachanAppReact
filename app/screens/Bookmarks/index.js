@@ -15,7 +15,7 @@ import DbQueries from '../../utils/dbQueries'
 import { bookStyle } from './styles.js'
 import {updateVersionBook} from '../../store/action/'
 
-import {getBookChaptersFromMapping,getBookNumOfVersesFromMapping} from '../../utils/UtilFunctions';
+import {getBookChaptersFromMapping} from '../../utils/UtilFunctions';
 Dimensions.get('window').width
 import {connect} from 'react-redux'
 import firebase from 'react-native-firebase'
@@ -122,8 +122,6 @@ class BookMarks extends Component {
       bookName:bookName,
       chapterNumber:chapter,
       totalChapters:getBookChaptersFromMapping(bookId),
-      totalVerses:getBookNumOfVersesFromMapping(bookId,chapter),
-      // verseNumber:verseNumber
     })
     this.props.navigation.navigate("Bible")
   }

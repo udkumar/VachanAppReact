@@ -11,7 +11,6 @@ const initialState = {
     colorFile :dayColors,
     sizeFile:mediumFont,
     verseInLine:AsyncStorageConstants.Values.verseInLine,
-    fontFamily:AsyncStorageConstants.Values.FontFamily["hindi"]
   
 }
 function updateStyling(state=initialState,action){
@@ -102,14 +101,6 @@ function updateStyling(state=initialState,action){
             verseInLine:action.verseInLine
         }
 
-        case UPDATE_FONT_FAMILY:
-            console.log("font family reducer ",action.fontFamily)
-        return{
-            ...state,
-            fontFamily:AsyncStorageConstants.Values.FontFamily[action.fontFamily]
-
-        }
-        
         default: 
         return state
     
