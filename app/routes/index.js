@@ -34,9 +34,7 @@ const NavStack = createStackNavigator(
           headerTitleStyle: {
             fontWeight: 'bold',
           },
-           
         })
-      
       },
       Search: { screen: Search},
       SelectionTab:{screen:SelectionTab,

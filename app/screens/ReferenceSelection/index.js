@@ -86,9 +86,16 @@ class ReferenceSelection extends Component {
         }
     }
   }
+  
   reloadBooks=()=>{
     this.errorMessage()
-    this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,downloaded:this.props.downloaded,sourceId:this.props.sourceId})
+    if(this.props.navigation.state.params.parallelContent){
+      this.props.fetchVersionBooks({language:this.props.parallelContentLanguage,versionCode:this.props.parallelContentVersionCode,downloaded:false,sourceId:this.props.parallelContentSourceId})
+    }
+    else{
+      this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,downloaded:this.props.downloaded,sourceId:this.props.sourceId})
+    }
+    // this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,downloaded:this.props.downloaded,sourceId:this.props.sourceId})
   }
   render() {
     this.styles = styles(this.props.colorFile, this.props.sizeFile);  

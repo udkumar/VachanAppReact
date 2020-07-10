@@ -53,7 +53,7 @@ import Color from '../../utils/colorConstants'
     this.styles = styles(this.props.colorFile, this.props.sizeFile);  
     return (
       <View style={this.styles.container}>
-         <Header>
+         <Header style={{backgroundColor:Color.Blue_Color}}>
           <Left>
             <Button transparent onPress={()=>this.props.navigation.navigate("Bible")}>
               <Icon size={24} color={Color.White} name='arrow-back'  />

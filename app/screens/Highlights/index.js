@@ -86,7 +86,7 @@ class HighLights extends Component {
   // }
   this.setState({HightlightedVerseArray:data})
   }
-  async componentDidMount(){
+  fetchHighlights(){
     if(this.props.email){
       this.setState({isLoading:true},()=>{
         firebase.database().ref("/users/"+this.props.uid+"/highlights/"+this.props.sourceId+"/").once('value', (snapshot)=> {
@@ -109,7 +109,15 @@ class HighLights extends Component {
           })
           this.setState({isLoading:false})
       })
-
+    }
+  }
+  async componentDidMount(){
+    this.fetchHighlights()
+  }
+  componentDidUpdate(prevProps, prevState){
+    console.log(" HIGHLIGHTS ",prevProps.books)
+    if(prevProps.books !==this.props.books){
+      this.fetchHighlights()
     }
   }
   navigateToBible=(bId,bookName,chapterNum,verseNum)=>{
@@ -132,6 +140,11 @@ class HighLights extends Component {
         }
       }
     }
+    else{
+      this.setState({HightlightedVerseArray:[]})
+      return
+    }
+   
     let value = item.verseNumber  &&
       item.verseNumber.map(e=>
         <TouchableOpacity style={this.styles.bookmarksView} onPress = { ()=> {this.navigateToBible(item.bookId,bookName,item.chapterNumber,e)}} >
@@ -142,7 +155,7 @@ class HighLights extends Component {
         </TouchableOpacity>
       )
       return(
-      <View>{value}</View>
+      <View>{ bookName && value }</View>
       )
   }
   render() {
@@ -162,10 +175,8 @@ class HighLights extends Component {
             style={this.styles.messageEmpty}>
            Select verse to Highlight
           </Text>
-          
         </View>
       }
-      extraData={this.props}
     />
       } 
      </View>

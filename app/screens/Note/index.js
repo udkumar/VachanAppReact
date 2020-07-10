@@ -162,6 +162,9 @@ class Note extends Component {
          bookName = this.props.books[i].bookName
         }
       }
+    }else{
+      this.setState({notesData:[]})
+      return
     }
       let value = item.notes && item.notes.map((val,j) =>
           <TouchableOpacity style={this.styles.noteContent}
@@ -196,7 +199,7 @@ class Note extends Component {
       )
       return(
         <View>
-          {value}
+          {bookName && value}
         </View>
       )
  }

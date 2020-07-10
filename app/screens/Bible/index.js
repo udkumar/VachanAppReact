@@ -183,61 +183,6 @@ class Bible extends Component {
     })  
 
     console.log("props in bible page ",this.props.email)
-    // this.gestureResponder = createResponder({
-    //   onStartShouldSetResponder: (evt, gestureState) => true,
-    //   onStartShouldSetResponderCapture: (evt, gestureState) => true,
-    //   onMoveShouldSetResponder: (evt, gestureState) => true,
-    //   onMoveShouldSetResponderCapture: (evt, gestureState) => true,
-    //   onResponderGrant: (evt, gestureState) => {},
-    //   onResponderMove: (evt, gestureState) => {
-    //     let thumbSize = this.state.thumbSize;
-    //     if (gestureState.pinch && gestureState.previousPinch) {
-    //       thumbSize *= (gestureState.pinch / gestureState.previousPinch)
-    //       let currentDate = new Date().getTime()
-    //       let diff = currentDate - this.pinchTime
-    //       console.log("time diff : " + diff + " prev diff : " + this.pinchDiff)
-    //       if (diff > this.pinchDiff) {
-    //           console.log("gesture pinch diff = " + (gestureState.pinch - gestureState.previousPinch))
-    //          if (gestureState.pinch - gestureState.previousPinch > 5) {
-    //             // large
-    //             console.log("large")
-    //             this.props.screenProps.changeSizeByOne(1)              
-    //         } else if (gestureState.previousPinch - gestureState.pinch > 5) {
-    //             console.log("small")
-    //             // small
-    //             this.props.screenProps.changeSizeByOne(-1)              
-    //         }
-    //       }
-    //       this.pinchDiff = diff
-    //       this.pinchTime = currentDate
-    //     }
-    //     let {left, top} = this.state;
-    //     left += (gestureState.moveX - gestureState.previousMoveX);
-    //     top += (gestureState.moveY - gestureState.previousMoveY);
-    //     this.setState({
-    //       gestureState: {
-    //         ...gestureState
-    //       },
-    //       left, top, thumbSize
-    //     })  
-    //   },
-    //   onResponderTerminationRequest: (evt, gestureState) => true,
-    //   onResponderRelease: (evt, gestureState) => {
-    //     this.setState({
-    //       gestureState: {
-    //         ...gestureState
-    //       }
-    //     })
-    //   },
-    //   onResponderTerminate: (evt, gestureState) => {},
-      
-    //   onResponderSingleTapConfirmed: (evt, gestureState) => {
-    //     console.log('onResponderSingleTapConfirmed...' + JSON.stringify(gestureState));
-    //   },
-    //   moveThreshold: 2,
-    //   debug: false
-    // })
-
   NetInfo.isConnected.addEventListener(
       'connectionChange',
       this._handleConnectivityChange
@@ -309,7 +254,12 @@ class Bible extends Component {
           duration: 3000
         })
         this.queryBookFromAPI(null)
-        // this.props.fetchAllContent()
+        this.props.fetchVersionBooks({
+          language:this.props.language,
+          versionCode:this.props.versionCode,
+          downloaded:this.props.downloaded,
+          sourceId:this.props.sourceId
+        })
 
       }else{
         Toast.show({
@@ -408,6 +358,7 @@ class Bible extends Component {
 
         }
         else{
+          this.setState({chapterContent:[],isLoading:false})
           console.log("not able to fetch book from local database")
         }
         
@@ -417,6 +368,7 @@ class Bible extends Component {
     try{
       // console.log(" get chapter ",this.props.downloaded)
       this.props.navigation.setParams({
+        
         isBookmark:this.isBookmark()
       })
       if(this.props.downloaded){
@@ -476,8 +428,6 @@ class Bible extends Component {
               chapterNumber:JSON.parse(this.state.currentVisibleChapter),
               totalChapters:this.props.totalChapters,
             })
-            // this.props.updateVersion({language:this.props.language,languageCode:this.props.languageCode,
-            // versionCode:this.props.versionCode,sourceId:this.props.sourceId,downloaded:this.props.downloaded})
             this.getHighlights()
             this.getNotes()
             this.fetchAudio()
@@ -1067,10 +1017,7 @@ const mapStateToProps = state =>{
 }
 const mapDispatchToProps = dispatch =>{
   return {
-    fetchVersionLanguage:()=>dispatch(fetchVersionLanguage()),
-    fetchVersionContent:(payload)=>dispatch(fetchVersionContent(payload)),
     updateVersion: (payload)=>dispatch(updateVersion(payload)),
-    queryDownloadedBook:(payload)=>dispatch(queryDownloadedBook(payload)),
     fetchAudioUrl:(payload)=>dispatch(fetchAudioUrl(payload)),
     updateVersionBook: (value)=>dispatch(updateVersionBook(value)),
     userInfo:(payload)=>dispatch(userInfo(payload)),

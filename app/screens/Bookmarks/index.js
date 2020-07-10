@@ -69,8 +69,7 @@ class BookMarks extends Component {
     this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);   
     // this.refreshData = this.refreshData.bind(this)
   }
-
-  async componentDidMount(){
+  fecthBookmarks(){
     if(this.props.email){
       this.setState({isLoading:true},()=>{
         var firebaseRef = firebase.database().ref("users/"+this.props.uid+"/bookmarks/"+this.props.sourceId);
@@ -97,25 +96,16 @@ class BookMarks extends Component {
       })
 
     }
-    // else{
-    //   let model = await  DbQueries.queryBookmark(this.state.sourceId,null)
-    //   console.log(" not logged in ",model)
-    //     // { bookId: 'deu',chapterNumber: { '0': 10, '1': 11, '2': 12, '3': 14 } }
-    //   if (model != null) {
-    //     if(model.length > 0){
-    //       var data =[]
-    //       for(var i=0;i<=model.length-1;i++){
-    //       var chapters =[]
-    //         data.push({bookId:model[i].bookId,chapterNumber:chapters})
-    //         for(var key in model[i].chapterNumber){
-    //           chapters.push(model[i].chapterNumber[key])
-    //         }
-    //       }
-    //       this.setState({bookmarksList:data})
-    //     }
-    //   }
-    // }
+  }
+  async componentDidMount(){
+  this.fecthBookmarks()
   } 
+  componentDidUpdate(prevProps, prevState){
+    console.log("BOOK MARKS ",prevProps.books)
+    if(prevProps.books !==this.props.books){
+      this.fecthBookmarks()
+    }
+  }
   navigateToBible(bookId,bookName,chapter){
     this.props.updateVersionBook({
       bookId:bookId, 
@@ -125,10 +115,6 @@ class BookMarks extends Component {
     })
     this.props.navigation.navigate("Bible")
   }
-  // getItemLayout = (data, index) => {
-  //   return { length: height, offset: height * index, index };
-  // }
-
     
   async onBookmarkRemove(id,chapterNum){
     if(this.props.email){
@@ -167,8 +153,11 @@ class BookMarks extends Component {
          bookName = this.props.books[i].bookName
         }
       }
+    }else{
+        this.setState({bookmarksList:[]})
+        return
     }
-      var val = item.chapterNumber.length > 0 &&
+      var value = item.chapterNumber.length > 0 &&
         item.chapterNumber.map(e=>
         <TouchableOpacity style={this.styles.bookmarksView} onPress = { ()=> {this.navigateToBible(item.bookId,bookName,e)}} >
         <Text style={this.styles.bookmarksText}>{bookName} {":"} {e}</Text>
@@ -179,7 +168,7 @@ class BookMarks extends Component {
       )
     return(
     <View>
-      {bookName && val} 
+      {bookName && value } 
     </View>
     )
     
@@ -206,7 +195,6 @@ class BookMarks extends Component {
              
            </View>
          }
-         extraData={this.props}
         /> 
         }
        </View>
