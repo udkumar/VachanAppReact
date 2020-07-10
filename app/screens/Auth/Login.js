@@ -215,7 +215,7 @@ import Color from '../../utils/colorConstants'
             style={this.styles.dividerLine}
           />
           </View>
-          <View style={{flex:1,alignItems:'center',justifyContent:'center',marginVertical:16}}>
+          <View style={{flex:1,alignItems:'center',justifyContent:'center',marginVertical:32}>
           <GoogleSigninButton
             style={{width: 68, height: 68}}
             size={GoogleSigninButton.Size.Icon}
