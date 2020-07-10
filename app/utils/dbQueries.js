@@ -90,7 +90,6 @@ class DbQueries {
     deleteNote(time){
         DbHelper.deleteNote(time);
     }
-
     addHistory(sourceId,langName,languageCode, verCode, bookId,bookName, chapterNumber,downloaded, time) {
         DbHelper.addHistory(sourceId,langName,languageCode, verCode, bookId,bookName, chapterNumber,downloaded, time)
     }

@@ -52,7 +52,7 @@ class Bible extends Component {
                     </TouchableOpacity>
                       <TouchableOpacity 
                         onPress={() =>{navigation.navigate("SelectionTab", 
-                        {getReference:params.getRef,parallelContent:false,bookId:params.bookId,chapterNumber:params.currentChapter,totalChapters:params.numOfChapter,totalVerses:params.numOfVerse})}}
+                        {getReference:params.getRef,parallelContent:false,bookId:params.bookId,bookName:params.bookName,chapterNumber:params.currentChapter,totalChapters:params.numOfChapter,totalVerses:params.numOfVerse})}}
                         style={[navStyles.headerLeftStyle,{paddingHorizontal:8}]}> 
                           <Text style={[navStyles.headerTextStyle,{ paddingRight:4}]}>{params.bookName} </Text>
                           <Text style={[navStyles.headerTextStyle,{fontWeight:'bold'}]}>{params.currentChapter }</Text>
@@ -275,7 +275,6 @@ class Bible extends Component {
       this.fetchAudio()
       // this.getBookName()
       const shortName =  this.props.language.toLowerCase()  == ('malayalam' ||'tamil' || 'kannada') ?  (this.props.bookName.length > 4 ? this.props.bookName.slice(0,3)+"..." : this.props.bookName ) : this.props.bookName.length > 8 ? this.props.bookName.slice(0,7)+"..." : this.props.bookName
-
       this.props.navigation.setParams({
         bookId:this.props.bookId,
         bookName:shortName,
@@ -329,11 +328,10 @@ class Bible extends Component {
       var time =  new Date()
       DbQueries.addHistory(this.props.sourceId,this.props.language,this.props.languageCode, 
         this.props.versionCode, item.bookId,item.bookName, JSON.parse(item.chapterNumber), this.props.downloaded, time)
-        // const shortName =  this.props.language.toLowerCase()  == ('malayalam' ||'tamil') ?  item.bookName.length > 6 ? item.bookName.slice(0,5)+"..." : item.bookName : item.bookName.length > 10 ? item.bookName.slice(0,9)+"..." : item.bookName
-
+        const shortName =  this.props.language.toLowerCase()  == ('malayalam' ||'tamil') ?  item.bookName.length > 6 ? item.bookName.slice(0,5)+"..." : item.bookName : item.bookName.length > 10 ? item.bookName.slice(0,9)+"..." : item.bookName
         this.props.navigation.setParams({
-        // bookId:item.bookId,
-        // bookName:shortName,
+        bookId:item.bookId,
+        bookName:shortName,
         currentChapter:JSON.parse(item.chapterNumber),
         numOfChapter:item.totalChapters,
       })
@@ -372,11 +370,11 @@ class Bible extends Component {
 
       this.props.updateVersion({language:item.languageName,languageCode:item.languageCode,
       versionCode:item.versionCode,sourceId:item.sourceId,downloaded:item.downloaded})
-      // const shortName =  this.props.language.toLowerCase()  == ('malayalam' ||'tamil') ? (bookName.length > 6 ? bookName.slice(0,5)+"..." : bookName ) : bookName.length > 10 ? bookName.slice(0,9)+"..." : bookName
+      const shortName =  this.props.language.toLowerCase()  == ('malayalam' ||'tamil' || 'kannada') ? (bookName.length > 6 ? bookName.slice(0,5)+"..." : bookName ) : bookName.length > 10 ? bookName.slice(0,9)+"..." : bookName
       this.props.navigation.setParams({
       languageName:item.languageName.substring(0,3),
       versionCode:item.versionCode,
-      // bookName: shortName
+      bookName: shortName
       })
       this.props.updateVersionBook({
         bookId:this.props.bookId,
@@ -440,11 +438,13 @@ class Bible extends Component {
   queryBookFromAPI = async(val)=>{
     this.setState({isLoading:true,currentVisibleChapter: val != null ? JSON.parse(this.state.currentVisibleChapter)  + val : this.state.currentVisibleChapter,error:null },async()=>{
       try{
+      const shortName =  this.props.language.toLowerCase()  == ('malayalam' ||'tamil' || 'kannada') ? (this.props.bookName.length > 6 ? this.props.bookName.slice(0,5)+"..." : this.props.bookName ) : this.props.bookName.length > 10 ? this.props.bookName.slice(0,9)+"..." : this.props.bookName
+
             this.props.navigation.setParams({
               languageName:this.props.language.substring(0,3),
               versionCode:this.props.versionCode,
-              // bookId:this.props.bookId,
-              // bookName:this.props.bookName > 10 ? this.props.bookName.slice(0,9)+"..." : this.props.bookName,
+              bookId:this.props.bookId,
+              bookName:shortName,
               currentChapter:JSON.parse(this.state.currentVisibleChapter),
               numOfChapter:this.props.totalChapters,
               isBookmark:this.isBookmark()
@@ -880,7 +880,7 @@ getNotes(){
         this.props.navigation.getParam("visibleParallelView") &&
         <View style={{position:'absolute',top:0,zIndex:2,width:'50%'}}>
           <Header style={{height:40}}>
-            <Button transparent onPress={()=>{this.props.navigation.navigate("SelectionTab",{getReference:this.getReference,bookId:this.props.bookId,chapterNumber:this.state.currentVisibleChapter,totalChapters:this.props.totalChapters,totalVerses:this.props.totalVerses})}}>
+            <Button transparent onPress={()=>{this.props.navigation.navigate("SelectionTab",{getReference:this.getReference,bookId:this.props.bookId,bookName:this.props.bookName,chapterNumber:this.state.currentVisibleChapter,totalChapters:this.props.totalChapters,totalVerses:this.props.totalVerses})}}>
                 <Title style={{fontSize:16}}>{this.props.bookName.length > 10 ? this.props.bookName.slice(0,9)+"..." : this.props.bookName} {this.state.currentVisibleChapter}</Title>
                 <Icon name="arrow-drop-down" color={Color.White} size={20}/>
             </Button>

@@ -438,6 +438,7 @@ class DbHelper {
 	}
 
 	async addHistory(sourceId,langName,langCode, verCode, bId,bookName, cNum,downloaded, timeStamp) {
+		console.log("ADD HISTORY BOOK NAME ",bookName)
 		let realm = await this.getRealm();
 		if (realm) {
 			realm.write(() => {

@@ -27,6 +27,7 @@ class ChapterSelection extends Component {
       return{chapterData:Array.from(new Array(nextProps.screenProps.totalChapters), (x,i) => i+1)}
   }
    onNumPress=(item,index)=>{
+     console.log(" VALUE CHAPTER ",item)
     this.props.screenProps.updateSelectedChapter(item,index)
   }
   render() {

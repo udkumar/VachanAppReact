@@ -40,7 +40,7 @@ const NavStack = createStackNavigator(
       },
       Search: { screen: Search},
       SelectionTab:{screen:SelectionTab,
-        navigationOptions: { headerTitle:"Select Chapter" }
+        navigationOptions: { headerTitle:null }
       },
       Notes:{ screen:Notes
       },

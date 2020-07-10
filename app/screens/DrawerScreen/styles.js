@@ -4,7 +4,6 @@ import Color from '../../utils/colorConstants'
 const width = Dimensions.get('window').width;
 
 export const styles =(colorFile, sizeFile) =>{
-    console.log("color file styling page",colorFile)
     return StyleSheet.create({
     container:{
         flex:1,

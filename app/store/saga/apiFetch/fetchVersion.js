@@ -66,7 +66,6 @@ const API_BASE_URL = 'https://api.vachanonline.net/v1/'
             // console.log("language name ",payload.language.toLowerCase(),response[i].language.name)
             if(payload.language.toLowerCase() == response[i].language.name){
               for(var j=0;j<=response[i].bookNames.length-1;j++){
-                  console.log("BOOK ID ",response[i].bookNames[j].short)
                 var books= {
                   bookId:response[i].bookNames[j].book_code,
                   bookName:response[i].bookNames[j].short,

@@ -3,7 +3,6 @@ import { Icon } from 'native-base';
 const width = Dimensions.get('window').width;
 
 export const settingsPageStyle =(colorFile, sizeFile) =>{
-    console.log("color file styling page",colorFile)
     return StyleSheet.create({
     container:{
         flex:1,

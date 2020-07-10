@@ -18,10 +18,6 @@ import { styles } from  './styles';
 
 class ReferenceSelection extends Component {
 
-  static navigationOptions = {
-    headerTitle: 'Select Reference',
-  };
-
   constructor(props){
     super(props)
     console.log("REFERNCE SELECTION NAVIGATION : " + JSON.stringify(props.navigation))
@@ -63,21 +59,24 @@ class ReferenceSelection extends Component {
   //       totalVerses:getBookNumOfVersesFromMapping(this.state.selectedBookId,chapterNumber)
   //   })
   // }
-  updateSelectedChapter = (chapterNumber, index) => {
-    var chapterNum = chapterNumber != null ? chapterNumber  : this.state.selectedChapterNumber
+  updateSelectedChapter = (chapter, index) => {
+    var chapterNum = chapter === null ?  this.state.selectedChapterNumber : chapter
+    console.log("CHAPTER NUMBER ",chapter , "chapter number ",chapterNum,"selected book name" ,this.state.selectedBookName)
 
-    console.log(" totalChapters :",chapterNum)
-    this.setState({selectedChapterIndex:index !=null && index,})
-    this.props.navigation.state.params.getReference({
-      bookId:this.state.selectedBookId,
-      bookName:this.state.selectedBookName,
-      chapterNumber:this.state.selectedChapterNumber > this.state.totalChapters ? '1' : chapterNum,
-      totalChapters:this.state.totalChapters,
-      totalVerses:this.state.totalVerses,
-      // verseNumber:verseNumber !=null &&  verseNumber 
+    this.setState({selectedChapterNumber:chapterNum,
+      selectedChapterIndex:index !=null && index,
+      totalVerses:getBookNumOfVersesFromMapping(this.state.selectedBookId,chapterNum)
+    },()=>{
+      this.props.navigation.state.params.getReference({
+        bookId:this.state.selectedBookId,
+        bookName:this.state.selectedBookName,
+        chapterNumber: this.state.selectedChapterNumber,
+        totalChapters:this.state.totalChapters,
+        totalVerses:this.state.totalVerses,
+        // verseNumber:verseNumber !=null &&  verseNumber 
+      })
+      this.props.navigation.goBack()
     })
-    // this.props.books.length = 0
-    this.props.navigation.pop()
   }
   async componentDidMount(){
     if(this.props.navigation.state.params.parallelContent){

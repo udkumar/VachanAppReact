@@ -227,10 +227,13 @@ class LanguageList extends Component {
                   <View>
                   {
                     element.downloaded == true ? 
+                  
+                    item.languageName.toLowerCase() == 'english' ? null : 
                     <Icon style={[this.styles.iconStyle,{marginRight:8}]} name="delete" size={24}  onPress={()=>{this.deleteBible(item.languageName,item.languageCode,element.versionCode,element.sourceId, element.downloaded)}}
                     />
                   :
-                    <Icon  style={[this.styles.iconStyle,{marginRight:12}]} name="file-download" size={24} onPress={()=>{this.downloadBible(item.languageName,element.versionCode,item.bookNameList,element.sourceId)}}/>
+                  item.languageName.toLowerCase() == 'english' ? null :
+                  <Icon  style={[this.styles.iconStyle,{marginRight:12}]} name="file-download" size={24} onPress={()=>{this.downloadBible(item.languageName,element.versionCode,item.bookNameList,element.sourceId)}}/>
                   }
                 </View>
                 </TouchableOpacity>

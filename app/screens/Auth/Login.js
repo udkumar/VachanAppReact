@@ -34,7 +34,7 @@ import Color from '../../utils/colorConstants'
 
     login = async() => {
       if(this.state.email === '' && this.state.password === '') {
-        // Alert.alert('Enter details to signin!')
+        Alert.alert('Please enter email and password !')
       } else {
         this.setState({
           isLoading: true,
@@ -62,6 +62,9 @@ import Color from '../../utils/colorConstants'
           }
           if(error.code === 'auth/invalid-email'){
             Alert.alert("Invalid Email")
+          }
+          if(error.code === 'auth/unknown'){
+            Alert.alert("Something went wrong. Please check your internet connection")
           }
           this.setState({isLoading:false })
         })
@@ -212,14 +215,22 @@ import Color from '../../utils/colorConstants'
             style={this.styles.dividerLine}
           />
           </View>
-          <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
+          <View style={{flex:1,alignItems:'center',justifyContent:'center',marginVertical:16}}>
+          <GoogleSigninButton
+            style={{width: 68, height: 68}}
+            size={GoogleSigninButton.Size.Icon}
+            color={GoogleSigninButton.Color.Dark}
+            onPress={this._signInGoogle}
+          />
+          </View>
+          {/* <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
             <TouchableOpacity onPress={this._signInGoogle}>
               <Icon name="google" size={38} color={Color.Google_Color}/>
             </TouchableOpacity>
             <TouchableOpacity onPress={this._signInFacebook}>
             <Icon name="facebook" size={38} color={Color.Facebook_Color}/>
             </TouchableOpacity>
-          </View>
+          </View> */}
           <Text 
             style={this.styles.loginText}
             onPress={() => this.props.navigation.navigate('Register')}>

@@ -11,12 +11,13 @@ import {connect} from 'react-redux'
 const screenHeight = Dimensions.get('window').height
 class About extends Component {
   static navigationOptions = {
-    headerTitle: 'About',
+    headerTitle: 'About Us',
   };
   constructor(props){
     super(props);
     this.styles = aboutPage(this.props.colorFile, this.props.sizeFile);   
   }
+  
   render() {
     // const bullet = '\u2022'
     return (
@@ -30,8 +31,9 @@ class About extends Component {
       <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Technology Provider:{'\n'} </Text>
       Bridge Connectivity Solutions Pvt. Ltd. (BCS) developed this platform with an in-house team of developers inspired from similar websites in other countries.  VachanEngine powers the backend. 
       Permission to use Vachan APIs can be be provided for similar digital content delivery for products with like minded vision. Please contact us at <Text style={this.styles.linkText} onPress={() =>{Linking.openURL('thevachanproject@gmail.com')}}>thevachanproject@gmail.com</Text>. Also visit our company website <Text style={this.styles.linkText} textBreakStrategy={'simple'} onPress={() =>{Linking.openURL('www.bridgeconn.com')}}>www.bridgeconn.com</Text> {'\n'}
-     
-    <Text textBreakStrategy={'simple'} style={{fontWeight:'bold'}}>{'\n'}Release Notes (1/06/2020) v1.0 {'\n'}</Text>
+      <Text textBreakStrategy={'simple'} style={{fontWeight:'bold'}}>{'\n'} Contact Us </Text>
+      <Text style={this.styles.linkText} onPress={() =>{Linking.openURL('thevachanproject@gmail.com')}}>{'\n'}thevachanproject@gmail.com</Text>
+    <Text textBreakStrategy={'simple'} style={{fontWeight:'bold'}}>{'\n'}Release Notes (3/7/2020) v1.0 {'\n'}</Text>
     <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Platform:{'\n'}</Text>
     The Vachan Online web application is developed in ReactJS enabled by Postgres APIs  (VachanEngine) in the back-end. The companion mobile app Vachan Go is written in ReactNative. {'\n'}
     <Text textBreakStrategy={'simple'}  style={this.styles.TitleText}>{'\n'}Content Additions (using Vachan API’s):{'\n'}</Text> 
