@@ -62,7 +62,7 @@ class ReferenceSelection extends Component {
   updateSelectedChapter = (chapter, index) => {
     var chapterNum = chapter === null ?  this.state.selectedChapterNumber : chapter
     console.log("CHAPTER NUMBER ",chapter , "chapter number ",chapterNum,"selected book name" ,this.state.selectedBookName)
-
+    // this.state.selectedChapterNumber > this.state.totalChapters ? '1' : chapterNum,
     this.setState({selectedChapterNumber:chapterNum,
       selectedChapterIndex:index !=null && index,
       totalVerses:getBookNumOfVersesFromMapping(this.state.selectedBookId,chapterNum)
@@ -70,7 +70,7 @@ class ReferenceSelection extends Component {
       this.props.navigation.state.params.getReference({
         bookId:this.state.selectedBookId,
         bookName:this.state.selectedBookName,
-        chapterNumber: this.state.selectedChapterNumber,
+        chapterNumber: chapterNum > this.state.totalChapters ? '1' : chapterNum,
         totalChapters:this.state.totalChapters,
         totalVerses:this.state.totalVerses,
         // verseNumber:verseNumber !=null &&  verseNumber 

@@ -42,7 +42,8 @@ export const aboutPage =(colorFile, sizeFile) =>{
         TitleText:{
             paddingVertical:12,
             fontSize:sizeFile.titleText,
-            color:Color.Blue_Color,
+            // color:Color.Blue_Color,
+            color:colorFile.sectionHeading,
             letterSpacing: 1.2,
             lineHeight:sizeFile.lineHeight
             // flexShrink: 1 

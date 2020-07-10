@@ -72,6 +72,10 @@ export const noteStyle =(colorFile, sizeFile) =>{
         fontSize:sizeFile.contentText,
         color:colorFile.textColor
     },
+    noteText:{
+        fontSize:sizeFile.titleText,
+        color:colorFile.textColor
+    },
     deleteIon:{
         fontSize:sizeFile.iconSize,
         color:colorFile.textColor

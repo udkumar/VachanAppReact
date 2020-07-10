@@ -182,7 +182,7 @@ class Note extends Component {
         <Card>
         <CardItem style={this.styles.cardItemStyle}>
           <View style={this.styles.notesContentView}> 
-          <Text>{this.props.language} {this.props.versionCode} {bookName} {val.verses.join()}</Text>
+          <Text style={this.styles.noteText} >{this.props.language} {this.props.versionCode} {bookName} {val.verses.join()}</Text>
             {/* <Text style={this.styles.noteFontCustom} numberOfLines={2}>{this.bodyText(val.body)}</Text> */}
             <View style={this.styles.noteCardItem}>
               <Text style={this.styles.noteFontCustom}>{this.dateFormate(val.modifiedTime)}</Text>
