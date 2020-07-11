@@ -8,7 +8,7 @@ const ReloadButton = ({
     styles,
     reloadFunction
     })=>(
-    <View style={buttonstyle.buttonContainer} >
+    <View style={buttonstyle.buttonContainer}>
           <TouchableOpacity 
             onPress={()=>reloadFunction(null)}
             style={buttonstyle.reloadButton}>

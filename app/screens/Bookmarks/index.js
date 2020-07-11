@@ -102,7 +102,7 @@ class BookMarks extends Component {
   } 
   componentDidUpdate(prevProps, prevState){
     console.log("BOOK MARKS ",prevProps.books)
-    if(prevProps.books !==this.props.books){
+    if(prevProps.books.length != this.props.books.length){
       this.fecthBookmarks()
     }
   }

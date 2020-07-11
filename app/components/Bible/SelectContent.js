@@ -75,7 +75,6 @@ var contentType = ''
                   parallelContentVersionCode:v.versionCode,parallelContentSourceId:v.sourceId})
                   this.props.fetchVersionBooks({language:item.languageName,versionCode:v.versionCode,
                   downloaded:false,sourceId:v.sourceId})
-                    console.log( " v ",v)
                   this.props.parallelMetadta({
                   pCopyrightHolder:v.metaData[0].copyrightHolder,
                   pDescription:v.metaData[0].description,

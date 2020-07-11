@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux'
 import {Body,Header,Right,Title,Button} from 'native-base'
-import{fetchCommentaryContent} from '../../../store/action/index'
+import{fetchCommentaryContent,fetchVersionBooks} from '../../../store/action/index'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {styles} from './styles'
 import Color from '../../../utils/colorConstants'
@@ -34,7 +34,9 @@ class Commentary extends Component {
     this.props.fetchCommentaryContent({parallelContentSourceId:this.props.parallelContentSourceId,bookId:this.props.bookId,chapter:this.props.currentVisibleChapter})
     }
   }
-  
+  componentWillMount(){
+
+  }
   errorMessage(){
     console.log("props ",this.props.error)
     if (!this.alertPresent) {
@@ -51,8 +53,11 @@ class Commentary extends Component {
       this.errorMessage()
   }
   componentWillUnmount(){
+    this.props.fetchVersionBooks({language:this.props.language,
+      versionCode:this.props.versionCode,
+      downloaded:this.props.downloaded,sourceId:this.props.sourceId})
     console.log( "component UN Mount  ")
-}
+  }
   render(){
     const bookId = this.props.bookId
     const value = this.props.books.length !=0 && this.props.books.filter(function (entry){
@@ -147,8 +152,12 @@ class Commentary extends Component {
 
 const mapStateToProps = state =>{
   return{
+
     language: state.updateVersion.language,
     versionCode:state.updateVersion.versionCode,
+    sourceId:state.updateVersion.sourceId,
+    downloaded:state.updateVersion.downloaded,
+
     chapterNumber:state.updateVersion.chapterNumber,
     totalChapters:state.updateVersion.totalChapters,
     bookName:state.updateVersion.bookName,
@@ -172,6 +181,8 @@ const mapDispatchToProps = dispatch =>{
   return {
     
     fetchCommentaryContent:(payload)=>dispatch(fetchCommentaryContent(payload)),
+    fetchVersionBooks:(payload)=>dispatch(fetchVersionBooks(payload)),
+
   }
 }
 export  default connect(mapStateToProps,mapDispatchToProps)(Commentary)

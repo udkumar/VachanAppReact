@@ -33,7 +33,7 @@ class About extends Component {
       Permission to use Vachan APIs can be be provided for similar digital content delivery for products with like minded vision. Please contact us at <Text style={this.styles.linkText} onPress={() =>{Linking.openURL('thevachanproject@gmail.com')}}>thevachanproject@gmail.com</Text>. Also visit our company website <Text style={this.styles.linkText} textBreakStrategy={'simple'} onPress={() =>{Linking.openURL('www.bridgeconn.com')}}>www.bridgeconn.com</Text> {'\n'}
       <Text textBreakStrategy={'simple'} style={{fontWeight:'bold'}}>{'\n'} Contact Us </Text>
       <Text style={this.styles.linkText} onPress={() =>{Linking.openURL('thevachanproject@gmail.com')}}>{'\n'}thevachanproject@gmail.com</Text>
-    <Text textBreakStrategy={'simple'} style={{fontWeight:'bold'}}>{'\n'}Release Notes (3/7/2020) v1.0 {'\n'}</Text>
+    <Text textBreakStrategy={'simple'} style={{fontWeight:'bold'}}>{'\n'}Release Notes (13/07/2020) v1.0 {'\n'}</Text>
     <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Platform:{'\n'}</Text>
     The Vachan Online web application is developed in ReactJS enabled by Postgres APIs  (VachanEngine) in the back-end. The companion mobile app Vachan Go is written in ReactNative. {'\n'}
     <Text textBreakStrategy={'simple'}  style={this.styles.TitleText}>{'\n'}Content Additions (using Vachan API’s):{'\n'}</Text> 
@@ -53,7 +53,6 @@ class About extends Component {
     <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Personalisation and sync using simple login.{'\n'}
     <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Bookmarks, Highlights & Notes.{'\n'}
     <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Basic Bible search.{'\n'}
-    <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Dynamic Data{'\n'}
     <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Personalisation{'\n'}
     <Text textBreakStrategy={'simple'} style={[this.styles.bulletIcon,{padding:10}]}>{'\u2022' + " "}</Text>Seamless transfer of User Data between Vachan Online and Vachan Go.{'\n'}
 

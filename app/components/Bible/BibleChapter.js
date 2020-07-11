@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import Spinner from 'react-native-loading-spinner-overlay';
-import {fetchParallelBible} from '../../store/action'
+import {fetchParallelBible,fetchVersionBooks} from '../../store/action'
 import { styles } from './styles';
 import {connect} from 'react-redux'
 import {getResultText} from '../../utils/UtilFunctions'
@@ -55,24 +55,16 @@ class BibleChapter extends Component {
                 })
             })
     }
-    componentWillUnmount(){
-        console.log( "component UN Mount  ")
-    }
+    
     componentDidMount(){
-        console.log( "componentDidMount  ",this.props.books)
         this.queryParallelBible(null)
     }
-    //for updating bible content 
-    // componentWillUpdate(nextProps) {
-    //     console.log(" PREV PROP ",this.props.currentVisibleChapter,nextProps.currentVisibleChapter)
-    //     if (this.props.bookId != nextProps.bookId || nextProps.currentVisibleChapter != this.props.currentVisibleChapter) {
-    //     this.props.fetchCommentaryContent({parallelContentSourceId:this.props.parallelContentSourceId,bookId:nextProps.bookId,chapter:nextProps.currentVisibleChapter})
-    //     // bar prop has changed
-    //     }
-    // }
-
+    componentWillUnmount(){
+      this.props.fetchVersionBooks({language:this.props.language,
+        versionCode:this.props.versionCode,
+        downloaded:this.props.downloaded,sourceId:this.props.sourceId})
+    }
     errorMessage(){
-        console.log("props ",this.props.error)
         if (!this.alertPresent) {
             this.alertPresent = true;
             if (this.props.error) {
@@ -94,7 +86,7 @@ class BibleChapter extends Component {
     }
    
     render(){
-
+        console.log("book name ",this.state.bookName, this.props.books.length)
         const bookId = this.state.id
         const value = this.props.books.length !=0 && this.props.books.filter(function (entry){
             return  entry.bookId == bookId
@@ -161,22 +153,14 @@ class BibleChapter extends Component {
                         </Text>         
                         </Text>
                         }
-                    {/* {index == this.props.parallelBible.length - 1  && ( this.props.showBottomBar ? <View style={{height:64, marginBottom:4}} />: null ) } */}
                     </View>
                     )}
                     <View style={this.styles.addToSharefooterComponent}>
                     {
-                    (this.props.license && this.props.copyrightHolder && this.props.technologyPartner) &&
                     <View style ={this.styles.footerView}>
-                    <Text style={this.styles.textListFooter}>
-                        <Text style={this.styles.footerText}>Copyright:</Text>{' '}{this.props.copyrightHolder}
-                    </Text>
-                    <Text style={this.styles.textListFooter}>
-                    <Text style={this.styles.footerText}>License:</Text>{' '}{this.props.license}
-                    </Text>
-                    <Text style={this.styles.textListFooter}>
-                    <Text style={this.styles.footerText}>Technology partner:</Text>{' '}{this.props.technologyPartner}
-                    </Text>
+                    {(this.props.revision !==null && this.props.revision !== '') &&  <Text style={this.styles.textListFooter}><Text style={this.styles.footerText}>Copyright:</Text>{' '}{this.props.revision}</Text>}
+                    {(this.props.license !==null && this.props.license !=='') && <Text style={this.styles.textListFooter}><Text style={this.styles.footerText}>License:</Text>{' '}{this.props.license}</Text>}
+                    {(this.props.technologyPartner !==null && this.props.technologyPartner !=='' ) && <Text style={this.styles.textListFooter}><Text style={this.styles.footerText}>Technology partner:</Text>{' '}{this.props.technologyPartner}</Text>}
                     </View>
                     }
                     </View>
@@ -219,6 +203,11 @@ const mapStateToProps = state =>{
         books:state.versionFetch.data,
         // downloaded:false,
 
+        language: state.updateVersion.language,
+        versionCode:state.updateVersion.versionCode,
+        sourceId:state.updateVersion.sourceId,
+        downloaded:state.updateVersion.downloaded,
+
         parallelContentSourceId:state.updateVersion.parallelContentSourceId,
         parallelContentVersionCode:state.updateVersion.parallelContentVersionCode,
         parallelContentLanguage:state.updateVersion.parallelContentLanguage,
@@ -226,7 +215,7 @@ const mapStateToProps = state =>{
         parallelBible:state.parallel.parallelBible,
         parallelContentType:state.updateVersion.parallelContentType,
 
-        copyrightHolder:state.updateVersion.pRevision,
+        revision:state.updateVersion.pRevision,
         license:state.updateVersion.pLicense,
         technologyPartner:state.updateVersion.pTechnologyPartner,
 
@@ -237,7 +226,10 @@ const mapStateToProps = state =>{
 
 const mapDispatchToProps = dispatch =>{
     return {
-      fetchParallelBible:(data)=>dispatch(fetchParallelBible(data))
+      fetchParallelBible:(data)=>dispatch(fetchParallelBible(data)),
+    fetchVersionBooks:(payload)=>dispatch(fetchVersionBooks(payload)),
+
+
     }
   }
 

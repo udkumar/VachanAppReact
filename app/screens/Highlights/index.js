@@ -116,7 +116,7 @@ class HighLights extends Component {
   }
   componentDidUpdate(prevProps, prevState){
     console.log(" HIGHLIGHTS ",prevProps.books)
-    if(prevProps.books !==this.props.books){
+    if(prevProps.books.length != this.props.books.length){
       this.fetchHighlights()
     }
   }

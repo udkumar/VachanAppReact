@@ -16,7 +16,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import DbQueries from '../../utils/dbQueries'
 import VerseView from './VerseView'
 import APIFetch from '../../utils/APIFetch'
-import {fetchAudioUrl,fetchVersionLanguage,fetchVersionContent,queryDownloadedBook,fetchVersionBooks,userInfo,updateVersionBook,updateVersion,updateMetadata} from '../../store/action/'
+import {fetchAudioUrl,fetchVersionBooks,userInfo,updateVersionBook,updateVersion,updateMetadata} from '../../store/action/'
 import SelectContent from '../../components/Bible/SelectContent'
 import SelectBottomTabBar from '../../components/Bible/SelectBottomTabBar'
 import ChapterNdAudio from '../../components/Bible/ChapterNdAudio';
@@ -34,7 +34,6 @@ import firebase from 'react-native-firebase'
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 
-const INITIAL_SCROLL_POSITION = 40; 
 class Bible extends Component {
   static navigationOptions = ({navigation}) =>{
         const { params={} } = navigation.state 
@@ -51,15 +50,14 @@ class Bible extends Component {
                     />
                     </TouchableOpacity>
                       <TouchableOpacity 
-                        onPress={() =>{navigation.navigate("SelectionTab", 
-                        {getReference:params.getRef,parallelContent:false,bookId:params.bookId,bookName:params.bookName,chapterNumber:params.currentChapter,totalChapters:params.numOfChapter})}}
+                        onPress={() =>{navigation.navigate("SelectionTab",{getReference:params.getRef,parallelContent:false,bookId:params.bookId,bookName:params.bookName,chapterNumber:params.currentChapter,totalChapters:params.numOfChapter})}}
                         style={[navStyles.headerLeftStyle,{paddingHorizontal:8}]}> 
-                          <Text style={[navStyles.headerTextStyle,{ paddingRight:4}]}>{params.bookName} </Text>
+                          <Text style={[navStyles.headerTextStyle,{ paddingRight:4}]}>{params.bookName}</Text>
                           <Text style={[navStyles.headerTextStyle,{fontWeight:'bold'}]}>{params.currentChapter }</Text>
                           <Icon name="arrow-drop-down" color={Color.White} size={20} style={{alignSelf:'center'}}/>
                       </TouchableOpacity>
                       <TouchableOpacity 
-                        onPress={() =>{{navigation.navigate("LanguageList",{updateLangVer:params.updatelangVer})}}} 
+                        onPress={() =>{navigation.navigate("LanguageList",{updateLangVer:params.updatelangVer})}}  
                         style={[navStyles.headerLeftStyle]}>
                           <Text style={[navStyles.headerTextStyle,{paddingRight:4}]}>{params.languageName}</Text>
                           <Text style={[navStyles.headerTextStyle,{fontWeight:'bold'}]}>{params.versionCode}</Text>
@@ -90,7 +88,7 @@ class Bible extends Component {
               }
                   <TouchableOpacity  style={[navStyles.touchableStyleRight,{flexDirection:'row'}]}>
                     <Icon 
-                      onPress={params.onSeach} 
+                      onPress={params.onSearch} 
                       name='search'
                       color={Color.White}
                       size={24} 
@@ -183,11 +181,11 @@ class Bible extends Component {
     })  
 
     console.log("props in bible page ",this.props.email)
-  NetInfo.isConnected.addEventListener(
+    NetInfo.isConnected.addEventListener(
       'connectionChange',
       this._handleConnectivityChange
 
-  );
+    );
   // this._handleConnectivityChange
   // NetInfo.isConnected.fetch().done((isConnected) => {
   //   if(isConnected == true){
@@ -204,13 +202,13 @@ class Bible extends Component {
       audio:this.state.audio,
       onBookmark: this.onBookmarkPress,
       toggleAudio:this.toggleAudio,
-      onSeach:this.onSeach,
+      onSearch:this.onSearch,
       onSearchHideHeader:this.state.onSearchHideHeader
       // toggleModal:this.setState({modalVisible:!this.state.modalVisible}),
     })
     this.subs = this.props.navigation.addListener("didFocus", () =>{
-
-    this.setState({isLoading:true,selectedReferenceSet:[],bookId:this.props.bookId,currentVisibleChapter:this.props.chapterNumber},()=>{
+      
+    this.setState({isLoading:true,selectedReferenceSet:[],showBottomBar: false,bookId:this.props.bookId,currentVisibleChapter:this.props.chapterNumber},()=>{
       console.log("IS DOWNLOADED ",this.props.bookName)
       this.getChapter()
       this.audioComponentUpdate()
@@ -219,8 +217,12 @@ class Bible extends Component {
       this.getNotes()
       this.fetchAudio()
       // this.getBookName()
-      const shortName =  this.props.language.toLowerCase()  == ('malayalam' ||'tamil' || 'kannada') ?  (this.props.bookName.length > 4 ? this.props.bookName.slice(0,3)+"..." : this.props.bookName ) : this.props.bookName.length > 8 ? this.props.bookName.slice(0,7)+"..." : this.props.bookName
-      this.props.navigation.setParams({
+      const shortName =  this.props.language.toLowerCase()  == ('malayalam' ||'tamil' || 'kannada') ?
+        (this.props.bookName.length > 4 ? this.props.bookName.slice(0,3)+"..." : this.props.bookName ) : 
+        this.props.bookName.length > 8 ? this.props.bookName.slice(0,7)+"..." : this.props.bookName
+        console.log("sort name ",shortName)
+      
+        this.props.navigation.setParams({
         bookId:this.props.bookId,
         bookName:shortName,
         currentChapter:this.state.currentVisibleChapter,
@@ -229,12 +231,6 @@ class Bible extends Component {
         audio:this.state.audio,
         numOfChapter:this.props.totalChapters,
         isBookmark:this.isBookmark()
-      })
-      this.props.fetchVersionBooks({
-        language:this.props.language,
-        versionCode:this.props.versionCode,
-        downloaded:this.props.downloaded,
-        sourceId:this.props.sourceId
       })
       this.setState({isLoading:false})
     })
@@ -265,15 +261,22 @@ class Bible extends Component {
           type: "warning",
           duration: 3000
         })
+        this.setState({chapterContent:[]})
       }
     })
   };
   getReference = async(item)=>{
+    this.setState({selectedReferenceSet: [], showBottomBar: false})
+
     if(item){
       var time =  new Date()
       DbQueries.addHistory(this.props.sourceId,this.props.language,this.props.languageCode, 
         this.props.versionCode, item.bookId,item.bookName, JSON.parse(item.chapterNumber), this.props.downloaded, time)
-        const shortName =  this.props.language.toLowerCase()  == ('malayalam' ||'tamil') ?  item.bookName.length > 6 ? item.bookName.slice(0,5)+"..." : item.bookName : item.bookName.length > 10 ? item.bookName.slice(0,9)+"..." : item.bookName
+        const shortName =  this.props.language.toLowerCase()  == ('malayalam' ||'tamil') ? 
+        (item.bookName.length > 6 ? item.bookName.slice(0,5)+"..." : item.bookName) : 
+         item.bookName.length > 10 ? item.bookName.slice(0,9)+"..." : item.bookName
+        console.log("sort name ",shortName)
+
         this.props.navigation.setParams({
         bookId:item.bookId,
         bookName:shortName,
@@ -293,17 +296,20 @@ class Bible extends Component {
   }
 
   updateLangVer=async(item)=>{
+    this.setState({selectedReferenceSet: [], showBottomBar: false})
+
     // console.log(" ITEM ",item)
     if(item){
-      console.log(" Book List ",item.books)
+      console.log(" Book List ",item.metadata)
       var bookName = null 
      for(var i = 0 ;i<=item.books.length-1;i++){
        if(item.books[i].bookId == this.props.bookId){
          bookName = item.books[i].bookName
        }
      }
+    //  bookN = bookName != null && 
      this.props.updateMetadata({
-       copyrightHolder:item.metadata[0].copyrightHolder,
+      copyrightHolder:item.metadata[0].copyrightHolder,
       description:item.metadata[0].description,
       license:item.metadata[0].license,
       source:item.metadata[0].source,
@@ -314,12 +320,18 @@ class Bible extends Component {
 
       this.props.updateVersion({language:item.languageName,languageCode:item.languageCode,
       versionCode:item.versionCode,sourceId:item.sourceId,downloaded:item.downloaded})
-      const shortName =  this.props.language.toLowerCase()  == ('malayalam' ||'tamil' || 'kannada') ? (bookName.length > 6 ? bookName.slice(0,5)+"..." : bookName ) : bookName.length > 10 ? bookName.slice(0,9)+"..." : bookName
-      this.props.navigation.setParams({
-      languageName:item.languageName.substring(0,3),
-      versionCode:item.versionCode,
-      bookName: shortName
-      })
+
+      if(bookName != null){
+        const shortName =  this.props.language.toLowerCase()  == ('malayalam' ||'tamil' || 'kannada') ?
+        (bookName.length > 6 ? bookName.slice(0,5)+"..." : bookName) : 
+        bookName.length > 10 ? bookName.slice(0,9)+"..." : bookName
+        console.log("sort name ",shortName)
+       this.props.navigation.setParams({
+       languageName:item.languageName.substring(0,3),
+       versionCode:item.versionCode,
+       bookName: shortName 
+       })
+      }
       this.props.updateVersionBook({
         bookId:this.props.bookId,
         bookName:bookName,
@@ -337,6 +349,7 @@ class Bible extends Component {
     }else{
       return
     }
+
   }
 
   async getDownloadedContent(){
@@ -363,27 +376,32 @@ class Bible extends Component {
 
   async getChapter(){
     try{
-      // console.log(" get chapter ",this.props.downloaded)
-      this.props.navigation.setParams({
-        
-        isBookmark:this.isBookmark()
-      })
-      if(this.props.downloaded){
-        this.getDownloadedContent()
-        }else{
-          var content = await APIFetch.getChapterContent(this.props.sourceId, this.props.bookId, this.state.currentVisibleChapter)
-          this.setState({chapterContent:content.chapterContent.verses,error:null,isLoading:false,currentVisibleChapter:this.state.currentVisibleChapter})
-        }
+      // this.setState({isLoading:true},async()=>{
+        this.props.navigation.setParams({
+          isBookmark:this.isBookmark()
+        })
+        if(this.props.downloaded){
+          this.getDownloadedContent()
+          }else{
+            var content = await APIFetch.getChapterContent(this.props.sourceId, this.props.bookId, this.state.currentVisibleChapter)
+            this.setState({chapterContent:content.chapterContent.verses,error:null,isLoading:false,currentVisibleChapter:this.state.currentVisibleChapter})
+          }
+          // this.setState({isLoading:false})
+      // })
     }
     catch(error){
       this.setState({error:error,isLoading:false,chapterContent:[]})
     }
+    this.setState({selectedReferenceSet: [], showBottomBar: false})
   }
 
   queryBookFromAPI = async(val)=>{
-    this.setState({isLoading:true,currentVisibleChapter: val != null ? JSON.parse(this.state.currentVisibleChapter)  + val : this.state.currentVisibleChapter,error:null },async()=>{
+    this.setState({isLoading:true,selectedReferenceSet: [], showBottomBar: false,currentVisibleChapter: val != null ? JSON.parse(this.state.currentVisibleChapter)  + val : this.state.currentVisibleChapter,error:null },async()=>{
       try{
-      const shortName =  this.props.language.toLowerCase()  == ('malayalam' ||'tamil' || 'kannada') ? (this.props.bookName.length > 6 ? this.props.bookName.slice(0,5)+"..." : this.props.bookName ) : this.props.bookName.length > 10 ? this.props.bookName.slice(0,9)+"..." : this.props.bookName
+      const shortName =  this.props.language.toLowerCase()  == ('malayalam' ||'tamil' || 'kannada') ? 
+      (this.props.bookName.length > 6 ? this.props.bookName.slice(0,5)+"..." : this.props.bookName ) :
+      this.props.bookName.length > 10 ? this.props.bookName.slice(0,9)+"..." : this.props.bookName
+      console.log("sort name ",shortName)
 
             this.props.navigation.setParams({
               languageName:this.props.language.substring(0,3),
@@ -394,7 +412,6 @@ class Bible extends Component {
               numOfChapter:this.props.totalChapters,
               isBookmark:this.isBookmark()
             })
-           
               console.log(" book is downloaded",this.props.downloaded)
               if(this.props.downloaded){
                 if(this.state.downloadedBook.length > 0){
@@ -777,7 +794,7 @@ getNotes(){
 
   _keyExtractor = (item, index) => item.number;
 
-  onSeach=()=>{
+  onSearch=()=>{
     this.props.navigation.navigate('Search')
     // console.log(" HEADER HIDE ",this.state.onSearchHideHeader)
     // this.setState({onSearchHideHeader:!this.state.onSearchHideHeader})
@@ -787,34 +804,26 @@ getNotes(){
     this.props.navigation.setParams({visibleParallelView:value,})
   }
   renderFooter = () => {
+    console.log("licence ",this.props.license)
     if(this.state.chapterContent.length === 0 ){
       return null
     }else{
       return(
-        // <View>
         <View style={this.styles.addToSharefooterComponent}>
-          { 
-          (this.props.license && this.props.copyrightHolder && this.props.technologyPartner) &&
+          {
           <View style ={this.styles.footerView}>
-          <Text style={this.styles.textListFooter}>
-            <Text style={this.styles.footerText}>Copyright:</Text>{' '}{this.props.copyrightHolder}
-          </Text>
-          <Text style={this.styles.textListFooter}>
-          <Text style={this.styles.footerText}>License:</Text>{' '}{this.props.license}
-          </Text>
-          <Text style={this.styles.textListFooter}>
-          <Text style={this.styles.footerText}>Technology partner:</Text>{' '}{this.props.technologyPartner}
-          </Text>
+           {(this.props.revision !==null && this.props.revision !== '') &&  <Text style={this.styles.textListFooter}><Text style={this.styles.footerText}>Copyright:</Text>{' '}{this.props.revision}</Text>}
+           {(this.props.license !==null && this.props.license !=='') && <Text style={this.styles.textListFooter}><Text style={this.styles.footerText}>License:</Text>{' '}{this.props.license}</Text>}
+           {(this.props.technologyPartner !==null && this.props.technologyPartner !=='' )&& <Text style={this.styles.textListFooter}><Text style={this.styles.footerText}>Technology partner:</Text>{' '}{this.props.technologyPartner}</Text>}
           </View>
-        }
+          }
         </View>
-        // </View>
         )
     }
   }
 
   render() {
-    console.log(" COPYRIGHT ",this.props.copyrightHolder)
+    console.log(" COPYRIGHT ",this.props.revision)
     return(
     <View style={this.styles.container}>
       {
@@ -842,13 +851,13 @@ getNotes(){
         <View style={{width:this.props.navigation.getParam("visibleParallelView") ? '50%' :width }}>
           <FlatList
                 data={this.state.chapterContent }
-                contentContainerStyle={this.state.chapterContent.length === 0 ? this.styles.centerEmptySet : {margin:16,marginTop:this.props.navigation.getParam("visibleParallelView") ? 52 : 16}}
+                contentContainerStyle={this.state.chapterContent.length === 0 ? this.styles.centerEmptySet : {margin:16,marginTop:this.props.navigation.getParam("visibleParallelView") ? 48 : 16}}
                 extraData={this.state}
                 showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
                 renderItem={({item, index}) => 
                   <VerseView
-                      // ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
+                      ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
                       verseData = {item}
                       index = {index}
                       styles = {this.styles}
@@ -909,7 +918,7 @@ getNotes(){
                 navigation={this.props.navigation}
             /> }
             {
-              this.props.contentType =='commentary' &&
+              this.props.contentType == 'commentary' &&
               <Commentary 
               toggleParallelView={(value)=>this.toggleParallelView(value)} 
               currentVisibleChapter={this.state.currentVisibleChapter}
@@ -989,7 +998,7 @@ const mapStateToProps = state =>{
     bookName:state.updateVersion.bookName,
     bookId:state.updateVersion.bookId,
 
-    copyrightHolder:state.updateVersion.revision,
+    revision:state.updateVersion.revision,
     license:state.updateVersion.license,
     technologyPartner:state.updateVersion.technologyPartner,
 
@@ -1017,9 +1026,6 @@ const mapDispatchToProps = dispatch =>{
     fetchVersionBooks:(payload)=>dispatch(fetchVersionBooks(payload)),
     updateMetadata:(payload)=>dispatch(updateMetadata(payload)),
     // fetchAllContent:()=>dispatch(fetchAllContent()),
-
-
-
     // fetchDownloadedVersionContent:(payload)=>dispatch(fetchDownloadedVersionContent(payload))
   }
 }
