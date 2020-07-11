@@ -94,7 +94,6 @@ class BibleChapter extends Component {
     }
    
     render(){
-        console.log(" FETCH VERSION BOOKS ",this.props.error)
 
         const bookId = this.state.id
         const value = this.props.books.length !=0 && this.props.books.filter(function (entry){
@@ -119,7 +118,6 @@ class BibleChapter extends Component {
                     <Spinner
                     visible={true}
                     textContent={'Loading...'}
-                    //  textStyle={styles.spinnerTextStyle}
                 />}
                 {
                 (this.props.error) ?

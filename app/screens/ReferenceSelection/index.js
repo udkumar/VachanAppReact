@@ -61,6 +61,9 @@ class ReferenceSelection extends Component {
         chapterNumber: chapterNum > this.state.totalChapters ? '1' : chapterNum,
         totalChapters:this.state.totalChapters,
       })
+      if(this.props.navigation.state.params.parallelContent){
+        this.props.books.length = 0;
+      }
       this.props.navigation.goBack()
     })
   }

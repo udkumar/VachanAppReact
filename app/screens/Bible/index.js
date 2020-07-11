@@ -230,15 +230,12 @@ class Bible extends Component {
         numOfChapter:this.props.totalChapters,
         isBookmark:this.isBookmark()
       })
-      // this.props.updateVersionBook({
-      //   bookId:this.props.bookId,
-      //   bookName:this.props.bookName,
-      //   chapterNumber:this.state.currentVisibleChapter,
-      //   totalChapters:this.props.totalChapters,
-      // })
-      // this.props.updateVersion({language:this.props.language,languageCode:this.props.languageCode,
-      // versionCode:this.props.versionCode,sourceId:this.props.sourceId,downloaded:this.props.downloaded})
-      
+      this.props.fetchVersionBooks({
+        language:this.props.language,
+        versionCode:this.props.versionCode,
+        downloaded:this.props.downloaded,
+        sourceId:this.props.sourceId
+      })
       this.setState({isLoading:false})
     })
     })
@@ -909,7 +906,6 @@ getNotes(){
                 bookName={this.props.bookName}
                 toggleParallelView={(value)=>this.toggleParallelView(value)}
                 totalChapters={this.props.totalChapters}
-                
                 navigation={this.props.navigation}
             /> }
             {
@@ -917,8 +913,6 @@ getNotes(){
               <Commentary 
               toggleParallelView={(value)=>this.toggleParallelView(value)} 
               currentVisibleChapter={this.state.currentVisibleChapter}
-              // commentaryFullScreen={()=>this.props.navigation.navigate('Commentary')}
-              // bookId={this.props.bookId}
             />
             }
             {
@@ -926,7 +920,6 @@ getNotes(){
               <Dictionary 
               toggleParallelView={(value)=>this.toggleParallelView(value)} 
               currentVisibleChapter={this.state.currentVisibleChapter}
-              // bookId={this.props.bookId}
             />
             }
 
