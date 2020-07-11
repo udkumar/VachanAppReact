@@ -8,6 +8,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Share,
+  AppState,
   // ToastAndroid,
   Modal,
   NetInfo,
@@ -50,14 +51,14 @@ class Bible extends Component {
                     />
                     </TouchableOpacity>
                       <TouchableOpacity 
-                        onPress={() =>{navigation.navigate("SelectionTab",{getReference:params.getRef,parallelContent:false,bookId:params.bookId,bookName:params.bookName,chapterNumber:params.currentChapter,totalChapters:params.numOfChapter})}}
+                        onPress={params.navigateToSelectionTab}
                         style={[navStyles.headerLeftStyle,{paddingHorizontal:8}]}> 
                           <Text style={[navStyles.headerTextStyle,{ paddingRight:4}]}>{params.bookName}</Text>
                           <Text style={[navStyles.headerTextStyle,{fontWeight:'bold'}]}>{params.currentChapter }</Text>
                           <Icon name="arrow-drop-down" color={Color.White} size={20} style={{alignSelf:'center'}}/>
                       </TouchableOpacity>
                       <TouchableOpacity 
-                        onPress={() =>{navigation.navigate("LanguageList",{updateLangVer:params.updatelangVer})}}  
+                        onPress={params.navigateToLanguage}  
                         style={[navStyles.headerLeftStyle]}>
                           <Text style={[navStyles.headerTextStyle,{paddingRight:4}]}>{params.languageName}</Text>
                           <Text style={[navStyles.headerTextStyle,{fontWeight:'bold'}]}>{params.versionCode}</Text>
@@ -184,8 +185,8 @@ class Bible extends Component {
     NetInfo.isConnected.addEventListener(
       'connectionChange',
       this._handleConnectivityChange
-
     );
+    AppState.addEventListener('change', this._handleAppStateChange);
   // this._handleConnectivityChange
   // NetInfo.isConnected.fetch().done((isConnected) => {
   //   if(isConnected == true){
@@ -203,6 +204,8 @@ class Bible extends Component {
       onBookmark: this.onBookmarkPress,
       toggleAudio:this.toggleAudio,
       onSearch:this.onSearch,
+      navigateToLanguage:this.navigateToLanguage,
+      navigateToSelectionTab:this.navigateToSelectionTab,
       onSearchHideHeader:this.state.onSearchHideHeader
       // toggleModal:this.setState({modalVisible:!this.state.modalVisible}),
     })
@@ -265,6 +268,17 @@ class Bible extends Component {
       }
     })
   };
+
+  _handleAppStateChange=(currentAppState) =>{
+    if(currentAppState == "background") {
+        this.setState({audio:false,status:false})
+    } 
+    
+    if(currentAppState == "inactive") {
+      this.setState({audio:false,status:false})
+    }
+  }
+
   getReference = async(item)=>{
     this.setState({selectedReferenceSet: [], showBottomBar: false})
 
@@ -785,20 +799,27 @@ getNotes(){
       NetInfo.isConnected.removeEventListener(
         'connectionChange',
         this._handleConnectivityChange
- 
-    );
-    if(this.unsubscriber) {
-      this.unsubscriber();
-    }  
+      )
+      AppState.removeEventListener('change', this._handleAppStateChange);
+      if(this.unsubscriber) {
+        this.unsubscriber();
+      }  
   }
 
   _keyExtractor = (item, index) => item.number;
 
   onSearch=()=>{
     this.props.navigation.navigate('Search')
-    // console.log(" HEADER HIDE ",this.state.onSearchHideHeader)
-    // this.setState({onSearchHideHeader:!this.state.onSearchHideHeader})
-    // this.props.navigation.setParams({onSearchHideHeader:!this.state.onSearchHideHeader})
+  }
+  navigateToLanguage=()=>{
+    this.setState({audio:false,status:false})
+    this.props.navigation.navigate("LanguageList",{updateLangVer:this.updateLangVer})
+  }
+  navigateToSelectionTab=()=>{
+    this.setState({audio:false,status:false})
+    this.props.navigation.navigate("SelectionTab",{getReference:this.getReference,
+      parallelContent:false,bookId:this.props.bookId,bookName:this.props.bookName,
+      chapterNumber:this.props.currentVisibleChapter,totalChapters:this.props.totalChapters})
   }
   toggleParallelView(value){
     this.props.navigation.setParams({visibleParallelView:value,})
@@ -880,9 +901,9 @@ getNotes(){
           <View style={{flex:1}}>
           <ChapterNdAudio
             styles={this.styles}
-            audio={this.state.audio}
+            audio={this.props.navigation.getParam("visibleParallelView") ? false : this.state.audio}
             currentVisibleChapter={this.state.currentVisibleChapter}
-            status={this.state.status}
+            status={this.props.navigation.getParam("visibleParallelView") ? false : this.state.status}
             languageCode={this.props.languageCode}
             versionCode={this.props.versionCode}
             bookId={this.props.bookId}

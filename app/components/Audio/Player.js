@@ -92,11 +92,9 @@ class Player extends Component {
     console.log("PORP   URL .....",this.props.loading,this.props.audioURL)
     const track = this.state.audioFile;
     return (
-      
       <View style={{flex:1}}>
-           {this.props.loading && 
-           <ActivityIndicator style={{alignItems: 'center',justifyContent: 'center',}} size="large" color={Color.Blue_Color}/> }
-           {
+           {this.props.loading ?
+            <ActivityIndicator style={{alignItems: 'center',justifyContent: 'center',}} size="large" color={Color.Blue_Color}/> :  
             this.props.error ? null :
             <View style={this.props.styles.audiocontainer}>
             <Controls
