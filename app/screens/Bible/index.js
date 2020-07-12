@@ -271,11 +271,15 @@ class Bible extends Component {
 
   _handleAppStateChange=(currentAppState) =>{
     if(currentAppState == "background") {
-        this.setState({audio:false,status:false})
+        this.setState({status:false})
     } 
     
     if(currentAppState == "inactive") {
-      this.setState({audio:false,status:false})
+      this.setState({status:false})
+    }
+    if(currentAppState == "active") {
+      // this.fetchAudio()
+      this.setState({status:true})
     }
   }
 
@@ -287,8 +291,8 @@ class Bible extends Component {
       DbQueries.addHistory(this.props.sourceId,this.props.language,this.props.languageCode, 
         this.props.versionCode, item.bookId,item.bookName, JSON.parse(item.chapterNumber), this.props.downloaded, time)
         const shortName =  this.props.language.toLowerCase()  == ('malayalam' ||'tamil') ? 
-        (item.bookName.length > 6 ? item.bookName.slice(0,5)+"..." : item.bookName) : 
-         item.bookName.length > 10 ? item.bookName.slice(0,9)+"..." : item.bookName
+        (item.bookName.length > 4 ? item.bookName.slice(0,3)+"..." : item.bookName) : 
+         item.bookName.length > 8 ? item.bookName.slice(0,7)+"..." : item.bookName
         console.log("sort name ",shortName)
 
         this.props.navigation.setParams({
@@ -337,8 +341,8 @@ class Bible extends Component {
 
       if(bookName != null){
         const shortName =  this.props.language.toLowerCase()  == ('malayalam' ||'tamil' || 'kannada') ?
-        (bookName.length > 6 ? bookName.slice(0,5)+"..." : bookName) : 
-        bookName.length > 10 ? bookName.slice(0,9)+"..." : bookName
+        (bookName.length > 4 ? bookName.slice(0,3)+"..." : bookName) : 
+        bookName.length > 8 ? bookName.slice(0,7)+"..." : bookName
         console.log("sort name ",shortName)
        this.props.navigation.setParams({
        languageName:item.languageName.substring(0,3),
@@ -413,8 +417,8 @@ class Bible extends Component {
     this.setState({isLoading:true,selectedReferenceSet: [], showBottomBar: false,currentVisibleChapter: val != null ? JSON.parse(this.state.currentVisibleChapter)  + val : this.state.currentVisibleChapter,error:null },async()=>{
       try{
       const shortName =  this.props.language.toLowerCase()  == ('malayalam' ||'tamil' || 'kannada') ? 
-      (this.props.bookName.length > 6 ? this.props.bookName.slice(0,5)+"..." : this.props.bookName ) :
-      this.props.bookName.length > 10 ? this.props.bookName.slice(0,9)+"..." : this.props.bookName
+      (this.props.bookName.length > 4 ? this.props.bookName.slice(0,3)+"..." : this.props.bookName) :
+      this.props.bookName.length > 8 ? this.props.bookName.slice(0,7)+"..." : this.props.bookName
       console.log("sort name ",shortName)
 
             this.props.navigation.setParams({
@@ -812,11 +816,11 @@ getNotes(){
     this.props.navigation.navigate('Search')
   }
   navigateToLanguage=()=>{
-    this.setState({audio:false,status:false})
+    this.setState({status:false})
     this.props.navigation.navigate("LanguageList",{updateLangVer:this.updateLangVer})
   }
   navigateToSelectionTab=()=>{
-    this.setState({audio:false,status:false})
+    this.setState({status:false})
     this.props.navigation.navigate("SelectionTab",{getReference:this.getReference,
       parallelContent:false,bookId:this.props.bookId,bookName:this.props.bookName,
       chapterNumber:this.props.currentVisibleChapter,totalChapters:this.props.totalChapters})
@@ -901,7 +905,7 @@ getNotes(){
           <View style={{flex:1}}>
           <ChapterNdAudio
             styles={this.styles}
-            audio={this.props.navigation.getParam("visibleParallelView") ? false : this.state.audio}
+            audio={this.state.audio}
             currentVisibleChapter={this.state.currentVisibleChapter}
             status={this.props.navigation.getParam("visibleParallelView") ? false : this.state.status}
             languageCode={this.props.languageCode}
