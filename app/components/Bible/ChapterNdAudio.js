@@ -41,7 +41,7 @@ const ChapterNdAudio = ({
             <Icon name={'chevron-right'} color={Color.Blue_Color} size={navigation.getParam("visibleParallelView") ? 16 : 32} 
                 style={styles.bottomBarChevrontIcon} 
                 onPress={()=>queryBookFromAPI(1)}
-                />
+            />
         </View>
         }
         </View>

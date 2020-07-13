@@ -848,7 +848,7 @@ getNotes(){
   }
 
   render() {
-    console.log(" COPYRIGHT ",this.props.revision)
+    console.log(" chapter Content ",this.state.chapterContent)
     return(
     <View style={this.styles.container}>
       {

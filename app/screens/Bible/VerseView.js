@@ -81,17 +81,14 @@ class VerseView extends Component {
   render() {
     let obj = this.props.chapterNumber + '_' + this.props.index + '_' + this.props.verseData.number+ '_' +this.props.verseData.text;
     let isSelect = this.has(this.props.selectedReferences, obj)
-    // console.log("is selected ",isSelect)
     let isHighlight = this.isHighlight()
-    // let isNoted = this.isNoted()
       if(this.props.verseData.number == 1){
-        // console.log("this.props.verseData.number")
         return (
           <Text style ={this.props.styles.textStyle} onPress={() => {this.onPress()}}  
           >
-            <Text style={this.props.styles.sectionHeading}>
-              {this.props.verseData.metadata ? (this.props.verseData.metadata[0].section && this.props.verseData.metadata[0].section.text+"\n"): null }
-            </Text>
+          <Text style={this.props.styles.sectionHeading}>
+            {this.props.verseData.metadata ? (this.props.verseData.metadata[0].section && this.props.verseData.metadata[0].section.text+"\n") : null }
+          </Text>
           <Text style={this.props.styles.verseChapterNumber}>
         {this.props.chapterNumber}{" "}
           </Text>
@@ -112,11 +109,10 @@ class VerseView extends Component {
       }
         return (
           <Text style ={this.props.styles.textStyle} onPress={() => {this.onPress()}} 
-            onLayout={object => this.props.itemHeights = object.nativeEvent.layout.height}
             >
-              <Text style={this.props.styles.sectionHeading}>
-              {this.props.verseData.metadata ? (this.props.verseData.metadata[0].section && this.props.verseData.metadata[0].section.text+"\n"): null }
-              </Text>
+          <Text style={this.props.styles.sectionHeading}>
+          {this.props.verseData.metadata ? (this.props.verseData.metadata[0].section && this.props.verseData.metadata[0].section.text+"\n"): null }
+          </Text>
             <Text style={this.props.styles.verseNumber}>
               {this.props.verseData.number}{" "}
             </Text>

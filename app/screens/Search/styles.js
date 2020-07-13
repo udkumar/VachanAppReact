@@ -11,7 +11,9 @@ export const searchStyle =(colorFile, sizeFile) =>{
             flex:1
         },
         ListEmptyContainer:{
-            alignSelf:'center'
+            justifyContent:'center',
+            alignItems:'center',
+
         },
         searchedDataContainer:{
             margin:8,

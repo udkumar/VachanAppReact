@@ -328,7 +328,7 @@ searchedData = ({item,index}) => {
         </View>
         <Text style={this.styles.textLength}>{text}</Text>
         {
-        this.state.tabsData.length > 0 &&
+        this.state.searchedResult.length > 0 &&
         <View>
           {/* <Text>{applyBoldStyle}</Text> */}
         <SearchTab
