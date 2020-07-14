@@ -76,10 +76,12 @@ class VerseView extends Component {
         return (
         <Text style ={this.props.styles.textStyle}>
         {
-          this.props.chapterHeader !== null &&
+          this.props.chapterHeader !== null ?
           <Text style={this.props.styles.sectionHeading}>
             {this.props.chapterHeader } {"\n"}
           </Text>
+          :
+          null
         }
         <Text onPress={() => {this.onPress()}}>
           <Text style={this.props.styles.verseChapterNumber}>
@@ -98,10 +100,11 @@ class VerseView extends Component {
         </Text> 
         </Text>
         {
-        this.props.verseData.metadata &&
-          <Text style={this.props.styles.sectionHeading}>
-             {"\n"} {(this.props.verseData.metadata[0].section && this.props.verseData.metadata[0].section.text) } 
-          </Text>
+        (this.props.verseData.metadata && this.props.verseData.metadata[0].section) ?
+        <Text style={this.props.styles.sectionHeading}>
+          {"\n"} {this.props.verseData.metadata[0].section.text } 
+        </Text>
+        : null
         }
         {/* {isNoted ? <Icon name="note-outline" size={20} style={{padding:8}} /> :null}  */}
           </Text>
@@ -126,10 +129,11 @@ class VerseView extends Component {
               </Text>  
             </Text>
             {
-            this.props.verseData.metadata &&
+            (this.props.verseData.metadata && this.props.verseData.metadata[0].section) ?
               <Text style={this.props.styles.sectionHeading}>
-                {"\n"} {(this.props.verseData.metadata[0].section && this.props.verseData.metadata[0].section.text) } 
+                {"\n"} {this.props.verseData.metadata[0].section.text } 
               </Text>
+            : null
             }
             {/* {isNoted ? <Icon name="note-outline" size={20} style={{padding:8}} /> :null}  */}
           </Text>
