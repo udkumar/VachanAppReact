@@ -119,6 +119,7 @@ class Bible extends Component {
       downloadedBook:[],
       audio:false,
       chapterContent:[],
+      chapterHeader:null,
       error:null,
       isLoading: false,
       showBottomBar: false,
@@ -400,10 +401,15 @@ class Bible extends Component {
         })
         if(this.props.downloaded){
           this.getDownloadedContent()
-          }else{
+        }else{
             var content = await APIFetch.getChapterContent(this.props.sourceId, this.props.bookId, this.state.currentVisibleChapter)
-            this.setState({chapterContent:content.chapterContent.verses,error:null,isLoading:false,currentVisibleChapter:this.state.currentVisibleChapter})
-          }
+            if(content){
+              var header  = content.chapterContent.metadata && 
+              (content.chapterContent.metadata[0].section && content.chapterContent.metadata[0].section.text) 
+              console.log(" CHAPTER METADATA  ",header)
+              this.setState({chapterHeader:header,chapterContent:content.chapterContent.verses,error:null,isLoading:false,currentVisibleChapter:this.state.currentVisibleChapter})
+            }
+        }
           // this.setState({isLoading:false})
       // })
     }
@@ -445,8 +451,13 @@ class Bible extends Component {
               }else{
                 try{
                   var content = await APIFetch.getChapterContent(this.props.sourceId, this.props.bookId, this.state.currentVisibleChapter)
-                  this.setState({chapterContent:content.chapterContent.verses,isLoading:false,currentVisibleChapter:this.state.currentVisibleChapter})
-                  this.props.navigation.setParams({numOfVerse:content.chapterContent.verses.length})
+                  if(content){
+                    var header  = content.chapterContent.metadata && 
+                    (content.chapterContent.metadata[0].section && content.chapterContent.metadata[0].section.text) 
+                    console.log(" CHAPTER METADATA ",header)
+                    this.setState({chapterHeader:header,chapterContent:content.chapterContent.verses,isLoading:false,currentVisibleChapter:this.state.currentVisibleChapter})
+                    this.props.navigation.setParams({numOfVerse:content.chapterContent.verses.length})
+                  }
                 }
                 catch(error){
                   console.log("erorr ",error)
@@ -848,7 +859,7 @@ getNotes(){
   }
 
   render() {
-    console.log(" chapter Content ",this.state.chapterContent)
+    // console.log(" chapter Content ",this.state.chapterContent)
     return(
     <View style={this.styles.container}>
       {
@@ -884,6 +895,7 @@ getNotes(){
                   <VerseView
                       ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
                       verseData = {item}
+                      chapterHeader={this.state.chapterHeader}
                       index = {index}
                       styles = {this.styles}
                       selectedReferences = {this.state.selectedReferenceSet}

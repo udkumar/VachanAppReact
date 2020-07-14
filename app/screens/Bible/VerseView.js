@@ -1,20 +1,10 @@
 import React, { Component } from 'react';
 import {
-  StyleSheet,
   Text,
-  View,
-  Animated
 } from 'react-native';
-const Constants = require('../../utils/constants')
 import {connect} from 'react-redux'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { array } from 'prop-types';
-
 import {getResultText}  from  '../../utils/UtilFunctions'
   
-// import { styles } from './styles.js';
-
-
 class VerseView extends Component {
   constructor(props){
     super(props)
@@ -84,15 +74,46 @@ class VerseView extends Component {
     let isHighlight = this.isHighlight()
       if(this.props.verseData.number == 1){
         return (
-          <Text style ={this.props.styles.textStyle} onPress={() => {this.onPress()}}  
-          >
+        <Text style ={this.props.styles.textStyle}>
+        {
+          this.props.chapterHeader !== null &&
           <Text style={this.props.styles.sectionHeading}>
-            {this.props.verseData.metadata ? (this.props.verseData.metadata[0].section && this.props.verseData.metadata[0].section.text+"\n") : null }
+            {this.props.chapterHeader } {"\n"}
           </Text>
+        }
+        <Text onPress={() => {this.onPress()}}>
           <Text style={this.props.styles.verseChapterNumber}>
-        {this.props.chapterNumber}{" "}
+            {this.props.chapterNumber}{" "}
           </Text>
-        <Text style={ [isSelect && isHighlight 
+          <Text style={ [isSelect && isHighlight 
+            ? this.props.styles.verseTextSelectedHighlighted 
+            : !isSelect && !isHighlight 
+            ? this.props.styles.verseTextNotSelectedNotHighlighted
+            : !isSelect && isHighlight
+            ? this.props.styles.verseTextNotSelectedHighlighted
+            : this.props.styles.verseTextSelectedNotHighlighted,
+          ]}
+          >
+          {getResultText(this.props.verseData.text)}
+        </Text> 
+        </Text>
+        {
+        this.props.verseData.metadata &&
+          <Text style={this.props.styles.sectionHeading}>
+             {"\n"} {(this.props.verseData.metadata[0].section && this.props.verseData.metadata[0].section.text) } 
+          </Text>
+        }
+        {/* {isNoted ? <Icon name="note-outline" size={20} style={{padding:8}} /> :null}  */}
+          </Text>
+        )
+      }
+        return (
+          <Text style ={this.props.styles.textStyle} onPress={() => {this.onPress()}} >
+            <Text>
+              <Text style={this.props.styles.verseNumber}>
+                {this.props.verseData.number}{" "}
+              </Text>
+              <Text style={[isSelect && isHighlight 
                 ? this.props.styles.verseTextSelectedHighlighted 
                 : !isSelect && !isHighlight 
                 ? this.props.styles.verseTextNotSelectedNotHighlighted
@@ -100,33 +121,16 @@ class VerseView extends Component {
                 ? this.props.styles.verseTextNotSelectedHighlighted
                 : this.props.styles.verseTextSelectedNotHighlighted,
               ]}
-                >
-          {getResultText(this.props.verseData.text)}
-        </Text> 
-        {/* {isNoted ? <Icon name="note-outline" size={20} style={{padding:8}} /> :null}  */}
-          </Text>
-        )
-      }
-        return (
-          <Text style ={this.props.styles.textStyle} onPress={() => {this.onPress()}} 
-            >
-          <Text style={this.props.styles.sectionHeading}>
-          {this.props.verseData.metadata ? (this.props.verseData.metadata[0].section && this.props.verseData.metadata[0].section.text+"\n"): null }
-          </Text>
-            <Text style={this.props.styles.verseNumber}>
-              {this.props.verseData.number}{" "}
-            </Text>
-            <Text style={[isSelect && isHighlight 
-                    ? this.props.styles.verseTextSelectedHighlighted 
-                    : !isSelect && !isHighlight 
-                    ? this.props.styles.verseTextNotSelectedNotHighlighted
-                    : !isSelect && isHighlight
-                    ? this.props.styles.verseTextNotSelectedHighlighted
-                    : this.props.styles.verseTextSelectedNotHighlighted,
-                  ]}
               >
-              {getResultText(this.props.verseData.text) } 
-            </Text>   
+                {getResultText(this.props.verseData.text) } 
+              </Text>  
+            </Text>
+            {
+            this.props.verseData.metadata &&
+              <Text style={this.props.styles.sectionHeading}>
+                {"\n"} {(this.props.verseData.metadata[0].section && this.props.verseData.metadata[0].section.text) } 
+              </Text>
+            }
             {/* {isNoted ? <Icon name="note-outline" size={20} style={{padding:8}} /> :null}  */}
           </Text>
         )
