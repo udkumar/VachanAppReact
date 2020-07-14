@@ -1,11 +1,13 @@
 
 import { FETCH_PARALLEL_BIBLE } from '../../action/actionsType'
-import {parallelBibleSuccess,parallelBiblefailure}  from '../../action/'
+import {parallelBibleSuccess,parallelBiblefailure,}  from '../../action/'
 import { put, takeLatest, call,fork,all } from 'redux-saga/effects'
 import fetchApi from '../../api';
 import DbQueries from '../../../utils/dbQueries'
 // 
 const API_BASE_URL = 'https://api.vachanonline.net/v1/'
+
+
 
   function* fetchParalleBible(params) {
     try {

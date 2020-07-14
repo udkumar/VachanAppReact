@@ -9,6 +9,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin';  
 import { AccessToken, LoginManager,LoginButton } from 'react-native-fbsdk';
 import {styles} from './styles.js'
+import Color from '../../utils/colorConstants'
 
  class Login extends Component {
     static navigationOptions = {
@@ -33,7 +34,7 @@ import {styles} from './styles.js'
 
     login = async() => {
       if(this.state.email === '' && this.state.password === '') {
-        // Alert.alert('Enter details to signin!')
+        Alert.alert('Please enter email and password !')
       } else {
         this.setState({
           isLoading: true,
@@ -42,14 +43,13 @@ import {styles} from './styles.js'
         .auth()
         .signInWithEmailAndPassword(this.state.email, this.state.password)
         .then((res) => {
-          console.log(res)
+          console.log("signInWithEmailAndPassword",res.emailVerified)
+          
           // this.props.userInfo({email:user._user.email,uid:user._user.uid,
           // userName:user._user.displayName,phoneNumber:null,photo:user._user.photoURL})
           this.props.navigation.navigate("Bible")
           this.setState({
             isLoading: false,
-            email: '', 
-            password: ''
           })
         })
         .catch(error => {
@@ -63,6 +63,9 @@ import {styles} from './styles.js'
           if(error.code === 'auth/invalid-email'){
             Alert.alert("Invalid Email")
           }
+          if(error.code === 'auth/unknown'){
+            Alert.alert("Something went wrong. Please check your internet connection")
+          }
           this.setState({isLoading:false })
         })
       }
@@ -71,26 +74,33 @@ import {styles} from './styles.js'
     _signInGoogle = () => {
       GoogleSignin.signIn()
         .then((data) => {
-          // console.log(" USER GOOGLE DATA ",data)
-
+          console.log(" USER GOOGLE sign in ",data)
+          this.setState({isLoading:true},()=>{
+            const credential = firebase.auth.GoogleAuthProvider.credential(data.idToken, data.accessToken);
+            // Login with the credential
+            return firebase.auth().signInWithCredential(credential);
+          })
           // Create a new Firebase credential with the token
-          const credential = firebase.auth.GoogleAuthProvider.credential(data.idToken, data.accessToken);
-          // Login with the credential
-          return firebase.auth().signInWithCredential(credential);
+          
         })
         .then((res) => {
-          this.props.navigation.navigate("Bible")
+          this.setState({isLoading:true},()=>{
+            this.setState({isLoading:false})
+            this.props.navigation.navigate("Bible")
+          })
+          console.log(" Google Response ")
           // this.props.userInfo({email:res.user._user.email,uid:res.user._user.uid,userName:res.user._user.displayName,phoneNumber:null,photo:res.user._user.photoURL})
           // If you need to do anything with the user, do it here
           // The user will be logged in automatically by the
-          // `onAuthStateChanged` listener we set up in App.js earlier
+          // `onAuthStateChanged` listener we set up in BIble.js earlier
         })
         .catch((error) => {
-          const { code, message } = error;
+          console.log(" Google ERROR ",error)
+          // const { code, message } = error;
           // console.log("ERROR ",error)
           // For details of error codes, see the docs
           // The message contains the default Firebase string
-          // representation of the error
+          // representation of the error                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
         });
     }
 
@@ -110,11 +120,14 @@ import {styles} from './styles.js'
           return firebase.auth().signInWithCredential(credential);
         })
         .then((res) => {
-          this.props.navigation.navigate("Bible")
-          // this.props.userInfo({email:res.user._user.email,uid:res.user._user.uid,userName:res.user._user.displayName,phoneNumber:null,photo:res.user._user.photoURL})
-          // console.log(" USER facbook user ",user)
+          this.setState({isLoading:true},()=>{
+            this.setState({isLoading:false})
+            this.props.navigation.navigate("Bible")
+          })
+          
         })
         .catch((error) => {
+          console.log("ERROR FACEBOOK ",error)
           const { code, message } = error;
           // For details of error codes, see the docs
           // The message contains the default Firebase string
@@ -123,7 +136,7 @@ import {styles} from './styles.js'
     }
     componentDidMount(){
       GoogleSignin.configure({
-        scopes: ['https://www.googleapis.com/auth/drive.readonly'], // what API you want to access on behalf of the user, default is email and profile
+        // scopes: ['https://www.googleapis.com/auth/drive.readonly'], // what API you want to access on behalf of the user, default is email and profile
         webClientId: '486797934259-gkdusccl094153bdj8cbugfcf5tqqb4j.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
         offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
         hostedDomain: '', // specifies a hosted domain restriction
@@ -137,7 +150,7 @@ import {styles} from './styles.js'
       if(this.state.isLoading){
         return(
           <View style={this.styles.preloader}>
-            <ActivityIndicator size="large" color="#3E4095"/>
+            <ActivityIndicator size="large" color={Color.Blue_Color}/>
           </View>
         )
       }    
@@ -155,7 +168,7 @@ import {styles} from './styles.js'
             style={{width: 50,height: 50,marginVertical:16}}
             source={require('../../assets/bcs_old_favicon.png')}
           />
-            <Text style={{fontSize:26,color:'#3E4095',fontWeight:'bold'}}>Sign In</Text>
+            <Text style={{fontSize:26,color:Color.Blue_Color,fontWeight:'bold'}}>Sign In</Text>
           </View> 
           <View style={{
             flexDirection: "column",
@@ -182,7 +195,7 @@ import {styles} from './styles.js'
           <Icon name={this.state.passwordVisible ? 'eye' : 'eye-off'} size={24} style={this.styles.eyeIcon} onPress={()=>this.setState({passwordVisible:!this.state.passwordVisible})}/>
           </View>
           <Button
-            color="#3E4095"
+            color={Color.Blue_Color}
             title="Signin"
             onPress={() => this.login()}
           />   
@@ -202,21 +215,22 @@ import {styles} from './styles.js'
             style={this.styles.dividerLine}
           />
           </View>
-          <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
-          {/* <GoogleSigninButton
-              size={GoogleSigninButton.Size.Icon}
-              color={GoogleSigninButton.Color.Dark}
-              onPress={this._signInGoogle}
-              disabled={this.state.isSigninInProgress} /> */}
+          <View style={{flex:1,alignItems:'center',justifyContent:'center',marginVertical:32}}>
+          <GoogleSigninButton
+            style={{width: 68, height: 68}}
+            size={GoogleSigninButton.Size.Icon}
+            color={GoogleSigninButton.Color.Dark}
+            onPress={this._signInGoogle}
+          />
+          </View>
+          {/* <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
             <TouchableOpacity onPress={this._signInGoogle}>
-              <Icon name="google" size={38} color="#DB4437"/>
-            {/* <Text> Login With Google </Text>     */}
+              <Icon name="google" size={38} color={Color.Google_Color}/>
             </TouchableOpacity>
             <TouchableOpacity onPress={this._signInFacebook}>
-            <Icon name="facebook" size={38} color="#3b5998"/>
-              {/* <Text> Login With Facebook </Text>           */}
+            <Icon name="facebook" size={38} color={Color.Facebook_Color}/>
             </TouchableOpacity>
-          </View>
+          </View> */}
           <Text 
             style={this.styles.loginText}
             onPress={() => this.props.navigation.navigate('Register')}>

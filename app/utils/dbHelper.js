@@ -438,6 +438,7 @@ class DbHelper {
 	}
 
 	async addHistory(sourceId,langName,langCode, verCode, bId,bookName, cNum,downloaded, timeStamp) {
+		console.log("ADD HISTORY BOOK NAME ",bookName)
 		let realm = await this.getRealm();
 		if (realm) {
 			realm.write(() => {
@@ -488,15 +489,33 @@ class DbHelper {
 		})
 	}
 
-	async addLangaugeList(languages){
+	async addLangaugeList(languages,books){
 		let realm = await this.getRealm()
 		
 		if(realm){
 			for(var i=0; i<languages.length; i++){
-				console.log(" LANGUAGE TO ADD TO DATABASE ",languages[i])
-				realm.write(() => {
-					realm.create('LanguageModel',languages[i])
-				})
+				for(var j=0;j<books.length;j++){
+				var bookArr = []
+					if(languages[i].languageName.toLowerCase() == books[j].language.name){
+						for(var k=0;k<books[j].bookNames.length;k++){
+							const bookObj={
+								bookId:books[j].bookNames[k].book_code,
+								bookName:books[j].bookNames[k].short,
+								bookNumber:books[j].bookNames[k].book_id,
+							}
+							bookArr.push(bookObj)
+						}
+						var bookList =  bookArr.sort(function(a, b){return a.bookNumber - b.bookNumber})
+						realm.write(() =>{
+							realm.create('LanguageModel',{
+								languageName:languages[i].languageName ,
+								languageCode:languages[i].languageCode,
+								versionModels: languages[i].versionModels,
+								bookNameList:bookList,
+							})
+						})
+					}
+				}
 			}
 		}
 	}
@@ -538,16 +557,15 @@ class DbHelper {
 	// 	}
 	// }
 	//get all available booklist
-	async getDownloadedBook(langName,verCode){
-		console.log("languaeg name ",langName,"version code ",verCode)
+	async getDownloadedBook(langName){
 		let realm = await this.getRealm();
 		console.log("realm ",realm)
 		if(realm){
 			console.log("realm  inside")
 					let result = realm.objectForPrimaryKey("LanguageModel", langName);
-					let resultsA = result.versionModels;
-					let resultB = resultsA.filtered('versionCode == "'+verCode+'" ');
-					return resultB[0].bookNameList
+					let resultsA = result.bookNameList;
+					// let resultB = resultsA.filtered('versionCode == "'+verCode+'" ');
+					return resultsA
 		}
 	}
 	//download version
@@ -566,19 +584,23 @@ class DbHelper {
 			}
 			else{
 			var bookIdList =[]
+			console.log("VERSION BOOK ",resultBoook.length)
+
 			if(resultBoook.length == 0){
+				console.log("VERSION BOOK is zero ",resultBoook.length)
 				// direct adding data to db 
 				realm.write(() => {
 						for(var i=0;i<bookmodel.length;i++){
 						realm.create('BookModel', bookmodel[i])
 						bookIdList.push({bookId:bookmodel[i].bookId,bookName:bookmodel[i].bookName,bookNumber:bookmodel[i].bookNumber})
 						}
-					resultsB[0].bookNameList = bookIdList
+					// resultsB[0].bookNameList = bookIdList
 					resultsB[0].downloaded = true;
 				})
 			}
 			else{
-			console.log("some book is there ")
+				console.log("VERSION BOOK is not zero ",resultBoook.length)
+
 			var found = false;
 			for(var i=0;i<resultBoook.length;i++){
 				console.log("book is version Code  " ,resultBoook[i].languageName)
@@ -587,17 +609,17 @@ class DbHelper {
 					found = true
 				}
 			}
-			// if(found==false){
-			// 	console.log("add version ")
-			// 		realm.write(() => {
-			// 			for(var i=0;i<bookmodel.length;i++){
-			// 			realm.create('BookModel', bookmodel[i])
-			// 		}
-			// 		resultsB[0].bookNameList = bookmodel[i].bookId
-			// 		resultsA[0].downloaded = true;
-			// 		})
+			if(found==false){
+				console.log("add version ")
+					realm.write(() => {
+						for(var i=0;i<bookmodel.length;i++){
+						realm.create('BookModel', bookmodel[i])
+					}
+					// resultsB[0].bookNameList = bookmodel[i].bookId
+					resultsA[0].downloaded = true;
+					})
 					
-			// }
+			}
 		}
 		
 	}

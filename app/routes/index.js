@@ -24,29 +24,21 @@ import LanguageList from '../screens/LanguageList'
 import SelectionTab from '../screens/ReferenceSelection/'
 import BookMarks from '../screens/Bookmarks/';
 import Infographics from '../screens/StudyHelp/InfoGraphics/';
-
+import Color  from '../utils/colorConstants'
 const NavStack = createStackNavigator(
   {  
       Bible:{
         screen:Bible,
         navigationOptions: ({ navigation }) => ({
-          // title: null,  // Title to appear in status bar
-          // header:null,
-          // headerLeft :<MenuIcon navigate={navigation.navigate}/>,
-          headerTintColor: '#fff',
+          headerTintColor: Color.White,
           headerTitleStyle: {
             fontWeight: 'bold',
           },
-          
-           
         })
-      
       },
-      Search: { screen: Search,
-
-       },
+      Search: { screen: Search},
       SelectionTab:{screen:SelectionTab,
-        navigationOptions: { headerTitle:"Select Chapter" }
+        navigationOptions: { headerTitle:null }
       },
       Notes:{ screen:Notes
       },
@@ -96,15 +88,15 @@ const NavStack = createStackNavigator(
     // headerMode: 'none',
     defaultNavigationOptions: {
       headerStyle: {
-          backgroundColor: "#3E4095",
+          backgroundColor:Color.Blue_Color,
           elevation: 0,
           shadowOpacity: 0,
           // height:40
       },
-      headerTintColor: '#fff',
+      headerTintColor: Color.White,
       headerTitleStyle: {
           fontWeight: 'bold',
-          color: '#ffffff'
+          color: Color.White
       }
   },
   

@@ -1,6 +1,7 @@
 import {StyleSheet,Dimensions} from 'react-native'
 import { Icon } from 'native-base';
 const width = Dimensions.get('window').width;
+import Color from '../../utils/colorConstants'
 
 export const aboutPage =(colorFile, sizeFile) =>{
     return StyleSheet.create({
@@ -12,7 +13,7 @@ export const aboutPage =(colorFile, sizeFile) =>{
                 fontSize:sizeFile.contentText,
                 color:colorFile.textColor,
                 lineHeight:sizeFile.lineHeight,
-                flexShrink: 1 
+                // flexShrink: 1 ,
         },
         textContainer:{
             margin:16,
@@ -30,7 +31,7 @@ export const aboutPage =(colorFile, sizeFile) =>{
             fontWeight:"bold"
         },
         linkText:{
-                color: 'red',
+                color: Color.Red,
                 textDecorationLine:'underline',
                 fontSize:sizeFile.contentText
         },
@@ -40,16 +41,19 @@ export const aboutPage =(colorFile, sizeFile) =>{
         TitleText:{
             paddingVertical:12,
             fontSize:sizeFile.titleText,
-            color:'#3E4095',
+            // color:Color.Blue_Color,
+            color:colorFile.sectionHeading,
             letterSpacing: 1.2,
-            flexShrink: 1 
+            lineHeight:sizeFile.lineHeight
+            // flexShrink: 1 
             // color:colorFile.textColor,
         },
         bulletIcon:{
             fontSize:26,
             color:colorFile.iconColor,
-            flexShrink: 1 
+            lineHeight:sizeFile.lineHeight,
 
+            // flexShrink: 1,
         }
     })
 

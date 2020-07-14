@@ -14,6 +14,7 @@ import { SelectBookPageStyle } from './styles.js';
 import {AsyncStorageConstants} from '../../../utils/AsyncStorageConstants'
 import {connect} from 'react-redux'
 import Spinner from 'react-native-loading-spinner-overlay';
+import Color from '../../../utils/colorConstants'
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 
@@ -125,7 +126,7 @@ renderItem = ({item, index})=> {
             </Text>
             <Icon 
               name='chevron-right' 
-              color="gray" 
+              color={Color.Gray} 
               style={this.styles.iconCustom}
               />
           </View>
@@ -145,10 +146,9 @@ renderItem = ({item, index})=> {
       }
   }
 
-
   render(){
-    let activeBgColor = this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#3F51B5' : '#fff'
-    let inactiveBgColor =  this.state.colorMode == AsyncStorageConstants.Values.DayMode ? '#fff' : '#3F51B5'
+    let activeBgColor = this.state.colorMode == AsyncStorageConstants.Values.DayMode ? Color.Blue_Color : Color.White
+    let inactiveBgColor =  this.state.colorMode == AsyncStorageConstants.Values.DayMode ? Color.White : Color.Blue_Color
     return (
       <View style={this.styles.container}>
       {this.props.isLoading ? 
@@ -216,7 +216,7 @@ renderItem = ({item, index})=> {
             />
         </View> 
       }
-     {(this.props.books && this.props.books.length > 0) && <Icon name="check-circle" color='rgba(62, 64, 149, 0.8)' onPress={()=>this.props.screenProps.updateSelectedVerse(null,null)}  size={64} style={{position:'absolute',bottom:0,right:0,padding:20}}/>}
+     {(this.props.books && this.props.books.length > 0) && <Icon name="check-circle" color='rgba(62, 64, 149, 0.8)' onPress={()=>this.props.screenProps.updateSelectedChapter(null,null)}  size={64} style={{position:'absolute',bottom:0,right:0,padding:20}}/>}
       </View>
     );
   }

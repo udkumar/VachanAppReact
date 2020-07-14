@@ -10,17 +10,12 @@ import {
 import {connect} from 'react-redux'
 import {SelectionTab} from './routes/index'
 import {fetchVersionBooks} from '../../store/action/'
-import { getBookNumOfVersesFromMapping } from '../../utils/UtilFunctions';
 import Spinner from 'react-native-loading-spinner-overlay';
 import APIFetch from '../../utils/APIFetch'
-
-
+import ReloadButton from '../../components/ReloadButton';
+import { styles } from  './styles';
 
 class ReferenceSelection extends Component {
-
-  static navigationOptions = {
-    headerTitle: 'Select Reference',
-  };
 
   constructor(props){
     super(props)
@@ -37,7 +32,6 @@ class ReferenceSelection extends Component {
       
       selectedVerseIndex: 0,
       selectedVerseNumber: '',
-      totalVerses:this.props.navigation.state.params.totalVerses
 
     }
     this.alertPresent =false
@@ -51,32 +45,27 @@ class ReferenceSelection extends Component {
         selectedBookId: item.bookId, 
         selectedBookName: item.bookName, 
         totalChapters: item.numOfChapters,
-        totalVerses:getBookNumOfVersesFromMapping(item.bookId,this.state.selectedChapterNumber)
     })
   }
 
-  updateSelectedChapter = (chapterNumber,index) => {
-    console.log("selectedChapterIndex , selectedChapterNumber",index,chapterNumber)
-    this.setState({
-        selectedChapterIndex: index, 
-        selectedChapterNumber: chapterNumber,
-        totalVerses:getBookNumOfVersesFromMapping(this.state.selectedBookId,chapterNumber)
+  updateSelectedChapter = (chapter, index) => {
+    var chapterNum = chapter === null ?  this.state.selectedChapterNumber : chapter
+    console.log("CHAPTER NUMBER ",chapter , "chapter number ",chapterNum,"selected book name" ,this.state.selectedBookName)
+    // this.state.selectedChapterNumber > this.state.totalChapters ? '1' : chapterNum,
+    this.setState({selectedChapterNumber:chapterNum,
+      selectedChapterIndex:index !=null && index,
+    },()=>{
+      this.props.navigation.state.params.getReference({
+        bookId:this.state.selectedBookId,
+        bookName:this.state.selectedBookName,
+        chapterNumber: chapterNum > this.state.totalChapters ? '1' : chapterNum,
+        totalChapters:this.state.totalChapters,
+      })
+      if(this.props.navigation.state.params.parallelContent){
+        this.props.books.length = 0
+      }
+      this.props.navigation.goBack()
     })
-  }
-
-  updateSelectedVerse = (verseNumber, index) => {
-    
-    this.setState({selectedVerseIndex:index !=null && index, selectedVerseNumber: verseNumber})
-    // pop current screen, and pass data
-
-    this.props.navigation.state.params.getReference({
-      bookId:this.state.selectedBookId,bookName:this.state.selectedBookName,
-      chapterNumber:this.state.selectedChapterNumber > this.state. totalChapters ? '1' :this.state.selectedChapterNumber,
-      totalChapters:this.state.totalChapters,
-      totalVerses:this.state.totalVerses,
-      verseNumber:verseNumber !=null &&  verseNumber 
-    })
-      this.props.navigation.pop()
   }
   async componentDidMount(){
     if(this.props.navigation.state.params.parallelContent){
@@ -100,11 +89,19 @@ class ReferenceSelection extends Component {
         }
     }
   }
+  
   reloadBooks=()=>{
     this.errorMessage()
-    this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,downloaded:this.props.downloaded,sourceId:this.props.sourceId})
+    if(this.props.navigation.state.params.parallelContent){
+      this.props.fetchVersionBooks({language:this.props.parallelContentLanguage,versionCode:this.props.parallelContentVersionCode,downloaded:false,sourceId:this.props.parallelContentSourceId})
+    }
+    else{
+      this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,downloaded:this.props.downloaded,sourceId:this.props.sourceId})
+    }
+    // this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,downloaded:this.props.downloaded,sourceId:this.props.sourceId})
   }
   render() {
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);  
     return (
       this.props.isLoading ?
         <Spinner
@@ -114,12 +111,16 @@ class ReferenceSelection extends Component {
       /> : ( 
         this.props.error ? 
         <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-        <TouchableOpacity 
+          <ReloadButton
+          styles={this.styles}
+          reloadFunction={this.reloadBooks}
+          />
+        {/* <TouchableOpacity 
         onPress={this.reloadBooks}
         style={{height:40,width:120,borderRadius:4,backgroundColor:'#3F51B5',justifyContent:'center',alignItems:'center'}}
         >
         <Text style={{fontSize:18,color:'#fff'}}>Reload</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         </View>
         :
         <SelectionTab 
@@ -130,12 +131,10 @@ class ReferenceSelection extends Component {
         selectedChapterNumber: this.state.selectedChapterNumber,
         selectedVerseIndex: this.state.selectedVerseIndex,
         selectedVerseNumber: this.state.selectedVerseNumber,
-        totalVerses:this.state.totalVerses,
         totalChapters:this.state.totalChapters,
 
         updateSelectedBook: this.updateSelectedBook,
         updateSelectedChapter: this.updateSelectedChapter,
-        updateSelectedVerse: this.updateSelectedVerse,
         onPressCheck:this.onPressCheck
 
       }}/>
@@ -159,11 +158,14 @@ const mapStateToProps = state =>{
         parallelContentVersionCode:state.updateVersion.parallelContentVersionCode,
         parallelContentLanguage:state.updateVersion.parallelContentLanguage,
         parallelContentLanguageCode:state.updateVersion.parallelContentLanguageCode,
-        // parallelContentType:state.updateVersion.parallelContentType,
+        parallelContentType:state.updateVersion.parallelContentType,
 
         books:state.versionFetch.data,
         error:state.versionFetch.error,
-        isLoading:state.versionFetch.loading
+        isLoading:state.versionFetch.loading,
+
+        sizeFile:state.updateStyling.sizeFile,
+        colorFile:state.updateStyling.colorFile,
     }
   }
   const mapDispatchToProps = dispatch =>{

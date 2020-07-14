@@ -6,6 +6,7 @@ import { StyleSheet, ActivityIndicator, View, Alert,TextInput,Text,TouchableOpac
 import firebase from 'react-native-firebase'
 import {styles} from './styles.js'
 import {connect} from 'react-redux'
+import Color from '../../utils/colorConstants'
 
 
 class Reset extends Component {
@@ -68,7 +69,7 @@ class Reset extends Component {
         if(this.state.isLoading){
             return(
               <View style={this.styles.preloader}>
-                <ActivityIndicator size="large" color="#3E4095"/>
+                <ActivityIndicator size="large" color={Color.Blue_Color}/>
               </View>
             )
           }    
@@ -87,7 +88,7 @@ class Reset extends Component {
             onChangeText={(val) => this.updateInputVal(val, 'email')}
           />
             <Button
-              color="#3E4095"
+              color={Color.Blue_Color}
               title="Reset Password"
               onPress={() => this.reset()}
             />  

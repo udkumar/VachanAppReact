@@ -1,5 +1,6 @@
 import {StyleSheet,Dimensions} from 'react-native'
 import { Icon } from 'native-base';
+import Color  from '../../utils/colorConstants';
 const width = Dimensions.get('window').width;
 
 export const searchStyle =(colorFile, sizeFile) =>{
@@ -42,7 +43,7 @@ export const searchStyle =(colorFile, sizeFile) =>{
         },
         searchedData:{
             padding:4,
-            borderBottomColor: 'silver',
+            borderBottomColor: Color.Gray,
             borderBottomWidth: 0.5,
             margin:4,
             fontSize:sizeFile.titleText,

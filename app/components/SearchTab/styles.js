@@ -1,5 +1,5 @@
 import {StyleSheet,Dimensions} from 'react-native'
-
+import Color from '../../utils/colorConstants'
 export const styles = StyleSheet.create({
 
     container:{
@@ -12,7 +12,7 @@ export const styles = StyleSheet.create({
         borderRightWidth:1,
         borderBottomWidth:0,
         borderTopWidth:0,
-        borderColor:"#3F51B5",
+        borderColor:Color.Blue_Color,
         
     },
     buttonCenter:{

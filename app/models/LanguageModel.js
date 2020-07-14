@@ -11,5 +11,6 @@ LanguageModel.schema = {
         languageName: 'string',
         languageCode:'string',
         versionModels: 'VersionModel[]',
+		bookNameList:'bookNameList[]',
     }
 };

@@ -2,6 +2,7 @@ import {StyleSheet,Dimensions} from 'react-native'
 import { Icon } from 'native-base';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
+import Color from '../../../utils/colorConstants'
 
 export const styles =(colorFile, sizeFile) =>{
     // console.log("color file ",colorFile,sizeFile)
@@ -60,13 +61,25 @@ export const styles =(colorFile, sizeFile) =>{
             margin:12,
             padding:12,
             flex:1,
-            borderColor:'#3E4095',
+            borderColor:Color.Blue_Color,
             borderWidth:1,
             backgroundColor:colorFile.backgroundColor
         },
         textDescription:{
             color:colorFile.textColor,
             fontSize:sizeFile.contentText,
-        }
+        },
+        reloadButton:{
+            height:40,width:120,borderRadius:4,
+            backgroundColor:Color.Blue_Color,
+            justifyContent:'center',alignItems:'center'
+          },
+        reloadText:{fontSize:18,color:Color.White,textAlign:'center'},
+        emptyMessageIcon:{
+            fontSize:sizeFile.emptyIconSize,
+            margin:16,
+            color:colorFile.iconColor,
+            alignSelf:'center'
+        },
     })
 }

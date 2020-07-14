@@ -1,7 +1,7 @@
 import {StyleSheet,Dimensions} from 'react-native'
-import { Icon } from 'native-base';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
+import Color from '../../utils/colorConstants'
 
 export const styles =(colorFile, sizeFile) =>{
     // console.log("color file ",colorFile,sizeFile)
@@ -10,6 +10,16 @@ export const styles =(colorFile, sizeFile) =>{
         flex:1,
         backgroundColor:colorFile.backgroundColor
         
+    },
+    centerContent:{
+        flex:1,
+        justifyContent:'center',
+        alignContent:'center'
+    },
+    centerEmptySet: { 
+        justifyContent: 'center', 
+        alignItems: 'center',
+        height: '100%' 
     },
     verseWrapperText:{
         fontSize:sizeFile.contentText,
@@ -48,7 +58,6 @@ export const styles =(colorFile, sizeFile) =>{
         bottom:0,
         width: width, 
         height: 62, 
-        // backgroundColor:'#3E4095',
         flexDirection:'row',
         justifyContent:'center'
 
@@ -63,7 +72,7 @@ export const styles =(colorFile, sizeFile) =>{
      
     bottomOptionText:{
         textAlign:'center',
-        color:'white',   
+        color:Color.White,   
         fontSize:16
 
     },
@@ -73,12 +82,11 @@ export const styles =(colorFile, sizeFile) =>{
     },
     bottomOptionSeparator:{
         width: 1,
-        backgroundColor:'white',
+        backgroundColor:Color.White,
         marginVertical:8,
         
     },
     VerseText:{
-        // fontFamily:fontfamily, 
         fontWeight:'100'
     },
 
@@ -90,10 +98,10 @@ export const styles =(colorFile, sizeFile) =>{
         paddingVertical:4
     },
     sectionHeading:{
-        fontSize:sizeFile.titleText,
-        color:'#3E4095',
         fontWeight:'normal',
-        lineHeight:sizeFile.lineHeight
+        lineHeight:sizeFile.lineHeight,
+        fontSize:sizeFile.contentText + 1,
+        color:colorFile.sectionHeading,
     },
     bottomBarParallelPrevView:{
         position:'absolute', 
@@ -102,8 +110,20 @@ export const styles =(colorFile, sizeFile) =>{
         height:40,
         width:40,
         borderRadius: 28,
-        bottom:48,
-        left:8
+        bottom:36,
+        left:4
+    },
+    bottomBarPrevView:{
+        position:'absolute', 
+        backgroundColor:colorFile.semiTransparentBackground,
+        justifyContent:'center',
+        height:56,
+        width:56,
+        borderRadius:32,
+        margin:8,
+        bottom:20,
+        left:0
+        
     },
     bottomBarNextParallelView:{
         position:'absolute', 
@@ -112,8 +132,20 @@ export const styles =(colorFile, sizeFile) =>{
         height:40,
         width:40,
         borderRadius: 28,
-        bottom:48,
-        right:8
+        bottom:36,
+        right:4
+    },
+
+    bottomBarNextView:{
+        height:56,
+        width:56,
+        borderRadius:32,
+        margin:8,
+        bottom:20,
+        right:0,
+        position:'absolute', 
+        backgroundColor:colorFile.semiTransparentBackground,
+        justifyContent:'center'
     },
 
     bottomBarAudioCenter:{
@@ -131,6 +163,7 @@ export const styles =(colorFile, sizeFile) =>{
 
         justifyContent:'center'
     },
+    
     bottomBarChevrontIcon:{ 
         alignItems:'center',
         zIndex:2, 
@@ -161,9 +194,24 @@ export const styles =(colorFile, sizeFile) =>{
     verseTextSelectedNotHighlighted:{
         textDecorationLine: 'underline',
     },
-    
+    textListFooter:{
+        color:colorFile.textColor,
+        fontSize:sizeFile.contentText-2,
+        textAlign:'center',
+        paddingVertical:2
+    },
     addToSharefooterComponent:{
-
+        // height: 60, 
+        // position:'absolute',
+        // bottom:0,
+        // padding:12,
+        margin:16,
+        justifyContent:'center',
+        alignItems:'center',
+    },
+    
+    footerText:{
+        fontWeight:'bold'
     },
     IconFloatingStyle:{
         position: 'absolute',
@@ -175,5 +223,23 @@ export const styles =(colorFile, sizeFile) =>{
         padding:8,
         top: 10,
       },
+      reloadButton:{
+        height:40,
+        width:120,
+        borderRadius:4,
+        backgroundColor:Color.Blue_Color,
+        justifyContent:'center',
+        alignItems:'center'
+    },
+    reloadText:{fontSize:18,
+        color:Color.White,
+        textAlign:'center'
+    },
+    emptyMessageIcon:{
+        fontSize:sizeFile.emptyIconSize,
+        margin:16,
+        color:colorFile.iconColor,
+        alignSelf:'center'
+    },
     })
 }

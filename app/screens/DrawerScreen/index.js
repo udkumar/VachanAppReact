@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
-import {ScrollView, Text, View, StyleSheet,ImageBackground,TouchableOpacity,Image} from 'react-native';
+import {ScrollView, Text, View, StyleSheet,ImageBackground,TouchableOpacity,Image, ColorPropType} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { styles } from './styles.js';
 import {connect} from 'react-redux'
-
+import Color from '../../utils/colorConstants'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil'
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
 
+import {fetchVersionBooks} from '../../store/action/'
 
 
 
@@ -36,6 +37,8 @@ class DrawerScreen extends Component {
   //   })
   // }
   async componentDidMount(){
+    this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,
+      downloaded:this.props.downloaded,sourceId:this.props.sourceId})
     var email = await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.BackupRestoreEmail)
     this.setState({email})
   }
@@ -55,7 +58,7 @@ class DrawerScreen extends Component {
       {icon:'history',pressIcon:'History',text:'History'},
       {icon:'search',pressIcon:'Search',text:'Search'},
       {icon:'settings',pressIcon:'Settings',text:'Settings'},
-      {icon:'info',pressIcon:'About',text:'About'},
+      {icon:'info',pressIcon:'About',text:'About us'},
     ]
     this.styles = styles(this.props.colorFile, this.props.sizeFile);
     
@@ -69,12 +72,12 @@ class DrawerScreen extends Component {
                       style={this.styles.imageStyle}
                       source={require('../../assets/bcs_old_favicon.png')}
                     />
-                    {/* <View style={this.styles.goToLogin}> */}
-                    <Text style={{size:20,color:'#fff'}}>
+                    <View style={this.styles.goToLogin}>
+                    {/* <Text style={{size:20,color:Color.White}}>
                       Vachan Go
-                    </Text>
-                    {/* <Image source={require('../../assets/logo.png')} style={{padding:4,width:136,height:30}}/> */}
-                    {/* </View> */}
+                    </Text> */}
+                    <Image source={require('../../assets/logo.png')} style={{padding:4,width:136,height:30}}/>
+                    </View>
                     </View>
                 </ImageBackground>
             </View>
@@ -109,8 +112,18 @@ const mapStateToProps = state =>{
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
     email:state.userInfo.email,
+
+    language: state.updateVersion.language,
+    languageCode:state.updateVersion.languageCode,
+    versionCode:state.updateVersion.versionCode,
+    sourceId:state.updateVersion.sourceId,
+    downloaded:state.updateVersion.downloaded,
   }
 }
 
-
-export  default connect(mapStateToProps,null)(DrawerScreen)
+const mapDispatchToProps = dispatch =>{
+  return {
+    fetchVersionBooks:(value)=>dispatch(fetchVersionBooks(value)),
+  }
+}
+export  default connect(mapStateToProps,mapDispatchToProps)(DrawerScreen)

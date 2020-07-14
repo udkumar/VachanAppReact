@@ -1,5 +1,6 @@
-import {StyleSheet,Dimensions} from 'react-native'
+import {StyleSheet,Dimensions, ColorPropType} from 'react-native'
 import colorConstants from '../../../utils/colorConstants'
+import Color from '../../../utils/colorConstants'
 
 export const SelectBookPageStyle =(colorFile, sizeFile) =>{
     return StyleSheet.create({
@@ -15,13 +16,13 @@ export const SelectBookPageStyle =(colorFile, sizeFile) =>{
         justifyContent:'center'
    },
    headerRightText:{
-    color:"#fff",
+    color:Color.White,
     margin:16
    },
     sideBarContainer:{
         flexDirection:'column',
         // width:width/5,
-        backgroundColor:colorConstants.Black
+        backgroundColor:Color.Black
     },
     sideBarIconCustom:{
         alignSelf:'center',
@@ -38,7 +39,7 @@ export const SelectBookPageStyle =(colorFile, sizeFile) =>{
         height: 45,
         borderLeftWidth:1,
         borderRightWidth:1,
-        borderColor:'#3F51B5',
+        borderColor:Color.Blue_Color,
         justifyContent:'center'
     },
     buttonText:{

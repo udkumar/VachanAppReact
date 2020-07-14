@@ -90,7 +90,6 @@ class DbQueries {
     deleteNote(time){
         DbHelper.deleteNote(time);
     }
-
     addHistory(sourceId,langName,languageCode, verCode, bookId,bookName, chapterNumber,downloaded, time) {
         DbHelper.addHistory(sourceId,langName,languageCode, verCode, bookId,bookName, chapterNumber,downloaded, time)
     }
@@ -108,8 +107,8 @@ class DbQueries {
     }
 
     // add list of languages to db
-    addLangaugeList(lang){
-        DbHelper.addLangaugeList(lang)
+    addLangaugeList(lang,books){
+        DbHelper.addLangaugeList(lang,books)
     }
     getLangaugeList(){
        return DbHelper.getLangaugeList()
@@ -129,8 +128,8 @@ class DbQueries {
     queryBook(lang,ver,bookId){
         return DbHelper.queryBook(lang,ver,bookId)
     }
-    getDownloadedBook(lang,ver){
-        return DbHelper.getDownloadedBook(lang,ver)
+    getDownloadedBook(lang){
+        return DbHelper.getDownloadedBook(lang)
     }
     // updateLangaugeList(langName,versCode,downloaded){
     //     DbHelper.updateLangaugeList(langName,versCode,downloaded)

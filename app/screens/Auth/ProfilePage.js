@@ -13,6 +13,7 @@ import {userInfo} from '../../store/action'
 // import Login from './Login'
 import firebase from 'react-native-firebase'
 import {styles} from './styles.js'
+import Color from '../../utils/colorConstants'
 
   class ProfilePage extends Component {
     constructor(props){
@@ -52,10 +53,10 @@ import {styles} from './styles.js'
     this.styles = styles(this.props.colorFile, this.props.sizeFile);  
     return (
       <View style={this.styles.container}>
-         <Header>
+         <Header style={{backgroundColor:Color.Blue_Color}}>
           <Left>
             <Button transparent onPress={()=>this.props.navigation.navigate("Bible")}>
-              <Icon size={24} color="#fff" name='arrow-back'  />
+              <Icon size={24} color={Color.White} name='arrow-back'  />
             </Button>
           </Left>
           <Body>
@@ -67,7 +68,7 @@ import {styles} from './styles.js'
           <Card style={this.styles.cardStyling}>
             <CardItem  style={this.styles.cardItemStyling}>
                 <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
-                <Image style={this.styles.avatar} source={this.props.photo !=null  ? {uri:this.props.photo} :  require('../../assets/account1.png')}/>
+                <Image style={this.styles.avatar} source={this.props.photo !=null  ? {uri:this.props.photo} :  require('../../assets/account.png')}/>
                 <View>
                 <Text style={[this.styles.textStyle,{paddingRight:8}]}>{this.props.email}</Text>
                 <Text style={[this.styles.textStyle,{paddingRight:8}]}>{this.props.userName}</Text>

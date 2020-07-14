@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   Dimensions,
   FlatList,
-  WebView
+  WebView,
+  ActivityIndicator
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Card, CardItem, Content, Right, Left } from 'native-base';
@@ -41,6 +42,7 @@ class Note extends Component {
       sizeFile:this.props.sizeFile,
       notesData:[],
       referenceList:[],
+      isLoading:false
     }
     this.styles = noteStyle(props.colorFile, props.sizeFile);   
     
@@ -61,7 +63,6 @@ class Note extends Component {
   //     referenceList:  this.props.navigation.state.params.referenceList,
   //     bookId: this.props.bookId,
   //     chapterNumber:1,
-  //     totalVerses:null
   //   })
   // };
 
@@ -99,27 +100,37 @@ class Note extends Component {
 
   queryDb(){
     if(this.props.email){
+      this.setState({isLoading:true},()=>{
       var firebaseRef = firebase.database().ref("users/"+this.props.uid+"/notes/"+this.props.sourceId)
       firebaseRef.once('value', (snapshot)=>{
         if(snapshot.val() === null){
-          this.setState({notesData:[]})
+          this.setState({notesData:[],isLoading:false})
         } 
         else{
           var arr =[]
           var notes = snapshot.val()
-          // console.log( " log Notes ",snapshot.val())
+          console.log( " log Notes ",snapshot.val())
           for(var bookKey in notes){
             for(var chapterKey in notes[bookKey]){
               if(notes[bookKey][chapterKey] != null){
-                arr.push({bookId:bookKey,chapterNumber:chapterKey,notes:Array.isArray(notes[bookKey][chapterKey]) ? notes[bookKey][chapterKey] : [notes[bookKey][chapterKey]]})
+                arr.push({bookId:bookKey,
+                  chapterNumber:chapterKey,
+                  notes:Array.isArray(notes[bookKey][chapterKey]) ? notes[bookKey][chapterKey] : [notes[bookKey][chapterKey]]})
               }
             }
           }
+          arr.sort(function(a,b){
+            console.log(" notes date ",a.notes[0].modifiedTime)
+            return new Date(b.notes[0].modifiedTime) - new Date(a.notes[0].modifiedTime)
+          })
           this.setState({
-            notesData:arr
+            notesData:arr,
+            isLoading:false
           })
         }
       })
+      this.setState({isLoading:false})
+    })
     }
     else{
       console.log("not logged in")
@@ -137,16 +148,30 @@ class Note extends Component {
     return strParse1 == '' ? 'No additional text' : strParse1
   }
   dateFormate(modifiedTime){
-    var date = new Date(modifiedTime);
-    return date.getHours() < 24  ? moment(modifiedTime).fromNow() : moment(modifiedTime).format('DD-MMM');  
+    var date = new Date(modifiedTime).toLocaleString()
+    // var date = new Date(modifiedTime);
+    return date
+    // return date.getHours() < 24  ? moment(modifiedTime).fromNow() : moment(modifiedTime).format('DD-MMM');  
   }
   renderItem = ({item,index})=>{
-    return(
-      item.notes && item.notes.map((val,j) =>
+    var bookName = null 
+    if (this.props.books){
+      for(var i = 0; i<= this.props.books.length-1; i++){
+        var bId = this.props.books[i].bookId
+        if(bId == item.bookId){
+         bookName = this.props.books[i].bookName
+        }
+      }
+    }else{
+      this.setState({notesData:[]})
+      return
+    }
+      let value = item.notes && item.notes.map((val,j) =>
           <TouchableOpacity style={this.styles.noteContent}
           onPress={()=>{this.props.navigation.navigate("EditNote",{
             bcvRef:{
               bookId:item.bookId, 
+              bookName:bookName,
               chapterNumber:item.chapterNumber , 
               verses:val.verses
               }, 
@@ -159,7 +184,8 @@ class Note extends Component {
         <Card>
         <CardItem style={this.styles.cardItemStyle}>
           <View style={this.styles.notesContentView}> 
-            <Text style={this.styles.noteFontCustom} numberOfLines={2}>{this.bodyText(val.body)}</Text>
+          <Text style={this.styles.noteText} >{this.props.language} {this.props.versionCode} {bookName} {val.verses.join()}</Text>
+            {/* <Text style={this.styles.noteFontCustom} numberOfLines={2}>{this.bodyText(val.body)}</Text> */}
             <View style={this.styles.noteCardItem}>
               <Text style={this.styles.noteFontCustom}>{this.dateFormate(val.modifiedTime)}</Text>
               <Icon name="delete-forever" style={this.styles.deleteIon} onPress={()=>this.onDelete(val.createdTime,val.body,index,j)}/>
@@ -171,39 +197,35 @@ class Note extends Component {
       </TouchableOpacity>
     // )
       )
-    )
+      return(
+        <View>
+          {bookName && value}
+        </View>
+      )
  }
 
   render() {
     console.log(" NOTES DATA ",this.state.notesData)
     return (
       <View style={this.styles.container}>
-        {this.state.notesData.length > 0 ?
-      <ScrollView>
+       {this.state.isLoading ? 
+      <ActivityIndicator animate={true} style={{justifyContent:'center',alignSelf:'center'}}/> :
       <FlatList
-        // contentContainerStyle={this.state.notesData.length === 0 
-        //   ? this.styles.centerEmptySet: this.styles.noteFlatlistCustom}
+        contentContainerStyle={this.state.notesData.length === 0 
+          ? this.styles.centerEmptySet : this.styles.noteFlatlistCustom}
         data={this.state.notesData}
         renderItem={this.renderItem}
-        // ListEmptyComponent={
-        //   <TouchableOpacity onPress={()=>this.createNewNote(-1)} 
-        //     style={this.styles.emptyMessageContainer}>
-        //     <Icon name="note-add"  style={this.styles.emptyMessageIcon} />
-        //     <Text style={this.styles.messageEmpty}>Tap to create a new note</Text>
-        //   </TouchableOpacity>
-        // }
+        ListEmptyComponent={
+          <View style={this.styles.emptyMessageContainer}>
+          <Icon name="note" style={this.styles.emptyMessageIcon} onPress={()=>{this.props.navigation.navigate("Bible")}}/>
+            <Text
+              style={this.styles.messageEmpty}>
+             Select verse to Note
+            </Text>
+          </View>
+        }
       />
-      </ScrollView>
-      :
-        <View style={this.styles.emptyMessageContainer}>
-        <Icon name="note-add" style={this.styles.emptyMessageIcon}/>
-          <Text
-            style={this.styles.messageEmpty}
-          >
-           No Note added
-          </Text>
-          
-        </View>
+     
       }
       </View>
     );
@@ -215,8 +237,12 @@ const mapStateToProps = state =>{
     sizeFile:state.updateStyling.sizeFile,
     colorFile:state.updateStyling.colorFile,
     sourceId:state.updateVersion.sourceId,
+
+    language: state.updateVersion.language,
+    versionCode:state.updateVersion.versionCode,
     email:state.userInfo.email,
     uid:state.userInfo.uid,
+    books:state.versionFetch.data,
 
   }
 }
@@ -232,7 +258,6 @@ export  default connect(mapStateToProps,null)(Note)
 //     // bookName:state.editNote.bookName,
 //     // bodyText:state.editNote.bodyText,
 //     // chapterNumber:state.editNote.chapterNumber,
-//     // verseNumber: state.editNote.verseNumber,
 //     // index:state.editNote.index,
 //     // referenceNote:state.editNote.referenceNote,
     

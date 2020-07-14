@@ -1,22 +1,18 @@
 import React, { Component } from 'react';
-import { Text,Alert, StyleSheet,ScrollView,Dimensions, Modal,View,ActivityIndicator,TextInput,FlatList,LayoutAnimation,UIManager,Platform,TouchableOpacity} from 'react-native';
-import {Card,ListItem,Left,Right,List,Accordion} from 'native-base'
-import firebase from 'react-native-firebase';
-import { NavigationActions,StackActions } from 'react-navigation'
+import { Text,View,UIManager,Platform,TouchableOpacity,Alert} from 'react-native';
+import {Accordion} from 'native-base'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import DbQueries from '../../utils/dbQueries'
 import APIFetch from '../../utils/APIFetch'
-import timestamp from '../../assets/timestamp.json'
-import {getBookSectionFromMapping, getBookNumberFromMapping } from '../../utils/UtilFunctions';
-import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
-import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants';
+import {getBookSectionFromMapping} from '../../utils/UtilFunctions';
 import { styles } from './styles.js';
 import {connect} from 'react-redux';
-import {updateVersion,fetchVersionBooks,fetchAllContent} from '../../store/action/'
+import {updateVersion,fetchVersionBooks,fetchAllContent,updateMetadata} from '../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
+import Color from '../../utils/colorConstants'
+import ReloadButton from '../../components/ReloadButton';
 
-import {API_BASE_URL} from '../../utils/APIConstant'
-import { State } from 'react-native-gesture-handler';
+
 
 // const languageList = async () => { 
 //   return await DbQueries.getLangaugeList()
@@ -60,12 +56,12 @@ class LanguageList extends Component {
       this.fetchLanguages()  
     }
 
-    errorMessage(){
+    errorMessage=()=>{
       if (!this.alertPresent) {
           this.alertPresent = true;
           if (this.state.languages.length == 0) {
             this.fetchLanguages()
-            // Alert.alert("", "Check your internet connection", [{text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
+            Alert.alert("", "Check your internet connection", [{text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
             }else{
             console.log("LANGUAGEG LIST ",this.state.languages.length)
             this.alertPresent = false;
@@ -73,23 +69,46 @@ class LanguageList extends Component {
           }
       }
     }
-  updateData(){
+  updateData=()=>{
       this.props.fetchAllContent()
       this.errorMessage()
   }
     async fetchLanguages(){
-      console.log(" language list ")
       var lanVer = []
       const languageList =  await DbQueries.getLangaugeList()
-      if(languageList === null){
-        // console.log("language LIST ",languageList)
-        if(this.props.bibleLanguages[0].content.length > 0){
-          // console.log("language  update ",this.props.bibleLanguages[0].content)
-          DbQueries.addLangaugeList(this.props.bibleLanguages[0].content)
-          lanVer = this.props.bibleLanguages[0].content
+      console.log(" language list ",languageList)
+      try{
+      if(languageList == null){
+        const books = await APIFetch.fetchBookInLanguage()
+        var languages = this.props.bibleLanguages[0].content
+        console.log(" LANGUAGE FROM API ",languages.length, " BOOKS ",books.length )
+        if(languages && books){
+          for(var i=0; i<languages.length; i++){
+            for(var j=0;j<books.length;j++){
+            var bookArr = []
+              if(languages[i].languageName.toLowerCase() == books[j].language.name){
+                for(var k=0;k<books[j].bookNames.length;k++){
+                  const bookObj={
+                    bookId:books[j].bookNames[k].book_code,
+                    bookName:books[j].bookNames[k].short,
+                    bookNumber:books[j].bookNames[k].book_id,
+                  }
+                  bookArr.push(bookObj)
+                }
+                var bookList =  bookArr.sort(function(a, b){return a.bookNumber - b.bookNumber})
+                    lanVer.push({
+                      languageName:languages[i].languageName ,
+                      languageCode:languages[i].languageCode,
+                      versionModels: languages[i].versionModels,
+                      bookNameList:bookList,
+                    })
+              }
+            }
+          }
+          DbQueries.addLangaugeList(languages,books)
         }
         else{
-          console.log("no language found call update ")
+          console.log("no language found, call update ")
           this.updateData()
         }
       }
@@ -98,68 +117,59 @@ class LanguageList extends Component {
           lanVer.push(languageList[i])
         }
       }
+      console.log(" LANGUAGGE LIST",lanVer)
       this.setState({
         languages: lanVer,
         // searchList: lanVer
       })
     }
-    downloadBible = async(langName,verCode,index,sourceId)=>{
+    catch(error){
+      console.log(" ERROR add language",error)
+    }
+    }
+
+    downloadBible = async(langName,verCode,books,sourceId)=>{
+      console.log(langName+" ",books) 
       var bookModels = []
       try{
-        const curTime = Date.now().toString() + "_1"
-        notification = new firebase.notifications.Notification()
-            .setNotificationId(curTime)
-            .setTitle('Downloading')
-            .setBody(this.state.language +" Bible downloading" )
-            .android.setChannelId('download_channel')
-            .android.setSmallIcon('ic_launcher')
-            .android.setOngoing(true)
-        firebase.notifications().displayNotification(notification)
-
-
         this.setState({startDownload:true})
-        const response = await APIFetch.fetchBookInLanguage()
-        var content = await APIFetch.getAllBooks(sourceId,"json")
-        for(var i =0;i<response.length;i++){
-          if(langName.toLowerCase() == response[i].language.name && content.bibleContent){
-            for(var j=0;j<response[i].bookNames.length;j++){
-            console.log("book name while downloading from api ",response[i].bookNames[j].long)
+        var content = await APIFetch.getAllBooks(parseInt(sourceId),"json")
+        console.log(" Content ",content.bibleContent)
+        for(var i =0;i<books.length;i++){
+          console.log(" BOOKS ",books[i])
             bookModels.push({
             languageName: langName,
             versionCode: verCode,
-            bookId:response[i].bookNames[j].book_code,
-            bookName:response[i].bookNames[j].long,
-            bookNumber:response[i].bookNames[j].book_id,
-            chapters: this.getChapters(content.bibleContent,response[i].bookNames[j].book_code),
-            section: getBookSectionFromMapping(response[i].bookNames[j].book_code),
+            bookId:books[i].bookId,
+            bookName:books[i].bookName,
+            bookNumber:books[i].bookNumber,
+            chapters: this.getChapters(content.bibleContent,books[i].bookId),
+            section: getBookSectionFromMapping(books[i].bookId),
           })
-            }
-          }
         }
       DbQueries.addNewVersion(langName,verCode,bookModels,sourceId)
-      firebase.notifications().removeDeliveredNotification(curTime)
-      await this.fetchLanguages()
-      this.setState({startDownload:false})
+      // const languageList =  await DbQueries.getLangaugeList()
+      // await this.fetchLanguages()
+      this.setState({startDownload:false,languages:languageList})
       }catch(error){
+      console.log("Error ",error)
       this.setState({startDownload:false})
-      console.log("error ",error)
-        alert("There is some error on downloading this version please select another version")
+        alert("Something went wrong. Try Again")
       }
     }
     getChapters=(content,bookId)=>{
       var chapterModels =[]
-      
         for(var id in content){
         if(content != null && id == bookId){
           console.log("id in chapter",id,bookId)
-          for(var i=0; i<content[id].chapters.length; i++){
+          for(var c=0; c<content[id].chapters.length; c++){
             var  verseModels = []
-            for(var j=0; j<content[id].chapters[i].verses.length; j++){
-              verseModels.push(content[id].chapters[i].verses[j])
+            for(var v=0; v<content[id].chapters[c].verses.length; v++){
+              verseModels.push(content[id].chapters[c].verses[v])
             }
             var chapterModel = { 
-              chapterNumber:  parseInt(content[id].chapters[i].header.title),
-              numberOfVerses: parseInt(content[id].chapters[i].verses.length),
+              chapterNumber:  parseInt(content[id].chapters[c].header.title),
+              numberOfVerses: parseInt(content[id].chapters[c].verses.length),
               verses:verseModels,
             }
             chapterModels.push(chapterModel)
@@ -169,11 +179,13 @@ class LanguageList extends Component {
       }
     }
 
-     navigateTo(langName,langCode,verCode,sourceId,downloaded){
-      this.props.fetchVersionBooks({language:langName,versionCode:verCode,downloaded:downloaded,sourceId:sourceId})
-       this.props.navigation.state.params.updateLangVer({
+     navigateTo(langName,langCode,booklist,verCode,sourceId,metadata,downloaded){
+       console.log(' book List ',booklist )
+      this.props.navigation.state.params.updateLangVer({
         sourceId:sourceId,languageName:langName,languageCode:langCode, 
-        versionCode:verCode,downloaded:downloaded
+        versionCode:verCode,downloaded:downloaded,
+        books:booklist,
+        metadata:metadata
       })
       this.props.navigation.pop()
     }
@@ -207,20 +219,21 @@ class LanguageList extends Component {
             {item.versionModels.map((element, index, key) => (
               <TouchableOpacity 
               style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginHorizontal:8}} 
-               onPress={()=>{this.navigateTo(item.languageName,item.languageCode,element.versionCode,element.sourceId, element.downloaded)}}>
+               onPress={()=>{this.navigateTo(item.languageName,item.languageCode,item.bookNameList,element.versionCode,element.sourceId,element.metaData, element.downloaded)}}>
                   <View>
                     <Text style={[this.styles.text,{marginLeft:8,fontWeight:'bold'}]} >{element.versionCode} </Text>
                     <Text style={[this.styles.text,{marginLeft:8}]} >{element.versionName}</Text>
                   </View>
                   <View>
                   {
-                    element.downloaded == true ? 
+                    element.downloaded === true ? 
+                    item.languageName.toLowerCase() === 'english' ? null : 
                     <Icon style={[this.styles.iconStyle,{marginRight:8}]} name="delete" size={24}  onPress={()=>{this.deleteBible(item.languageName,item.languageCode,element.versionCode,element.sourceId, element.downloaded)}}
                     />
                   :
-                    <Icon  style={[this.styles.iconStyle,{marginRight:12}]} name="file-download" size={24} onPress={()=>{this.downloadBible(item.languageName,element.versionCode,index,element.sourceId)}}/>
-                  }
-                
+                  item.languageName.toLowerCase() === 'english' ? null :
+                  <Icon  style={[this.styles.iconStyle,{marginRight:12}]} name="file-download" size={24} onPress={()=>{this.downloadBible(item.languageName,element.versionCode,item.bookNameList,element.sourceId)}}/>
+                  } 
                 </View>
                 </TouchableOpacity>
             ))}
@@ -229,8 +242,7 @@ class LanguageList extends Component {
       )
     }
     render(){
-      // booksValue = this.props.books
-      console.log(" languague LIST IN RENDER ",this.state.languages)
+      // console.log(" LANGUaGE ",this.state.languages )
       return (
         <View style={this.styles.MainContainer}>
         {
@@ -249,14 +261,19 @@ class LanguageList extends Component {
           />
         :null }
           
-            {this.state.languages.length == 0  ?
+            {
+            this.state.languages.length == 0  ?
               <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-              <TouchableOpacity 
+                <ReloadButton
+                reloadFunction={this.updateData}
+                styles={this.styles}
+                />
+              {/* <TouchableOpacity 
               onPress={()=>this.updateData()}
-              style={{height:40,width:120,borderRadius:4,backgroundColor:'#3F51B5',justifyContent:'center',alignItems:'center'}}
+              style={{height:40,width:120,borderRadius:4,backgroundColor:Color.Blue_Color,justifyContent:'center',alignItems:'center'}}
               >
               <Text style={{fontSize:18,color:'#fff'}}>Reload</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
               </View>
               :
               <Accordion 
@@ -281,8 +298,6 @@ const mapStateToProps = state =>{
     versionCode:state.updateVersion.versionCode,
     sourceId:state.updateVersion.sourceId,
     downloaded:state.updateVersion.downloaded,
-
-
     bookId:state.updateVersion.bookId,
     chapterNumber:state.updateVersion.chapterNumber,
     sizeFile:state.updateStyling.sizeFile,
@@ -297,6 +312,7 @@ const mapDispatchToProps = dispatch =>{
     updateVersion: (value)=>dispatch(updateVersion(value)),
     fetchAllContent:()=>dispatch(fetchAllContent()),
     fetchVersionBooks:(payload)=>dispatch(fetchVersionBooks(payload)),
+    updateMetadata:(payload)=>dispatch(updateMetadata(payload)),
   }
 }
 export default connect(mapStateToProps,mapDispatchToProps)(LanguageList)

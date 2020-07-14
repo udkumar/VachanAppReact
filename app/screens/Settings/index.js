@@ -4,7 +4,7 @@ import {
   View,
   Slider,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
 } from 'react-native';
 import { List, ListItem, Right, Left } from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -14,7 +14,7 @@ import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
 import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
 import {connect} from 'react-redux'
 import {updateColorMode,updateFontSize,updateVerseInLine} from '../../store/action/index'
-
+import Color from '../../utils/colorConstants'
 class Setting extends Component {
   static navigationOptions = {
     headerTitle: 'Settings',
@@ -73,8 +73,8 @@ class Setting extends Component {
   render() {
     this.styles = settingsPageStyle(this.props.colorFile,this.props.sizeFile)
     console.log(" color mode ",this.state.colorMode)
-    const dayModeIconColor = this.state.colorMode == AsyncStorageConstants.Values.DayMode  ? dayColors.accentColor : 'grey'
-    const nightModeIconColor =  this.state.colorMode == AsyncStorageConstants.Values.NightMode  ? nightColors.accentColor : 'grey'
+    const dayModeIconColor = this.state.colorMode == AsyncStorageConstants.Values.DayMode  ? dayColors.accentColor : Color.Gray
+    const nightModeIconColor =  this.state.colorMode == AsyncStorageConstants.Values.NightMode  ? nightColors.accentColor : Color.Gray
     const modeIconConstColor = constColors.accentColor
 
     return (

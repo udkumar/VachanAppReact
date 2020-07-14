@@ -1,26 +1,18 @@
 import React,{Component} from 'react';
 import {
-  SafeAreaView,
   TouchableOpacity,
   FlatList,
-  StyleSheet,
   Alert,
   Text,
   View
 } from 'react-native';
-var RNFS = require('react-native-fs');
-import SplashScreen from 'react-native-splash-screen'
-import Spinner from 'react-native-loading-spinner-overlay';
 import {connect} from 'react-redux'
-import {Card,CardItem,Content,Body,Header,Container, Right,Left,Title,Button} from 'native-base'
-import{fetchCommentaryContent} from '../../../store/action/index'
+import {Body,Header,Right,Title,Button} from 'native-base'
+import{fetchCommentaryContent,fetchVersionBooks} from '../../../store/action/index'
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import startEndIndex from '../../../assets/commentary_mapping'
-import { NavigationEvents } from 'react-navigation';
-import APIFetch from '../../../utils/APIFetch'
-import { ScrollView } from 'react-native-gesture-handler';
 import {styles} from './styles'
-
+import Color from '../../../utils/colorConstants'
+import ReloadButton from '../../../components/ReloadButton';
 
 class Commentary extends Component {
 
@@ -42,7 +34,9 @@ class Commentary extends Component {
     this.props.fetchCommentaryContent({parallelContentSourceId:this.props.parallelContentSourceId,bookId:this.props.bookId,chapter:this.props.currentVisibleChapter})
     }
   }
-  
+  componentWillMount(){
+
+  }
   errorMessage(){
     console.log("props ",this.props.error)
     if (!this.alertPresent) {
@@ -58,8 +52,19 @@ class Commentary extends Component {
   updateData = ()=>{
       this.errorMessage()
   }
+  componentWillUnmount(){
+    this.props.fetchVersionBooks({language:this.props.language,
+      versionCode:this.props.versionCode,
+      downloaded:this.props.downloaded,sourceId:this.props.sourceId})
+    console.log( "component UN Mount  ")
+  }
   render(){
-    console.log("compoent parallel ",this.props.commentaryContent)
+    const bookId = this.props.bookId
+    const value = this.props.books.length !=0 && this.props.books.filter(function (entry){
+        return  entry.bookId == bookId
+     })
+    const bookName = value ?  value[0].bookName : this.props.bookName
+
     var convertToText = (response) => {
       if(response){
         let exRegex = /<b>(.*?)<\/b>/g
@@ -87,39 +92,31 @@ class Commentary extends Component {
     }
     return (
       <View style={this.styles.container}>
-       <Header style={{height:40,borderLeftWidth:0.5,borderLeftColor:'#fff'}} >
+       <Header style={{height:40,borderLeftWidth:0.5,borderLeftColor:Color.White}} >
         <Body>
           <Title style={{fontSize:16}}>{this.props.parallelContentVersionCode}</Title>
         </Body>
         <Right>
         <Button transparent 
-        // onPress={this.props.commentaryFullScreen}
         onPress={()=>this.props.toggleParallelView(false)}
         >
-          <Icon name='cancel' color={'#fff'} size={20}/>
+        <Icon name='cancel' color={Color.White} size={20}/>
         </Button>
-        {/* <Button transparent 
-        // onPress={this.props.commentaryFullScreen}
-        onPress={()=>this.props.toggleParallelView(false)}
-        > */}
-          {/* <Icon name='cancel' color={'#fff'} size={20}/> */}
-        {/* </Button> */}
+   
         </Right>
       </Header>
+
       {
         (this.props.error) ?
-        <View style={{flex:1,justifyContent:'center',alignContent:'center'}}>
-          <TouchableOpacity 
-          onPress={()=>this.updateData()}
-          style={{height:40,width:120,borderRadius:4,backgroundColor:'#3F51B5',
-          justifyContent:'center',alignItems:'center'}}>
-            <Text style={{fontSize:18,color:'#fff'}}>Reload</Text>
-          </TouchableOpacity>
+        <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+          <ReloadButton
+          styles={this.styles}
+          reloadFunction={this.updateData}
+          />   
         </View>
       :
       <View style={{flex:1}}>
-        <Text style={[this.styles.commentaryHeading,{margin:10}]}>{this.props.bookName} {  } {this.props.commentaryContent.chapter}</Text>
-        
+        <Text style={[this.styles.commentaryHeading,{margin:10}]}>{bookName} {  } {this.props.commentaryContent.chapter}</Text>
       <FlatList
         data={this.props.commentaryContent.commentaries}
         showsVerticalScrollIndicator={false}
@@ -155,8 +152,12 @@ class Commentary extends Component {
 
 const mapStateToProps = state =>{
   return{
+
     language: state.updateVersion.language,
     versionCode:state.updateVersion.versionCode,
+    sourceId:state.updateVersion.sourceId,
+    downloaded:state.updateVersion.downloaded,
+
     chapterNumber:state.updateVersion.chapterNumber,
     totalChapters:state.updateVersion.totalChapters,
     bookName:state.updateVersion.bookName,
@@ -165,6 +166,7 @@ const mapStateToProps = state =>{
     colorFile:state.updateStyling.colorFile,
 
     contentType:state.updateVersion.contentType,
+    books:state.versionFetch.data,
 
     parallelContentSourceId:state.updateVersion.parallelContentSourceId,
     parallelContentVersionCode:state.updateVersion.parallelContentVersionCode,
@@ -179,6 +181,8 @@ const mapDispatchToProps = dispatch =>{
   return {
     
     fetchCommentaryContent:(payload)=>dispatch(fetchCommentaryContent(payload)),
+    fetchVersionBooks:(payload)=>dispatch(fetchVersionBooks(payload)),
+
   }
 }
 export  default connect(mapStateToProps,mapDispatchToProps)(Commentary)

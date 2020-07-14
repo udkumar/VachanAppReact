@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import Spinner from 'react-native-loading-spinner-overlay';
+import Color from '../../utils/colorConstants'
 
 
 
@@ -34,7 +35,7 @@ const SelectionGrid=({
         renderItem={({item,index}) => 
         <TouchableOpacity 
         style={[styles.selectGridNum,
-          {backgroundColor:'transparent'}]}
+          {backgroundColor:Color.Transparent}]}
           onPress={()=>{onNumPress(item,index)}}>
             <View>
                 <Text style={[styles.chapterNum,{fontWeight: item == heighlightedNumber ? "bold":"normal"}]}>{item}</Text>

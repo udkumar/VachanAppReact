@@ -1,6 +1,6 @@
 
 
-export {updateVersion,updateContentType,updateVersionBook,updatematadata} from './updateVersion'
+export {updateVersion,updateContentType,updateVersionBook,updateMetadata,parallelMetadta} from './updateVersion'
 export {updateFontSize,updateColorMode,updateVerseInLine} from './updateStyling'
 
 export {fetchAudioUrl,audioURLSuccess,audioURLFailure} from './apiFetch/audio/fetchUrl'

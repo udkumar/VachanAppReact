@@ -14,13 +14,19 @@
         android:gravity="center"
         android:src="@mipmap/bcs_old_favicon" 
      />
-   <TextView android:id="@+id/text"
+    <ImageView 
+        android:layout_width="600px" 
+        android:layout_height="200px" 
+        android:gravity="center"
+        android:src="@mipmap/logo_blue" 
+    />
+   <!-- <TextView android:id="@+id/text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="#3E4095"
         android:textSize="24sp"
         android:gravity="center"
         android:text="Vachan Go" 
-    />
+    /> -->
       
 </LinearLayout>

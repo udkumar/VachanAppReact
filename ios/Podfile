@@ -37,6 +37,8 @@ target 'AutographaGo_ReactNative' do
 
     pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
 
+    pod 'toolbar-android', :path => '../node_modules/@react-native-community/toolbar-android'
+
   end
 
   target 'AutographaGo_ReactNativeTests' do

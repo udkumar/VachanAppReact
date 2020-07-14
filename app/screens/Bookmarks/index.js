@@ -15,7 +15,7 @@ import DbQueries from '../../utils/dbQueries'
 import { bookStyle } from './styles.js'
 import {updateVersionBook} from '../../store/action/'
 
-import {getBookChaptersFromMapping,getBookNumOfVersesFromMapping} from '../../utils/UtilFunctions';
+import {getBookChaptersFromMapping} from '../../utils/UtilFunctions';
 Dimensions.get('window').width
 import {connect} from 'react-redux'
 import firebase from 'react-native-firebase'
@@ -69,60 +69,54 @@ class BookMarks extends Component {
     this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);   
     // this.refreshData = this.refreshData.bind(this)
   }
-
-  async componentDidMount(){
+  fecthBookmarks(){
     if(this.props.email){
-      var firebaseRef = firebase.database().ref("users/"+this.props.uid+"/bookmarks/"+this.props.sourceId);
-      firebaseRef.once('value', (snapshot)=> {
-        var data=[]
-          var list = snapshot.val()
-          if(snapshot.val() !=null){
-            for(var key in list){
-              data.push({bookId:key,chapterNumber:list[key]})
+      this.setState({isLoading:true},()=>{
+        var firebaseRef = firebase.database().ref("users/"+this.props.uid+"/bookmarks/"+this.props.sourceId);
+        firebaseRef.once('value', (snapshot)=> {
+          var data=[]
+            var list = snapshot.val()
+            if(snapshot.val() != null){
+              for(var key in list){
+                data.push({bookId:key,chapterNumber:list[key]})
+              }
+              this.setState({
+                bookmarksList:data,
+                isLoading:false
+              })
             }
-            this.setState({
-              bookmarksList:data
-            })
-          }
-        })
+            else{
+              this.setState({
+                bookmarksList:[],
+                isLoading:false
+              })
+            }
+          })
+          this.setState({isLoading:false})
+      })
+
     }
-    // else{
-    //   let model = await  DbQueries.queryBookmark(this.state.sourceId,null)
-    //   console.log(" not logged in ",model)
-    //     // { bookId: 'deu',chapterNumber: { '0': 10, '1': 11, '2': 12, '3': 14 } }
-    //   if (model != null) {
-    //     if(model.length > 0){
-    //       var data =[]
-    //       for(var i=0;i<=model.length-1;i++){
-    //       var chapters =[]
-    //         data.push({bookId:model[i].bookId,chapterNumber:chapters})
-    //         for(var key in model[i].chapterNumber){
-    //           chapters.push(model[i].chapterNumber[key])
-    //         }
-    //       }
-    //       this.setState({bookmarksList:data})
-    //     }
-    //   }
-    // }
+  }
+  async componentDidMount(){
+  this.fecthBookmarks()
   } 
-  navigateToBible(bookId,chapter){
+  componentDidUpdate(prevProps, prevState){
+    console.log("BOOK MARKS ",prevProps.books)
+    if(prevProps.books.length != this.props.books.length){
+      this.fecthBookmarks()
+    }
+  }
+  navigateToBible(bookId,bookName,chapter){
     this.props.updateVersionBook({
       bookId:bookId, 
-      bookName:this.props.bookName,
+      bookName:bookName,
       chapterNumber:chapter,
       totalChapters:getBookChaptersFromMapping(bookId),
-      totalVerses:getBookNumOfVersesFromMapping(bookId,chapter),
-      // verseNumber:verseNumber
     })
     this.props.navigation.navigate("Bible")
   }
-  // getItemLayout = (data, index) => {
-  //   return { length: height, offset: height * index, index };
-  // }
-
     
   async onBookmarkRemove(id,chapterNum){
-
     if(this.props.email){
       var data =  this.state.bookmarksList
       data.filter((a,i) => {
@@ -148,75 +142,63 @@ class BookMarks extends Component {
         })
         this.setState({bookmarksList:data})
     }
-    // else{
-    //   await DbQueries.updateBookmarkInBook(this.state.sourceId,id,chapterNum,false);
-    //   var data =  this.state.bookmarksList
-    //   data.filter((a,i) => {
-    //       if(a.bookId == id ){
-    //           a.chapterNumber.filter((b,j) => {
-    //           if(b == chapterNum){
-    //             if(a.chapterNumber.length == 1){
-    //               console.log(" i ",i)
-    //                data.splice(i,1)
-    //             }
-    //             else{
-    //                a.chapterNumber.splice(j,1)
-    //             }
-    //           }
-    //         })
-    //       }
-    //     })
-    //     this.setState({bookmarksList:data})
-    // }
-  
   }
-
+  renderItem = ({item, index}) => {
+    var bookName = null 
+    if (this.props.books){
+      for(var i = 0; i<= this.props.books.length-1; i++){
+        var bId = this.props.books[i].bookId
+        // console.log(" BOOK ID IN BOKMARKS")
+        if(bId == item.bookId){
+         bookName = this.props.books[i].bookName
+        }
+      }
+    }else{
+        this.setState({bookmarksList:[]})
+        return
+    }
+      var value = item.chapterNumber.length > 0 &&
+        item.chapterNumber.map(e=>
+        <TouchableOpacity style={this.styles.bookmarksView} onPress = { ()=> {this.navigateToBible(item.bookId,bookName,e)}} >
+        <Text style={this.styles.bookmarksText}>{bookName} {":"} {e}</Text>
+        <Icon name='delete-forever' style={this.styles.iconCustom}   
+          onPress={() => {this.onBookmarkRemove(item.bookId,e)} } 
+        />
+        </TouchableOpacity>
+      )
+    return(
+    <View>
+      {bookName && value } 
+    </View>
+    )
+    
+  }
   render() {
     console.log(" book list ",this.props.books)
     return (
         <View style={this.styles.container}>
-         {this.state.bookmarksList.length > 0 ?
+        {
+        this.state.isLoading ? 
+         <ActivityIndicator animate={true} style={{justifyContent:'center',alignSelf:'center'}}/> :
          <FlatList
          data={this.state.bookmarksList}
          contentContainerStyle={this.state.bookmarksList.length === 0 && this.styles.centerEmptySet}
-         renderItem={({item, index}) => 
-           <View>{
-             item.chapterNumber.length > 0 &&
-             item.chapterNumber.map(e=>
-              <TouchableOpacity style={this.styles.bookmarksView} onPress = { ()=> {this.navigateToBible(item.bookId,e)}} >
-              <Text style={this.styles.bookmarksText}>{this.props.bookName} {":"} {e}</Text>
-              <Icon name='delete-forever' style={this.styles.iconCustom}   
-                onPress={() => {this.onBookmarkRemove(item.bookId,e)} } 
-              />
-              </TouchableOpacity>
-            )}
+         renderItem={ this.renderItem}
+         ListEmptyComponent={
+           <View style={this.styles.emptyMessageContainer}>
+           <Icon name="collections-bookmark" style={this.styles.emptyMessageIcon} onPress={()=>{this.props.navigation.navigate("Bible")}}/>
+             <Text
+               style={this.styles.messageEmpty}
+             >
+              No Bookmark added
+             </Text>
+             
            </View>
          }
-        //  ListEmptyComponent={
-        //    <View style={this.styles.emptyMessageContainer}>
-        //    <Icon name="collections-bookmark" style={this.styles.emptyMessageIcon}/>
-        //      <Text
-        //        style={this.styles.messageEmpty}
-        //      >
-        //       No Bookmark added
-        //      </Text>
-             
-        //    </View>
-        //  }
-         extraData={this.props}
-       /> : 
-       <View style={this.styles.emptyMessageContainer}>
-           <Icon name="collections-bookmark" style={this.styles.emptyMessageIcon}/>
-            <Text
-             style={this.styles.messageEmpty}
-           >
-               No Bookmark added
-            </Text>
-             
-           </View> 
-         } 
-        </View>
-    );
+        /> 
+        }
+       </View>
+    )
   }
 }
 

@@ -1,4 +1,4 @@
-import { UPDATE_VERSION,UPDATE_VERSION_BOOK, UPDATE_CONTENT_TYPE,UPDATE_MATA_DATA  } from '../action/actionsType';
+import { UPDATE_VERSION,UPDATE_VERSION_BOOK, UPDATE_CONTENT_TYPE,UPDATE_MATA_DATA,PARALLEL_METADATA  } from '../action/actionsType';
 
 const initialState = {
    language:'Hindi',
@@ -7,21 +7,27 @@ const initialState = {
    versionCode:'IRV',
    sourceId:45,
    downloaded:false,
-   bookId:'3jn',
-   bookName:'3 यूहन्ना',
+   bookId:'jhn',
+   bookName:'यूहन्ना',
    chapterNumber:1,
-   totalChapters:1,
-   verseNumber: 1,
-   totalVerses:15,
+   totalChapters:21,
    verseText:'',
 
-   copyrightHolder:'',
-   description:'',
-   license:'',
-   source:'',
-   technologyPartner:'',
-   revision:'',
-   versionNameGL:'',
+   copyrightHolder:'Unfolding Word',
+   description:'Revision of existing public domain bible 1950 . Hard copy of original available with BCS ',
+   license:'Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)',
+   source:'Wycliffe Associates - 2017',
+   technologyPartner:'Bridge Connectivity Solutions',
+   revision:'unfoldingWord - 2018',
+   versionNameGL:'\u0939\u093f\u0902\u0926\u0940 - \u0907\u0902\u0921\u093f\u092f\u0928 \u0930\u093f\u0935\u093e\u0907\u091c\u094d\u0921 \u0935\u0930\u094d\u091c\u0928\n',
+
+   pCopyrightHolder:'Unfolding Word',
+   pDescription:'Revision of existing public domain bible 1950 . Hard copy of original available with BCS ',
+   pLicense:'Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)',
+   pSource:'Wycliffe Associates - 2017',
+   pTechnologyPartner:'Bridge Connectivity Solutions',
+   pRevision:'unfoldingWord - 2018',
+   pVersionNameGL:'\u0939\u093f\u0902\u0926\u0940 - \u0907\u0902\u0921\u093f\u092f\u0928 \u0930\u093f\u0935\u093e\u0907\u091c\u094d\u0921 \u0935\u0930\u094d\u091c\u0928\n',
 
    parallelContentType:'bible',
    parallelContentLanguage:'Hindi',
@@ -53,8 +59,6 @@ function updateVersionReducer(state=initialState,action){
             bookName:action.payload.bookName,
             chapterNumber:action.payload.chapterNumber,
             totalChapters:action.payload.totalChapters,
-            totalVerses:action.payload.totalVerses,
-            verseNumber:action.payload.verseNumber
         }
         case UPDATE_CONTENT_TYPE:
         return {
@@ -82,6 +86,18 @@ function updateVersionReducer(state=initialState,action){
             revision:action.payload.revision,
             versionNameGL:action.payload.versionNameGL,
         }
+        case PARALLEL_METADATA:
+        return {
+            ...state,
+            pCopyrightHolder:action.payload.pCopyrightHolder,
+            pDescription:action.payload.pDescription,
+            pLicense:action.payload.pLicense,
+            pSource:action.payload.pSource,
+            pTechnologyPartner:action.payload.pTechnologyPartner,
+            pRevision:action.payload.pRevision,
+            pVersionNameGL:action.payload.pVersionNameGL,
+        }
+
         default: 
         return state
     }

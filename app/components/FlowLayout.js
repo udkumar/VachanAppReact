@@ -17,26 +17,26 @@ var {
 import {connect} from 'react-redux'
 
 
-class FlowView extends Component {
+// class FlowView extends Component {
 	
-	render() {
-		return (
-			<View>
-				<TouchableOpacity onPress={()=>{
-					this.props.onTextClick();
-				}}>
-					<View style={[styles.corner,{backgroundColor:'transparent'}]}>
-						<Text style={this.props.styles.textStyle}>{this.props.bookName} {this.props.chapterNumber}:{this.props.verseNumber}</Text>
-                        <Icon name="clear" style={this.props.styles.iconReferClose}
-                        	onPress={()=> {this.props.onDeleteClick()}} />
-					</View>
-                </TouchableOpacity>
+// 	render() {
+// 		return (
+// 			<View>
+// 				<TouchableOpacity onPress={()=>{
+// 					this.props.onTextClick();
+// 				}}>
+// 					<View style={[styles.corner,{backgroundColor:'transparent'}]}>
+// 						<Text style={this.props.styles.textStyle}>{this.props.bookName} {this.props.chapterNumber}:{this.props.verseNumber}</Text>
+//                         <Icon name="clear" style={this.props.styles.iconReferClose}
+//                         	onPress={()=> {this.props.onDeleteClick()}} />
+// 					</View>
+//                 </TouchableOpacity>
             
-			</View>
-		);
-	};
+// 			</View>
+// 		);
+// 	};
 
-}
+// }
 class FlowLayout extends Component {
 	
 	constructor(props) {
@@ -46,31 +46,21 @@ class FlowLayout extends Component {
 	render() {
 		// console.log('FLOW LAYOUT BCV REF ',this.props.bcvRef)
 		let items = this.props.dataValue.verses.map((value, position) => {
-			return (
-				<View key={position}>
-				{/* <TouchableOpacity onPress={()=>{
-					this.props.openReference(position)
-				}}> */}
+				return(
+					<View key={position}>
+					<TouchableOpacity onPress={()=>{
+					this.props.openReference(value,position)
+					}}>
 					<View style={[styles.corner,{backgroundColor:'transparent'}]}>
-						<Text style={this.props.styles.textStyle}>{this.props.bookName} {this.props.dataValue.chapterNumber}:{value}</Text>
-                        {/* <Icon name="clear" style={this.props.styles.iconReferClose}
-                        	onPress={()=> {this.props.deleteReference(position)}} /> */}
+						<Text style={this.props.styles.textStyle}>{this.props.dataValue.bookName} {this.props.dataValue.chapterNumber}:{value}</Text>
+                       {/* {
+						   this.props.dataValue.verses.length === 1 ? null :  <Icon name="clear" style={this.props.styles.iconReferClose}
+						   onPress={()=> {this.props.deleteReference(position)}} />
+					   } */}
 					</View>
-                {/* </TouchableOpacity> */}
-
-					{/* <FlowView 
-					//  ref ={this.props.dataValue[position]} 
-					text={this.props.dataValue} 
-                        onDeleteClick={()=>{
-                            this.props.deleteReference(position);
-                        }}
-                        onTextClick={()=>{
-                            this.props.openReference(position);
-						}}
-						styles={this.props.styles}
-                    /> */}
+                </TouchableOpacity>
 				</View>
-			);
+				)
 		});
 
 		return (
@@ -92,7 +82,7 @@ const mapStateToProps = state =>{
   
   
   
-  export  default connect(mapStateToProps,null)(FlowLayout)
+export  default connect(mapStateToProps,null)(FlowLayout)
 const styles = StyleSheet.create({
 	corner: {
         flexDirection:'row',
