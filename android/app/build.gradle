@@ -75,12 +75,12 @@ import com.android.build.OutputFile
 
 project.ext.react = [
     entryFile: "index.js",
+    
+    bundleInDebug: true,
+
     // whether to bundle JS and assets in release mode
-     bundleInDebug: false,
-     bundleInRelease: true, 
-     resourcesDirRelease   : "src/release/res"
-    //  root: "../../package.json",
-    //  resourcesDirRelease: "$buildDir/intermediates/res/merged/release"
+    //  bundleInRelease: true, 
+    //  resourcesDirRelease   : "src/release/res"
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -117,9 +117,9 @@ android {
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
-        dexOptions {
-            javaMaxHeapSize "4g"
-        }
+        // dexOptions {
+        //     javaMaxHeapSize "4g"
+        // }
         multiDexEnabled true
     }
      
@@ -132,20 +132,19 @@ android {
         }
     }
     signingConfigs {
-        release {
-            if (project.hasProperty('MYAPP_RELEASE_STORE_FILE')) {
-        //    java.lang.System.console(MYAPP_RELEASE_STORE_PASSWORD) 
-                storeFile file(MYAPP_RELEASE_STORE_FILE)
-                storePassword MYAPP_RELEASE_STORE_PASSWORD
-                keyAlias MYAPP_RELEASE_KEY_ALIAS
-                keyPassword MYAPP_RELEASE_KEY_PASSWORD
-            }
-        }
+        // release {
+        //     if (project.hasProperty('MYAPP_RELEASE_STORE_FILE')) {
+        //         storeFile file(MYAPP_RELEASE_STORE_FILE)
+        //         storePassword MYAPP_RELEASE_STORE_PASSWORD
+        //         keyAlias MYAPP_RELEASE_KEY_ALIAS
+        //         keyPassword MYAPP_RELEASE_KEY_PASSWORD
+        //     }
+        // }
     }
     buildTypes {
         release {
             minifyEnabled enableProguardInReleaseBuilds
-            signingConfig signingConfigs.release
+            // signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }

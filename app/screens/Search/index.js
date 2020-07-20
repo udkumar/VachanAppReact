@@ -111,7 +111,7 @@ class Search extends Component {
         var res = await APIFetch.searchText(this.state.sourceId,this.state.text)
         console.log(" res ",res)
         var data = []
-          if (res && this.state.books) {
+          if (res.result.length > 0 && this.state.books){
             for(var i=0; i<=res.result.length-1; i++){
               for(var j = 0 ;j<= this.state.books.length-1;j++){
                 var bId = this.state.books[j].bookId
@@ -125,7 +125,6 @@ class Search extends Component {
                     text:res.result[i].text,
                   })
                 }
-                
               }
             }
             this.setState({searchedResult:data})
@@ -292,7 +291,7 @@ ListFooterComponent = () => {
 }
 
 searchedData = ({item,index}) => {
-    return (
+    return(
       <TouchableOpacity style={this.styles.searchedDataContainer} 
         onPress={ ()=> {this.goToBible(item.bookId,item.bookName,item.chapterNumber,item.verseNumber,this.state.languageName)}}
         >
@@ -328,7 +327,7 @@ searchedData = ({item,index}) => {
         </View>
         <Text style={this.styles.textLength}>{text}</Text>
         {
-        this.state.tabsData.length > 0 &&
+        this.state.searchedResult.length > 0 &&
         <View>
           {/* <Text>{applyBoldStyle}</Text> */}
         <SearchTab
