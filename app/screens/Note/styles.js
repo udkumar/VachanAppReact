@@ -1,8 +1,6 @@
 import {StyleSheet,Dimensions} from 'react-native'
-import { Icon } from 'native-base';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-import Color from '../../utils/colorConstants'
 
 export const noteStyle =(colorFile, sizeFile) =>{
     return StyleSheet.create({
@@ -73,7 +71,7 @@ export const noteStyle =(colorFile, sizeFile) =>{
         color:colorFile.textColor
     },
     noteText:{
-        fontSize:sizeFile.titleText,
+        fontSize:sizeFile.contentText,
         color:colorFile.textColor
     },
     deleteIon:{
