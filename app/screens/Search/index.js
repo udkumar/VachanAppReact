@@ -13,7 +13,7 @@ import DbQueries from '../../utils/dbQueries.js'
 import APIFetch from '../../utils/APIFetch'
 import { getBookChaptersFromMapping, getBookNumberFromMapping, getResultText } from '../../utils/UtilFunctions'
 import SearchTab from '../../components/SearchTab/SearchTab'
-import { updateVersionBook, updateVersion, fetchVersionBooks } from '../../store/action/'
+import { updateVersionBook, updateVersion, fetchVersionBooks, updateMetadata } from '../../store/action/'
 
 import { searchStyle } from './styles'
 import { connect } from 'react-redux'
@@ -70,7 +70,8 @@ class Search extends Component {
       languageCode: this.props.languageCode,
       bookName: this.props.bookName,
       bookId: this.props.bookId,
-      books: this.props.books
+      books: this.props.books,
+      metadata:null
     }
 
     this.onSearchText = this.onSearchText.bind(this)
@@ -266,6 +267,28 @@ class Search extends Component {
     
     this.props.fetchVersionBooks({ language:  this.state.languageName, versionCode: this.state.versionCode, 
       downloaded: this.state.downloaded, sourceId: this.state.sourceId })
+    if(this.state.metadata === null){
+      this.props.updateMetadata({
+        copyrightHolder: null,
+        description: null,
+        license: null,
+        source: null,
+        technologyPartner: null,
+        revision: null,
+        versionNameGL: null
+      })
+    } else{
+      this.props.updateMetadata({
+        copyrightHolder: this.state.metadata[0].copyrightHolder,
+        description: this.state.metadata[0].description,
+        license: this.state.metadata[0].license,
+        source: this.state.metadata[0].source,
+        technologyPartner: this.state.metadata[0].technologyPartner,
+        revision: this.state.metadata[0].revision,
+        versionNameGL: this.state.metadata[0].versionNameGL
+      })
+    }
+     
 
     this.props.navigation.navigate('Bible')
   }
@@ -309,11 +332,12 @@ class Search extends Component {
       tabsData: [], searchedResult: [],
       sourceId: item.sourceId, languageCode: item.languageCode,
       languageName: item.languageName, versionCode: item.versionCode,
-      downloaded: item.downloaded, books: item.books
+      downloaded: item.downloaded, books: item.books,metadata:item.metadata
+
     })
   }
   render() {
-    console.log(" STATE language ", this.state.languageName)
+    console.log(" STATE Metadata ",this.state.metadata && this.state.metadata[0].revision)
     let text = this.state.isLoading == true ? "Loading..." : this.state.tabsData.length + " search results found"
     return (
       <View style={this.styles.container}>
@@ -367,6 +391,8 @@ const mapDispatchToProps = dispatch => {
     updateVersionBook: (value) => dispatch(updateVersionBook(value)),
     updateVersion: (value) => dispatch(updateVersion(value)),
     fetchVersionBooks: (value) => dispatch(fetchVersionBooks(value)),
+    updateMetadata: (payload) => dispatch(updateMetadata(payload)),
+
   }
 }
 

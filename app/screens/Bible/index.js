@@ -274,9 +274,9 @@ class Bible extends Component {
     this.setState({ selectedReferenceSet: [], showBottomBar: false })
 
     if (item) {
-      var time = new Date()
-      DbQueries.addHistory(this.props.sourceId, this.props.language, this.props.languageCode,
-        this.props.versionCode, item.bookId, item.bookName, JSON.parse(item.chapterNumber), this.props.downloaded, time)
+      // var time = new Date()
+      // DbQueries.addHistory(this.props.sourceId, this.props.language, this.props.languageCode,
+      //   this.props.versionCode, item.bookId, item.bookName, JSON.parse(item.chapterNumber), this.props.downloaded, time)
       const shortName = this.props.language.toLowerCase() == ('malayalam' || 'tamil') ?
         (item.bookName.length > 4 ? item.bookName.slice(0, 3) + "..." : item.bookName) :
         item.bookName.length > 8 ? item.bookName.slice(0, 7) + "..." : item.bookName
@@ -492,7 +492,7 @@ class Bible extends Component {
             break;
           }
         }
-        if (found == false) {
+        if (found === false) {
           this.props.navigation.setParams({ audio: false })
           this.setState({ audio: false })
         }
@@ -862,7 +862,6 @@ class Bible extends Component {
               keyExtractor={this._keyExtractor}
               ListFooterComponent={this.renderFooter}
               ListEmptyComponent={<ReloadButton styles={this.styles} reloadFunction={this.queryBookFromAPI} />}
-            // ListFooterComponentStyle={{}}
             />
             {
               this.state.chapterContent.length > 0 &&
@@ -937,14 +936,12 @@ const navStyles = StyleSheet.create({
     justifyContent: 'space-evenly',
     flexDirection: 'row',
     flex: 1,
-    // paddingLeft:8,
   },
   border: {
     paddingHorizontal: 4,
     paddingVertical: 4,
 
     borderWidth: 0.2,
-    // marginLeft:4,
     borderColor: Color.White
   },
   headerRightStyle: {
@@ -964,9 +961,6 @@ const navStyles = StyleSheet.create({
   },
   headerTextStyle: {
     fontSize: 18,
-    // alignSelf:'baseline',
-    // flexShrink: 1,
-    // fontWeight:'400',
     color: Color.White,
     textAlign: 'center'
   },

@@ -8,7 +8,7 @@ import DbQueries from '../../utils/dbQueries'
 import { View } from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Accordion } from 'native-base';
-import { updateVersion, updateVersionBook,fetchVersionBooks } from '../../store/action/'
+import { updateVersion, updateVersionBook, fetchVersionBooks, updateMetadata } from '../../store/action/'
 import { getBookChaptersFromMapping } from '../../utils/UtilFunctions'
 import { historyStyle } from './styles.js'
 import { connect } from 'react-redux'
@@ -109,7 +109,7 @@ class History extends Component {
       </View>
     )
   }
-  goToContent(item) {
+  async  goToContent(item) {
     this.props.updateVersion({
       language: item.languageName, languageCode: item.languageCode,
       versionCode: item.versionCode, sourceId: item.sourceId,
@@ -121,9 +121,32 @@ class History extends Component {
       chapterNumber: item.chapterNumber,
       totalChapters: getBookChaptersFromMapping(item.bookId),
     })
-    this.props.fetchVersionBooks({ language:  item.languageName, versionCode: item.versionCode, 
-      downloaded: item.downloaded, sourceId: item.sourceId })
-    
+    this.props.fetchVersionBooks({
+      language: item.languageName, versionCode: item.versionCode,
+      downloaded: item.downloaded, sourceId: item.sourceId
+    })
+    var getVersionMetaData = await DbQueries.getVersionMetaData(item.languageName, item.versionCode, item.sourceId)
+    if (getVersionMetaData && getVersionMetaData.length > 0) {
+      this.props.updateMetadata({
+        copyrightHolder: getVersionMetaData[0].copyrightHolder,
+        description: getVersionMetaData[0].description,
+        license: getVersionMetaData[0].license,
+        source: getVersionMetaData[0].source,
+        technologyPartner: getVersionMetaData[0].technologyPartner,
+        revision: getVersionMetaData[0].revision,
+        versionNameGL: getVersionMetaData[0].versionNameGL
+      })
+    } else {
+      this.props.updateMetadata({
+        copyrightHolder: null,
+        description: null,
+        license: null,
+        source: null,
+        technologyPartner: null,
+        revision: null,
+        versionNameGL: null
+      })
+    }
     this.props.navigation.navigate("Bible")
   }
 
@@ -150,7 +173,7 @@ class History extends Component {
         {
           this.state.historyList.length == 0 ?
             <View style={this.styles.emptyMessageContainer}>
-              <Icon name="import-contacts" style={this.styles.emptyMessageIcon} />
+              <Icon onPress={() => { this.props.navigation.navigate("Bible") }} name="import-contacts" style={this.styles.emptyMessageIcon} />
               <Text style={this.styles.messageEmpty}>
                 Start reading
           </Text>
@@ -181,6 +204,7 @@ const mapDispatchToProps = dispatch => {
   return {
     updateVersion: (value) => dispatch(updateVersion(value)),
     fetchVersionBooks: (payload) => dispatch(fetchVersionBooks(payload)),
+    updateMetadata: (payload) => dispatch(updateMetadata(payload)),
     updateVersionBook: (value) => dispatch(updateVersionBook(value))
   }
 }

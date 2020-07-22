@@ -37,7 +37,7 @@ export const aboutPage = (colorFile, sizeFile) => {
             flexDirection: 'row'
         },
         TitleText: {
-            paddingVertical: 12,
+            paddingTop: 8,
             fontSize: sizeFile.titleText,
             // color:Color.Blue_Color,
             color: colorFile.sectionHeading,

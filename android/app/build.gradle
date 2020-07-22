@@ -76,10 +76,10 @@ import com.android.build.OutputFile
 project.ext.react = [
     entryFile: "index.js",
     
-    bundleInDebug: true,
+    // bundleInDebug: true,
 
     // whether to bundle JS and assets in release mode
-    //  bundleInRelease: true, 
+     bundleInRelease: true, 
     //  resourcesDirRelease   : "src/release/res"
 ]
 
@@ -132,19 +132,19 @@ android {
         }
     }
     signingConfigs {
-        // release {
-        //     if (project.hasProperty('MYAPP_RELEASE_STORE_FILE')) {
-        //         storeFile file(MYAPP_RELEASE_STORE_FILE)
-        //         storePassword MYAPP_RELEASE_STORE_PASSWORD
-        //         keyAlias MYAPP_RELEASE_KEY_ALIAS
-        //         keyPassword MYAPP_RELEASE_KEY_PASSWORD
-        //     }
-        // }
+        release {
+            if (project.hasProperty('MYAPP_RELEASE_STORE_FILE')) {
+                storeFile file(MYAPP_RELEASE_STORE_FILE)
+                storePassword MYAPP_RELEASE_STORE_PASSWORD
+                keyAlias MYAPP_RELEASE_KEY_ALIAS
+                keyPassword MYAPP_RELEASE_KEY_PASSWORD
+            }
+        }
     }
     buildTypes {
         release {
             minifyEnabled enableProguardInReleaseBuilds
-            // signingConfig signingConfigs.release
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }

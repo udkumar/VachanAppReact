@@ -54,7 +54,7 @@ class Player extends Component {
       <View style={{ flex: 1 }}>
         {this.props.loading ?
           <ActivityIndicator style={{ alignItems: 'center', justifyContent: 'center', }} size="large" color={Color.Blue_Color} /> :
-          this.props.error ? null :
+          (this.props.audioURL &&
             <View style={this.props.styles.audiocontainer}>
               <Controls
                 styles={this.props.styles}
@@ -77,7 +77,7 @@ class Player extends Component {
                 onEnd={this.onEnd}           // Callback when playback finishes
                 onError={this.videoError}    // Callback when video cannot be loaded
               />
-            </View>
+            </View>)
         }
       </View>
     );
