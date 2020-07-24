@@ -99,6 +99,7 @@ class Commentary extends Component {
                         <Text style={this.styles.commentaryHeading}>Verse Number : {item.verse}</Text>
                       )}
                     <HTML 
+                     baseFontStyle={this.styles.textString}
                     tagsStyles={{p:this.styles.textString}} html={item.text} imagesMaxWidth={Dimensions.get('window').width} />
                   </View>
                 )}
@@ -107,7 +108,9 @@ class Commentary extends Component {
                   {this.props.commentaryContent.bookIntro == '' ? null :
                     <View style={this.styles.cardItemBackground}>
                       <Text style={this.styles.commentaryHeading}>Book Intro</Text>
-                    <HTML tagsStyles={{p:this.styles.textString}} html={this.props.commentaryContent.bookIntro} imagesMaxWidth={Dimensions.get('window').width} />
+                    <HTML 
+                    baseFontStyle={this.styles.textString}
+                    tagsStyles={{p:this.styles.textString}} html={this.props.commentaryContent.bookIntro} imagesMaxWidth={Dimensions.get('window').width} />
                     </View>}
                 </View>}
               />
