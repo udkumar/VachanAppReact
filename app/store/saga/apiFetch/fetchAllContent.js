@@ -2,14 +2,16 @@
 import { FETCH_ALL_CONTENT, FECTH_ALL_LANGUAGE } from '../../action/actionsType'
 import { allContentFailure, allContentSuccess, allLanguageFailure, allLanguageSuccess } from '../../action/'
 import { put, takeLatest, call, fork, all } from 'redux-saga/effects'
+import securityVaraibles  from './../../../../securityVaraibles.js'
 import fetchApi from '../../api';
 const API_BASE_URL = 'https://api.vachanonline.net/v1/'
 
 //fetch audio available book ,audio file 
 function* fetchAllContent() {
   try {
+    const commentaryKey = securityVaraibles.COMMENTARY_KEY ? '?key='+securityVaraibles.COMMENTARY_KEY : ''
     const bibleAPI = API_BASE_URL + 'bibles'
-    const commentaryAPI = API_BASE_URL + 'commentaries'
+    const commentaryAPI = API_BASE_URL + 'commentaries'+commentaryKey
     const dictionaryAPI = API_BASE_URL + 'dictionaries'
     const [bibleLanguage, commentaryLanguage, dictionariesLanguage] = yield all([
       call(fetchApi, bibleAPI),

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  TouchableOpacity,
+  Dimensions,
   FlatList,
   Alert,
   Text,
@@ -13,6 +13,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { styles } from './styles'
 import Color from '../../../utils/colorConstants'
 import ReloadButton from '../../../components/ReloadButton';
+import HTML from 'react-native-render-html';
+
 
 class Commentary extends Component {
 
@@ -32,9 +34,7 @@ class Commentary extends Component {
       this.props.fetchCommentaryContent({ parallelContentSourceId: this.props.parallelContentSourceId, bookId: this.props.bookId, chapter: this.props.currentVisibleChapter })
     }
   }
-  componentWillMount() {
 
-  }
   errorMessage() {
     if (!this.alertPresent) {
       this.alertPresent = true;
@@ -62,32 +62,7 @@ class Commentary extends Component {
       return entry.bookId == bookId
     })
     const bookName = value ? value[0].bookName : this.props.bookName
-
-    var convertToText = (response) => {
-      if (response) {
-        let exRegex = /<b>(.*?)<\/b>/g
-        //replaced string with bld because on spliting with '<b>' tag ,all text get mixed not able to identify where to apply the bold style 
-        let splitstr = response.replace(/\<br>|\<br\/>/g, "\n").replace(exRegex, 'BLD<b>$1</b>BLD')
-        //splited with bld will remove the bld text and will be left with b tag and ext can easily get bold
-        let str = splitstr.split('BLD')
-        console.log(str)
-        let temp = []
-        for (var i = 0; i <= str.length - 1; i++) {
-          let matchBold = exRegex.exec(str[i])
-          if (matchBold != null) {
-            temp.push(<Text style={{ fontWeight: 'bold', fontSize: 16 }}>{matchBold[1]} : </Text>)
-          }
-          else {
-            temp.push(<Text>{str[i]}</Text>)
-          }
-        }
-        return (<Text>{temp}</Text>)
-      }
-      else {
-        return
-      }
-
-    }
+   
     return (
       <View style={this.styles.container}>
         <Header style={{ height: 40, borderLeftWidth: 0.5, borderLeftColor: Color.White }} >
@@ -123,7 +98,8 @@ class Commentary extends Component {
                         <Text style={this.styles.commentaryHeading}>Chapter Intro</Text> :
                         <Text style={this.styles.commentaryHeading}>Verse Number : {item.verse}</Text>
                       )}
-                    <Text style={this.styles.textString}>{convertToText(item.text)}</Text>
+                    <HTML 
+                    tagsStyles={{p:this.styles.textString}} html={item.text} imagesMaxWidth={Dimensions.get('window').width} />
                   </View>
                 )}
                 ListFooterComponent={<View style={{ height: 40, marginBottom: 40 }}></View>}
@@ -131,7 +107,7 @@ class Commentary extends Component {
                   {this.props.commentaryContent.bookIntro == '' ? null :
                     <View style={this.styles.cardItemBackground}>
                       <Text style={this.styles.commentaryHeading}>Book Intro</Text>
-                      <Text style={this.styles.textString}>{convertToText(this.props.commentaryContent.bookIntro)}</Text>
+                    <HTML tagsStyles={{p:this.styles.textString}} html={this.props.commentaryContent.bookIntro} imagesMaxWidth={Dimensions.get('window').width} />
                     </View>}
                 </View>}
               />
