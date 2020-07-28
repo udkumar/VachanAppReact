@@ -8,7 +8,6 @@ export const SelectBookPageStyle =(colorFile, sizeFile) =>{
     flex:1,
     backgroundColor:colorFile.backgroundColor,
   
-    // flexDirection:'row'
    },
     textStyle: {
         fontSize:sizeFile.titleText,
@@ -21,7 +20,6 @@ export const SelectBookPageStyle =(colorFile, sizeFile) =>{
    },
     sideBarContainer:{
         flexDirection:'column',
-        // width:width/5,
         backgroundColor:Color.Black
     },
     sideBarIconCustom:{

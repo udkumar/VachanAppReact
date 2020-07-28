@@ -1,5 +1,4 @@
 import {StyleSheet,Dimensions} from 'react-native'
-const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 import Color from '../../utils/colorConstants'
 
@@ -10,7 +9,6 @@ export const styles =(colorFile, sizeFile) =>{
     backgroundColor:colorFile.backgroundColor
     },
     container:{
-        // margin:8,
         backgroundColor:colorFile.backgroundColor
     },
     rowViewContainer: {
@@ -59,13 +57,10 @@ export const styles =(colorFile, sizeFile) =>{
       headerText: {
         fontSize: 16,
         color:colorFile.textColor
-        // fontWeight: '500',
-        // alignItems:'flex-start'
       },
       iconStyle:{
         fontSize:sizeFile.iconSize,
         color:colorFile.iconColor
-        // alignItems:'flex-end'
       },
       separator: {
         height: 0.5,
@@ -77,14 +72,10 @@ export const styles =(colorFile, sizeFile) =>{
       text: {
         fontSize: 16,
         color: colorFile.textColor,
-        
-        // paddingLeft:10
       },
       content: {
         paddingHorizontal:20,
         paddingVertical:10,
-        // paddingLeft: 20,
-        // paddingRight: 20,
         flexDirection:"row",
         justifyContent:'space-between',
         backgroundColor:colorFile.backgroundColor
@@ -124,7 +115,6 @@ export const styles =(colorFile, sizeFile) =>{
         selectionInnerContent:{
           padding: 10,
           backgroundColor:colorFile.backgroundColor,
-          // color:colorFile.textColor,
         }
    })
 

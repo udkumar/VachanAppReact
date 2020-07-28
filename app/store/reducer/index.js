@@ -1,6 +1,5 @@
 
-import {createStore,combineReducers,applyMiddleware,compose} from 'redux'
-import { persistStore, persistReducer } from 'redux-persist';
+import { combineReducers } from 'redux'
 
 import updateVersionReducer from './updateVersionReducer';
 import updateStylingReducer from './updateStylingReducer';
@@ -14,16 +13,16 @@ import parallelBibleReducer from './apiFetchReducer/parallelBibleReducer'
 import userInfo from './UserInfoReducer'
 
 const rootReducer = combineReducers({
-    updateVersion:updateVersionReducer,
-    updateStyling:updateStylingReducer,
-    versionFetch:fetchVersionReducer,
-    commentaryFetch:fetchCommentaryReducer,
-    dictionaryFetch:fetchDictionaryReducer,
-    audioFetch:fetchAudioReducer,
-    contents:fetchContentReducer,
-    downloadedBible:downloadedContent,
-    parallel:parallelBibleReducer,
-    userInfo:userInfo
+    updateVersion: updateVersionReducer,
+    updateStyling: updateStylingReducer,
+    versionFetch: fetchVersionReducer,
+    commentaryFetch: fetchCommentaryReducer,
+    dictionaryFetch: fetchDictionaryReducer,
+    audioFetch: fetchAudioReducer,
+    contents: fetchContentReducer,
+    downloadedBible: downloadedContent,
+    parallel: parallelBibleReducer,
+    userInfo: userInfo
 })
 
-export default  rootReducer
+export default rootReducer
