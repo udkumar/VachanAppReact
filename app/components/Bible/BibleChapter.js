@@ -200,7 +200,6 @@ const mapStateToProps = state => {
         sizeFile: state.updateStyling.sizeFile,
         colorFile: state.updateStyling.colorFile,
         books: state.versionFetch.data,
-        // downloaded:false,
 
         language: state.updateVersion.language,
         versionCode: state.updateVersion.versionCode,

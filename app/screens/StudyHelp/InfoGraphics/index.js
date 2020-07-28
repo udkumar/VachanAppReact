@@ -12,7 +12,6 @@ class Infographics extends Component {
 
   static navigationOptions = ({ navigation }) => {
     const { params = {} } = navigation.state
-    console.log("params header of infographics ", params)
     return {
       headerTitle: (
         <View style={{ flex: 1, marginRight: 10 }}>
@@ -38,7 +37,6 @@ class Infographics extends Component {
     this.props.navigation.setParams({ file: this.props.file })
   }
   componentDidMount() {
-    console.log("IMAGE PATH ", this.props.file)
     this.props.navigation.setParams({
       bookName: this.props.bookName,
       currentChapter: this.props.chapterNumber,
@@ -50,7 +48,6 @@ class Infographics extends Component {
   }
 
   render() {
-    console.log("infographics json file ", this.props.file)
     return (
       <View style={{ flex: 1 }}>
         <NavigationEvents

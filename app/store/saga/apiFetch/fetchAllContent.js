@@ -119,7 +119,6 @@ function* fetchAllContent() {
     yield put(allContentFailure(null))
 
   } catch (e) {
-    console.log(" ERROR ", e)
     yield put(allContentFailure(e))
     yield put(allContentSuccess([]))
   }

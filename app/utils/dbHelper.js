@@ -37,9 +37,7 @@ class DbHelper {
 						: RNFS.DocumentDirectoryPath + '/vachanApp.realm',
 				schema: [LanguageModel.schema, LanguageMetaData.schema, VersionModel.schema, BookModel.schema, ChapterModel.schema, VerseModel.schema, NoteModel.schema, NoteStylingModel.schema, VerseStylingModel.schema, ReferenceModel.schema, HistoryModel.schema, BookmarksListModel.schema, HighlightsModel.schema, VerseMetadataModel.schema, bookNameList.schema, BookmarksBookId.schema, HighlightsBookId.schema]
 			});
-			// console.log('create db:', db.path)
 		} catch (err) {
-			console.log("error in getItem" + err)
 			return null;
 		}
 	}
@@ -63,10 +61,10 @@ class DbHelper {
 	async queryVersionWithCode(verCode: string, langCode: string) {
 		let realm = await this.getRealm();
 		if (realm) {
-			// let result = realm.objectForPrimaryKey("LanguageModel", langCode);
-			// let resultsA = result.versionModels;
-			// resultsA = resultsA.filtered('versionCode ==[c] "' + verCode + '"');
-			// return resultsA;
+			let result = realm.objectForPrimaryKey("LanguageModel", langCode);
+			let resultsA = result.versionModels;
+			resultsA = resultsA.filtered('versionCode ==[c] "' + verCode + '"');
+			return resultsA;
 		}
 		return null;
 	}
@@ -75,10 +73,8 @@ class DbHelper {
 		let realm = await this.getRealm();
 		if (realm) {
 			let resultsA = realm.objects("BookModel")
-			console.log("result a ", JSON.stringify(resultsA))
 			if (resultsA.length > 0) {
 				var resultsB = resultsA.filtered('languageName ==[c] "' + langCode + '" && versionCode ==[c] "' + verCode + '" && bookName CONTAINS[c] "' + text + '"').sorted("bookNumber");
-				console.log(" result a ", resultsB.length)
 				if (resultsB.length > 0) {
 					return { bookId: resultsB[0].bookId, bookName: resultsB[0].bookName }
 				}
@@ -96,7 +92,6 @@ class DbHelper {
 			if (resultsB.length > 0) {
 				var textValue = []
 				for (var i = 0; i <= resultsB.length - 1; i++) {
-					// var bookId = bookIdresultsB[i].bookName
 					for (var j = 0; j <= resultsB[i].chapters.length - 1; j++) {
 						var matchedStr = resultsB[i].chapters[j].verses.filtered('text CONTAINS[c] "' + text + '"')
 						if (Object.keys(matchedStr).length > 0) {
@@ -110,7 +105,6 @@ class DbHelper {
 						}
 					}
 				}
-				console.log(" verse in ", textValue)
 				return textValue
 			}
 		}
@@ -143,8 +137,6 @@ class DbHelper {
 				if (highlights.length > 0) {
 					let bookmarksId = highlights[0].highlightsBookId
 					let res = bookmarksId.filtered('bookId==[c] "' + bId + '"&& chapterNumber==[c] "' + cNum + '"')
-					// let res = bookmarksId.filtered('bookId==[c] "' + bId + '"')
-					console.log("bookmarks match chapter ", JSON.stringify(res.length))
 					if (Object.keys(res).length > 0) {
 						return res
 					}
@@ -166,27 +158,18 @@ class DbHelper {
 		let vNum = parseInt(verseNumber)
 		let cNum = parseInt(chapterNumber)
 		if (realm) {
-			// value =[]
 			if (isHighlight) {
 				realm.write(() => {
 					if (Object.keys(sourcedata).length == 0) {
-						console.log("SOURCE ID NOT PRESENT   ")
 						let highlights = realm.create('HighlightsModel', { sourceId: source, highlightsBookId: [] });
 						highlights.highlightsBookId.push({ bookId: bId, chapterNumber: cNum, verseNumber: [vNum] })
 					}
 					else {
-						console.log("SOURCE ID PRESENT   ")
 						var addToBook = sourcedata[0].highlightsBookId.filtered('bookId==[c]"' + bId + '"&& chapterNumber==[c]"' + cNum + '"')
-						console.log(" not bookid ", JSON.stringify(addToBook))
 						if (Object.keys(addToBook).length == 0) {
-							console.log("	BOOK ID PRESENT   ")
-							console.log(" not bookid ", JSON.stringify(addToBook))
 							sourcedata[0].highlightsBookId.push({ bookId: bId, chapterNumber: cNum, verseNumber: [vNum] })
-							// sourcedata[0].highlightsBookId[0].chapterNumber.push(cNum)
 						}
 						else {
-							console.log("	BOOK ID PRESENT   ")
-							console.log(" not chapter ", JSON.stringify(addToBook))
 							if (addToBook[0].verseNumber.indexOf(vNum) == -1) {
 								addToBook[0].verseNumber.push(vNum)
 							}
@@ -196,7 +179,6 @@ class DbHelper {
 			}
 			else {
 				var addToBook = sourcedata[0].highlightsBookId.filtered('bookId==[c]"' + bId + '"&& chapterNumber==[c]"' + cNum + '"')
-				console.log("delete ", addToBook[0])
 				var index = addToBook[0].verseNumber.indexOf(vNum)
 				if (addToBook[0].verseNumber.indexOf(vNum) != -1) {
 					realm.write(() => {
@@ -219,7 +201,6 @@ class DbHelper {
 	}
 
 	async insertNewBook(bookModel, versionModel, languageModel) {
-		// console.log("bookModel "+JSON.stringify(bookModel)+ " version modal "+JSON.stringify(versionModel)+ "language modal "+JSON.stringify(languageModel))
 		let realm = await this.getRealm();
 		if (realm) {
 			var ls = realm.objectForPrimaryKey('LanguageModel', languageModel.languageName);
@@ -242,18 +223,15 @@ class DbHelper {
 					}
 					realm.write(() => {
 						ls.versionModels[pos].bookModels.push(bookModel);
-						console.log("BOOK ADDED ")
 					});
 				} else {
 					realm.write(() => {
 						ls.versionModels.push(versionModel);
-						console.log("verion model added ")
 					});
 				}
 			} else {
 				realm.write(() => {
 					realm.create('LanguageModel', languageModel);
-					console.log("langauge added")
 				});
 			}
 		}
@@ -286,7 +264,6 @@ class DbHelper {
 
 
 	async updateBookmarkInBook(sourceId, bId, cNum, isBookmark) {
-		console.log(" langName,verCode,bId,cNum, isBookmark) ", bId, cNum, isBookmark)
 		let realm = await this.getRealm();
 		if (realm) {
 			var source = parseInt(sourceId)
@@ -296,18 +273,13 @@ class DbHelper {
 					if (Object.keys(sourcedata).length == 0) {
 						let bookmarks = realm.create('BookmarksListModel', { sourceId: source, bookmarksBookId: [] });
 						bookmarks.bookmarksBookId.push({ bookId: bId, chapterNumber: [cNum] })
-						// bookmarks.bookmarksBookId[0].chapterNumber.push(cNum)
-						console.log(" add chapter ")
 					}
 					else {
 						var addToBook = sourcedata[0].bookmarksBookId.filtered('bookId=="' + bId + '"')
 						if (Object.keys(addToBook).length == 0) {
-							console.log(" not bookid ", JSON.stringify(addToBook))
 							sourcedata[0].bookmarksBookId.push({ bookId: bId, chapterNumber: [cNum] })
-							// sourcedata[0].bookmarksBookId[0].chapterNumber.push(cNum)
 						}
 						else {
-							console.log(" not chapter ", JSON.stringify(addToBook))
 							if (addToBook[0].chapterNumber.indexOf(cNum) == -1) {
 								addToBook[0].chapterNumber.push(cNum)
 							}
@@ -317,7 +289,6 @@ class DbHelper {
 			}
 			else {
 				var addToBook = sourcedata[0].bookmarksBookId.filtered('bookId=="' + bId + '"')
-				console.log("nothing to delete ", addToBook[0].chapterNumber.indexOf(cNum))
 				if (addToBook[0].chapterNumber.indexOf(cNum) > -1) {
 					realm.write(() => {
 						addToBook[0].chapterNumber.splice(addToBook[0].chapterNumber.indexOf(cNum), 1)
@@ -329,10 +300,8 @@ class DbHelper {
 
 	}
 	async queryBookmark(sourceId, bId) {
-		// console.log("languagge version ",langName,verCode)
 
 		let realm = await this.getRealm()
-		// source id null  or bid null or both null 
 		if (realm) {
 			let result1 = realm.objects("BookmarksListModel");
 			if (sourceId == null && bId == null) {
@@ -354,10 +323,8 @@ class DbHelper {
 			else {
 				let bookmarks = result1.filtered('sourceId == "' + sourceId + '"')
 				if (bookmarks.length > 0) {
-					// console.log("bookmarks data ",bookmarks.length)
 					let bookmarksId = bookmarks[0].bookmarksBookId
 					let res = bookmarksId.filtered('bookId==[c] "' + bId + '"')
-					console.log("bookmarks match chapter ", JSON.stringify(res.length))
 					if (Object.keys(res).length > 0) {
 						return res
 					}
@@ -391,7 +358,6 @@ class DbHelper {
 	}
 
 	async addOrUpdateNote(index, body, createdTime, modifiedTime, refList) {
-		// console.log("verse list ",refList)
 		let realm = await this.getRealm();
 		if (realm) {
 			let results = realm.objects('NoteModel').filtered('createdTime = $0', createdTime);
@@ -401,13 +367,11 @@ class DbHelper {
 						body: body, createdTime: createdTime, modifiedTime: modifiedTime,
 						references: refList
 					})
-					console.log("write.. new notes..")
 				} else {
 					if (results.length > 0) {
 						results[0].body = body;
 						results[0].modifiedTime = modifiedTime;
 						results[0].references = refList;
-						console.log("update.. notes..")
 					}
 				}
 			});
@@ -416,22 +380,18 @@ class DbHelper {
 
 	async deleteNote(createdTime) {
 		let realm = await this.getRealm();
-		console.log("delete note : " + createdTime);
 		realm.write(() => {
 			let allNotes = realm.objects('NoteModel').filtered('createdTime = $0', createdTime);
-			console.log("len note : " + allNotes.length);
 			realm.delete(allNotes); // Deletes all
 		});
 	}
 	async notesCharStyle(charIndex, styleOption) {
 		let realm = await this.getRealm();
 		if (realm) {
-			console.log("value in db help " + charIndex + " style option " + styleOption)
 		}
 	}
 
 	async addHistory(sourceId, langName, langCode, verCode, bId, bookName, cNum, downloaded, timeStamp) {
-		console.log("ADD HISTORY BOOK NAME ", bookName)
 		let realm = await this.getRealm();
 		if (realm) {
 			realm.write(() => {
@@ -446,7 +406,6 @@ class DbHelper {
 					downloaded: JSON.parse(downloaded),
 					time: timeStamp
 				})
-				console.log("write.. history complete..")
 			});
 		}
 	}
@@ -531,11 +490,9 @@ class DbHelper {
 		if (realm) {
 			let result = realm.objects('LanguageModel');
 			if (Object.keys(result).length > 0) {
-				console.log("result language list found")
 				return result
 			}
 			else {
-				console.log("result language list not found")
 				return null
 			}
 		}
@@ -544,18 +501,14 @@ class DbHelper {
 	//get all available booklist
 	async getDownloadedBook(langName) {
 		let realm = await this.getRealm();
-		console.log("realm ", realm)
 		if (realm) {
-			console.log("realm  inside")
 			let result = realm.objectForPrimaryKey("LanguageModel", langName);
 			let resultsA = result.bookNameList;
-			// let resultB = resultsA.filtered('versionCode == "'+verCode+'" ');
 			return resultsA
 		}
 	}
 	//download version
 	async addNewVersion(langName, verCode, bookmodel, sourceId) {
-		// angName,verCode,result,sourceId,bookListData
 		let realm = await this.getRealm();
 		if (realm) {
 			let result = realm.objectForPrimaryKey("LanguageModel", langName)
@@ -565,10 +518,7 @@ class DbHelper {
 
 			if (bookmodel.length > 0) {
 				var bookIdList = []
-				console.log("VERSION BOOK ", resultBook.length)
 				if (resultBook.length == 0) {
-					console.log("VERSION BOOK is zero ", resultBook.length)
-					// direct adding data to db 
 					realm.write(() => {
 						for (var i = 0; i < bookmodel.length; i++) {
 							realm.create('BookModel', bookmodel[i])
@@ -578,11 +528,8 @@ class DbHelper {
 					})
 				}
 				else {
-					console.log("VERSION BOOK is not zero ", resultBook.length)
 					for (var i = 0; i < resultBook.length; i++) {
-						console.log("book is version Code  ", resultBook[i].languageName)
 						if (resultBook[i].versionCode == verCode) {
-							console.log("VERSION ALREADY ADDED")
 							realm.write(() => {
 								for (var i = 0; i < bookmodel.length; i++) {
 									realm.create('BookModel', bookmodel[i])
@@ -599,15 +546,12 @@ class DbHelper {
 	}
 	//query  chapter
 	async queryVersions(langName, verCode, bookId) {
-		console.log("query version ", langName, verCode, bookId)
 		let realm = await this.getRealm()
 
 		if (realm) {
 			let result = realm.objects('BookModel')
 			let data = result.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '" && bookId =="' + bookId + '"')
-			// let resultsA = result.chapters[0]
 			if (Object.keys(data).length > 0) {
-				console.log('downloaded book found ', Object.keys(data).length)
 				return data
 			}
 			else {
@@ -616,7 +560,6 @@ class DbHelper {
 		}
 	}
 	async queryTextForNote(langName, verCode, bookId, chapterNumber, verseNumber) {
-		console.log("query version ", langName, verCode, bookId, chapterNumber, verseNumber)
 		let realm = await this.getRealm()
 
 		if (realm) {

@@ -34,26 +34,20 @@ class Setting extends Component {
   }
   async onChangeSlider(value) {
     await this.props.updateFontSize(value)
-    // this.styles = settingsPageStyle(this.props.colorFile, this.props.sizeFile);
     AsyncStorageUtil.setAllItems([
       [AsyncStorageConstants.Keys.SizeMode, JSON.stringify(value)],
     ]);
-    console.log("size mode ", this.props.sizeMode)
   }
 
   async onColorModeChange(value) {
-    console.log("value ", value, "color mode props ", this.props.colorMode)
     await this.props.updateColorMode(value)
-    // this.styles = settingsPageStyle(this.props.colorFile, this.props.sizeFile);
     AsyncStorageUtil.setAllItems([
       [AsyncStorageConstants.Keys.ColorMode, JSON.stringify(value)],
     ]);
   }
 
   onVerseInLineModeChange = () => {
-    console.log("verse in line ", this.state.verseInLine)
     this.setState({ verseInLine: !this.state.verseInLine }, () => {
-      console.log("verse in line ", this.state.verseInLine)
       this.props.updateVerseInLine(!this.state.verseInLine);
       AsyncStorageUtil.setAllItems([
         [AsyncStorageConstants.Keys.VerseViewMode, JSON.stringify(!this.state.verseInLine)],
@@ -72,7 +66,6 @@ class Setting extends Component {
   }
   render() {
     this.styles = settingsPageStyle(this.props.colorFile, this.props.sizeFile)
-    console.log(" color mode ", this.state.colorMode)
     const dayModeIconColor = this.state.colorMode == AsyncStorageConstants.Values.DayMode ? dayColors.accentColor : Color.Gray
     const nightModeIconColor = this.state.colorMode == AsyncStorageConstants.Values.NightMode ? nightColors.accentColor : Color.Gray
 

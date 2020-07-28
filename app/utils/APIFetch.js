@@ -66,9 +66,8 @@ var APIFetch = {
             })
                 .then(ApiUtils.checkStatus)
                 .then((response) => response.json())
-                .catch(e => console.log("erorr fetching all books ", e))
+                .catch(e => e)
         } catch (error) {
-            console.log("error on getting all books ", error)
             return error;
         }
     },
@@ -85,14 +84,12 @@ var APIFetch = {
             })
                 .then(ApiUtils.checkStatus)
                 .then((response) => response)
-                .catch(e => console.log(" ", e))
+                .catch(e =>  e)
         } catch (error) {
-            console.log("fetching audio ", error)
             return error;
         }
     },
     async availableAudioBook(language_code, version) {
-        console.log("anguage_code,version ", language_code, version)
         const version_code = version.toLowerCase()
         try {
             return await fetch(GIT_BASE_API + "audio_bibles" + "/" + language_code + "/" + version_code + "/" + "manifest.json", {
@@ -104,9 +101,8 @@ var APIFetch = {
             })
                 .then(ApiUtils.checkStatus)
                 .then((response) => response.json())
-                .catch(e => console.log(" ", e))
+                .catch(e =>e)
         } catch (error) {
-            console.log("error in fetching manifest file of audio ", error)
             return error;
         }
     },
@@ -123,9 +119,8 @@ var APIFetch = {
             })
                 .then(ApiUtils.checkStatus)
                 .then((response) => response.json())
-                .catch(e => console.log("erorr fetching all books ", e))
+                .catch(e =>  e)
         } catch (error) {
-            console.log("error on getting all books ", error)
             return error;
         }
     },
@@ -140,9 +135,8 @@ var APIFetch = {
             })
                 .then(ApiUtils.checkStatus)
                 .then((response) => response.json())
-                .catch(e => console.log("erorr fetching all books ", e))
+                .catch(e =>  e)
         } catch (error) {
-            console.log("error on getting all books ", error)
             return error;
         }
     },
@@ -157,9 +151,8 @@ var APIFetch = {
             })
                 .then(ApiUtils.checkStatus)
                 .then((response) => response.json())
-                .catch(e => console.log("erorr fetching all books ", e))
+                .catch(e =>  e)
         } catch (error) {
-            console.log("error on getting all books ", error)
             return error;
         }
     },
@@ -174,9 +167,8 @@ var APIFetch = {
             })
                 .then(ApiUtils.checkStatus)
                 .then((response) => response.json())
-                .catch(e => console.log("erorr fetching all books ", e))
+                .catch(e =>  e)
         } catch (error) {
-            console.log("error on getting all books ", error)
             return error;
         }
     },
@@ -191,9 +183,8 @@ var APIFetch = {
             })
                 .then(ApiUtils.checkStatus)
                 .then((response) => response.json())
-                .catch(e => console.log("erorr fetching all books ", e))
+                .catch(e =>  e)
         } catch (error) {
-            console.log("error on getting all books ", error)
             return error;
         }
     },
@@ -208,9 +199,8 @@ var APIFetch = {
             })
                 .then(ApiUtils.checkStatus)
                 .then((response) => response.json())
-                .catch(e => console.log("erorr fetching all books ", e))
+                .catch(e => e)
         } catch (error) {
-            console.log("error on getting all books ", error)
             return error;
         }
     },
@@ -225,9 +215,8 @@ var APIFetch = {
             })
                 .then(ApiUtils.checkStatus)
                 .then((response) => response.json())
-                .catch(e => console.log("erorr fetching all books ", e))
+                .catch(e => e)
         } catch (error) {
-            console.log("error on getting search ", error)
             return error;
         }
     }

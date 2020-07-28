@@ -152,11 +152,6 @@ export const styles = (colorFile, sizeFile) => {
             position: 'absolute',
             bottom: 20,
             left: 0,
-            // width: 56, 
-            // height: 56, 
-
-            // backgroundColor: colorFile.backgroundColor,
-            // backgroundColor:colorFile.semiTransparentBackground,
             backgroundColor: 'rgba(63, 81, 181,0.5)',
 
             justifyContent: 'center'
@@ -171,7 +166,6 @@ export const styles = (colorFile, sizeFile) => {
         },
         verseNumber: {
             fontSize: sizeFile.contentText,
-            // color:colorFile.textColor
         },
         verseChapterNumber: {
             fontSize: sizeFile.titleText,
@@ -199,10 +193,6 @@ export const styles = (colorFile, sizeFile) => {
             paddingVertical: 2
         },
         addToSharefooterComponent: {
-            // height: 60, 
-            // position:'absolute',
-            // bottom:0,
-            // padding:12,
             margin: 16,
             justifyContent: 'center',
             alignItems: 'center',

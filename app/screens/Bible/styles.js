@@ -195,10 +195,6 @@ export const styles = (colorFile, sizeFile) => {
             paddingVertical: 2
         },
         addToSharefooterComponent: {
-            // height: 60, 
-            // position:'absolute',
-            // bottom:0,
-            // padding:12,
             margin: 16,
             marginBottom: 60,
             justifyContent: 'center',

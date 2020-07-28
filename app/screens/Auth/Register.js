@@ -29,7 +29,6 @@ class Register extends Component {
     this.setState(state);
   }
   registerUser = () => {
-    console.log(" photo url ", this.state.filePath)
     if (this.state.email === '' && this.state.password === '') {
       Alert.alert('Enter details to signup!')
     } else {
@@ -37,10 +36,6 @@ class Register extends Component {
         isLoading: true,
       })
       if (this.state.cpassword === this.state.password) {
-        // firebase.auth().currentUser.sendEmailVerification({
-        //     handleCodeInApp: true,
-        //     url: 'app/email-verification',
-        //    });
         firebase
           .auth()
           .createUserWithEmailAndPassword(this.state.email, this.state.password)
@@ -72,7 +67,6 @@ class Register extends Component {
   }
 
   render() {
-    console.log(" FILE   ", this.state.filePath)
     if (this.state.isLoading) {
       return (
         <View style={this.styles.preloader}>

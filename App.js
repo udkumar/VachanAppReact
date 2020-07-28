@@ -1,16 +1,11 @@
 import React, { Component } from 'react';
 import  {AppNavigator} from './app/routes/';
-import {NetInfo} from 'react-native'
 import AsyncStorageUtil from './app/utils/AsyncStorageUtil';
-import {nightColors, dayColors} from './app/utils/colors.js'
-import {extraSmallFont,smallFont,mediumFont,largeFont,extraLargeFont} from './app/utils/dimens.js'
-import { styleFile } from './app/utils/styles.js'
 import {AsyncStorageConstants} from './app/utils/AsyncStorageConstants'
 import SplashScreen from 'react-native-splash-screen'
 import {connect} from 'react-redux'
 import { Root } from "native-base";
 import {fetchAllContent,fetchVersionBooks} from './app/store/action/'
-// import isSignedIn from './app/routes/auth'
 
 class App extends Component {
     constructor(props){

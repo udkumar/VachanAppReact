@@ -12,7 +12,6 @@ import Color from '../../utils/colorConstants'
 class Player extends Component {
   constructor(props) {
     super(props);
-    console.log("PLAYER ", props)
     this.state = {
       paused: true,
       totalLength: 1,

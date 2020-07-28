@@ -86,9 +86,7 @@ class Search extends Component {
 
       if (this.state.downloaded) {
         let searchResultByBookName = await DbQueries.querySearchBookWithName(this.state.versionCode, this.state.languageName, this.state.text);
-        // console.log("SEARCHED  RESULT",searchResultByBookName)
         if (searchResultByBookName) {
-          console.log("SEARCHED  RESULT", searchResultByBookName)
           let reference = [{
             bookId: searchResultByBookName.bookId,
             bookName: searchResultByBookName.bookName,
@@ -101,7 +99,6 @@ class Search extends Component {
         }
 
         let searchResultByVerseText = await DbQueries.querySearchVerse(this.state.versionCode, this.state.languageName, this.state.text)
-        console.log("searchResultByVerseText  ", searchResultByVerseText)
         if (searchResultByVerseText && searchResultByVerseText.length > 0) {
           this.setState({ searchedResult: [...this.state.searchedResult, ...searchResultByVerseText] })
           this.addRefListToTab(searchResultByVerseText)
@@ -109,7 +106,6 @@ class Search extends Component {
         this.setState({ isLoading: false })
       } else {
         var res = await APIFetch.searchText(this.state.sourceId, this.state.text)
-        console.log(" res ", res)
         var data = []
         if (res.result.length > 0 && this.state.books) {
           for (var i = 0; i <= res.result.length - 1; i++) {
@@ -252,7 +248,6 @@ class Search extends Component {
   }
 
   goToBible = (bId, bookName, chapterNum, verseNum) => {
-    console.log(" language version ", this.props.languageName, this.state.languageName, this.props.versionCode)
     this.props.updateVersionBook({
       bookId: bId,
       bookName: bookName,

@@ -1,8 +1,7 @@
 
 import { FETCH_AUDIO_URL } from '../../action/actionsType'
 import { audioURLFailure, audioURLSuccess } from '../../action/'
-import { put, takeLatest, call, fork } from 'redux-saga/effects'
-import fetchApi from '../../api';
+import { put, takeLatest, call } from 'redux-saga/effects'
 const GIT_BASE_API = 'https://github.com/Bridgeconn/vachancontentrepository/raw/master/'
 
 function* fetchAudioUrl(params) {

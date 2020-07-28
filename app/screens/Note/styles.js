@@ -22,9 +22,6 @@ export const noteStyle =(colorFile, sizeFile) =>{
     selectGridNum:{
         flex:0.25,
         borderColor:colorFile.gridBorderColor,
-        // borderRightWidth:1, 
-        // borderBottomWidth:1,
-        // borderWidth:0.5,
         height:width/4,
         justifyContent:"center"
     },
@@ -113,8 +110,6 @@ export const noteStyle =(colorFile, sizeFile) =>{
         flex:1, 
         flexDirection:'column', 
         backgroundColor:colorFile.backgroundColor,
-        // margin:8
-
     },
     subContainer:{
         justifyContent:'space-between',
@@ -144,7 +139,6 @@ export const noteStyle =(colorFile, sizeFile) =>{
     messageEmpty:{
         fontSize:sizeFile.titleText,
         color:colorFile.textColor,
-        // textAlign:'center',
     },
     emptyMessageIcon:{
         fontSize:sizeFile.emptyIconSize,

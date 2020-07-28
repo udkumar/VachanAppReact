@@ -18,7 +18,6 @@ class LanguageList extends Component {
   });
   constructor(props) {
     super(props)
-    // console.log("LANGUAGELIST PROPS ",this.props.navigation.state.routeName)
     if (Platform.OS === 'android') {
       UIManager.setLayoutAnimationEnabledExperimental(true);
     }
@@ -26,10 +25,8 @@ class LanguageList extends Component {
       isLoading: false,
       text: '',
       languages: [],
-      // searchList:[],
       startDownload: false,
       index: -1,
-      // languageName:'',
       language: this.props.language,
       versionCode: this.props.versionCode,
       downloaded: this.props.downloaded,
@@ -56,9 +53,7 @@ class LanguageList extends Component {
         this.fetchLanguages()
         Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
       } else {
-        console.log("LANGUAGEG LIST ", this.state.languages.length)
         this.alertPresent = false;
-        // this.setState({languages:this.props.bibleLanguages[0].content})
       }
     }
   }
@@ -109,7 +104,6 @@ class LanguageList extends Component {
       }
       this.setState({
         languages: lanVer,
-        // searchList: lanVer
       })
     }
     catch (error) {
@@ -138,7 +132,6 @@ class LanguageList extends Component {
       await this.fetchLanguages()
       this.setState({ startDownload: false })
     } catch (error) {
-      console.log("Error ", error)
       this.setState({ startDownload: false })
       alert("Something went wrong. Try Again")
     }
@@ -147,7 +140,6 @@ class LanguageList extends Component {
     var chapterModels = []
     for (var id in content) {
       if (content != null && id == bookId) {
-        console.log("id in chapter", id, bookId)
         for (var c = 0; c < content[id].chapters.length; c++) {
           var verseModels = []
           for (var v = 0; v < content[id].chapters[c].verses.length; v++) {
@@ -160,14 +152,12 @@ class LanguageList extends Component {
           }
           chapterModels.push(chapterModel)
         }
-        console.log("Chapter MOdel ", chapterModels.length)
         return chapterModels
       }
     }
   }
 
   navigateTo(langName, langCode, booklist, verCode, sourceId, metadata, downloaded) {
-    console.log(' book List ', booklist)
     this.props.navigation.state.params.updateLangVer({
       sourceId: sourceId, languageName: langName, languageCode: langCode,
       versionCode: verCode, downloaded: downloaded,

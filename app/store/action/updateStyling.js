@@ -4,16 +4,12 @@ export const updateColorMode = (colorMode) => {
     return {
         type: UPDATE_COLOR_MODE,
         colorMode: colorMode,
-        // colorFile :colorFile,
-
-
     }
 }
 export const updateFontSize = (sizeMode) => {
     return {
         type: UPDATE_FONT_SIZE,
         sizeMode: sizeMode,
-        // sizeFile:sizeFile,
     }
 }
 

@@ -1,11 +1,7 @@
-import {StyleSheet,Dimensions} from 'react-native'
-import { Icon } from 'native-base';
-const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
+import {StyleSheet} from 'react-native'
 import Color from '../../../utils/colorConstants'
 
 export const styles =(colorFile, sizeFile) =>{
-    // console.log("color file ",colorFile,sizeFile)
     return StyleSheet.create({
         container:{
         flex:1,
@@ -34,14 +30,12 @@ export const styles =(colorFile, sizeFile) =>{
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            // backgroundColor:colorFile.backgroundColor
         },
         dictionaryModalView:{
             flex: 1,
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            // backgroundColor:'#eee'
 
         },
         cardStyle:{

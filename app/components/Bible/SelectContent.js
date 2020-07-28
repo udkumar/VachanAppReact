@@ -26,7 +26,6 @@ class SelectContent extends Component {
 
   _renderHeader = (item, expanded) => {
     var value = expanded && item.contentType
-    console.log("content type ......", value)
     if (value) {
       contentType = value
     }
@@ -130,7 +129,6 @@ class SelectContent extends Component {
             <TouchableWithoutFeedback
               style={this.styles.modalContainer}
               onPressOut={() => { this.props.navigation.setParams({ modalVisible: false }) }}
-            // onPress={this.onPressModal}
             >
               <View style={{ height: '80%', width: '70%', alignSelf: 'flex-end' }}>
                 <Card style={{ marginTop: 40 }}>
@@ -164,7 +162,6 @@ const mapStateToProps = state => {
   return {
     availableContents: state.contents.contentLanguages,
     error: state.contents.error,
-    // isLoading:state.contents.loading,
     contentType: state.updateVersion.parallelContentType,
 
     sizeFile: state.updateStyling.sizeFile,
