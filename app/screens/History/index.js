@@ -45,8 +45,6 @@ class History extends Component {
   async componentDidMount() {
     this.setState({ isLoading: true }, async () => {
       let historyData = await DbQueries.queryHistory()
-      console.log("query history ", historyData)
-
       if (historyData) {
         let historyList = [...this.state.historyList]
         var date = new Date()
@@ -91,7 +89,6 @@ class History extends Component {
 
 
   onClearHistory = () => {
-    console.log("hi clear history")
     DbQueries.clearHistory()
     this.setState({ historyList: [] })
     this.props.navigation.setParams({

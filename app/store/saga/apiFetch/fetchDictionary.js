@@ -8,10 +8,8 @@ function* fetchDictionaryContent(params) {
     const payload = params.payload
     const content = API_BASE_URL + payload.parallelContentSourceId
     const res = yield call(fetch, content)
-    // console.log("res ",res)
     if (res.ok && res.status == 200) {
       const result = yield res.json()
-
       yield put(dictionaryContentSuccess(result))
       yield put(dictionaryContentFailure(null))
     }
@@ -19,9 +17,7 @@ function* fetchDictionaryContent(params) {
       yield put(dictionaryContentFailure(e))
       yield put(dictionaryContentSuccess([]))
     }
-
   } catch (e) {
-    console.log("error ", e)
     yield put(dictionaryContentFailure(e))
     yield put(dictionaryContentSuccess([]))
   }

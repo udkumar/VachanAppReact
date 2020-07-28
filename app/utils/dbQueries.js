@@ -1,5 +1,4 @@
 import DbHelper from './dbHelper';
-// import dbHelper from './dbHelper';
 
 class DbQueries {
 
@@ -24,14 +23,12 @@ class DbQueries {
     querySearchVerse(verCode: string, langName: string, text: string) {
         return DbHelper.queryInVerseText(verCode, langName, text);
     }
-    //for api data 
     queryHighlights(sourceId, bookId, cNum) {
         return DbHelper.queryHighlights(sourceId, bookId, cNum);
     }
     insert(model, value) {
         DbHelper.insert(model, value);
     }
-    // angName,verCode,result,sourceId,bookListData
     addNewVersion(langName, versCode, bookModels, sourceId) {
         DbHelper.addNewVersion(langName, versCode, bookModels, sourceId)
     }

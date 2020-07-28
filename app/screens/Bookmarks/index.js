@@ -88,7 +88,6 @@ class BookMarks extends Component {
             if (b == chapterNum) {
               var firebaseRef = firebase.database().ref("users/" + this.props.uid + "/bookmarks/" + this.props.sourceId + "/" + id);
               if (a.chapterNumber.length == 1) {
-                console.log(" i ", i)
                 data.splice(i, 1)
                 firebaseRef.remove()
                 return

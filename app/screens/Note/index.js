@@ -39,7 +39,6 @@ class Note extends Component {
     data.forEach((a, i) => {
       var firebaseRef = firebase.database().ref("users/" + this.props.uid + "/notes/" + this.props.sourceId + "/" + a.bookId)
       if (i == k) {
-        console.log("A ", a.notes.length)
         a.notes.forEach((b, j) => {
           if (b.body == body && j == l && createdTime == b.createdTime) {
             var updates = {}
@@ -70,7 +69,6 @@ class Note extends Component {
           else {
             var arr = []
             var notes = snapshot.val()
-            console.log(" log Notes ", snapshot.val())
             for (var bookKey in notes) {
               for (var chapterKey in notes[bookKey]) {
                 if (notes[bookKey][chapterKey] != null) {
@@ -83,7 +81,6 @@ class Note extends Component {
               }
             }
             arr.sort(function (a, b) {
-              console.log(" notes date ", a.notes[0].modifiedTime)
               return new Date(b.notes[0].modifiedTime) - new Date(a.notes[0].modifiedTime)
             })
             this.setState({
@@ -95,9 +92,7 @@ class Note extends Component {
         this.setState({ isLoading: false })
       })
     }
-    else {
-      console.log("not logged in")
-    }
+    
   }
   componentDidMount() {
     this.queryDb()
@@ -139,7 +134,6 @@ class Note extends Component {
             },
             notesList: item.notes,
             contentBody: this.bodyText(val.body),
-            // noteObject:item.notes,
             onbackNote: this.queryDb,
             noteIndex: j,
           })

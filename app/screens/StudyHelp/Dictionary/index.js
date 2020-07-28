@@ -65,7 +65,6 @@ class Dictionary extends Component {
       item.words.map(w =>
         <TouchableOpacity
           style={{
-            // flexDirection: "row",
             padding: 10,
           }}
           onPress={() => this.fetchWord(w)}
@@ -88,19 +87,16 @@ class Dictionary extends Component {
     }
   }
   updateData = () => {
-    // if(this.props.error){
+    if(this.props.error){
     this.errorMessage()
-    // }
-    // else{
-    //   return
-    // }
+    }
+    else{
+      return
+    }
   }
 
 
   render() {
-    console.log(" this.props.data ", this.props.dictionaryContent)
-    console.log(" this.props.error ", this.props.error)
-
     return (
       <View style={this.styles.container}>
         <Header style={{ height: 40, borderLeftWidth: 0.5, borderLeftColor: Color.White }} >

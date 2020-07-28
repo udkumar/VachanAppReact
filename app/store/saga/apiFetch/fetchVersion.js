@@ -32,17 +32,10 @@ function* fetchVersionLanguage() {
 function* fetchVersionBooks(params) {
   try {
     const payload = params.payload
-    console.log("PAYLOAD ", payload)
-    // let downloaded = yield AsyncStorageUtil.getAllItems([
-    //   AsyncStorageConstants.Keys.Downloaded,
-    // ])
     let bookListData = []
     if (payload.downloaded) {
-      // console.log("payload bible ")
       var response = yield DbQueries.getDownloadedBook(payload.language)
-      console.log("book name downloaded  ", response)
       for (var i = 0; i <= response.length - 1; i++) {
-        // var bookId = response[i]
         var books = {
           bookId: response[i].bookId,
           bookName: response[i].bookName,
@@ -52,18 +45,12 @@ function* fetchVersionBooks(params) {
         }
         bookListData.push(books)
       }
-      // console.log("book list fetch book list ")
-      // console.log("book list fetch book list ",response)
     }
     else {
-      // const url  = API_BASE_URL + "bibles" + "/" + payload.sourceId + "/" + "books"
       var result = yield call(fetch, 'https://api.vachanonline.net/v1/booknames')
-      // console.log("response data  ",result)
       if (result.ok && result.status == 200) {
         const response = yield result.json()
-        // console.log("response data  ",response)
         for (var i = 0; i < response.length; i++) {
-          // console.log("language name ",payload.language.toLowerCase(),response[i].language.name)
           if (payload.language.toLowerCase() == response[i].language.name) {
             for (var j = 0; j <= response[i].bookNames.length - 1; j++) {
               var books = {
@@ -82,10 +69,8 @@ function* fetchVersionBooks(params) {
     var res = bookListData.length == 0 ? [] : bookListData.sort(function (a, b) { return a.bookNumber - b.bookNumber })
     yield put(versionBooksSuccess(res))
     yield put(versionBooksFailure(null))
-    // console.log("NOT GETTING DATA ",bookListData)
 
   } catch (e) {
-    console.log("ERROR ON GETTING BOOOKLIST ", e)
     yield put(versionBooksFailure(e))
     yield put(versionBooksSuccess([]))
   }
@@ -102,13 +87,11 @@ function* queryDownloadedBook(params) {
   catch (e) {
     yield put(downloadedBookFailure(e))
     yield put(downloadedBookSuccess([]))
-    console.log("error fetch content ", e)
   }
 }
 
 function* fetchVersionContent(params) {
   try {
-    // let chapterContent = []
     const payload = params.payload
     const url = API_BASE_URL + "bibles" + "/" + payload.sourceId + "/" + "books" + "/" + payload.bookId + "/" + "chapter" + "/" + payload.chapter
     const res = yield call(fetch, url)
@@ -125,7 +108,6 @@ function* fetchVersionContent(params) {
     }
 
   } catch (e) {
-    console.log("error fetch content ", e)
     yield put(versionContentFailure(e))
     yield put(versionContentSuccess([]))
 

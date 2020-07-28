@@ -70,7 +70,6 @@ class Bible extends Component {
         backgroundColor: Color.Blue_Color,
         elevation: 0,
         shadowOpacity: 0,
-        // height:40,
         width: params.visibleParallelView ? '50%' : width
       },
       headerRight: (
@@ -139,7 +138,6 @@ class Bible extends Component {
       status: false,
       modalVisible: false,
       onSearchHideHeader: false,
-      // loginModal:false,
       arrLayout: [],
       notesList: [],
       initializing: true,
@@ -203,7 +201,6 @@ class Bible extends Component {
     this.subs = this.props.navigation.addListener("didFocus", () => {
 
       this.setState({ isLoading: true, selectedReferenceSet: [], showBottomBar: false, bookId: this.props.bookId, currentVisibleChapter: this.props.chapterNumber }, () => {
-        console.log("IS DOWNLOADED ", this.props.bookName)
         this.getChapter()
         this.audioComponentUpdate()
         this.getHighlights()
@@ -213,7 +210,6 @@ class Bible extends Component {
         const shortName = this.props.language.toLowerCase() == ('malayalam' || 'tamil' || 'kannada') ?
           (this.props.bookName.length > 4 ? this.props.bookName.slice(0, 3) + "..." : this.props.bookName) :
           this.props.bookName.length > 8 ? this.props.bookName.slice(0, 7) + "..." : this.props.bookName
-        console.log("sort name ", shortName)
 
         this.props.navigation.setParams({
           bookId: this.props.bookId,
@@ -253,7 +249,6 @@ class Bible extends Component {
           type: "warning",
           duration: 3000
         })
-        // this.setState({ chapterContent: [] })
       }
     })
   };
@@ -303,7 +298,6 @@ class Bible extends Component {
     this.setState({ selectedReferenceSet: [], showBottomBar: false })
 
     if (item) {
-      console.log(" Book List ", item.metadata)
       var bookName = null
       for (var i = 0; i <= item.books.length - 1; i++) {
         if (item.books[i].bookId == this.props.bookId) {
@@ -329,7 +323,6 @@ class Bible extends Component {
         const shortName = this.props.language.toLowerCase() == ('malayalam' || 'tamil' || 'kannada') ?
           (bookName.length > 4 ? bookName.slice(0, 3) + "..." : bookName) :
           bookName.length > 8 ? bookName.slice(0, 7) + "..." : bookName
-        console.log("sort name ", shortName)
         this.props.navigation.setParams({
           languageName: item.languageName.substring(0, 3),
           versionCode: item.versionCode,
@@ -389,7 +382,6 @@ class Bible extends Component {
         if (content) {
           var header = content.chapterContent.metadata &&
             (content.chapterContent.metadata[0].section && content.chapterContent.metadata[0].section.text)
-          console.log(" CHAPTER METADATA  ", header)
           this.setState({ chapterHeader: header, chapterContent: content.chapterContent.verses, error: null, isLoading: false, currentVisibleChapter: this.state.currentVisibleChapter })
         }
       }
@@ -415,7 +407,6 @@ class Bible extends Component {
           numOfChapter: this.props.totalChapters,
           isBookmark: this.isBookmark()
         })
-        console.log(" book is downloaded", this.props.downloaded)
         if (this.props.downloaded) {
           if (this.state.downloadedBook.length > 0) {
             this.setState({
@@ -611,7 +602,6 @@ class Bible extends Component {
         var newBookmarks = isbookmark
           ? this.state.bookmarksList.filter((a) => a !== this.state.currentVisibleChapter)
           : this.state.bookmarksList.concat(this.state.currentVisibleChapter)
-        console.log(" book mark ", newBookmarks)
         firebase.database().ref("users/" + this.props.userId + "/bookmarks/" + this.props.sourceId + "/" + this.props.bookId).set(newBookmarks)
         this.setState({
           bookmarksList: newBookmarks
@@ -631,7 +621,6 @@ class Bible extends Component {
   }
   //selected reference for highlighting verse
   getSelectedReferences = (vIndex, chapterNum, vNum, text) => {
-    console.log("vIndex, chapterNum, vNum,text ", chapterNum, vIndex, vNum, text)
     let obj = chapterNum + '_' + vIndex + '_' + vNum + '_' + text
     let selectedReferenceSet = [...this.state.selectedReferenceSet]
 
@@ -862,7 +851,6 @@ class Bible extends Component {
               keyExtractor={this._keyExtractor}
               ListFooterComponent={this.renderFooter}
               ListEmptyComponent={<ReloadButton styles={this.styles} reloadFunction={this.queryBookFromAPI} />}
-            // ListFooterComponentStyle={{}}
             />
             {
               this.state.chapterContent.length > 0 &&
@@ -937,14 +925,12 @@ const navStyles = StyleSheet.create({
     justifyContent: 'space-evenly',
     flexDirection: 'row',
     flex: 1,
-    // paddingLeft:8,
   },
   border: {
     paddingHorizontal: 4,
     paddingVertical: 4,
 
     borderWidth: 0.2,
-    // marginLeft:4,
     borderColor: Color.White
   },
   headerRightStyle: {
@@ -964,9 +950,6 @@ const navStyles = StyleSheet.create({
   },
   headerTextStyle: {
     fontSize: 18,
-    // alignSelf:'baseline',
-    // flexShrink: 1,
-    // fontWeight:'400',
     color: Color.White,
     textAlign: 'center'
   },
@@ -1014,8 +997,6 @@ const mapDispatchToProps = dispatch => {
     userInfo: (payload) => dispatch(userInfo(payload)),
     fetchVersionBooks: (payload) => dispatch(fetchVersionBooks(payload)),
     updateMetadata: (payload) => dispatch(updateMetadata(payload)),
-    // fetchAllContent:()=>dispatch(fetchAllContent()),
-    // fetchDownloadedVersionContent:(payload)=>dispatch(fetchDownloadedVersionContent(payload))
   }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Bible)

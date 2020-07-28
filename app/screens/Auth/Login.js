@@ -47,7 +47,6 @@ class Login extends Component {
           })
         })
         .catch(error => {
-          console.log("ERROR IN LOGIN PAGE ", error)
           if (error.code === 'auth/user-not-found') {
             Alert.alert("User not found")
           }
@@ -68,7 +67,6 @@ class Login extends Component {
   _signInGoogle = () => {
     GoogleSignin.signIn()
       .then((data) => {
-        console.log(" USER GOOGLE sign in ", data)
         this.setState({ isLoading: true }, () => {
           const credential = firebase.auth.GoogleAuthProvider.credential(data.idToken, data.accessToken);
           // Login with the credential
@@ -82,21 +80,17 @@ class Login extends Component {
           this.setState({ isLoading: false })
           this.props.navigation.navigate("Bible")
         })
-        console.log(" Google Response ")
         // If you need to do anything with the user, do it here
         // The user will be logged in automatically by the
         // `onAuthStateChanged` listener we set up in BIble.js earlier
       })
       .catch((error) => {
-        console.log(" Google ERROR ", error)
-
       });
   }
 
   _signInFacebook = () => {
     LoginManager.logInWithPermissions(['public_profile', 'email'])
       .then((result) => {
-        // console.log(" USER facbook result ",result)
         if (result.isCancelled) {
           return Promise.reject(new Error('The user cancelled the request'));
         }
@@ -116,13 +110,11 @@ class Login extends Component {
 
       })
       .catch((error) => {
-        console.log("ERROR FACEBOOK ", error)
         const { code, message } = error;
       });
   }
   componentDidMount() {
     GoogleSignin.configure({
-      // scopes: ['https://www.googleapis.com/auth/drive.readonly'], // what API you want to access on behalf of the user, default is email and profile
       webClientId: '486797934259-gkdusccl094153bdj8cbugfcf5tqqb4j.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
       offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
       hostedDomain: '', // specifies a hosted domain restriction

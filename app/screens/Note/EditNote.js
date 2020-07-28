@@ -32,7 +32,6 @@ class EditNote extends Component {
 
   constructor(props) {
     super(props);
-    console.log(" props in EDIT PAGE ", this.props.navigation.state.params)
     this.state = {
       noteIndex: this.props.navigation.state.params.noteIndex,
       noteObject: this.props.navigation.state.params.notesList,
@@ -45,7 +44,6 @@ class EditNote extends Component {
   }
   saveNote = async () => {
     var time = Date.now()
-    console.log("bcvRef " + this.state.bcvRef)
 
     var firebaseRef = firebase.database().ref("users/" + this.props.uid + "/notes/" + this.props.sourceId + "/" + this.state.bcvRef.bookId)
 
@@ -65,7 +63,6 @@ class EditNote extends Component {
         edit.update(updates)
       }
       else {
-        console.log("NOTE INDEX ", this.state.bcvRef.verses)
         var notesArray = this.state.noteObject.concat({
           createdTime: time,
           modifiedTime: time,
@@ -96,13 +93,11 @@ class EditNote extends Component {
   onBack = async () => {
     if (this.state.noteIndex == -1) {
       if (this.state.contentBody == '') {
-        // alert("body should not be empty")
       }
       this.showAlert();
       return
     }
     else {
-      console.log("1 ", this.state.contentBody, " 2 ", this.state.noteObject)
       if (this.state.contentBody !== this.props.navigation.state.params.contentBody
         || this.state.bcvRef.verses.length !== this.props.navigation.state.params.bcvRef.verses.length
       ) {
@@ -118,7 +113,6 @@ class EditNote extends Component {
     this.props.navigation.setParams({ handleBack: this.onBack })
   }
   openReference = (index, value) => {
-    console.log(" bcv ref open ref", index)
     if (this.state.contentBody !== this.props.navigation.state.params.contentBody
       || this.state.bcvRef.verses.length !== this.props.navigation.state.params.bcvRef.verses.length
     ) {
@@ -152,7 +146,6 @@ class EditNote extends Component {
     this.props.navigation.navigate('Bible')
   }
   render() {
-    console.log(" note list ", this.state.bcvRef)
     return (
       <View style={{ flex: 1 }}>
         <ScrollView style={this.styles.containerEditNote}>
@@ -161,7 +154,6 @@ class EditNote extends Component {
             {this.state.bcvRef
               &&
               <FlowLayout style={this.styles.tapButton}
-                // ref="flow" 
                 dataValue={this.state.bcvRef}
                 openReference={(index) => this.openReference(index)}
                 styles={this.styles}

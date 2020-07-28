@@ -44,9 +44,6 @@ class HighLights extends Component {
       if (a.bookId == id && a.chapterNumber == chapterNum) {
         a.verseNumber.forEach(async (b, j) => {
           if (b == verseNum) {
-            // if(this.props.email == null){
-            //   await DbQueries.updateHighlightsInVerse(this.props.sourceId,id,chapterNum,verseNum, false)
-            // }
             if (a.verseNumber.length == 1) {
               if (this.props.emai) {
                 firebase.database().ref("users/" + this.props.uid + "/highlights/" + this.props.sourceId + "/" + id + "/" + chapterNum).remove()
@@ -63,12 +60,10 @@ class HighLights extends Component {
       }
     })
     var updates = {}
-    console.log(" index ", index)
     if (index != -1) {
       updates[chapterNum] = data[index].verseNumber
       firebase.database().ref("users/" + this.props.uid + "/highlights/" + this.props.sourceId + "/" + id).update(updates)
     }
-    // }
     this.setState({ HightlightedVerseArray: data })
   }
   fetchHighlights() {
@@ -76,12 +71,10 @@ class HighLights extends Component {
       this.setState({ isLoading: true }, () => {
         firebase.database().ref("/users/" + this.props.uid + "/highlights/" + this.props.sourceId + "/").once('value', (snapshot) => {
           var highlights = snapshot.val()
-          console.log("HIGHLIGHTED VERSES ", snapshot.val())
           var array = []
           if (highlights != null) {
             for (var key in highlights) {
               for (var val in highlights[key]) {
-                console.log(" highlight null ", highlights[key][val])
                 if (highlights[key][val] != null) {
                   array.push({ bookId: key, chapterNumber: val, verseNumber: highlights[key][val] })
                 }
@@ -142,7 +135,6 @@ class HighLights extends Component {
     )
   }
   render() {
-    console.log("langugueg name ", this.state.HightlightedVerseArray)
     return (
       <View style={this.styles.container}>
         {this.state.isLoading ?
@@ -176,13 +168,9 @@ const mapStateToProps = state => {
     sourceId: state.updateVersion.sourceId,
     email: state.userInfo.email,
     uid: state.userInfo.uid,
-
-
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
-
     books: state.versionFetch.data,
-
   }
 }
 const mapDispatchToProps = dispatch => {

@@ -2,10 +2,6 @@ import React from 'react'
 import { Text } from 'react-native'
 
 export const typography = () => {
-  // if(Platform.OS !== 'android') {
-  //   return
-  // }
-
   const oldRender = Text.render
   Text.render = function (...args) {
     const origin = oldRender.call(this, ...args);

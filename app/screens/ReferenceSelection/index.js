@@ -31,7 +31,6 @@ class ReferenceSelection extends Component {
   }
 
   updateSelectedBook = (item) => {
-    console.log("item ob book ", item)
     this.setState({
       selectedBookId: item.bookId,
       selectedBookName: item.bookName,
@@ -41,7 +40,6 @@ class ReferenceSelection extends Component {
 
   updateSelectedChapter = (chapter, index) => {
     var chapterNum = chapter === null ? this.state.selectedChapterNumber : chapter
-    console.log("CHAPTER NUMBER ", chapter, "chapter number ", chapterNum, "selected book name", this.state.selectedBookName)
     this.setState({
       selectedChapterNumber: chapterNum,
       selectedChapterIndex: index != null && index,
@@ -111,7 +109,6 @@ class ReferenceSelection extends Component {
                 selectedVerseIndex: this.state.selectedVerseIndex,
                 selectedVerseNumber: this.state.selectedVerseNumber,
                 totalChapters: this.state.totalChapters,
-
                 updateSelectedBook: this.updateSelectedBook,
                 updateSelectedChapter: this.updateSelectedChapter,
                 onPressCheck: this.onPressCheck

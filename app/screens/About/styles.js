@@ -11,7 +11,6 @@ export const aboutPage = (colorFile, sizeFile) => {
             fontSize: sizeFile.contentText,
             color: colorFile.textColor,
             lineHeight: sizeFile.lineHeight,
-            // flexShrink: 1 ,
         },
         textContainer: {
             margin: 16,
@@ -39,19 +38,14 @@ export const aboutPage = (colorFile, sizeFile) => {
         TitleText: {
             paddingVertical: 12,
             fontSize: sizeFile.titleText,
-            // color:Color.Blue_Color,
             color: colorFile.sectionHeading,
             letterSpacing: 1.2,
             lineHeight: sizeFile.lineHeight
-            // flexShrink: 1 
-            // color:colorFile.textColor,
         },
         bulletIcon: {
             fontSize: 26,
             color: colorFile.iconColor,
             lineHeight: sizeFile.lineHeight,
-
-            // flexShrink: 1,
         }
     })
 

@@ -31,7 +31,6 @@ export const bookStyle=(colorFile, sizeFile) =>{
     messageEmpty:{
         fontSize:sizeFile.titleText,
         color:colorFile.textColor,
-        // textAlign:'center',
     },
     emptyMessageIcon:{
         fontSize:sizeFile.emptyIconSize,

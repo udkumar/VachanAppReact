@@ -17,7 +17,6 @@ class LanguageList extends Component {
   });
   constructor(props) {
     super(props)
-    // console.log("LANGUAGELIST PROPS ",this.props.navigation.state.routeName)
     if (Platform.OS === 'android') {
       UIManager.setLayoutAnimationEnabledExperimental(true);
     }
@@ -25,10 +24,8 @@ class LanguageList extends Component {
       isLoading: false,
       text: '',
       languages: [],
-      // searchList:[],
       startDownload: false,
       index: -1,
-      // languageName:'',
       language: this.props.language,
       versionCode: this.props.versionCode,
       downloaded: this.props.downloaded,
@@ -55,9 +52,7 @@ class LanguageList extends Component {
         this.fetchLanguages()
         Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
       } else {
-        console.log("LANGUAGEG LIST ", this.state.languages.length)
         this.alertPresent = false;
-        // this.setState({languages:this.props.bibleLanguages[0].content})
       }
     }
   }
@@ -68,12 +63,10 @@ class LanguageList extends Component {
   async fetchLanguages() {
     var lanVer = []
     const languageList = await DbQueries.getLangaugeList()
-    console.log(" language list ", languageList)
     try {
       if (languageList == null) {
         const books = await APIFetch.fetchBookInLanguage()
         var languages = this.props.bibleLanguages[0].content
-        console.log(" LANGUAGE FROM API ", languages.length, " BOOKS ", books.length)
         if (languages && books) {
           for (var i = 0; i < languages.length; i++) {
             for (var j = 0; j < books.length; j++) {
@@ -100,7 +93,6 @@ class LanguageList extends Component {
           DbQueries.addLangaugeList(languages, books)
         }
         else {
-          console.log("no language found, call update ")
           this.updateData()
         }
       }
@@ -109,55 +101,44 @@ class LanguageList extends Component {
           lanVer.push(languageList[i])
         }
       }
-      console.log(" LANGUAGGE LIST", lanVer)
       this.setState({
         languages: lanVer,
-        // searchList: lanVer
       })
     }
     catch (error) {
-      console.log(" ERROR add language", error)
     }
   }
 
   downloadBible = async (langName, verCode, books, sourceId) => {
-    // console.log(langName+" ",books)  
-    // var bookModels = []
+    var bookModels = []
     try {
       this.setState({ startDownload: true })
       var content = await APIFetch.getAllBooks(parseInt(sourceId), "json")
-      console.log(" Content length ", content)
-      // if(content.bibleContent && books){
-      // console.log(" Content ",books[i].bookId)
-      //   for(var i =0;i<books.length;i++){
-      //       bookModels.push({
-      //       languageName: langName,
-      //       versionCode: verCode,
-      //       bookId:books[i].bookId,
-      //       bookName:books[i].bookName,
-      //       bookNumber:books[i].bookNumber,
-      //       chapters: this.getChapters(content.bibleContent,books[i].bookId),
-      //       section: getBookSectionFromMapping(books[i].bookId),
-      //     })
-      //   }
-      // }
-      // console.log(" bookModels ",bookModels)
-      // DbQueries.addNewVersion(langName,verCode,bookModels,sourceId)
-      // const languageList =  await DbQueries.getLangaugeList()
-      // this.fetchLanguages()
+      if(content.bibleContent && books){
+        for(var i =0;i<books.length;i++){
+            bookModels.push({
+            languageName: langName,
+            versionCode: verCode,
+            bookId:books[i].bookId,
+            bookName:books[i].bookName,
+            bookNumber:books[i].bookNumber,
+            chapters: this.getChapters(content.bibleContent,books[i].bookId),
+            section: getBookSectionFromMapping(books[i].bookId),
+          })
+        }
+      }
+      DbQueries.addNewVersion(langName,verCode,bookModels,sourceId)
+      this.fetchLanguages()
       this.setState({ startDownload: false })
     } catch (error) {
-      console.log("Error ", error)
       this.setState({ startDownload: false })
       alert("Something went wrong. Try Again")
     }
   }
   getChapters = (content, bookId) => {
     var chapterModels = []
-    // console.log(" BOOK ID  from API ",id,bookId)
     for (var id in content) {
       if (content != null && id == bookId) {
-        console.log("id in chapter", id, bookId)
         for (var c = 0; c < content[id].chapters.length; c++) {
           var verseModels = []
           for (var v = 0; v < content[id].chapters[c].verses.length; v++) {
@@ -170,14 +151,12 @@ class LanguageList extends Component {
           }
           chapterModels.push(chapterModel)
         }
-        console.log("Chapter MOdel ", chapterModels.length)
         return chapterModels
       }
     }
   }
 
   navigateTo(langName, langCode, booklist, verCode, sourceId, metadata, downloaded) {
-    console.log(' book List ', booklist)
     this.props.navigation.state.params.updateLangVer({
       sourceId: sourceId, languageName: langName, languageCode: langCode,
       versionCode: verCode, downloaded: downloaded,
@@ -223,11 +202,11 @@ class LanguageList extends Component {
             <View>
               {
                 element.downloaded === true ?
-                  // item.languageName.toLowerCase() === 'english' ? null : 
+                  item.languageName.toLowerCase() === 'english' ? null : 
                   <Icon style={[this.styles.iconStyle, { marginRight: 8 }]} name="delete" size={24} onPress={() => { this.deleteBible(item.languageName, item.languageCode, element.versionCode, element.sourceId, element.downloaded) }}
                   />
                   :
-                  // item.languageName.toLowerCase() === 'english' ? null :
+                  item.languageName.toLowerCase() === 'english' ? null :
                   <Icon style={[this.styles.iconStyle, { marginRight: 12 }]} name="file-download" size={24} onPress={() => { this.downloadBible(item.languageName, element.versionCode, item.bookNameList, element.sourceId) }} />
               }
             </View>

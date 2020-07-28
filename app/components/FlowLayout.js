@@ -12,27 +12,6 @@ var {
 } = Dimensions.get('window');
 import { connect } from 'react-redux'
 
-
-// class FlowView extends Component {
-
-// 	render() {
-// 		return (
-// 			<View>
-// 				<TouchableOpacity onPress={()=>{
-// 					this.props.onTextClick();
-// 				}}>
-// 					<View style={[styles.corner,{backgroundColor:'transparent'}]}>
-// 						<Text style={this.props.styles.textStyle}>{this.props.bookName} {this.props.chapterNumber}:{this.props.verseNumber}</Text>
-//                         <Icon name="clear" style={this.props.styles.iconReferClose}
-//                         	onPress={()=> {this.props.onDeleteClick()}} />
-// 					</View>
-//                 </TouchableOpacity>
-
-// 			</View>
-// 		);
-// 	};
-
-// }
 class FlowLayout extends Component {
 
 	constructor(props) {
@@ -40,7 +19,6 @@ class FlowLayout extends Component {
 	}
 
 	render() {
-		// console.log('FLOW LAYOUT BCV REF ',this.props.bcvRef)
 		let items = this.props.dataValue.verses.map((value, position) => {
 			return (
 				<View key={position}>
@@ -83,7 +61,7 @@ const styles = StyleSheet.create({
 	corner: {
 		flexDirection: 'row',
 		borderColor: 'gray',
-		borderWidth: 1, /// PixelRatio.get(),
+		borderWidth: 1, 
 		borderRadius: 20,
 		justifyContent: 'center',
 		alignItems: 'center',

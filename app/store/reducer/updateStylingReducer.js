@@ -56,8 +56,6 @@ function updateStyling(state = initialState, action) {
                         default:
                             return {
                                 ...state,
-                                // sizeMode:AsyncStorageConstants.Values.SizeModeNormal,
-                                // sizeFile:mediumFont
                             }
 
                     }
@@ -70,8 +68,6 @@ function updateStyling(state = initialState, action) {
                 switchColor: () => {
                     switch (action.colorMode) {
                         case AsyncStorageConstants.Values.DayMode:
-                            console.log("color mode ", action.colorMode)
-                            console.log("color mode async value ", AsyncStorageConstants.Values.DayMode)
                             return {
                                 ...state,
                                 colorMode: action.colorMode,
@@ -87,8 +83,6 @@ function updateStyling(state = initialState, action) {
                         default:
                             return {
                                 ...state,
-                                // colorMode:action.colorMode,
-                                // colorFile:dayColors,
                             }
 
 

@@ -34,12 +34,3 @@ export const updateMetadata = (payload) => {
     }
 }
 
-
-
-
-// export const availableContent =() =>{
-//    return{
-//     type: AVAILABLE_CONTENT,
-//     contentType:contentType
-//    } 
-// }

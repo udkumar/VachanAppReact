@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {
-  TouchableOpacity,
   FlatList,
   Alert,
   Text,
@@ -70,7 +69,6 @@ class Commentary extends Component {
         let splitstr = response.replace(/\<br>|\<br\/>/g, "\n").replace(exRegex, 'BLD<b>$1</b>BLD')
         //splited with bld will remove the bld text and will be left with b tag and ext can easily get bold
         let str = splitstr.split('BLD')
-        console.log(str)
         let temp = []
         for (var i = 0; i <= str.length - 1; i++) {
           let matchBold = exRegex.exec(str[i])
