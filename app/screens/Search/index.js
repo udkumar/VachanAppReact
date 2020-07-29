@@ -71,7 +71,7 @@ class Search extends Component {
       bookName: this.props.bookName,
       bookId: this.props.bookId,
       books: this.props.books,
-      metadata:null
+      metadata: null
     }
 
     this.onSearchText = this.onSearchText.bind(this)
@@ -259,10 +259,12 @@ class Search extends Component {
       language: this.state.languageName, languageCode: this.state.languageCode,
       versionCode: this.state.versionCode, sourceId: this.state.sourceId, downloaded: this.state.downloaded
     })
-    
-    this.props.fetchVersionBooks({ language:  this.state.languageName, versionCode: this.state.versionCode, 
-      downloaded: this.state.downloaded, sourceId: this.state.sourceId })
-    if(this.state.metadata === null){
+
+    this.props.fetchVersionBooks({
+      language: this.state.languageName, versionCode: this.state.versionCode,
+      downloaded: this.state.downloaded, sourceId: this.state.sourceId
+    })
+    if (this.state.metadata === null) {
       this.props.updateMetadata({
         copyrightHolder: null,
         description: null,
@@ -272,7 +274,7 @@ class Search extends Component {
         revision: null,
         versionNameGL: null
       })
-    } else{
+    } else {
       this.props.updateMetadata({
         copyrightHolder: this.state.metadata[0].copyrightHolder,
         description: this.state.metadata[0].description,
@@ -283,7 +285,7 @@ class Search extends Component {
         versionNameGL: this.state.metadata[0].versionNameGL
       })
     }
-     
+
 
     this.props.navigation.navigate('Bible')
   }
@@ -327,12 +329,11 @@ class Search extends Component {
       tabsData: [], searchedResult: [],
       sourceId: item.sourceId, languageCode: item.languageCode,
       languageName: item.languageName, versionCode: item.versionCode,
-      downloaded: item.downloaded, books: item.books,metadata:item.metadata
+      downloaded: item.downloaded, books: item.books, metadata: item.metadata
 
     })
   }
   render() {
-    console.log(" STATE Metadata ",this.state.metadata && this.state.metadata[0].revision)
     let text = this.state.isLoading == true ? "Loading..." : this.state.tabsData.length + " search results found"
     return (
       <View style={this.styles.container}>

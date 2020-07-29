@@ -13,7 +13,6 @@ import firebase from 'react-native-firebase'
 import { noteStyle } from './styles.js';
 
 class Note extends Component {
-
   static navigationOptions = ({ navigation }) => ({
     headerTitle: 'Notes',
 
@@ -22,10 +21,10 @@ class Note extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      verseNumber:this.props.navigation.state.params ? this.props.navigation.state.params.verseNumber : null,
-      chapterNumber:this.props.navigation.state.params ? this.props.navigation.state.params.chapterNumber : null,
+      verseNumber: this.props.navigation.state.params ? this.props.navigation.state.params.verseNumber : null,
+      chapterNumber: this.props.navigation.state.params ? this.props.navigation.state.params.chapterNumber : null,
       bookId: this.props.navigation.state.params ? this.props.navigation.state.params.bookId : null,
-      
+
       colorFile: this.props.colorFile,
       sizeFile: this.props.sizeFile,
       notesData: [],
@@ -76,22 +75,22 @@ class Note extends Component {
             for (var bookKey in notes) {
               for (var chapterKey in notes[bookKey]) {
                 if (notes[bookKey][chapterKey] != null) {
-                  if(this.state.chapterNumber && this.state.bookId){
-                    if(chapterKey == this.state.chapterNumber && bookKey == this.state.bookId){
+                  if (this.state.chapterNumber && this.state.bookId) {
+                    if (chapterKey == this.state.chapterNumber && bookKey == this.state.bookId) {
                       arr.push({
                         bookId: bookKey,
                         chapterNumber: chapterKey,
                         notes: Array.isArray(notes[bookKey][chapterKey]) ? notes[bookKey][chapterKey] : [notes[bookKey][chapterKey]]
                       })
                     }
-                  }else{
+                  } else {
                     arr.push({
                       bookId: bookKey,
                       chapterNumber: chapterKey,
                       notes: Array.isArray(notes[bookKey][chapterKey]) ? notes[bookKey][chapterKey] : [notes[bookKey][chapterKey]]
                     })
                   }
-                  
+
                 }
               }
             }
@@ -107,7 +106,7 @@ class Note extends Component {
         this.setState({ isLoading: false })
       })
     }
-    
+
   }
   componentDidMount() {
     this.queryDb()

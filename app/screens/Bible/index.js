@@ -227,7 +227,7 @@ class Bible extends Component {
   }
   _handleConnectivityChange = (isConnected) => {
     this.setState({ connection_Status: isConnected == true ? true : false }, () => {
-      if (this.state.connection_Status){
+      if (this.state.connection_Status) {
         Toast.show({
           text: "Online. Now content available.",
           buttonText: "Okay",
@@ -242,7 +242,7 @@ class Bible extends Component {
           sourceId: this.props.sourceId
         })
 
-      }else{
+      } else {
         Toast.show({
           text: "Offline. Check your internet Connection.",
           buttonText: "Okay",
@@ -645,7 +645,7 @@ class Bible extends Component {
             }
           }
         }
-        this.setState({showBottomBar: this.state.selectedReferenceSet.length > 0 ? true : false, bottomHighlightText: selectedCount == highlightCount ? false : true })
+        this.setState({ showBottomBar: this.state.selectedReferenceSet.length > 0 ? true : false, bottomHighlightText: selectedCount == highlightCount ? false : true })
       })
     }
   }
