@@ -332,7 +332,6 @@ class Search extends Component {
     })
   }
   render() {
-    console.log(" STATE Metadata ",this.state.metadata && this.state.metadata[0].revision)
     let text = this.state.isLoading == true ? "Loading..." : this.state.tabsData.length + " search results found"
     return (
       <View style={this.styles.container}>
