@@ -1,3 +1,4 @@
+ 
 import React, { Component } from 'react';
 import {
   Text,
@@ -620,34 +621,33 @@ class Bible extends Component {
     }
   }
   //selected reference for highlighting verse
-  getSelectedReferences = (vIndex, chapterNum, vNum) => {
-    if (vIndex != -1 && chapterNum != -1 && vNum != -1) {
-      let obj = chapterNum + '_' + vIndex + '_' + vNum
-      let selectedReferenceSet = [...this.state.selectedReferenceSet]
-      var found = false;
-      for (var i = 0; i < selectedReferenceSet.length; i++) {
-        if (selectedReferenceSet[i] == obj) {
-          found = true;
-          selectedReferenceSet.splice(i, 1);
-          break;
-        }
+  getSelectedReferences = (vIndex, chapterNum, vNum, text) => {
+    let obj = chapterNum + '_' + vIndex + '_' + vNum + '_' + text
+    let selectedReferenceSet = [...this.state.selectedReferenceSet]
+
+    var found = false;
+    for (var i = 0; i < selectedReferenceSet.length; i++) {
+      if (selectedReferenceSet[i] == obj) {
+        found = true;
+        selectedReferenceSet.splice(i, 1);
+        break;
       }
-      if (!found) {
-        selectedReferenceSet.push(obj)
-      }
-      this.setState({ selectedReferenceSet }, () => {
-        let selectedCount = this.state.selectedReferenceSet.length, highlightCount = 0;
-        for (let item of this.state.selectedReferenceSet) {
-          let tempVal = item.split('_')
-          for (var i = 0; i <= this.state.HightlightedVerseArray.length - 1; i++) {
-            if (this.state.HightlightedVerseArray[i] == JSON.parse(tempVal[2])) {
-              highlightCount++
-            }
+    }
+    if (!found) {
+      selectedReferenceSet.push(obj)
+    }
+    this.setState({ selectedReferenceSet }, () => {
+      let selectedCount = this.state.selectedReferenceSet.length, highlightCount = 0;
+      for (let item of this.state.selectedReferenceSet) {
+        let tempVal = item.split('_')
+        for (var i = 0; i <= this.state.HightlightedVerseArray.length - 1; i++) {
+          if (this.state.HightlightedVerseArray[i] == JSON.parse(tempVal[2])) {
+            highlightCount++
           }
         }
-        this.setState({showBottomBar: this.state.selectedReferenceSet.length > 0 ? true : false, bottomHighlightText: selectedCount == highlightCount ? false : true })
-      })
-    }
+      }
+      this.setState({ showBottomBar: this.state.selectedReferenceSet.length > 0 ? true : false, bottomHighlightText: selectedCount == highlightCount ? false : true })
+    })
   }
 
   addToNotes = () => {
@@ -846,7 +846,7 @@ class Bible extends Component {
                   HightlightedVerse={this.state.HightlightedVerseArray}
                   notesList={this.state.notesList}
                   chapterNumber={this.state.currentVisibleChapter}
-                  navigation={this.props.navigation}
+                  showBottomBar={this.state.showBottomBar}
                 />
               }
               keyExtractor={this._keyExtractor}
