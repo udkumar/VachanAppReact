@@ -269,9 +269,9 @@ class Bible extends Component {
     this.setState({ selectedReferenceSet: [], showBottomBar: false })
 
     if (item) {
-      // var time = new Date()
-      // DbQueries.addHistory(this.props.sourceId, this.props.language, this.props.languageCode,
-      //   this.props.versionCode, item.bookId, item.bookName, JSON.parse(item.chapterNumber), this.props.downloaded, time)
+      var time = new Date()
+      DbQueries.addHistory(this.props.sourceId, this.props.language, this.props.languageCode,
+        this.props.versionCode, item.bookId, item.bookName, JSON.parse(item.chapterNumber), this.props.downloaded, time)
       const shortName = this.props.language.toLowerCase() == ('malayalam' || 'tamil') ?
         (item.bookName.length > 4 ? item.bookName.slice(0, 3) + "..." : item.bookName) :
         item.bookName.length > 8 ? item.bookName.slice(0, 7) + "..." : item.bookName
@@ -483,7 +483,7 @@ class Bible extends Component {
             break;
           }
         }
-        if (found === false) {
+        if (found == false) {
           this.props.navigation.setParams({ audio: false })
           this.setState({ audio: false })
         }
@@ -620,33 +620,34 @@ class Bible extends Component {
     }
   }
   //selected reference for highlighting verse
-  getSelectedReferences = (vIndex, chapterNum, vNum, text) => {
-    let obj = chapterNum + '_' + vIndex + '_' + vNum + '_' + text
-    let selectedReferenceSet = [...this.state.selectedReferenceSet]
-
-    var found = false;
-    for (var i = 0; i < selectedReferenceSet.length; i++) {
-      if (selectedReferenceSet[i] == obj) {
-        found = true;
-        selectedReferenceSet.splice(i, 1);
-        break;
-      }
-    }
-    if (!found) {
-      selectedReferenceSet.push(obj)
-    }
-    this.setState({ selectedReferenceSet }, () => {
-      let selectedCount = this.state.selectedReferenceSet.length, highlightCount = 0;
-      for (let item of this.state.selectedReferenceSet) {
-        let tempVal = item.split('_')
-        for (var i = 0; i <= this.state.HightlightedVerseArray.length - 1; i++) {
-          if (this.state.HightlightedVerseArray[i] == JSON.parse(tempVal[2])) {
-            highlightCount++
-          }
+  getSelectedReferences = (vIndex, chapterNum, vNum) => {
+    if (vIndex != -1 && chapterNum != -1 && vNum != -1) {
+      let obj = chapterNum + '_' + vIndex + '_' + vNum
+      let selectedReferenceSet = [...this.state.selectedReferenceSet]
+      var found = false;
+      for (var i = 0; i < selectedReferenceSet.length; i++) {
+        if (selectedReferenceSet[i] == obj) {
+          found = true;
+          selectedReferenceSet.splice(i, 1);
+          break;
         }
       }
-      this.setState({ showBottomBar: this.state.selectedReferenceSet.length > 0 ? true : false, bottomHighlightText: selectedCount == highlightCount ? false : true })
-    })
+      if (!found) {
+        selectedReferenceSet.push(obj)
+      }
+      this.setState({ selectedReferenceSet }, () => {
+        let selectedCount = this.state.selectedReferenceSet.length, highlightCount = 0;
+        for (let item of this.state.selectedReferenceSet) {
+          let tempVal = item.split('_')
+          for (var i = 0; i <= this.state.HightlightedVerseArray.length - 1; i++) {
+            if (this.state.HightlightedVerseArray[i] == JSON.parse(tempVal[2])) {
+              highlightCount++
+            }
+          }
+        }
+        this.setState({showBottomBar: this.state.selectedReferenceSet.length > 0 ? true : false, bottomHighlightText: selectedCount == highlightCount ? false : true })
+      })
+    }
   }
 
   addToNotes = () => {
@@ -845,7 +846,7 @@ class Bible extends Component {
                   HightlightedVerse={this.state.HightlightedVerseArray}
                   notesList={this.state.notesList}
                   chapterNumber={this.state.currentVisibleChapter}
-                  showBottomBar={this.state.showBottomBar}
+                  navigation={this.props.navigation}
                 />
               }
               keyExtractor={this._keyExtractor}
