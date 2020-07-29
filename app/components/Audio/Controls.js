@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import {
-  View,
+  View, TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
@@ -16,7 +16,9 @@ const Controls = ({
 }) => (
     <View style={styles.controlerContainer}>
       <View style={{ width: 20 }} />
-      <Icon onPress={onBack} styles={styles.iconStyle} name="fast-rewind" size={24} />
+      <TouchableOpacity onPress={onBack}>
+        <Icon onPress={onBack} styles={styles.iconStyle} name="fast-rewind" size={24} />
+      </TouchableOpacity>
       <View style={{ width: 10 }} />
       {!paused ?
         <View style={styles.playButton}>
@@ -28,9 +30,10 @@ const Controls = ({
         </View>
       }
       <View style={{ width: 10 }} />
-      <Icon onPress={onForward} styles={styles.iconStyle} name="fast-forward" size={24} />
+      <TouchableOpacity onPress={onForward}>
+        <Icon styles={styles.iconStyle} name="fast-forward" size={24} />
+      </TouchableOpacity>
       <View style={{ width: 20 }} />
-
     </View>
   );
 

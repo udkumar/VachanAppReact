@@ -419,6 +419,19 @@ class DbHelper {
 		return null
 	}
 
+	async getVersionMetaData(langName,verCode,sourceId){
+		let realm = await this.getRealm();
+		if (realm) {
+			let result = realm.objectForPrimaryKey("LanguageModel", langName)
+			let resultsA = result.versionModels
+			let resultsB = resultsA.filtered('versionCode ==[c] "' + verCode + '" && sourceId ==[c] "' + sourceId + '"')
+			console.log("result  ",resultsB[0].metaData)
+			return resultsB[0].metaData
+		}
+		return null
+	}
+	
+
 	async clearHistory() {
 		let realm = await this.getRealm();
 		realm.write(() => {
@@ -427,12 +440,12 @@ class DbHelper {
 		});
 	}
 
-	async deleteBibleVersion(langCode, verCode, sourceId, downloaded) {
+	async deleteBibleVersion(langName, verCode, sourceId, downloaded) {
 		let realm = await this.getRealm();
 		realm.write(() => {
-			let result = realm.objectForPrimaryKey("LanguageModel", langCode)
+			let result = realm.objectForPrimaryKey("LanguageModel", langName)
 			let bible = realm.objects("BookModel")
-			let bibleA = bible.filtered('languageName ==[c] "' + langCode + '" && versionCode ==[c] "' + verCode + '"')
+			let bibleA = bible.filtered('languageName ==[c] "' + langName + '" && versionCode ==[c] "' + verCode + '"')
 			realm.delete(bibleA);
 			let resultsA = result.versionModels
 			let resultsB = resultsA.filtered('versionCode ==[c] "' + verCode + '" && sourceId ==[c] "' + sourceId + '"')

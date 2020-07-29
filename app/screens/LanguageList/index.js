@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import DbQueries from '../../utils/dbQueries'
 import APIFetch from '../../utils/APIFetch'
 import { styles } from './styles.js';
+import { getBookSectionFromMapping } from '../../utils/UtilFunctions'
 import { connect } from 'react-redux';
 import { updateVersion, fetchVersionBooks, fetchAllContent, updateMetadata } from '../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -110,9 +111,9 @@ class LanguageList extends Component {
   }
 
   downloadBible = async (langName, verCode, books, sourceId) => {
-    var bookModels = []
     try {
       this.setState({ startDownload: true })
+      var bookModels =[]
       var content = await APIFetch.getAllBooks(parseInt(sourceId), "json")
       if(content.bibleContent && books){
         for(var i =0;i<books.length;i++){
@@ -127,8 +128,8 @@ class LanguageList extends Component {
           })
         }
       }
-      DbQueries.addNewVersion(langName,verCode,bookModels,sourceId)
-      this.fetchLanguages()
+      await DbQueries.addNewVersion(langName,verCode,bookModels,sourceId)
+      await this.fetchLanguages()
       this.setState({ startDownload: false })
     } catch (error) {
       this.setState({ startDownload: false })
