@@ -219,6 +219,23 @@ var APIFetch = {
         } catch (error) {
             return error;
         }
+    },
+    async fetchVideo(language_code){
+        console.log(" language  code fetch video ",language_code)
+        try {
+            return await fetch('https://api.vachanonline.net/v1/videos?language='+language_code,{
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(ApiUtils.checkStatus)
+                .then((response) => response.json())
+                .catch(e => e)
+        } catch (error) {
+            return error;
+        }
     }
 
 

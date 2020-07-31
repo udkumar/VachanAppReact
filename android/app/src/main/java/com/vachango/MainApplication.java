@@ -11,7 +11,6 @@ import co.apptailor.googlesignin.RNGoogleSigninPackage;
 
 import com.brentvatne.react.ReactVideoPackage;
 import io.realm.react.RealmReactPackage;
-import com.rnziparchive.RNZipArchivePackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.rnfs.RNFSPackage;
 import io.invertase.firebase.RNFirebasePackage;
@@ -27,6 +26,7 @@ import io.invertase.firebase.database.RNFirebaseDatabasePackage;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 import com.github.alinz.reactnativewebviewbridge.WebViewBridgePackage;
+import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.reactnativecommunity.toolbarandroid.ReactToolbarPackage;
 import com.facebook.reactnative.androidsdk.FBSDKPackage;
 // import com.imagepicker.ImagePickerPackage;
@@ -59,7 +59,6 @@ public class MainApplication extends Application implements ReactApplication {
             new RNGoogleSigninPackage(),
             new ReactVideoPackage(),
             new RealmReactPackage(),
-            new RNZipArchivePackage(),
             new VectorIconsPackage(),
             new RNFSPackage(),
             new AsyncStoragePackage(),
@@ -72,7 +71,8 @@ public class MainApplication extends Application implements ReactApplication {
             new RNFirebaseNotificationsPackage(),
             new WebViewBridgePackage(),
             new FBSDKPackage(),
-            new ReactToolbarPackage()
+            new ReactToolbarPackage(),
+            new RNCWebViewPackage()
             // new ImagePickerPackage()
       );
     }

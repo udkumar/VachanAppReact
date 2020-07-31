@@ -145,6 +145,8 @@ android {
 }
  
 dependencies {
+
+    implementation project(':react-native-webview')
     implementation project(':react-native-screens')
     implementation project(':@react-native-community_toolbar-android')
     compile project(':react-native-webview-bridge')
@@ -159,7 +161,6 @@ dependencies {
     implementation project(':react-native-google-signin')
     implementation project(':react-native-fbsdk')
     implementation project(':@react-native-community_async-storage')
-    implementation project(':react-native-zip-archive')
     implementation project(':realm')
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
