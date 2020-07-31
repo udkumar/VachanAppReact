@@ -66,11 +66,14 @@ class DbQueries {
     queryHistory() {
         return DbHelper.queryHistory();
     }
+    getVersionMetaData(langName,verCode,sourceId){
+      return  DbHelper.getVersionMetaData(langName,verCode,sourceId)
+    }
     clearHistory() {
         DbHelper.clearHistory()
     }
-    deleteBibleVersion(lanCode, verCode, sourceId, downloaded) {
-        DbHelper.deleteBibleVersion(lanCode, verCode, sourceId, downloaded)
+    deleteBibleVersion(langName, verCode, sourceId, downloaded) {
+        DbHelper.deleteBibleVersion(langName, verCode, sourceId, downloaded)
     }
     // add list of languages to db
     addLangaugeList(lang, books) {

@@ -135,9 +135,7 @@ class BookMarks extends Component {
   render() {
     return (
       <View style={this.styles.container}>
-        {
-          this.state.isLoading ?
-            <ActivityIndicator animate={true} style={{ justifyContent: 'center', alignSelf: 'center' }} /> :
+        {this.state.isLoading && <ActivityIndicator animate={true} style={{ justifyContent: 'center', alignSelf: 'center' }} />}
             <FlatList
               data={this.state.bookmarksList}
               contentContainerStyle={this.state.bookmarksList.length === 0 && this.styles.centerEmptySet}
@@ -152,7 +150,6 @@ class BookMarks extends Component {
                 </View>
               }
             />
-        }
       </View>
     )
   }

@@ -10,7 +10,7 @@ import { connect } from 'react-redux'
 import APIFetch from '../../utils/APIFetch'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { bookStyle } from './styles.js'
-import {Card, CardItem} from 'native-base'
+import { Card, CardItem } from 'native-base'
 
 
 class Video extends Component {
@@ -36,9 +36,9 @@ class Video extends Component {
     }
     this.setState({ videos: videoBook })
   }
-  playVideo(val){
-    const videoId =  val.url.replace("https://youtu.be/", "");
-    this.props.navigation.navigate("PlayVideo",{url:videoId,title:val.title,description:val.description,theme:val.theme})
+  playVideo(val) {
+    const videoId = val.url.replace("https://youtu.be/", "");
+    this.props.navigation.navigate("PlayVideo", { url: videoId, title: val.title, description: val.description, theme: val.theme })
   }
   onChangeState = (val) => {
     console.log("Value on change state ", val)
@@ -47,23 +47,34 @@ class Video extends Component {
     this.fetchVideo()
   }
   renderItem = ({ item }) => {
-    console.log(" ITEM ", item.details)
-    return (
-      item.details.map(e =>
-        <TouchableOpacity style={this.styles.bookmarksView} onPress={()=>this.playVideo(e)}>
-          <Card>
-            <CardItem>
-              <Text style={this.styles.bookmarksText}>{item.bookId} : {e.title}</Text>
-            </CardItem>
-          </Card>
-        </TouchableOpacity>
-      )
-
+    var bookName = null
+    if (this.props.books) {
+      for (var i = 0; i <= this.props.books.length - 1; i++) {
+        var bId = this.props.books[i].bookId
+        if (bId == item.bookId) {
+          bookName = this.props.books[i].bookName
+        }
+      }
+    } else {
+      this.setState({ bookmarksList: [] })
+      return
+    }
+    var value = item.details.map(e =>
+      <TouchableOpacity style={this.styles.videoView} onPress={() => this.playVideo(e)}>
+        <Card>
+          <CardItem>
+            <Text style={this.styles.videoText}>{bookName} : {e.title}</Text>
+          </CardItem>
+        </Card>
+      </TouchableOpacity>
     )
-
+    return (
+      <View>
+        {bookName && value}
+      </View>
+    )
   }
   render() {
-    console.log(" VIDEO  ", this.state.videos)
 
     return (
       <View style={this.styles.container}>
@@ -72,6 +83,7 @@ class Video extends Component {
             <ActivityIndicator animate={true} style={{ justifyContent: 'center', alignSelf: 'center' }} /> :
             <FlatList
               data={this.state.videos}
+              contentContainerStyle={this.state.videos.length === 0 && this.styles.centerEmptySet}
               renderItem={this.renderItem}
               ListEmptyComponent={
                 <View style={this.styles.emptyMessageContainer}>
@@ -92,6 +104,7 @@ class Video extends Component {
 const mapStateToProps = state => {
   return {
     languageCode: state.updateVersion.languageCode,
+    books: state.versionFetch.data,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
   }

@@ -221,6 +221,14 @@ class Bible extends Component {
           numOfChapter: this.props.totalChapters,
           isBookmark: this.isBookmark()
         })
+        if(this.props.books.length == 0 ){
+          this.props.fetchVersionBooks({
+            language: this.props.language,
+            versionCode: this.props.versionCode,
+            downloaded: this.props.downloaded, 
+            sourceId: this.props.sourceId
+        })
+        }
         this.setState({ isLoading: false })
       })
     })
@@ -235,12 +243,15 @@ class Bible extends Component {
           duration: 3000
         })
         this.queryBookFromAPI(null)
+        if(this.props.books.length ==0){
         this.props.fetchVersionBooks({
           language: this.props.language,
           versionCode: this.props.versionCode,
           downloaded: this.props.downloaded,
           sourceId: this.props.sourceId
         })
+        }
+       
 
       }else{
         Toast.show({
@@ -319,7 +330,7 @@ class Bible extends Component {
         versionCode: item.versionCode, sourceId: item.sourceId, downloaded: item.downloaded
       })
 
-      if (bookName != null) {
+      if (bookName != null){
         const shortName = this.props.language.toLowerCase() == ('malayalam' || 'tamil' || 'kannada') ?
           (bookName.length > 4 ? bookName.slice(0, 3) + "..." : bookName) :
           bookName.length > 8 ? bookName.slice(0, 7) + "..." : bookName
@@ -620,33 +631,34 @@ class Bible extends Component {
     }
   }
   //selected reference for highlighting verse
-  getSelectedReferences = (vIndex, chapterNum, vNum, text) => {
-    let obj = chapterNum + '_' + vIndex + '_' + vNum + '_' + text
-    let selectedReferenceSet = [...this.state.selectedReferenceSet]
-
-    var found = false;
-    for (var i = 0; i < selectedReferenceSet.length; i++) {
-      if (selectedReferenceSet[i] == obj) {
-        found = true;
-        selectedReferenceSet.splice(i, 1);
-        break;
-      }
-    }
-    if (!found) {
-      selectedReferenceSet.push(obj)
-    }
-    this.setState({ selectedReferenceSet }, () => {
-      let selectedCount = this.state.selectedReferenceSet.length, highlightCount = 0;
-      for (let item of this.state.selectedReferenceSet) {
-        let tempVal = item.split('_')
-        for (var i = 0; i <= this.state.HightlightedVerseArray.length - 1; i++) {
-          if (this.state.HightlightedVerseArray[i] == JSON.parse(tempVal[2])) {
-            highlightCount++
-          }
+  getSelectedReferences = (vIndex, chapterNum, vNum) => {
+    if (vIndex != -1 && chapterNum != -1 && vNum != -1) {
+      let obj = chapterNum + '_' + vIndex + '_' + vNum
+      let selectedReferenceSet = [...this.state.selectedReferenceSet]
+      var found = false;
+      for (var i = 0; i < selectedReferenceSet.length; i++) {
+        if (selectedReferenceSet[i] == obj) {
+          found = true;
+          selectedReferenceSet.splice(i, 1);
+          break;
         }
       }
-      this.setState({ showBottomBar: this.state.selectedReferenceSet.length > 0 ? true : false, bottomHighlightText: selectedCount == highlightCount ? false : true })
-    })
+      if (!found) {
+        selectedReferenceSet.push(obj)
+      }
+      this.setState({ selectedReferenceSet }, () => {
+        let selectedCount = this.state.selectedReferenceSet.length, highlightCount = 0;
+        for (let item of this.state.selectedReferenceSet) {
+          let tempVal = item.split('_')
+          for (var i = 0; i <= this.state.HightlightedVerseArray.length - 1; i++) {
+            if (this.state.HightlightedVerseArray[i] == JSON.parse(tempVal[2])) {
+              highlightCount++
+            }
+          }
+        }
+        this.setState({showBottomBar: this.state.selectedReferenceSet.length > 0 ? true : false, bottomHighlightText: selectedCount == highlightCount ? false : true })
+      })
+    }
   }
 
   addToNotes = () => {
@@ -845,7 +857,7 @@ class Bible extends Component {
                   HightlightedVerse={this.state.HightlightedVerseArray}
                   notesList={this.state.notesList}
                   chapterNumber={this.state.currentVisibleChapter}
-                  showBottomBar={this.state.showBottomBar}
+                  navigation={this.props.navigation}
                 />
               }
               keyExtractor={this._keyExtractor}

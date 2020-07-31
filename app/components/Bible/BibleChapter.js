@@ -99,7 +99,7 @@ class BibleChapter extends Component {
                         <Title style={{ fontSize: 16 }}>{bookName.length > 8 ? bookName.slice(0, 7) + "..." : bookName} {this.state.currentParallelViewChapter}</Title>
                         <Icon name="arrow-drop-down" color={Color.White} size={20} />
                     </Button>
-                    <Right>
+                    <Right style={{paddingRight:8}}>
                         <Button transparent onPress={() => this.props.toggleParallelView(false)}>
                             <Icon name='cancel' color={Color.White} size={20} />
                         </Button>

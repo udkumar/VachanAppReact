@@ -8,14 +8,13 @@ class VideoPlayer extends Component {
     super(props);
     this.state = {
       playing:true,
-      paused: false,
     };
   }
   onError = () => alert('Oh! ', error);
   onReady(){
     this.setState({playing:true})
   }
-  onChangeState(){
+  onChangeState(event){
   }
 
   render() {
@@ -23,7 +22,7 @@ class VideoPlayer extends Component {
     return (
        <YoutubePlayer
           ref={'playerRef'}
-          height={'50%'}
+          height={'34%'}
           width={'100%'}
           videoId={this.props.url}
           play={this.state.playing}
