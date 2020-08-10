@@ -132,13 +132,14 @@ class SelectContent extends Component {
             >
               <View style={{ height: '80%', width: '70%', alignSelf: 'flex-end' }}>
                 <Card style={{ marginTop: 40 }}>
+                {this.props.availableContents.length > 0 &&
                   <Accordion
                     dataArray={this.props.availableContents}
                     animation={true}
                     expanded={true}
                     renderHeader={this._renderHeader}
                     renderContent={this._renderContent}
-                  />
+                  />}
                 </Card>
               </View>
             </TouchableWithoutFeedback>

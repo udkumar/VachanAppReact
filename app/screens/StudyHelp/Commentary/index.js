@@ -56,13 +56,42 @@ class Commentary extends Component {
       downloaded: this.props.downloaded, sourceId: this.props.sourceId
     })
   }
+  renderItem=({ item })=> {
+    console.log("ITEM ", item)
+    return (
+      <View style={{ padding: 10 }}>
+        {item.verse &&
+          (item.verse == 0 ?
+            <Text style={this.styles.commentaryHeading}>Chapter Intro</Text> :
+            <Text style={this.styles.commentaryHeading}>Verse Number : {item.verse}</Text>
+          )}
+        <HTML
+          baseFontStyle={this.styles.textString}
+          tagsStyles={{ p: this.styles.textString }} html={item.text} />
+      </View>
+    )
+  }
+  ListHeaderComponent = () => {
+    return (
+      <View>
+        {this.props.commentaryContent.bookIntro == '' ? null :
+          <View style={this.styles.cardItemBackground}>
+            <Text style={this.styles.commentaryHeading}>Book Intro</Text>
+            <HTML
+              baseFontStyle={this.styles.textString}
+              tagsStyles={{ p: this.styles.textString }} html={this.props.commentaryContent.bookIntro} />
+          </View>}
+      </View>
+    )
+
+  }
   render() {
     const bookId = this.props.bookId
     const value = this.props.books.length != 0 && this.props.books.filter(function (entry) {
       return entry.bookId == bookId
     })
     const bookName = value ? value[0].bookName : this.props.bookName
-   
+
     return (
       <View style={this.styles.container}>
         <Header style={{ height: 40, borderLeftWidth: 0.5, borderLeftColor: Color.White }} >
@@ -91,28 +120,9 @@ class Commentary extends Component {
                 data={this.props.commentaryContent.commentaries}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ flexGrow: 1, margin: 16 }}
-                renderItem={({ item }) => (
-                  <View style={{ padding: 10 }}>
-                    {item.verse &&
-                      (item.verse == 0 ?
-                        <Text style={this.styles.commentaryHeading}>Chapter Intro</Text> :
-                        <Text style={this.styles.commentaryHeading}>Verse Number : {item.verse}</Text>
-                      )}
-                    <HTML 
-                     baseFontStyle={this.styles.textString}
-                    tagsStyles={{p:this.styles.textString}} html={item.text} imagesMaxWidth={Dimensions.get('window').width} />
-                  </View>
-                )}
+                renderItem={this.renderItem}
                 ListFooterComponent={<View style={{ height: 40, marginBottom: 40 }}></View>}
-                ListHeaderComponent={<View>
-                  {this.props.commentaryContent.bookIntro == '' ? null :
-                    <View style={this.styles.cardItemBackground}>
-                      <Text style={this.styles.commentaryHeading}>Book Intro</Text>
-                    <HTML 
-                    baseFontStyle={this.styles.textString}
-                    tagsStyles={{p:this.styles.textString}} html={this.props.commentaryContent.bookIntro} imagesMaxWidth={Dimensions.get('window').width} />
-                    </View>}
-                </View>}
+                ListHeaderComponent={this.ListHeaderComponent}
               />
             </View>
         }
