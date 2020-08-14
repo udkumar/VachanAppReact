@@ -75,13 +75,13 @@ import com.android.build.OutputFile
 
 project.ext.react = [
     entryFile: "index.js",
-    bundleInDebug: true,
+    // bundleInDebug: true,
     // whether to bundle JS and assets in release mode
-    //  bundleInRelease: true, 
-    //  resourcesDirRelease   : "src/release/res"
+     bundleInRelease: true, 
+     resourcesDirRelease   : "src/release/res"
 ]
 
-apply from: "../../node_modules/react-native/react.gradle"
+// apply from: "../../node_modules/react-native/react.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -122,10 +122,19 @@ android {
         }
     }
     signingConfigs {
- 
+        release {
+            if (project.hasProperty('MYAPP_RELEASE_STORE_FILE')) {
+        //    java.lang.System.console(MYAPP_RELEASE_STORE_PASSWORD) 
+                storeFile file(MYAPP_RELEASE_STORE_FILE)
+                storePassword MYAPP_RELEASE_STORE_PASSWORD
+                keyAlias MYAPP_RELEASE_KEY_ALIAS
+                keyPassword MYAPP_RELEASE_KEY_PASSWORD
+            }
+        }
     }
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }

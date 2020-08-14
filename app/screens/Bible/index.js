@@ -367,6 +367,7 @@ class Bible extends Component {
     var content = await DbQueries.queryVersions(this.props.language, this.props.versionCode, this.props.bookId, this.props.currentVisibleChapter)
     if (content != null) {
       this.setState({
+        chapterHeader: content[0].chapters[this.state.currentVisibleChapter - 1].chapterHeading,
         downloadedBook: content[0].chapters,
         chapterContent: content[0].chapters[this.state.currentVisibleChapter - 1].verses,
         isLoading: false,
@@ -420,7 +421,8 @@ class Bible extends Component {
         })
         if (this.props.downloaded) {
           if (this.state.downloadedBook.length > 0) {
-            this.setState({
+             this.setState({
+              chapterHeader:this.state.downloadedBook[this.state.currentVisibleChapter - 1].chapterHeading,
               chapterContent: this.state.downloadedBook[this.state.currentVisibleChapter - 1].verses,
               isLoading: false
             })
