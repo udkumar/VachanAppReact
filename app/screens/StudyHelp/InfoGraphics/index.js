@@ -49,9 +49,8 @@ class Infographics extends React.Component {
       } else {
         if (this.state.bookId){
           Toast.show({
-            text: 'Infographics for '+this.state.bookName +' is not avaialble. You can checkout other books',
+            text: 'Infographics for '+this.state.bookName +'is unavaialble. You can checkout other books',
             buttonText: "Okay",
-            type: "success",
             duration: 3000
           })
         }

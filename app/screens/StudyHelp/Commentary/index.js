@@ -94,7 +94,7 @@ class Commentary extends Component {
 
     return (
       <View style={this.styles.container}>
-        <Header style={{ height: 40, borderLeftWidth: 0.5, borderLeftColor: Color.White }} >
+        <Header style={{backgroundColor: Color.Blue_Color, height: 40, borderLeftWidth: 0.5, borderLeftColor: Color.White }} >
           <Body>
             <Title style={{ fontSize: 16 }}>{this.props.parallelContentVersionCode}</Title>
           </Body>

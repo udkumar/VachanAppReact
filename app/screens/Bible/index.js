@@ -93,7 +93,7 @@ class Bible extends Component {
               />
             </TouchableOpacity>
             :
-            <TouchableOpacity
+            <TouchableOpacity onPress={params.toggleAudio}
               style={navStyles.touchableStyleRight}>
               <Icon
                 name='volume-off'
@@ -141,7 +141,7 @@ class Bible extends Component {
             <Icon
               onPress={params.navigateToSettings}
               name='settings'
-              color={params.isBookmark ? Color.Red : Color.White}
+              color={Color.White}
               size={24}
             />
           </TouchableOpacity>
@@ -523,7 +523,7 @@ class Bible extends Component {
     }
     else {
       Toast.show({
-        text: "Offline. Content unavailable.",
+        text: 'No audio for '+this.props.language+ " "+this.props.bookName,
         buttonText: "Okay",
         duration: 3000
       })
@@ -879,8 +879,8 @@ class Bible extends Component {
         {
           this.props.navigation.getParam("visibleParallelView") ?
             <View style={{ position: 'absolute', top: 0, zIndex: 2, width: '50%' }}>
-              <Header style={{ height: 40 }}>
-                <Button transparent onPress={() => { this.props.navigation.navigate("SelectionTab", { getReference: this.getReference, bookId: this.props.bookId, bookName: this.props.bookName, chapterNumber: this.state.currentVisibleChapter, totalChapters: this.props.totalChapters }) }}>
+              <Header style={{ backgroundColor: Color.Blue_Color, height: 40 }}>
+                <Button transparent onPress={() => {this.props.navigation.navigate("SelectionTab", { getReference: this.getReference, bookId: this.props.bookId, bookName: this.props.bookName, chapterNumber: this.state.currentVisibleChapter, totalChapters: this.props.totalChapters }) }}>
                   <Title style={{ fontSize: 16 }}>{this.props.bookName.length > 10 ? this.props.bookName.slice(0, 9) + "..." : this.props.bookName} {this.state.currentVisibleChapter}</Title>
                   <Icon name="arrow-drop-down" color={Color.White} size={20} />
                 </Button>
@@ -889,11 +889,11 @@ class Bible extends Component {
             :
             <Header style={{ backgroundColor: Color.Blue_Color, height: 40 }}>
               <Button transparent onPress={this.navigateToSelectionTab}>
-                <Title style={{ fontSize: 16 }}>{this.props.bookName.length > 10 ? this.props.bookName.slice(0, 9) + "..." : this.props.bookName} {this.state.currentVisibleChapter}</Title>
+                <Title style={{ fontSize: 18 }}>{this.props.bookName.length > 16 ? this.props.bookName.slice(0, 15) + "..." : this.props.bookName} {this.state.currentVisibleChapter}</Title>
                 <Icon name="arrow-drop-down" color={Color.White} size={20} />
               </Button>
               <Button transparent onPress={this.navigateToLanguage}>
-                <Title style={{ fontSize: 16 }}>{this.props.language} {this.props.versionCode}</Title>
+                <Title style={{ fontSize: 18 }}>{this.props.language} {this.props.versionCode}</Title>
                 <Icon name="arrow-drop-down" color={Color.White} size={20} />
               </Button>
             </Header>
@@ -1021,12 +1021,12 @@ const navStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 12,
+    paddingHorizontal: 8,
     flex: 1,
   },
   touchableStyleRight: {
-    flexDirection: "row",
-    marginRight: 8
+    // flexDirection: "row",
+    // marginRight: 8
   },
   touchableStyleLeft: {
     flexDirection: "row",

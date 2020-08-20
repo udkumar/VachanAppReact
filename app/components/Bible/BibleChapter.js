@@ -94,7 +94,7 @@ class BibleChapter extends Component {
         this.styles = styles(this.props.colorFile, this.props.sizeFile);
         return (
             <View style={this.styles.container}>
-                <Header style={{ height: 40, borderLeftWidth: 0.2, borderLeftColor: Color.White }}>
+                <Header style={{backgroundColor: Color.Blue_Color,height: 40, borderLeftWidth: 0.2, borderLeftColor: Color.White }}>
                     <Button transparent onPress={() => { this.props.navigation.navigate("SelectionTab", { getReference: this.getRef, parallelContent: true, bookId: this.state.id, bookName: this.state.bookName, chapterNumber: this.state.currentParallelViewChapter, totalChapters: this.state.totalChapters }) }}>
                         <Title style={{ fontSize: 16 }}>{bookName.length > 8 ? bookName.slice(0, 7) + "..." : bookName} {this.state.currentParallelViewChapter}</Title>
                         <Icon name="arrow-drop-down" color={Color.White} size={20} />
