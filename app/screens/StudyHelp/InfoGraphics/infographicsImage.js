@@ -17,10 +17,10 @@ export class InfographicsImage extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const { params = {} } = navigation.state
     return {
-    headerTitle: (<Text style={{ fontSize: 16, color: Color.White, fontWeight: '700', marginRight: 12 }}>Image</Text>),
+      headerTitle: (<Text style={{ fontSize: 18, color: Color.White, fontWeight: 'bold', marginRight: 12 }}>Image</Text>),
       headerRight: (
         <TouchableOpacity onPress={params.resetSize}>
-          <Text style={{ fontSize: 16, color: Color.White, fontWeight: '700', marginRight: 12 }}>
+          <Text style={{ fontSize: 18, color: Color.White, fontWeight: 'bold', marginRight: 12 }}>
             Reset Size
           </Text>
         </TouchableOpacity>
@@ -30,12 +30,13 @@ export class InfographicsImage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-        url:this.props.navigation.state.params.url,
-        fileName:this.props.navigation.state.params.fileName,
-        image:null  
+      url: this.props.navigation.state.params.url,
+      fileName: this.props.navigation.state.params.fileName,
+      image: null,
+      isLoading: false
     }
     this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
- 
+
     /* Pinching */
     this._baseScale = new Animated.Value(1);
     this._pinchScale = new Animated.Value(1);
@@ -65,14 +66,14 @@ export class InfographicsImage extends React.Component {
 
 
     this._onTiltGestureEvent = Animated.event(
-      [{ nativeEvent: { translationY: this.translateY,translationX:this.translateX } }],
+      [{ nativeEvent: { translationY: this.translateY, translationX: this.translateX } }],
       { useNativeDriver: true }
     );
   }
   _onRotateHandlerStateChange = event => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
       this._lastRotate += event.nativeEvent.rotation;
-      console.log("_lastRotate ",this._lastRotate)
+      console.log("_lastRotate ", this._lastRotate)
       this._rotate.setOffset(this._lastRotate);
       this._rotate.setValue(0);
     }
@@ -80,7 +81,7 @@ export class InfographicsImage extends React.Component {
   _onPinchHandlerStateChange = event => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
       this._lastScale *= event.nativeEvent.scale;
-      console.log("_lastScale ",this._lastScale)
+      console.log("_lastScale ", this._lastScale)
 
       this._baseScale.setValue(this._lastScale);
       this._pinchScale.setValue(1);
@@ -92,13 +93,13 @@ export class InfographicsImage extends React.Component {
       this.translateX.extractOffset()
     }
   };
-  async componentDidMount(){
+  async componentDidMount() {
     this.props.navigation.setParams({
-      resetSize:this.resetSize
+      resetSize: this.resetSize
     })
-    this.setState({image:this.state.url+this.state.fileName})
+    this.setState({ image: this.state.url + this.state.fileName })
   }
-  resetSize = ()=>{
+  resetSize = () => {
     this._baseScale.setValue(1);
     this._rotate.setOffset(0);
     this.translateX.setOffset(0)
@@ -106,70 +107,76 @@ export class InfographicsImage extends React.Component {
   }
 
   render() {
-    console.log("image url ",this.state.image)
+    console.log("image url ", this.state.image)
     return (
-        this.state.image ?
-        <PanGestureHandler
-        ref={this.panRef}
-        onGestureEvent={this._onTiltGestureEvent}
-        onHandlerStateChange={this._onTiltGestureStateChange}
-        minDist={10}
-        minPointers={1}
-        maxPointers={2}
-        avgTouches>
-        <Animated.View style={[this.styles.wrapper]}>
-          <RotationGestureHandler
-            ref={this.rotationRef}
-            simultaneousHandlers={this.pinchRef}
-            onGestureEvent={this._onRotateGestureEvent}
-            onHandlerStateChange={this._onRotateHandlerStateChange}>
+      <View style={this.styles.wrapper}>
+        {this.state.isLoading &&
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <ActivityIndicator animate={true} size={32} />
+          </View>}
+        {this.state.image &&
+          <PanGestureHandler
+            ref={this.panRef}
+            onGestureEvent={this._onTiltGestureEvent}
+            onHandlerStateChange={this._onTiltGestureStateChange}
+            minDist={10}
+            minPointers={1}
+            maxPointers={2}
+            avgTouches>
             <Animated.View style={this.styles.wrapper}>
-              <PinchGestureHandler
-                ref={this.pinchRef}
-                simultaneousHandlers={this.rotationRef}
-                onGestureEvent={this._onPinchGestureEvent}
-                onHandlerStateChange={this._onPinchHandlerStateChange}>
-                <Animated.View style={this.styles.imagecontainer} collapsable={false}>
-                  <Animated.Image
-                    style={[
-                      this.styles.pinchableImage,
-                      {
-                        transform: [
-                          // { perspective: 200 },
-                          { scale: this._scale },
-                          { translateY : this.translateY },
-                          { translateX : this.translateX },
-                          { rotate: this._rotateStr },
-                        ],
-                      },
-                    ]}
-                    source={{uri:this.state.image}}
-                    loadingIndicatorSource={require('../../../assets/default_loader.png') }
-                  />
+              <RotationGestureHandler
+                ref={this.rotationRef}
+                simultaneousHandlers={this.pinchRef}
+                onGestureEvent={this._onRotateGestureEvent}
+                onHandlerStateChange={this._onRotateHandlerStateChange}>
+                <Animated.View style={this.styles.wrapper}>
+                  <PinchGestureHandler
+                    ref={this.pinchRef}
+                    simultaneousHandlers={this.rotationRef}
+                    onGestureEvent={this._onPinchGestureEvent}
+                    onHandlerStateChange={this._onPinchHandlerStateChange}>
+                    <Animated.View style={this.styles.imagecontainer} collapsable={false}>
+                      <Animated.Image
+                        style={[
+                          this.styles.pinchableImage,
+                          {
+                            transform: [
+                              // { perspective: 200 },
+                              { scale: this._scale },
+                              { translateY: this.translateY },
+                              { translateX: this.translateX },
+                              { rotate: this._rotateStr },
+                            ],
+                          },
+                        ]}
+                        onLoadStart={(e) => this.setState({ isLoading: true })}
+                        onLoadEnd={(e) => this.setState({ isLoading: false })}
+                        source={{ uri: this.state.image }}
+
+                      />
+                    </Animated.View>
+                  </PinchGestureHandler>
                 </Animated.View>
-              </PinchGestureHandler>
+              </RotationGestureHandler>
             </Animated.View>
-          </RotationGestureHandler>
-        </Animated.View>
-      </PanGestureHandler>
-      :
-      <View>
-        <Text>
-          Image not found
-        </Text>
+          </PanGestureHandler>}
       </View>
+
+
+
     );
   }
 }
 
 const mapStateToProps = state => {
-    return {
-      languageCode: state.updateVersion.languageCode,
-      books: state.versionFetch.data,
-      sizeFile: state.updateStyling.sizeFile,
-      colorFile: state.updateStyling.colorFile,
-    }
+  return {
+    languageCode: state.updateVersion.languageCode,
+    books: state.versionFetch.data,
+    sizeFile: state.updateStyling.sizeFile,
+    colorFile: state.updateStyling.colorFile,
+    colorMode: state.updateStyling.colorMode
   }
-  
-  
-  export default connect(mapStateToProps, null)(InfographicsImage)
+}
+
+
+export default connect(mapStateToProps, null)(InfographicsImage)
