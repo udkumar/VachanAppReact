@@ -60,7 +60,7 @@ class Video extends Component {
 
   }
   playVideo(val) {
-    const videoId = val.url.replace("https://youtube/", "");
+    const videoId = val.url.replace("https://youtu.be/", "");
     this.props.navigation.navigate("PlayVideo", { url: videoId, title: val.title, description: val.description, theme: val.theme })
   }
   componentDidMount() {
