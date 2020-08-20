@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { Text, View, UIManager, Platform, TouchableOpacity, Alert } from 'react-native';
+import { Text, View, TouchableOpacity, Alert } from 'react-native';
 import { Accordion } from 'native-base'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import DbQueries from '../../utils/dbQueries'
@@ -18,9 +18,6 @@ class LanguageList extends Component {
   });
   constructor(props) {
     super(props)
-    if (Platform.OS === 'android') {
-      UIManager.setLayoutAnimationEnabledExperimental(true);
-    }
     this.state = {
       isLoading: false,
       text: '',
@@ -113,8 +110,9 @@ class LanguageList extends Component {
   downloadBible = async (langName, verCode, books, sourceId) => {
     try {
       this.setState({ startDownload: true })
-      var bookModels =[]
-      var content = await APIFetch.getAllBooks(parseInt(sourceId), "json")
+      let bookModels =[]
+      let content = await APIFetch.getAllBooks(parseInt(sourceId), "json")
+
       if(content.bibleContent && books){
         for(var i =0;i<books.length;i++){
             bookModels.push({
@@ -128,26 +126,35 @@ class LanguageList extends Component {
           })
         }
       }
-      await DbQueries.addNewVersion(langName,verCode,bookModels,sourceId)
-      await this.fetchLanguages()
-      this.setState({ startDownload: false })
+      DbQueries.addNewVersion(langName,verCode,bookModels,sourceId)
+      this.fetchLanguages()
+      this.setState({ startDownload: false})
     } catch (error) {
       this.setState({ startDownload: false })
+      console.log(" error ",error)
       alert("Something went wrong. Try Again")
     }
   }
   getChapters = (content, bookId) => {
-    var chapterModels = []
+    let chapterModels = []
+    let chapterHeading = null 
     for (var id in content) {
       if (content != null && id == bookId) {
         for (var c = 0; c < content[id].chapters.length; c++) {
           var verseModels = []
+          chapterHeading = content[id].chapters[c].metadata && (content[id].chapters[c].metadata[0].section) ?  content[id].chapters[c].metadata[0].section.text : null
           for (var v = 0; v < content[id].chapters[c].verses.length; v++) {
-            verseModels.push(content[id].chapters[c].verses[v])
+            let verseData = content[id].chapters[c].verses[v] 
+            verseModels.push({
+              text:verseData.text,
+              number: verseData.number,
+              section: (verseData.metadata && verseData.metadata[0].section) ? verseData.metadata[0].section.text : null ,
+            })
           }
-          var chapterModel = {
+          let chapterModel = {
             chapterNumber: parseInt(content[id].chapters[c].header.title),
             numberOfVerses: parseInt(content[id].chapters[c].verses.length),
+            chapterHeading:chapterHeading,
             verses: verseModels,
           }
           chapterModels.push(chapterModel)
@@ -166,9 +173,9 @@ class LanguageList extends Component {
     })
     this.props.navigation.pop()
   }
-  async deleteBible(languageName, languageCode, versionCode, sourceId, downloaded) {
-    await DbQueries.deleteBibleVersion(languageName, versionCode, sourceId, downloaded)
-    await this.fetchLanguages()
+  deleteBible(languageName,languageCode,  versionCode, sourceId, downloaded) {
+     DbQueries.deleteBibleVersion(languageName, versionCode, sourceId, downloaded)
+     this.fetchLanguages()
   }
 
   _renderHeader = (item, expanded) => {

@@ -20,20 +20,20 @@ class BookMarks extends Component {
 
   constructor(props) {
     super(props)
-
     this.state = {
       bookmarksList: [],
       isLoading: false,
       languageName: this.props.languageName,
       versionCode: this.props.versionCode,
       sourceId: this.props.sourceId,
-      bookId: this.props.bookId
+      bookId: this.props.bookId,
+      message:''
     }
 
     this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
   }
 
-  fecthBookmarks() {
+  fecthBookmarks(){
     if (this.props.email) {
       this.setState({ isLoading: true }, () => {
         var firebaseRef = firebase.database().ref("users/" + this.props.uid + "/bookmarks/" + this.props.sourceId);
@@ -52,13 +52,16 @@ class BookMarks extends Component {
           else {
             this.setState({
               bookmarksList: [],
+              message:'No bookmark Added for '+this.props.languageName,
               isLoading: false
             })
           }
         })
         this.setState({ isLoading: false })
       })
-
+    }
+    else{
+      this.setState({bookmarksList: [],message:'Please login'})
     }
   }
   async componentDidMount() {
@@ -130,7 +133,13 @@ class BookMarks extends Component {
         {bookName && value}
       </View>
     )
-
+  }
+  emptyMessageNavigation=()=>{
+    if(this.props.email){
+      this.props.navigation.navigate("Bible")
+    }else{
+      this.props.navigation.navigate("Login")
+    }
   }
   render() {
     return (
@@ -142,10 +151,10 @@ class BookMarks extends Component {
               renderItem={this.renderItem}
               ListEmptyComponent={
                 <View style={this.styles.emptyMessageContainer}>
-                  <Icon name="collections-bookmark" style={this.styles.emptyMessageIcon} onPress={() => { this.props.navigation.navigate("Bible") }} />
+                  <Icon name="collections-bookmark" style={this.styles.emptyMessageIcon} onPress={this.emptyMessageNavigation} />
                   <Text
                     style={this.styles.messageEmpty}>
-                    No Bookmark added
+                    {this.state.message}
                   </Text>
                 </View>
               }

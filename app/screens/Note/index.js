@@ -30,7 +30,8 @@ class Note extends Component {
       sizeFile: this.props.sizeFile,
       notesData: [],
       referenceList: [],
-      isLoading: false
+      isLoading: false,
+      message:''
     }
     this.styles = noteStyle(props.colorFile, props.sizeFile);
 
@@ -68,7 +69,7 @@ class Note extends Component {
         var firebaseRef = firebase.database().ref("users/" + this.props.uid + "/notes/" + this.props.sourceId)
         firebaseRef.once('value', (snapshot) => {
           if (snapshot.val() === null) {
-            this.setState({ notesData: [], isLoading: false })
+            this.setState({ notesData: [],message:'No Note for '+this.props.languageName, isLoading: false })
           }
           else {
             var arr = []
@@ -110,6 +111,13 @@ class Note extends Component {
         this.setState({ isLoading: false })
       })
     }
+    else{
+      this.setState({
+        notesData:[],
+        message:'Please login'
+      })
+      
+    }
 
   }
   componentDidMount() {
@@ -126,6 +134,13 @@ class Note extends Component {
   dateFormate(modifiedTime) {
     var date = new Date(modifiedTime).toLocaleString()
     return date
+  }
+  emptyMessageNavigation=()=>{
+    if(this.props.email){
+      this.props.navigation.navigate("Bible")
+    }else{
+      this.props.navigation.navigate("Login")
+    }
   }
   renderItem = ({ item, index }) => {
     var bookName = null
@@ -159,7 +174,7 @@ class Note extends Component {
         <Card>
           <CardItem style={this.styles.cardItemStyle}>
             <View style={this.styles.notesContentView}>
-              <Text style={this.styles.noteText} >{this.props.language} {this.props.versionCode} {bookName} {item.chapterNumber} {"-"} {val.verses.join()}</Text>
+              <Text style={this.styles.noteText} >{this.props.languageName} {this.props.versionCode} {bookName} {item.chapterNumber} {"-"} {val.verses.join()}</Text>
               <View style={this.styles.noteCardItem}>
                 <Text style={this.styles.noteFontCustom}>{this.dateFormate(val.modifiedTime)}</Text>
                 <Icon name="delete-forever" style={this.styles.deleteIon} onPress={() => this.onDelete(val.createdTime, val.body, index, j)} />
@@ -189,10 +204,10 @@ class Note extends Component {
             renderItem={this.renderItem}
             ListEmptyComponent={
               <View style={this.styles.emptyMessageContainer}>
-                <Icon name="note" style={this.styles.emptyMessageIcon} onPress={() => { this.props.navigation.navigate("Bible") }} />
+                <Icon name="note" style={this.styles.emptyMessageIcon} onPress={this.emptyMessageNavigation} />
                 <Text
                   style={this.styles.messageEmpty}>
-                  Select verse to Note
+                  {this.state.message}
                 </Text>
               </View>
             }
@@ -209,7 +224,7 @@ const mapStateToProps = state => {
     colorFile: state.updateStyling.colorFile,
     sourceId: state.updateVersion.sourceId,
 
-    language: state.updateVersion.language,
+    languageName: state.updateVersion.language,
     versionCode: state.updateVersion.versionCode,
     email: state.userInfo.email,
     uid: state.userInfo.uid,

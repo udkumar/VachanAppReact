@@ -34,7 +34,7 @@ class PlayVideo extends Component {
     }
     render() {
         return (
-            <View style={{ flex: 1 }}>
+            <View style={this.styles.container}>
                 <Text style={this.styles.title}>
                     {this.state.title}
                 </Text>

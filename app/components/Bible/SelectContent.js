@@ -146,11 +146,11 @@ class SelectContent extends Component {
           </View>
         </Modal>
 
-        <TouchableOpacity onPress={this.onPressModal} style={[this.props.navStyles.touchableStyleRight, { flexDirection: 'row' }]}>
+        <TouchableOpacity onPress={this.onPressModal} style={this.props.navStyles.touchableStyleRight}>
           <MaterialCommunityIcons
             name='book-open-variant'
             color={Color.White}
-            size={24}
+            size={26}
           />
         </TouchableOpacity>
       </View>

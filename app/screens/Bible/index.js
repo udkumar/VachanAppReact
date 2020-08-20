@@ -6,6 +6,7 @@ import {
   Alert,
   Dimensions,
   StyleSheet,
+  Image,
   TouchableOpacity,
   Share,
   AppState,
@@ -38,32 +39,32 @@ class Bible extends Component {
     const { params = {} } = navigation.state
     return {
       header: params.visibleParallelView && null,
-      headerLeft: (
-        <View style={navStyles.headerLeftStyle}>
-          <TouchableOpacity style={[navStyles.touchableStyleLeft]}
-            onPress={() => { navigation.toggleDrawer() }}>
-            <Icon
-              name="menu"
-              color={Color.White}
-              size={24}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={params.navigateToSelectionTab}
-            style={[navStyles.headerLeftStyle, { paddingHorizontal: 8 }]}>
-            <Text style={[navStyles.headerTextStyle, { paddingRight: 4 }]}>{params.bookName}</Text>
-            <Text style={[navStyles.headerTextStyle, { fontWeight: 'bold' }]}>{params.currentChapter}</Text>
-            <Icon name="arrow-drop-down" color={Color.White} size={20} style={{ alignSelf: 'center' }} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={params.navigateToLanguage}
-            style={[navStyles.headerLeftStyle]}>
-            <Text style={[navStyles.headerTextStyle, { paddingRight: 4 }]}>{params.languageName}</Text>
-            <Text style={[navStyles.headerTextStyle, { fontWeight: 'bold' }]}>{params.versionCode}</Text>
-            <Icon name="arrow-drop-down" color={Color.White} style={{ alignSelf: 'center' }} size={20} />
-          </TouchableOpacity>
-        </View>
-      ),
+      // headerLeft: (
+      //   <View style={navStyles.headerLeftStyle}>
+      //     {/* <TouchableOpacity style={[navStyles.touchableStyleLeft]}
+      //       onPress={() => { navigation.toggleDrawer() }}>
+      //       <Icon
+      //         name="menu"
+      //         color={Color.White}
+      //         size={24}
+      //       />
+      //     </TouchableOpacity> */}
+      //     {/* <TouchableOpacity
+      //       onPress={params.navigateToSelectionTab}
+      //       style={[navStyles.headerLeftStyle, { paddingHorizontal: 8 }]}>
+      //       <Text style={[navStyles.headerTextStyle, { paddingRight: 4 }]}>{params.bookName}</Text>
+      //       <Text style={[navStyles.headerTextStyle, { fontWeight: 'bold' }]}>{params.currentChapter}</Text>
+      //       <Icon name="arrow-drop-down" color={Color.White} size={20} style={{ alignSelf: 'center' }} />
+      //     </TouchableOpacity>
+      //     <TouchableOpacity
+      //       onPress={params.navigateToLanguage}
+      //       style={[navStyles.headerLeftStyle]}>
+      //       <Text style={[navStyles.headerTextStyle, { paddingRight: 4 }]}>{params.languageName}</Text>
+      //       <Text style={[navStyles.headerTextStyle, { fontWeight: 'bold' }]}>{params.versionCode}</Text>
+      //       <Icon name="arrow-drop-down" color={Color.White} style={{ alignSelf: 'center' }} size={20} />
+      //     </TouchableOpacity> */}
+      //   </View>
+      // ),
 
       headerTintColor: Color.White,
       headerStyle: {
@@ -72,19 +73,54 @@ class Bible extends Component {
         shadowOpacity: 0,
         width: params.visibleParallelView ? '50%' : width
       },
-      headerRight: (
+      headerTitle: (
         <View style={navStyles.headerRightStyle}>
-          {params.audio &&
+          <TouchableOpacity style={navStyles.touchableStyleLeft}
+            onPress={() => { navigation.toggleDrawer() }}>
+            <Icon
+              name="menu"
+              color={Color.White}
+              size={28}
+            />
+          </TouchableOpacity>
+          {params.audio ?
             <TouchableOpacity onPress={params.toggleAudio}
-              style={[navStyles.touchableStyleRight, { flexDirection: 'row' }]}>
+              style={navStyles.touchableStyleRight}>
               <Icon
                 name='volume-up'
-                size={24}
+                size={28}
+                color={Color.White}
+              />
+            </TouchableOpacity>
+            :
+            <TouchableOpacity
+              style={navStyles.touchableStyleRight}>
+              <Icon
+                name='volume-off'
+                size={28}
                 color={Color.White}
               />
             </TouchableOpacity>
           }
-          <TouchableOpacity style={[navStyles.touchableStyleRight, { flexDirection: 'row' }]}>
+          <TouchableOpacity
+            onPress={params.navigateToVideo}
+            style={navStyles.touchableStyleRight}>
+            <Icon
+              name='videocam'
+              size={24}
+              color={Color.White}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={params.navigateToImage}
+            style={navStyles.touchableStyleRight}>
+            <Icon
+              name='image'
+              size={24}
+              color={Color.White}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity style={navStyles.touchableStyleRight}>
             <Icon
               onPress={params.onSearch}
               name='search'
@@ -92,7 +128,7 @@ class Bible extends Component {
               size={24}
             />
           </TouchableOpacity>
-          <TouchableOpacity style={[navStyles.touchableStyleRight, { flexDirection: 'row' }]}>
+          <TouchableOpacity style={navStyles.touchableStyleRight}>
             <Icon
               onPress={() => { params.onBookmark(params.isBookmark) }}
               name='bookmark'
@@ -101,6 +137,14 @@ class Bible extends Component {
             />
           </TouchableOpacity>
           <SelectContent visible={params.modalVisible} visibleParallelView={params.visibleParallelView} navigation={navigation} navStyles={navStyles} />
+          <TouchableOpacity style={navStyles.touchableStyleRight}>
+            <Icon
+              onPress={params.navigateToSettings}
+              name='settings'
+              color={params.isBookmark ? Color.Red : Color.White}
+              size={24}
+            />
+          </TouchableOpacity>
         </View>
       )
     }
@@ -196,6 +240,9 @@ class Bible extends Component {
       onSearch: this.onSearch,
       navigateToLanguage: this.navigateToLanguage,
       navigateToSelectionTab: this.navigateToSelectionTab,
+      navigateToVideo: this.navigateToVideo,
+      navigateToImage: this.navigateToImage,
+      navigateToSettings: this.navigateToSettings,
       onSearchHideHeader: this.state.onSearchHideHeader
     })
     this.subs = this.props.navigation.addListener("didFocus", () => {
@@ -221,13 +268,13 @@ class Bible extends Component {
           numOfChapter: this.props.totalChapters,
           isBookmark: this.isBookmark()
         })
-        if(this.props.books.length == 0 ){
+        if (this.props.books.length == 0) {
           this.props.fetchVersionBooks({
             language: this.props.language,
             versionCode: this.props.versionCode,
-            downloaded: this.props.downloaded, 
+            downloaded: this.props.downloaded,
             sourceId: this.props.sourceId
-        })
+          })
         }
         this.setState({ isLoading: false })
       })
@@ -235,7 +282,7 @@ class Bible extends Component {
   }
   _handleConnectivityChange = (isConnected) => {
     this.setState({ connection_Status: isConnected == true ? true : false }, () => {
-      if (this.state.connection_Status){
+      if (this.state.connection_Status) {
         Toast.show({
           text: "Online. Now content available.",
           buttonText: "Okay",
@@ -243,17 +290,17 @@ class Bible extends Component {
           duration: 3000
         })
         this.queryBookFromAPI(null)
-        if(this.props.books.length ==0){
-        this.props.fetchVersionBooks({
-          language: this.props.language,
-          versionCode: this.props.versionCode,
-          downloaded: this.props.downloaded,
-          sourceId: this.props.sourceId
-        })
+        if (this.props.books.length == 0) {
+          this.props.fetchVersionBooks({
+            language: this.props.language,
+            versionCode: this.props.versionCode,
+            downloaded: this.props.downloaded,
+            sourceId: this.props.sourceId
+          })
         }
-       
 
-      }else{
+
+      } else {
         Toast.show({
           text: "Offline. Check your internet Connection.",
           buttonText: "Okay",
@@ -330,7 +377,7 @@ class Bible extends Component {
         versionCode: item.versionCode, sourceId: item.sourceId, downloaded: item.downloaded
       })
 
-      if (bookName != null){
+      if (bookName != null) {
         const shortName = this.props.language.toLowerCase() == ('malayalam' || 'tamil' || 'kannada') ?
           (bookName.length > 4 ? bookName.slice(0, 3) + "..." : bookName) :
           bookName.length > 8 ? bookName.slice(0, 7) + "..." : bookName
@@ -367,6 +414,7 @@ class Bible extends Component {
     var content = await DbQueries.queryVersions(this.props.language, this.props.versionCode, this.props.bookId, this.props.currentVisibleChapter)
     if (content != null) {
       this.setState({
+        chapterHeader: content[0].chapters[this.state.currentVisibleChapter - 1].chapterHeading,
         downloadedBook: content[0].chapters,
         chapterContent: content[0].chapters[this.state.currentVisibleChapter - 1].verses,
         isLoading: false,
@@ -421,6 +469,7 @@ class Bible extends Component {
         if (this.props.downloaded) {
           if (this.state.downloadedBook.length > 0) {
             this.setState({
+              chapterHeader: this.state.downloadedBook[this.state.currentVisibleChapter - 1].chapterHeading,
               chapterContent: this.state.downloadedBook[this.state.currentVisibleChapter - 1].verses,
               isLoading: false
             })
@@ -656,7 +705,7 @@ class Bible extends Component {
             }
           }
         }
-        this.setState({showBottomBar: this.state.selectedReferenceSet.length > 0 ? true : false, bottomHighlightText: selectedCount == highlightCount ? false : true })
+        this.setState({ showBottomBar: this.state.selectedReferenceSet.length > 0 ? true : false, bottomHighlightText: selectedCount == highlightCount ? false : true })
       })
     }
   }
@@ -791,6 +840,17 @@ class Bible extends Component {
       chapterNumber: this.props.currentVisibleChapter, totalChapters: this.props.totalChapters
     })
   }
+  navigateToVideo = () => {
+    this.props.navigation.navigate("Video", { bookId: this.props.bookId, bookName: this.props.bookName })
+  }
+  navigateToImage = () => {
+    this.props.navigation.navigate("Infographics", { bookId: this.props.bookId, bookName: this.props.bookName })
+  }
+  navigateToSettings = () => {
+    this.props.navigation.navigate("Settings")
+
+  }
+
   toggleParallelView(value) {
     this.props.navigation.setParams({ visibleParallelView: value, })
   }
@@ -813,18 +873,30 @@ class Bible extends Component {
   }
 
   render() {
+
     return (
       <View style={this.styles.container}>
         {
-          this.props.navigation.getParam("visibleParallelView") &&
-          <View style={{ position: 'absolute', top: 0, zIndex: 2, width: '50%' }}>
-            <Header style={{ height: 40 }}>
-              <Button transparent onPress={() => { this.props.navigation.navigate("SelectionTab", { getReference: this.getReference, bookId: this.props.bookId, bookName: this.props.bookName, chapterNumber: this.state.currentVisibleChapter, totalChapters: this.props.totalChapters }) }}>
+          this.props.navigation.getParam("visibleParallelView") ?
+            <View style={{ position: 'absolute', top: 0, zIndex: 2, width: '50%' }}>
+              <Header style={{ height: 40 }}>
+                <Button transparent onPress={() => { this.props.navigation.navigate("SelectionTab", { getReference: this.getReference, bookId: this.props.bookId, bookName: this.props.bookName, chapterNumber: this.state.currentVisibleChapter, totalChapters: this.props.totalChapters }) }}>
+                  <Title style={{ fontSize: 16 }}>{this.props.bookName.length > 10 ? this.props.bookName.slice(0, 9) + "..." : this.props.bookName} {this.state.currentVisibleChapter}</Title>
+                  <Icon name="arrow-drop-down" color={Color.White} size={20} />
+                </Button>
+              </Header>
+            </View>
+            :
+            <Header style={{ backgroundColor: Color.Blue_Color, height: 40 }}>
+              <Button transparent onPress={this.navigateToSelectionTab}>
                 <Title style={{ fontSize: 16 }}>{this.props.bookName.length > 10 ? this.props.bookName.slice(0, 9) + "..." : this.props.bookName} {this.state.currentVisibleChapter}</Title>
                 <Icon name="arrow-drop-down" color={Color.White} size={20} />
               </Button>
+              <Button transparent onPress={this.navigateToLanguage}>
+                <Title style={{ fontSize: 16 }}>{this.props.language} {this.props.versionCode}</Title>
+                <Icon name="arrow-drop-down" color={Color.White} size={20} />
+              </Button>
             </Header>
-          </View>
         }
         {
           this.state.isLoading &&
@@ -948,8 +1020,8 @@ const navStyles = StyleSheet.create({
   headerRightStyle: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingRight: 2,
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
     flex: 1,
   },
   touchableStyleRight: {
