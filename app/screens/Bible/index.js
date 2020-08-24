@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, version } from 'react';
 import {
   Text,
   View,
@@ -136,7 +136,7 @@ class Bible extends Component {
               size={24}
             />
           </TouchableOpacity>
-          <SelectContent visible={params.modalVisible} visibleParallelView={params.visibleParallelView} navigation={navigation} navStyles={navStyles} />
+          <SelectContent visible={params.modalVisible} parallelLanguage={params.parallelLanguage} parallelMetaData={params.parallelMetaData}  visibleParallelView={params.visibleParallelView} navigation={navigation} navStyles={navStyles} />
           <TouchableOpacity style={navStyles.touchableStyleRight}>
             <Icon
               onPress={params.navigateToSettings}
@@ -231,6 +231,8 @@ class Bible extends Component {
     AppState.addEventListener('change', this._handleAppStateChange);
     this.props.navigation.setParams({
       visibleParallelView: false,
+      parallelLanguage:null,
+      parallelMetaData:null,
       modalVisible: false,
       updatelangVer: this.updateLangVer,
       getRef: this.getReference,
@@ -325,7 +327,7 @@ class Bible extends Component {
 
   getReference = async (item) => {
     this.setState({ selectedReferenceSet: [], showBottomBar: false })
-
+    console.log(" bookname ",item.bookName)
     if (item) {
       var time = new Date()
       DbQueries.addHistory(this.props.sourceId, this.props.language, this.props.languageCode,
@@ -832,12 +834,16 @@ class Bible extends Component {
     this.setState({ status: false })
     this.props.navigation.navigate("LanguageList", { updateLangVer: this.updateLangVer })
   }
-  navigateToSelectionTab = () => {
+  navigateToSelectionTab(parrallelContent){
     this.setState({ status: false })
     this.props.navigation.navigate("SelectionTab", {
       getReference: this.getReference,
-      parallelContent: false, bookId: this.props.bookId, bookName: this.props.bookName,
-      chapterNumber: this.props.currentVisibleChapter, totalChapters: this.props.totalChapters
+      language:this.props.language,
+      version:this.props.versionCode,
+      sourceId:this.props.sourceId,
+      downloaded:this.props.downloaded,
+      parallelContent: parrallelContent , bookId: this.props.bookId, bookName: this.props.bookName,
+      chapterNumber: this.state.currentVisibleChapter, totalChapters: this.props.totalChapters
     })
   }
   navigateToVideo = () => {
@@ -850,7 +856,6 @@ class Bible extends Component {
     this.props.navigation.navigate("Settings")
 
   }
-
   toggleParallelView(value) {
     this.props.navigation.setParams({ visibleParallelView: value, })
   }
@@ -873,14 +878,14 @@ class Bible extends Component {
   }
 
   render() {
-
+    console.log("parallel language ",this.props.navigation.getParam("parallelLanguage"))
     return (
       <View style={this.styles.container}>
         {
           this.props.navigation.getParam("visibleParallelView") ?
             <View style={{ position: 'absolute', top: 0, zIndex: 2, width: '50%' }}>
               <Header style={{ backgroundColor: Color.Blue_Color, height: 40 }}>
-                <Button transparent onPress={() => {this.props.navigation.navigate("SelectionTab", { getReference: this.getReference, bookId: this.props.bookId, bookName: this.props.bookName, chapterNumber: this.state.currentVisibleChapter, totalChapters: this.props.totalChapters }) }}>
+                <Button transparent onPress={()=>this.navigateToSelectionTab(true)}>
                   <Title style={{ fontSize: 16 }}>{this.props.bookName.length > 10 ? this.props.bookName.slice(0, 9) + "..." : this.props.bookName} {this.state.currentVisibleChapter}</Title>
                   <Icon name="arrow-drop-down" color={Color.White} size={20} />
                 </Button>
@@ -888,7 +893,7 @@ class Bible extends Component {
             </View>
             :
             <Header style={{ backgroundColor: Color.Blue_Color, height: 40 }}>
-              <Button transparent onPress={this.navigateToSelectionTab}>
+              <Button transparent onPress={()=>this.navigateToSelectionTab(false)}>
                 <Title style={{ fontSize: 18 }}>{this.props.bookName.length > 16 ? this.props.bookName.slice(0, 15) + "..." : this.props.bookName} {this.state.currentVisibleChapter}</Title>
                 <Icon name="arrow-drop-down" color={Color.White} size={20} />
               </Button>
@@ -974,6 +979,8 @@ class Bible extends Component {
                     currentChapter={this.state.currentVisibleChapter}
                     id={this.props.bookId}
                     bookName={this.props.bookName}
+                    parallelLanguage ={this.props.navigation.getParam("parallelLanguage")}
+                    parallelMetaData={this.props.navigation.getParam("parallelMetaData")}
                     toggleParallelView={(value) => this.toggleParallelView(value)}
                     totalChapters={this.props.totalChapters}
                     navigation={this.props.navigation}
@@ -981,6 +988,9 @@ class Bible extends Component {
                 {
                   this.props.contentType == 'commentary' &&
                   <Commentary
+                    id={this.props.bookId}
+                    bookName={this.props.bookName}
+                    parallelLanguage ={this.props.navigation.getParam("parallelLanguage")}
                     toggleParallelView={(value) => this.toggleParallelView(value)}
                     currentVisibleChapter={this.state.currentVisibleChapter}
                   />
@@ -988,6 +998,7 @@ class Bible extends Component {
                 {
                   this.props.contentType == 'dictionary' &&
                   <Dictionary
+                    parallelLanguage ={this.props.navigation.getParam("parallelLanguage")}
                     toggleParallelView={(value) => this.toggleParallelView(value)}
                     currentVisibleChapter={this.state.currentVisibleChapter}
                   />
@@ -1070,7 +1081,6 @@ const mapStateToProps = state => {
     availableCommentaries: state.commentaryFetch.availableCommentaries,
     commentary: state.commentaryFetch.commentaryContent,
     parallelContentType: state.updateVersion.parallelContentType,
-
   }
 }
 const mapDispatchToProps = dispatch => {

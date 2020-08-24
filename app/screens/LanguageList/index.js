@@ -165,13 +165,18 @@ class LanguageList extends Component {
   }
 
   navigateTo(langName, langCode, booklist, verCode, sourceId, metadata, downloaded) {
-    this.props.navigation.state.params.updateLangVer({
-      sourceId: sourceId, languageName: langName, languageCode: langCode,
-      versionCode: verCode, downloaded: downloaded,
-      books: booklist,
-      metadata: metadata
-    })
-    this.props.navigation.pop()
+    if(this.props.navigation.state.params.updateLangVer){
+      this.props.navigation.state.params.updateLangVer({
+        sourceId: sourceId, languageName: langName, languageCode: langCode,
+        versionCode: verCode, downloaded: downloaded,
+        books: booklist,
+        metadata: metadata
+      })
+      this.props.navigation.pop()
+    }else{
+      // for downloading bible from settings page no need to navigate
+      Alert.alert("To download bible click on download icon.")
+    }
   }
   deleteBible(languageName,languageCode,  versionCode, sourceId, downloaded) {
      DbQueries.deleteBibleVersion(languageName, versionCode, sourceId, downloaded)

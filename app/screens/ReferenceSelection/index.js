@@ -37,9 +37,9 @@ class ReferenceSelection extends Component {
       totalChapters: item.numOfChapters,
     })
   }
-
   updateSelectedChapter = (chapter, index) => {
-    var chapterNum = chapter === null ? this.state.selectedChapterNumber : chapter
+    var chapterNum = chapter == null ? this.state.selectedChapterNumber : chapter
+    console.log(" chapter ",chapterNum,chapter,index)
     this.setState({
       selectedChapterNumber: chapterNum,
       selectedChapterIndex: index != null && index,
@@ -50,24 +50,24 @@ class ReferenceSelection extends Component {
         chapterNumber: chapterNum > this.state.totalChapters ? '1' : chapterNum,
         totalChapters: this.state.totalChapters,
       })
-      if (this.props.navigation.state.params.parallelContent) {
-        this.props.books.length = 0
-      }
       this.props.navigation.goBack()
     })
   }
-  async componentDidMount() {
-    if (this.props.navigation.state.params.parallelContent) {
-      this.props.fetchVersionBooks({ language: this.props.parallelContentLanguage, versionCode: this.props.parallelContentVersionCode, downloaded: false, sourceId: this.props.parallelContentSourceId })
+  getBooks(){
+    if(this.props.navigation.state.params){
+      let params = this.props.navigation.state.params
+      this.props.fetchVersionBooks({ language: params.language, versionCode: params.versionCode, 
+        downloaded: params.downloaded, sourceId: params.sourceId })
     }
-    else {
-      this.props.fetchVersionBooks({ language: this.props.language, versionCode: this.props.versionCode, downloaded: this.props.downloaded, sourceId: this.props.sourceId })
-    }
+  }
+  componentDidMount() {
+   this.getBooks()
   }
   errorMessage() {
     if (!this.alertPresent) {
       this.alertPresent = true;
       if (this.props.error !== null) {
+        console.log(" ERROR ",this.props.error)
         Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
       } else {
         this.alertPresent = false;
@@ -77,12 +77,7 @@ class ReferenceSelection extends Component {
 
   reloadBooks = () => {
     this.errorMessage()
-    if (this.props.navigation.state.params.parallelContent) {
-      this.props.fetchVersionBooks({ language: this.props.parallelContentLanguage, versionCode: this.props.parallelContentVersionCode, downloaded: false, sourceId: this.props.parallelContentSourceId })
-    }
-    else {
-      this.props.fetchVersionBooks({ language: this.props.language, versionCode: this.props.versionCode, downloaded: this.props.downloaded, sourceId: this.props.sourceId })
-    }
+    this.getBooks()
   }
   render() {
     this.styles = styles(this.props.colorFile, this.props.sizeFile);
@@ -129,12 +124,6 @@ const mapStateToProps = state => {
     versionCode: state.updateVersion.versionCode,
     sourceId: state.updateVersion.sourceId,
     downloaded: state.updateVersion.downloaded,
-
-    parallelContentSourceId: state.updateVersion.parallelContentSourceId,
-    parallelContentVersionCode: state.updateVersion.parallelContentVersionCode,
-    parallelContentLanguage: state.updateVersion.parallelContentLanguage,
-    parallelContentLanguageCode: state.updateVersion.parallelContentLanguageCode,
-    parallelContentType: state.updateVersion.parallelContentType,
 
     books: state.versionFetch.data,
     error: state.versionFetch.error,

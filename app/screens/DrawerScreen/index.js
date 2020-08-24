@@ -49,7 +49,7 @@ class DrawerScreen extends Component {
       <View style={this.styles.container}>
         <ScrollView style={this.styles.container}>
           <View style={this.styles.headerContainer}>
-            <ImageBackground source={require('../../assets/headerbook.jpeg')} style={{ flex: 1, width: 280, }} >
+            <ImageBackground source={require('../../assets/headerbook.jpg')} style={{ flex: 1, width: 280, }} >
               <View style={{ position: 'absolute', bottom: 0, margin: 8 }}>
                 <Image
                   style={this.styles.imageStyle}

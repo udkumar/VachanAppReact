@@ -61,7 +61,6 @@ class VerseView extends Component {
       chapterNumber: this.props.chapterNumber,
       bookId: this.props.bookId, verseNumber: verse_num
     })
-
   }
 
   render() {
